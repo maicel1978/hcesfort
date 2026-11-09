@@ -2,31 +2,33 @@
 
 Work only on the first open task. Each task ends with a clean `devtools::check()`, commit and push.
 
-## v0.1: core validated against ENGIH 2018
-- [ ] 0. **Read the whole analysis** (`analisis_ENGIH2018`: README, scripts 00–09 and annexes, parameter CSVs in `data/raw/`, `data/auditoria/cifras_control/LEEME.txt`). Write `docs/analysis-map.md` with:
-  - each step of the analysis and the package function that will cover it;
-  - each methodological decision and threshold, with script and line;
-  - what is ENGIH-specific (adapter) and what is generic (core);
-  - errors or inconsistencies found.
-  No package code in this task. Maintainer review before continuing.
-- [ ] 1. Skeleton: `DESCRIPTION`, MIT licence, testthat 3, roxygen2 markdown, `NEWS.md`, `.gitignore` with `data-raw/private/`, GitHub Actions (R CMD check on three OS, test coverage, lint). Confirm the name is available on CRAN.
-- [ ] 2. Data contracts: schemas of the standard tables, validation function, classed errors, audit-log format.
-- [ ] 3. Reference data with sources in `data-raw/` (EAR, UL, reference energy, WHO 2009 levels, iron requirement distribution).
-- [ ] 4. `compute_afe()`.
-- [ ] 5. `convert_units()` and `link_composition()`, with audit log.
-- [ ] 6. `apparent_intake()`, with the section-combination rule as an adapter option.
-- [ ] 7. `apply_scenario()`, including replacement of enriched foods.
-- [ ] 8. `inadequacy()` and `above_ul()`.
-- [ ] 9. `estimate()` and `paired_difference()` on a complex design.
-- [ ] 10. ENGIH 2018 adapter and local acceptance test against the control figures (needs the microdata).
-- [ ] 11. Vignette in English and Spanish: from survey files to risk by scenario. pkgdown site.
+## v0.1: generic core, validated against ENGIH 2018
+- [x] 0. **Read the whole analysis** and write `docs/analysis-map.md`. Review recorded in `docs/improvements.md`.
+- [ ] 1. Skeleton: `DESCRIPTION`, MIT licence, testthat 3, roxygen2 markdown, `NEWS.md`, `README`, `.gitignore` with `data-raw/private/` and without `docs/`, `.Rbuildignore`, GitHub Actions (R CMD check on three OS, test coverage, lint). Confirm the name is available on CRAN. Confirm the requirements of rOpenSci statistical software review and add what they need from day one (`CITATION`, `codemeta.json`, contributing guide, code of conduct). Linter or test that enforces the size limits.
+- [ ] 2. Data contracts: schemas of the standard and user-supplied tables, constructors and validators, classed errors, nutrient registry, audit-log carrier (chosen by test) and its format (counts of records, households and grams by cause).
+- [ ] 3. Synthetic example dataset in the standard schema (invented households, composition, vehicles, one scenario), documented as synthetic.
+- [ ] 4. Reference data with sources in `data-raw/` (EAR, UL and the form it applies to, energy requirements, WHO 2009 levels, iron requirement distribution, DFE and RAE factors). Unverifiable values stay `# SOURCE PENDING` and are not shipped.
+- [ ] 5. `adult_equivalents()`.
+- [ ] 6. `convert_units()` (typed factors) and `flag_outliers()`.
+- [ ] 7. `link_composition()` and `fill_composition()`, with coverage over all records.
+- [ ] 8. `apparent_intake()` with the `include` flag, household status and energy-plausibility flag; `nutrient_density()`.
+- [ ] 9. `unfortified_baseline()`, `apply_scenario()` (level basis, compliance) and `vehicle_coverage()`.
+- [ ] 10. `inadequacy()` and `above_ul()`.
+- [ ] 11. `as_hces_design()`, `estimate_prevalence()` and `estimate_difference()` on a complex design, subsets as domains.
+- [ ] 12. Vignettes in English and Spanish: from standard tables to risk by scenario (synthetic data); how to write an adapter; plotting results with `ggplot2`. pkgdown site published from a `gh-pages` branch.
+
+## v0.1, companion repository: ENGIH 2018 adapter (needs the microdata)
+- [ ] A1. Stage-level control figures exported from the original pipeline (record counts by section and drop cause, grams by section, AFE distribution, median intake per nutrient). Can start any time; run by the maintainer.
+- [ ] A2. Thin adapter: ENGIH files → standard tables that pass the contracts of task 2. Start right after task 2 so the contracts meet a real survey early.
+- [ ] A3. Acceptance step 1: reproduce the control figures with the original choices as explicit options (tolerance 1e-6).
+- [ ] A4. Acceptance step 2: correct each erroneous default, one per commit, old and new figures in `NEWS.md`.
 
 ## v0.2: Peru and the article's open criticisms
-- [ ] Peru survey adapter.
-- [ ] Retention factors and partial compliance.
-- [ ] H-AR.
+- [ ] Peru survey adapter (companion repository).
+- [ ] Retention factors.
+- [ ] H-AR reference table.
 - [ ] Prevalence by persons.
-- [ ] Food groups and maps.
+- [ ] Food-group shares, on the baseline composition and with the design.
 
 ## v1.0
-- [ ] rOpenSci review or CRAN submission; software paper (JOSS).
+- [ ] rOpenSci review, then CRAN; software paper (JOSS).

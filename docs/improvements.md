@@ -1,13 +1,65 @@
-# Improvements pending a decision
+# Improvements: proposals and decisions
 
-Proposals from the critical review done in roadmap task 0. Nothing here has
-been applied: `CLAUDE.md`, `docs/specification.md` and `docs/roadmap.md` are
-unchanged. Error codes (E1…E26) refer to section 6 of `docs/analysis-map.md`.
+Proposals from the critical review done in roadmap task 0. Error codes
+(E1…E26) refer to section 6 of `docs/analysis-map.md`. The section
+"Decisions" below records what was accepted and where it was applied; the
+tables keep the original wording of each proposal.
 
 Priority: **high** = changes results or blocks a later task; **medium** =
 quality or maintainability; **low** = nice to have.
 
-Status of every proposal: open.
+## Decisions (2026-11-09)
+
+The maintainer answered question 1 (yes), set three principles and delegated
+the remaining choices:
+
+- What is external stays external; public data stay outside the package.
+- The package must connect with other packages (complex survey designs,
+  `ggplot2`, the tidyverse) rather than replace them.
+- It must adapt to any situation.
+
+Applied to `CLAUDE.md`, `docs/specification.md` (now v0.2) and
+`docs/roadmap.md`:
+
+| Proposal | Status | Note |
+|---|---|---|
+| P1, P24 | accepted | Two-step acceptance; tolerance 1e-6 in step 1. |
+| P2, P3, P4, P5, P7, P8, P9, P10, P11, P13, P14, P25 | accepted | Now part of the contracts and function list of the specification. |
+| P6 | accepted | `unfortified_baseline()` is its own step. |
+| P12 | accepted | Details fixed in roadmap task 11; `significant` column dropped. |
+| P15 | accepted | Roadmap task 4; unverifiable values are not shipped. |
+| P16 | accepted | Stays in v0.2. |
+| P18, P21, P22, P27, P28, P29, P31, P32, P33 | accepted | Roadmap tasks 1 and 3; `CLAUDE.md` Quality and Size sections. |
+| P19, P20 | accepted, relocated | Tasks A1 and A2 of the companion repository. |
+| P23 | accepted in substance | Carrier chosen in task 2 by a test, because a tibble result serves the tidyverse principle better if the log can be made to survive. |
+| P26 | changed | Decided the other way: adapters and country data live outside the package, in companion repositories. No composition table, crosswalk or national standard is shipped. |
+| P30 | superseded | The adapter is not in this repository; its tests live with it. |
+| P34 | moved | Applies to the companion repository. |
+| P17, P35 | open | Need the maintainer (questions 11 and branch protection). |
+
+Interpretations made under the delegation, to be corrected if wrong:
+
+- "Public data outside" is read as: composition tables, crosswalks, unit
+  catalogues and standards. The small reference tables of the method (EAR, UL,
+  energy requirements, WHO levels, iron distribution) are still shipped, with
+  source, as replaceable defaults; without them no function runs out of the
+  box. If these must also be external, task 4 becomes a companion data
+  package.
+- Maps leave the roadmap; plotting is shown in a vignette with the user's own
+  `ggplot2` code.
+
+Defaults adopted for the questions still unanswered (each remains an explicit
+option, so the answer can change it without a redesign):
+
+| Question | Default until answered |
+|---|---|
+| 3. Sec 3A reference period | 7 days; original rule kept as the legacy option. |
+| 4. Dozen | Treated as an error; fixed in acceptance step 2. |
+| 5. Basis of fortification levels | `# SOURCE PENDING`; level basis is a required column. |
+| 7. md5 and stage-level figures | Task A1, waiting for the maintainer. |
+| 8. Households without usable records | Kept in the design, outside the estimation domain, counted in the audit log. |
+| 9. Review track | rOpenSci statistical software review; requirements confirmed in task 1. |
+| 10. Peru survey | Unknown; contracts are written without assuming a questionnaire design. |
 
 ## Part A. From the review of the original analysis
 
