@@ -1,0 +1,11 @@
+bibentry(
+  bibtype = "Manual",
+  title = paste(
+    "hcesfort: Apparent Micronutrient Intake and Food Fortification",
+    "Scenarios from Household Consumption and Expenditure Surveys"
+  ),
+  author = person("Maicel E.", "Monz\u00f3n-P\u00e9rez"),
+  year = format(Sys.Date(), "%Y"),
+  note = paste("R package version", meta$Version),
+  url = "https://github.com/maicel1978/hcesfort"
+)

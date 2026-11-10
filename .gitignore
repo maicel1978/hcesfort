@@ -40,8 +40,8 @@ vignettes/*.pdf
 .Renviron
 .env
 
-# pkgdown site
-docs/
+# Private microdata: never versioned
+data-raw/private/
 
 # translation temp files
 po/*~
