@@ -52,7 +52,9 @@ fg_content <- function(scale = 1, baseline = TRUE, order = NULL) {
                      folate_ug_dfe = c(10, NA, 5, 50),
                      basis = "per_100g_edible", food_state = "raw",
                      source = "test fixture")
-  if (baseline) comp <- unfortified_baseline(comp, no_rules(), fg_registry())
+  rules <- data.frame(composition_id = character(0), nutrient = character(0),
+                      source = character(0))
+  if (baseline) comp <- unfortified_baseline(comp, rules, fg_registry())
   g <- convert_units(a, f, priority = "food")
   link_composition(g, cw, comp, fg_registry())
 }
