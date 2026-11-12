@@ -144,7 +144,8 @@ synthetic dataset.
 - Harmonised average requirements (H-AR; Allen et al., 2020) as an alternative
   reference table.
 - Prevalence weighted by persons, in addition to households.
-- Food-group shares.
+- Food-group shares under a fortification scenario (the shares on the
+  unfortified baseline are roadmap task 11c).
 - Maps and plotting helpers (the user's `ggplot2`/`sf` code; shown in a
   vignette at most).
 - Peru adapter: the survey is not confirmed; the contracts assume no

@@ -1,7 +1,8 @@
 # Design: country results report template
 
-- **Date:** 2026-11-12. **Status:** design, waiting for approval
-  (section 8). No package code is written by this note.
+- **Date:** 2026-11-12. **Status:** approved 2026-11-12, all decisions of
+  section 8 as recommended; D10 amended (the FACT manual is not needed,
+  Aaron et al. 2017 is cited as such). See `docs/improvements.md`.
 - **Aim.** A Quarto template for the results report of one country, laid
   out by the questions a decision-maker asks, not as introduction, methods,
   results and discussion. The package creates it with one function
@@ -20,9 +21,8 @@
 
 **Not opened: the FACT manual itself** (GAIN and Oxford Policy Management,
 2019). `www.gainhealth.org` is outside the allowed network of this session.
-Everything said below about the FACT comes from Aaron et al. 2017 and must
-be checked against the manual before the template cites the manual
-(decision D10).
+Everything said below about the FACT comes from Aaron et al. 2017, and
+the template cites that article, not the manual (decision D10).
 
 ## 2. Principles of the template
 

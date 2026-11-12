@@ -35,6 +35,19 @@ must:
   `?who2009_levels` (ratio of totals, P90), then call `who2009_levels()`;
 - show `audit_summary()` at the end of the chain.
 
+## Parallel design track (Fable, 2026-11-12)
+
+Does not change the next step above. Two design notes were added:
+
+- `docs/design-report-template.md`: country report template by decision
+  questions. **Approved** (roadmap 12b). Not to be implemented before 11c.
+- `docs/design-food-group-shares.md`: `food_group_intake()` and
+  `food_group_shares()` on the unfortified baseline (roadmap 11c).
+  **Waits for the approval of its nine decisions**; then Opus implements
+  it by its commit plan (section 7).
+
+The vignette on the template (task 12) waits for 12b.
+
 ## Open questions
 
 None for the maintainer. Open items for later: P91 (a helper for the

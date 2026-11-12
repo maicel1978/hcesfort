@@ -352,6 +352,40 @@ v0.1, candidates and review in v0.2).
 | P40 | medium | **Dependencies enter `DESCRIPTION` when first used.** `Imports` is empty in the skeleton: listing a package that no code imports produces a check note. | Keeps `check()` at 0 notes; the list agreed in `CLAUDE.md` is the ceiling, not the starting point. | 2 onwards |
 | P41 | low | **Codecov or an equivalent badge.** Coverage is computed in CI and the job fails below 90%; nothing is uploaded to an external service. | An external service needs the maintainer's account and token. | any |
 
+## Decisions (2026-11-12, report template)
+
+The maintainer approved as recommended the eleven decisions of section 8
+of `docs/design-report-template.md`:
+
+| # | Decision |
+|---|---|
+| D1 | `use_report_template(path, lang)` copies plain Quarto files; not a Quarto extension. |
+| D2 | Fitness for use: one verdict line on the front page, the full answer with its conditions in Q7. |
+| D3 | The reference scenario of Q1 and Q2 is a required param with no default; the unfortified baseline is always shown beside it. |
+| D4 | `food_group_shares()` is brought forward to v0.1 (design `docs/design-food-group-shares.md`, then Opus). |
+| D5 | The actions of Q6 are a small table written by the analyst (action, scenario from, scenario to). |
+| D6 | Equity across scenarios: paired difference by quintile, with intervals; the quintile 5 to 1 ratio returns only with an interval (G3). |
+| D7 | Shares are a ratio of weighted totals, not a mean of household shares; the basis is confirmed in the shares design (its decision 3). |
+| D8 | Templates in English and Spanish from the first version. |
+| D9 | The thresholds of Aaron et al. 2017 are shown only when the analyst passes them. |
+| D10 | Amended by the maintainer: the FACT manual is not needed; the template cites Aaron et al. 2017, as such. |
+| D11 | Q2 uses a dot plot with intervals, not a map. |
+
+Gaps G1 to G7 of that design are its open items; G2 becomes roadmap
+task 11c and G1 and G6 task 12b.
+
+## Open items from the design of the food-group shares (2026-11-12)
+
+Waiting for the approval of the nine decisions of section 10 of
+`docs/design-food-group-shares.md`.
+
+| Id | Priority | Proposal | Why | Task |
+|---|---|---|---|---|
+| P95 | medium | **Shares under a scenario.** They need the added amount attributed to food records, which `apply_scenario()` does not keep. | Optional exhibit of Q6 of the report. | v0.2 |
+| P96 | medium | **Gate on value coverage per group and nutrient**, mirroring `min_coverage` of `inadequacy()`. In v0.1 the grams without a value are logged, not gated. | A group with poor composition coverage is understated. | after A3 |
+| P97 | low | **Share of the national supply** (household totals) as a second basis next to amounts per AFE. | Large households weigh more in the supply. | v0.2 |
+| P98 | medium | **Export the ratio helper** as `estimate_ratio()` (P91) and add the contrast between two domains (G3 of the report design). | One way to estimate. | v0.2 |
+
 ## Open items from task 2 (2026-11-12)
 
 Self-review of task 2, done as an rOpenSci reviewer would. Items in scope
