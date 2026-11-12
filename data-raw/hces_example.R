@@ -26,7 +26,8 @@
 #   an enriched flour, and the enrichment rules that remove what was added;
 # - a food with two vehicles of different groups; a scenario with a
 #   compound-based level;
-# - a grouping of foods that leaves one food (egg) without a group.
+# - a grouping of foods that leaves one food (egg) without a group;
+# - an invented socioeconomic domain, `expenditure_group`, Q1 to Q5.
 
 set.seed(20261112)
 
@@ -42,6 +43,12 @@ households <- data.frame(
   region = rep(c("north", "south"), times = n_households / 2)
 )
 households$food_module_response[[40]] <- FALSE
+# An invented socioeconomic domain, five groups of eight households (Q1 the
+# lowest), assigned without the random generator so that the other tables
+# do not change. Added 2026-11-12 for the report template (G6).
+households$expenditure_group <- paste0(
+  "Q", (households$household_id * 3L) %% 5L + 1L
+)
 
 # Members: 1 to 6 per household; the first is an adult.
 size <- sample(1:6, n_households, replace = TRUE)

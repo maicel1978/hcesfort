@@ -8,7 +8,9 @@
 A list of eleven elements:
 \describe{
 \item{households}{40 households in 2 strata and 8 primary sampling
-units, with a \code{region} domain.}
+units, with two domains: \code{region} and an invented
+\code{expenditure_group} (\code{"Q1"}, the lowest, to \code{"Q5"}, eight households
+each).}
 \item{members}{Members of the households, with age, sex and pregnancy
 and lactation flags.}
 \item{acquisitions}{Food acquisitions in survey units.}

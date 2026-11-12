@@ -78,3 +78,9 @@ test_that("the example grouping passes and leaves only the egg out", {
   expect_true(all(g$food_code %in% e$crosswalk$food_code))
   expect_identical(setdiff(e$crosswalk$food_code, g$food_code), "egg")
 })
+
+test_that("the invented expenditure groups have eight households each", {
+  g <- hces_example$households$expenditure_group
+  expect_identical(as.vector(table(g)), rep(8L, 5))
+  expect_identical(sort(unique(g)), paste0("Q", 1:5))
+})

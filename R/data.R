@@ -31,7 +31,9 @@
 #' @format A list of eleven elements:
 #' \describe{
 #'   \item{households}{40 households in 2 strata and 8 primary sampling
-#'     units, with a `region` domain.}
+#'     units, with two domains: `region` and an invented
+#'     `expenditure_group` (`"Q1"`, the lowest, to `"Q5"`, eight households
+#'     each).}
 #'   \item{members}{Members of the households, with age, sex and pregnancy
 #'     and lactation flags.}
 #'   \item{acquisitions}{Food acquisitions in survey units.}
