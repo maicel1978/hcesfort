@@ -27,9 +27,10 @@ and supplying that country's tables, not redoing the analysis.
 - **Defensive programming** as set out in `CLAUDE.md`: data contracts, classed
   errors, checked joins, an audit log of every exclusion.
 - **Every function returns its result together with its audit log**, and the
-  log accumulates along a pipeline. The carrier (tibble subclass with an
-  accessor, or a classed list) is chosen in task 2 by a test: the log must
-  survive the verbs the pipeline uses, or its loss must raise a classed error.
+  log accumulates along a pipeline. The carrier is a tibble subclass with an
+  accessor, chosen in task 2 by a test (`docs/design-task2.md`): the package
+  re-attaches the log explicitly, a lost log raises a classed error, and a
+  table changed between two package functions is recorded in the log.
 - **Detect and decide are separate.** A function flags (outliers, implausible
   energy, stored purchases); another argument or function decides what to do
   with the flag. No threshold is a hidden default: defaults are documented
@@ -51,8 +52,10 @@ Standard tables (columns marked * are optional):
 - `members`: household id, age, sex, pregnant*, lactating*, share of meals
   taken at home*.
 - `acquisitions`: household id, food code, quantity, unit, section or source,
-  `period_days` (length of the observation window, not the number of days with
-  records), `include` flag set by the adapter's section-combination rule,
+  `period_days` (the number of days the recorded quantity is divided by; the
+  adapter sets it and documents its rule: the design length of the window, or
+  the days with a record where the survey supports that reading), `include`
+  flag set by the adapter's section-combination rule,
   origin* (purchase, own production, gift), household share*.
 
 Tables the user supplies alongside (not survey data, still external):
@@ -114,7 +117,9 @@ locally with the microdata. Two steps:
 
 1. **Faithful port.** With the original choices exposed as explicit options,
    the package reproduces the control figures of the original analysis.
-   Tolerance: 1e-6 absolute on percentages, means and medians.
+   Tolerance: 1e-6 absolute on percentages, means and medians. The run
+   records the versions of R and of every attached package next to the
+   figures.
 2. **Corrections.** Each option that is an error is switched to the corrected
    default, one at a time; old and new figures are recorded in `NEWS.md`.
 
@@ -129,12 +134,18 @@ synthetic dataset.
 - Food-group shares.
 - Maps and plotting helpers (the user's `ggplot2`/`sf` code; shown in a
   vignette at most).
-- Peru adapter: [CONFIRM the survey and its food modules].
+- Peru adapter: the survey is not confirmed; the contracts assume no
+  questionnaire design.
+- Food-matching support module (proposal P42 of `docs/improvements.md`).
 
 ## Pending decisions
-- Name and location of the companion repository for the ENGIH 2018 adapter.
-- Review track: rOpenSci statistical software review is the working
-  assumption; requirements are confirmed in task 1. CRAN afterwards.
+- Review track: the standard rOpenSci software review is the target (the
+  `srr` workflow of the statistical review is not adopted); confirmed at the
+  end. `codemeta.json`, the pkgdown site and badges wait for v1.0. CRAN
+  afterwards.
 - WFP sponsorship: if accepted, WFP appears in `DESCRIPTION` as funder (role
   `fnd` in `Authors@R`) and in the README. No WFP logo or branding without
   written authorisation.
+
+Decided: the companion repository of the ENGIH 2018 adapter is
+`hcesfort.engih2018`.

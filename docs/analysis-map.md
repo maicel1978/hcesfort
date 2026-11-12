@@ -12,6 +12,14 @@ in `data/raw/` (CSV and the five Excel workbooks, inspected sheet by sheet);
 `reports/MANUAL_tecnico.qmd`, `reports/_comun.R` and the annexes of
 `reports/INFORME_final.qmd`.
 
+Second reading (2026-11-12, same commit): `reports/INFORME_factibilidad.qmd`,
+the body of `reports/INFORME_final.qmd`, `reports/_metodo_densidad.qmd`,
+`reports/_mapas_cobertura.qmd` and the prose of the two presentations. What it
+changed is listed in section 9; E4 was withdrawn as an error and E1, E3, E7,
+E10 and E24 were amended. The reports compute their figures when compiled, so
+the figures themselves are not in the repository: those quoted in section 9
+were supplied by the maintainer from the compiled documents.
+
 What could not be checked: anything that needs the microdata. Findings whose
 size depends on the microdata are marked **[needs microdata]**.
 
@@ -49,7 +57,7 @@ then excluded as outliers (328,173 remain).
 | 6 | Guards on join tables (duplicate keys, empty keys) | `01:198-264` | core | contract validation (task 2) | Port as generic key-uniqueness and completeness checks. Source: `verificar_tabla_join()`. |
 | 7 | Crosswalk survey food → composition id, validated rows only | `01:287-300`, `05:72-88` | data + core | `link_composition()` | Unvalidated rows must be counted in the audit log, not silently unmatched. |
 | 8 | Edible portion | `01:309-325` | core | `link_composition()` (or a separate `apply_edible_portion()`) | Keyed by composition id in Sec 2 and by survey food in Sec 3A, because one composition id has two edible portions (`01:326-331`). The contract must key edible portion by survey food. |
-| 9 | Reference period | `01:83`, `01:435-440`, `03:64-74` | adapter | `acquisitions$period_days` | Sec 2: constant 7. Sec 3A: number of distinct days with a record in the household (see E4). |
+| 9 | Reference period | `01:83`, `01:435-440`, `03:64-74` | adapter | `acquisitions$period_days` | Sec 2: constant 7. Sec 3A: number of distinct days with a record in the household, the adapter's default; 7 days as the option (see E4). |
 | 10 | Daily grams = Q × FC × EP / days | `03:64-74` | core | `convert_units()` + `apparent_intake()` | Records with any missing factor become `NA` and are dropped later without a per-cause count (E3). |
 | 11 | Record-level outlier flag | `03:95-107` | core | `flag_outliers()` (missing from the specification) | Flag only; the decision is a separate step. |
 | 12 | Energy requirement per member and AFE | `04:76-163` | core + data | `compute_afe()` | Requirement table is reference data; age/sex coding is the adapter's job. |
@@ -86,7 +94,7 @@ are recorded in section 3), the Quarto reports.
 | Decision | Value | Script:lines | Source given in the original | Status |
 |---|---|---|---|---|
 | Reference period, Sec 2 | 7 days | `01:83` | survey design (stock on day 1 and day 8) | adapter parameter |
-| Reference period, Sec 3A | distinct days with a record, per household (median 7, min 1, max 8) | `01:435-437`, `03:69-73` | own decision, report annex A.3 | **questioned**, E4 |
+| Reference period, Sec 3A | distinct days with a record, per household (median 7, min 1, max 8) | `01:435-437`, `03:69-73` | own decision, tested in the feasibility report (table `tbl-pm`) | **kept as the default**; the design length (7 days) is the alternative option. See E4 |
 | Sec 2 quantity | question 9, "consumed by the household from the initial stock" | `01:377` | questionnaire | adapter |
 | Unit priority | universal factor over food-specific factor | `01:388`, `01:425` | own decision: 15 specific rows are inflated ×1000 | core argument |
 | Food-specific factors | median of the reported package content per food × unit | `data_raw_unidades.xlsx` (`nota` column) | derived from the microdata; some verified at point of sale (one shop, one day) | adapter data; E19 |
@@ -199,7 +207,11 @@ but probably harmless. Every item has a matching proposal in
   4.36 mg, folate 386 µg DFE per 100 g, against 0.8 and 9 unenriched), enriched
   pasta and breads enter with US-style enrichment. `grupos_micronutrientes.csv`
   in the control figures gives cereals 81.6% of folate and 66.1% of iron; both
-  are overstated. Already listed in `CLAUDE.md` as a known error.
+  are overstated. Already listed in `CLAUDE.md` as a known error. The final
+  report states that the shares are "computed on the scenario without
+  fortification" (`INFORME_final.qmd:607-608`, caption of the figure at
+  `:553`): the text describes the intended method, the code does not apply
+  it.
 - **E2 (B, confirmed in the parameter file). A dozen is converted as 12 grams.**
   Unit 52 "Docena" has `FC = 12` with method "Conteo" and the remark "needs the
   unit weight". `01:173-176` keeps every non-missing `FC` as a universal factor
@@ -216,17 +228,42 @@ but probably harmless. Every item has a matching proposal in
   coverage is "weighted by grams"; neither describes the code. About 60,000
   Sec 3A records (18%) never reach the intake estimate; 36,840 of them for lack
   of a composition match (README), the rest for lack of a unit factor, quantity
-  or household AFE, with no count per cause. The most frequent food of Sec 3A
-  (bouillon cube, 18,087 records) is among them.
-- **E4 (B, methodological). The Sec 3A divisor is the number of days with at
-  least one record.** `01:435-437` counts distinct days with a record and
-  `03:69-73` divides by it. A day without purchases is a day of zero
-  acquisition, not an unobserved day. A household that buys for the week on one
-  day is divided by 1 and its daily acquisition is overstated up to sevenfold.
-  The divisor also reaches 8 in a 7-day diary. The original justification
-  compares against a constant of 1, not against the diary length. If some
-  households truly kept the diary for fewer days, that needs a survey variable,
-  not the count of days with purchases. **[needs microdata]**
+  or household AFE. The pipeline keeps no count per cause; the feasibility
+  report does compute one when compiled (`INFORME_factibilidad.qmd:390-404`,
+  through `marcar_elegible()` of `reports/_comun.R:313-323`), with a
+  hierarchical attribution (quantity, then unit factor, then composition, then
+  edible portion), so a record that lacks both a factor and a match is counted
+  under "no conversion factor". That report names the missing factor as the
+  main cause; the README counts 36,840 records without a match. Both can be
+  true under the hierarchy, and the package's audit log must therefore count
+  causes without a hierarchy (one count per cause, plus the overlap). The most
+  frequent food of Sec 3A (bouillon cube, 18,087 records) is among the
+  unmatched. The per-nutrient coverage of the reports (final report,
+  `fig-cobertura`; feasibility report, `tbl-cob-nutriente`) is likewise
+  computed on the surviving records.
+- **E4 (withdrawn as an error, 2026-11-12; kept as a documented choice). The
+  Sec 3A divisor is the number of days with at least one record.**
+  `01:435-437` counts distinct days with a record and `03:69-73` divides by
+  it. The first reading called this an overstatement, on the argument that a
+  day without purchases is a day of zero acquisition. That reading missed the
+  test the original analysis had made: the feasibility report
+  (`INFORME_factibilidad.qmd:286-322`, table `tbl-pm`) sets out both
+  interpretations (observed for fewer days, or observed seven days with no
+  purchase on some) and compares median energy per AFE by number of days with
+  a record. The median is flat: 2,050 kcal with 1 day and 2,189 kcal with
+  7 days (figures of the compiled report, supplied by the maintainer). If the
+  divisor inflated intake, households with few days would show a higher
+  median; they do not. **Decision of the maintainer:** the default reference
+  period of Sec 3A is the number of days with a record; the design length
+  (7 days) stays as an explicit option of the adapter.
+  What remains open, to be measured with the microdata **[needs microdata]**:
+  (a) the same table with the energy of Sec 3A alone, because the test uses
+  the energy of both sections and Sec 2 is divided by a constant 7, which
+  dilutes any effect of the divisor; (b) the upper tail by number of days: the
+  same report attributes 349 of the 572 households above 6,000 kcal to bulk
+  purchases concentrated on one day (`:795-805`), which is the pattern the
+  divisor would amplify without moving the median; (c) what a divisor of 8
+  means in a 7-day diary (`tbl-pm` filters to 7 or fewer).
 - **E5 (B, confirmed). Households without retained records leave the risk
   denominator but stay in the coverage denominator.** 8,892 households are in
   the design; risk is estimated on 8,778 (`07:93-96` inner joins). Vehicle
@@ -247,8 +284,9 @@ but probably harmless. Every item has a matching proposal in
   scenario with the UL. Preformed retinol already in the diet (liver, dairy,
   eggs; INCAP has a `RETOL` column that is not read) and folic acid in foods
   fortified outside the scenario (FNDDS has a `Folic acid` column) are ignored.
-  The reference file and the manual call the result a "cota máxima"; for
-  vitamin A it is a lower bound.
+  The reference file, the manual and the final report
+  (`INFORME_final.qmd:417-420`, `:886-890`) call the result a "cota máxima";
+  for vitamin A it is a lower bound.
 - **E8 (B, unverified basis). The vitamin A level is read as retinol.**
   `06:42-43` converts mg/kg to µg RAE one to one. `parametros_normativos.csv`
   records the sugar standard with the compound "palmitato de retinol" and does
@@ -263,7 +301,12 @@ but probably harmless. Every item has a matching proposal in
   composition id form one group.
 - **E10 (B). Members without age or sex count as zero AFE** (`04:186`,
   `na.rm = TRUE`), which inflates the household's intake per AFE. Only a
-  message is printed; the author lists it as pending. **[needs microdata]**
+  message is printed; the author lists it as pending. The feasibility report
+  states that the AFE was computed for every household, "with no member
+  without an assigned energy requirement" (`INFORME_factibilidad.qmd:488-489`,
+  next to a table computed at compile time). If so, the defect is in the code
+  and has no effect on the ENGIH figures; severity falls to C once the
+  microdata confirm it. **[needs microdata]**
 - **E11 (C). Exhaustion rule with missing final stock.** `04:292-298` sums
   `cantidad_final` without `na.rm`; a missing value makes the comparison `NA`
   and the household is treated as having no stock, silently. Quantities in
@@ -281,7 +324,10 @@ but probably harmless. Every item has a matching proposal in
   `valores_referencia.csv`.
 - **E15. Documentation that no longer matches the code.** The header of `01`
   says Sec 3A is the main source and Sec 2 is used only for net availability;
-  the code sums both. The manual says Sec 2 consumption is "deduced from the
+  the code sums both, and the final report repeats that Sec 3A "is the main
+  source" (`INFORME_final.qmd:284-285`). The final report says coverage
+  "weighted by grams accompanies the results" (`:347-350`); it is computed on
+  the surviving records (E3). The manual says Sec 2 consumption is "deduced from the
   difference" of stocks; the code uses question 9. `01` reports 168 rows with
   encoding damage in the Sec 3A unit sheet; the versioned workbook has none
   and now carries a food code that the join does not use (`01:421-424` still
@@ -321,7 +367,10 @@ but probably harmless. Every item has a matching proposal in
 - **E24. Confidence intervals.** Proportions use symmetric intervals, which
   can leave [0, 100] at the extremes; the share above the UL and the medians
   have no interval; `significativa` is derived from 336 pairwise intervals
-  without adjustment. No option is set for strata with a single PSU.
+  without adjustment. No option is set for strata with a single PSU. The final
+  report says the intervals use the *t* distribution with the degrees of
+  freedom of the corresponding subdesign (`INFORME_final.qmd:289-291`); task 11
+  must reproduce that choice in acceptance step 1 and state its own.
 - **E25. AFE counts every listed member** as if all ate every meal at home,
   while food eaten away from home is not in the numerator. Intake per AFE is
   biased downwards for households that eat out more (urban, higher quintiles).
@@ -346,7 +395,7 @@ R 4.6.1) holds six aggregated files:
 
 | File | Rows | Content | Reproducible by a corrected package? |
 |---|---|---|---|
-| `riesgo_inadecuacion.csv` | 800 | % below EAR / iron probability, CI, CV, % above UL, median density; 7 scenarios nationally, baseline by region, zone, quintile and province; all households and energy-plausible | only if E2, E4, E5 and E10 are reproduced as they are |
+| `riesgo_inadecuacion.csv` | 800 | % below EAR / iron probability, CI, CV, % above UL, median density; 7 scenarios nationally, baseline by region, zone, quintile and province; all households and energy-plausible | only if E2, E5 and E10 are reproduced as they are (the divisor of E4 is the default, not a legacy option) |
 | `diferencias_escenarios.csv` | 336 | paired differences for every ordered pair of scenarios | same |
 | `escenarios_resumen.csv` | 35 | median and mean intake by scenario, folic acid above UL, Q5/Q1 | same |
 | `escenarios_consumo_vehiculos.csv` | 3 | coverage and consumption of rice, sugar and wheat | same |
@@ -361,5 +410,26 @@ shift in `NEWS.md`.
 
 ## 8. Open points for the maintainer
 
-The questions that block later tasks are listed, numbered and with a
-recommendation, at the end of `docs/improvements.md`.
+The questions of task 0 were answered on 2026-11-12; the answers are in the
+section "Decisions (2026-11-12)" of `docs/improvements.md`.
+
+## 9. Second reading: what the other reports add (2026-11-12)
+
+Findings changed: E4 withdrawn; E1, E3, E7, E10, E15 and E24 amended above.
+No other finding changes. New material for the package, none of it an error
+of the original:
+
+| Source | What it says | Consequence for the package |
+|---|---|---|
+| `INFORME_factibilidad.qmd:286-322` | Test of the Sec 3A divisor by days with a record. | E4. The adapter documents its rule for `period_days`; the core takes the column as given. |
+| `INFORME_factibilidad.qmd:795-805` | The outlier rule works per food; 572 households exceed 6,000 kcal per AFE per day: 223 from the overlap of sections (before the exhaustion rule existed), 349 from bulk purchases on one day. A household-level check is proposed and never built. | `flag_outliers()` needs a household-level scale as well as a record-level one (task 6); the energy-plausibility flag of task 8 is that check. |
+| `INFORME_factibilidad.qmd:650-684` | The crosswalk was built by assisted candidate generation and manual review; the review found errors in 9 of 148 assignments, of three recurring kinds: part of the food, state of preparation, degree of processing. | Evidence for the quality controls of the food-matching module (proposal P42). |
+| `INFORME_factibilidad.qmd:856-892` | Each section alone gives about 1,200 kcal per AFE per day; only the sum is plausible. | Confirms that `include` and `section` belong in the acquisitions contract; no change. |
+| `INFORME_factibilidad.qmd:91-114`, `:893-965` | Three earlier scenarios built by substituting composition codes; superseded by the seven additive scenarios. | Not ported. |
+| `INFORME_factibilidad.qmd:1120-1125` | Design variables: 8 strata, 933 PSUs, expansion factor without missing values. | Check for the adapter (task A2). |
+| `_metodo_densidad.qmd` | Critical density = EAR / reference energy × 1,000. The density criterion replaces the absolute criterion only where the variation of recorded energy is an artefact (between provinces), not where it is real (between quintiles, where it inverts the gradient); it stops discriminating for nutrients whose intake follows energy (vitamin E); it assumes multiplicative over-recording; iron is excluded. | `nutrient_density()` (task 8) returns the density and the critical density and documents these limits; it does not turn density into a prevalence by default. |
+| `INFORME_final.qmd:429-439` | The quintile is the survey's own `QUINTIL`; the variable used to rank households is not documented. | Adapter documentation. |
+| `INFORME_final.qmd:945-955` | Seven explanations of the geographic variation examined and discarded; unit factors of non-standard units remain as a possible origin. | None for the core; noted for the adapter. |
+
+The presentations and `_mapas_cobertura.qmd` repeat the figures and caveats of
+the reports and add no method.

@@ -35,7 +35,8 @@ Applied to `CLAUDE.md`, `docs/specification.md` (now v0.2) and
 | P26 | changed | Decided the other way: adapters and country data live outside the package, in companion repositories. No composition table, crosswalk or national standard is shipped. |
 | P30 | superseded | The adapter is not in this repository; its tests live with it. |
 | P34 | moved | Applies to the companion repository. |
-| P17, P35 | open | Need the maintainer (questions 11 and branch protection). |
+| P17 | closed 2026-11-12 | No issues; erratum drafted in `docs/erratum-engih2018.md`. |
+| P35 | open | Branch protection; work goes straight to `main`. |
 
 Interpretations made under the delegation, to be corrected if wrong:
 
@@ -61,12 +62,174 @@ option, so the answer can change it without a redesign):
 | 9. Review track | rOpenSci statistical software review; requirements confirmed in task 1. |
 | 10. Peru survey | Unknown; contracts are written without assuming a questionnaire design. |
 
+## Decisions (2026-11-12)
+
+The maintainer answered the eleven questions of task 0 (numbering of the
+section "Questions for the maintainer"):
+
+| # | Answer | Applied in |
+|---|---|---|
+| 1 | Yes: two-step acceptance. | Specification, Validation (unchanged). |
+| 2 | 1e-6, recording the versions of R and of the packages. | Specification, Validation; task A3. |
+| 3 | **E4 is wrong as written.** The feasibility report (table `tbl-pm`) shows a flat median energy by number of days with a record (1 day: 2,050 kcal; 7 days: 2,189), which supports dividing by the days observed. Default: days with a record; 7 days is the option. The test is repeated with the energy of Sec 3A alone when the microdata are available. | `docs/analysis-map.md`, E4 and section 9; specification, `period_days`; P3 superseded in part. |
+| 4 | The dozen is an error; its frequency is measured with the microdata. | E2 stands; acceptance step 2. |
+| 5 | The basis of the levels stays `# SOURCE PENDING`; the maintainer will obtain the texts. | E8 stands; `level_basis` is a required column. |
+| 6 | Adapter and country data outside the package. | Already applied (P26). |
+| 7 | md5 values and stage-level control figures: yes, when the maintainer has the microdata. | Task A1. |
+| 8 | Households without usable records: kept in the design, outside the estimation domain, counted in the audit log. | Tasks 8 and 11. |
+| 9 | **No `srr`.** The target is the standard rOpenSci software review; decided at the end. `codemeta.json`, pkgdown and badges wait for v1.0. | P36 closed (not adopted); P37 and P41 moved to v1.0; specification, Pending decisions. |
+| 10 | Peru: survey not confirmed. Contracts are written without assuming a questionnaire. | Task 2 design. |
+| 11 | No issues are opened. The errors are drafted in Spanish in `docs/erratum-engih2018.md`, for the maintainer to send privately. | P17 closed. |
+
+Also confirmed: the small reference tables are shipped inside the package,
+each with its source (the interpretation of 2026-11-09 stands). The companion
+repository is named `hcesfort.engih2018`; the maintainer creates it when
+task A1 starts. Work goes straight to `main` (P35 stays open, low).
+
+Consequences recorded here because they change earlier proposals:
+
+- **P3** proposed 7 days as the ENGIH default. Superseded: the default is the
+  number of days with a record. The contract keeps `period_days` as a column
+  set by the adapter; its meaning is "the number of days the recorded quantity
+  is divided by", and the adapter documents the rule that produced it.
+- **P1** listed the reference period among the original choices to expose as
+  legacy options. It is now a default with an alternative, not an error to
+  correct in step 2.
+- The reading of task 0 had not covered `INFORME_factibilidad.qmd`, the body of
+  `INFORME_final.qmd` or the density method. They were read on 2026-11-12;
+  section 9 of the analysis map lists what changed. Lesson recorded as a
+  rule of work: a finding of the class "the original has no evidence for X"
+  is only written after every report of the original has been read.
+
+Residual checks on E4 that I recommend running with the microdata, because
+the evidence is a median and the test mixes both sections: energy of Sec 3A
+alone by days with a record; share of households above the plausibility
+ceiling by days with a record; the meaning of an eighth day.
+
+## Proposal P42: food-matching support module (2026-11-12)
+
+Proposed by the maintainer; assessed here, not implemented. Status: **open,
+proposed for v0.2 before the Peru adapter.**
+
+The proposal: a module that supports the matching of survey foods to food
+composition tables, with no AI inside the package: (a) rank unmatched foods by
+records or grams; (b) propose candidates ordered by text similarity
+(`stringdist`), restricted by food group, without deciding; (c) reuse matches
+already validated for another survey as a seed; (d) quality controls of the
+matches (energy density, raw versus cooked, duplicates, edible portion);
+(e) export and import of the review decisions (CSV or Excel).
+
+**Assessment.** Worth doing. The crosswalk is the most expensive input of an
+adapter and the one where the original analysis found its own errors: 9 of
+148 assignments were wrong at first review, of three recurring kinds (part of
+the food, state of preparation, degree of processing), and E20 lists further
+rows that deserve review. The module turns that experience into checks. It
+also fits the scope rule: it ships no crosswalk and decides nothing.
+
+**What I would change.**
+
+1. **Split it in two and bring the first half forward.** Parts (a) and (d)
+   need only the tables of the contracts and no new dependency. (a) is the
+   audit log of `link_composition()` seen by food, which task 7 must produce
+   anyway (coverage over all records, by records and by grams). (d) is a set
+   of flags on the crosswalk and composition tables. Both can live in v0.1 as
+   `unmatched_foods()` (task 7) and `check_crosswalk()` (after task 7).
+   Parts (b), (c) and (e) are the v0.2 module.
+2. **(a) rank by grams when grams exist, by records otherwise, and say
+   which.** A food without a unit factor has no grams; ranking only by grams
+   hides it. Return both columns and the cause that blocks each food
+   (no factor, no match, not validated, no edible portion).
+3. **(b) similarity is a weak signal for food names; treat the output as a
+   shortlist, never as a ranking of correctness.** The decisive differences
+   are single words ("crudo", "cocido", "enriquecido", "hojas de") and local
+   names with another meaning: "cereza" is acerola in the Dominican Republic,
+   a difference of two orders of magnitude in vitamin C that no string
+   distance sees. So: normalise text first (case, accents, stop words, word
+   order through token-based distance), return the top *k* with the distance
+   and the candidate's state and group, never fill `composition_id`, and never
+   set `validated`. The restriction by food group needs a group on both
+   sides; composition tables have one, surveys often do not, so the
+   restriction must be optional and its absence visible.
+4. **(c) a seed is a candidate source, not a match.** A match validated for
+   another survey is valid for a pair (food description, composition table)
+   in a country. Reused rows must arrive with `validated = FALSE`, a
+   `seed_source` column and the original equivalence type, and enter the same
+   review as any candidate. The join is by normalised description, because
+   food codes differ between surveys; exact matches and fuzzy matches are
+   reported separately.
+5. **(d) each control is a flag with its rule stated, in the detect-then-decide
+   pattern, with no threshold as a hidden default.** Controls I would include:
+   - energy density of the matched composition row outside a range given by
+     the caller per food group (catches dry versus cooked, unit errors);
+   - state mismatch: purchased state versus the composition row's state,
+     without a yield factor (needs a `food_state` on both sides);
+   - edible portion: missing, equal to 1 for a food group that has refuse,
+     below 1 for a composition row already described as edible, and one
+     composition id with several edible portions (found in the original);
+   - duplicates: one food code with several rows; many food codes on one
+     composition id (legitimate, but worth a look when the descriptions
+     differ);
+   - a validated row without an equivalence type, and a validated row typed
+     as needing review (both found in the original, E20);
+   - composition rows with missing values for a nutrient of the registry,
+     weighted by the grams they carry (E21);
+   - enrichment: a match to an enriched or fortified composition row, which
+     must be declared for `unfortified_baseline()` (E1, E6).
+   The first control needs reference ranges. They cannot come from memory:
+   either the caller supplies them or they are derived from the composition
+   table itself (a row far from the median of its own group), which needs no
+   external source.
+6. **(e) the review file is a contract.** Fixed columns (food code,
+   description, candidate id, candidate description, decision, equivalence
+   type, reviewer note, date), a controlled vocabulary for the decision
+   (`accept`, `reject`, `defer`), and an import that validates it like any
+   other table: unknown ids, two accepted candidates for one food and edited
+   keys raise classed errors. CSV only inside the package; Excel is the user's
+   own `readxl`/`writexl` call, shown in the vignette. No reviewer name is
+   required, and the note column is free text that the package never ships.
+7. **Name the output for what it is.** The module produces a *crosswalk in
+   the contract of task 2*, so everything downstream is unchanged.
+
+**Risks.**
+
+- Automation bias: a ranked list invites accepting the first candidate. The
+  original's 6% first-pass error rate came from assisted candidates. Mitigation:
+  no default acceptance, `validated` only through the imported review file,
+  and the quality controls run on the result.
+- False confidence from text similarity across languages and local names;
+  survey in Spanish, composition table in English (FNDDS) gives distances
+  that mean nothing. The module must work within one language or take a
+  translation column supplied by the user.
+- Scope creep towards a food-description ontology (FoodEx2, LanguaL). Out of
+  scope; a column for such a code can be used for the group restriction if the
+  user has it.
+- Seeds carry another country's errors with an appearance of authority.
+- Licences: candidate lists reproduce descriptions of the composition table;
+  the package ships none, and the vignette must use the synthetic table.
+
+**Dependencies.** `stringdist` in `Suggests`, used only by the candidate
+function, with a classed error if it is missing. It is not installed in the build
+environment today, so its interface and its own dependencies are still to be
+checked. Base `utils::adist()` is a fallback with
+no dependency but only edit distance. No Excel dependency. No new `Imports`.
+
+**Where it goes.** v0.1: `unmatched_foods()` with task 7; `check_crosswalk()`
+as a new task after 7 (medium, Opus, small). v0.2, before the Peru adapter:
+candidates, seeds and the review round trip (design by Fable, implementation
+by Opus, as `docs/model-routing.md` already lists). Doing it before Peru is
+right: the Peru crosswalk is its first real use, and the ENGIH crosswalk,
+already validated, is its test of recall (how often the validated match is
+among the top *k* candidates).
+
+**Decision needed from the maintainer:** accept the split (quality controls
+and ranking in v0.1, candidates and review in v0.2)? Recommended: yes.
+
 ## Open items from task 1 (2026-11-10)
 
 | ID | Priority | Item | Rationale | Roadmap task |
 |---|---|---|---|---|
-| P36 | high | **Adopt the `srr` workflow or confirm it does not apply.** rOpenSci's guide for statistical software (source read: `ropensci/statistical-software-review-book`, `pkgdev.Rmd`) requires the roclet `srr::srr_stats_roclet` in `DESCRIPTION`, a `@srrstatsTODO` tag per standard, none left at submission, and a passing `pkgcheck::pkgcheck()`; `autotest` is recommended. Its categories are general, Bayesian, EDA, machine learning, networks, probability distributions, regression, spatial, time series and unsupervised learning. Survey-based prevalence estimation fits "general" at most, so the first step is a pre-submission enquiry to the editors: statistical review, or the standard rOpenSci software review. Not done in task 1: `srr` could not be installed in the build environment (CRAN is not reachable from it). | Decides whether standards are annotated while coding (cheap) or retrofitted (expensive). | 2, before the first core function |
-| P37 | low | **`codemeta.json`.** Generate with `codemetar::write_codemeta()` once the package has content; add the file to `.Rbuildignore`. | Expected by rOpenSci; not generated because `codemetar` was not available. | 12 |
+| P36 | closed 2026-11-12: not adopted | **Adopt the `srr` workflow or confirm it does not apply.** rOpenSci's guide for statistical software (source read: `ropensci/statistical-software-review-book`, `pkgdev.Rmd`) requires the roclet `srr::srr_stats_roclet` in `DESCRIPTION`, a `@srrstatsTODO` tag per standard, none left at submission, and a passing `pkgcheck::pkgcheck()`; `autotest` is recommended. Its categories are general, Bayesian, EDA, machine learning, networks, probability distributions, regression, spatial, time series and unsupervised learning. Survey-based prevalence estimation fits "general" at most, so the first step is a pre-submission enquiry to the editors: statistical review, or the standard rOpenSci software review. Not done in task 1: `srr` could not be installed in the build environment (CRAN is not reachable from it). | Decides whether standards are annotated while coding (cheap) or retrofitted (expensive). | 2, before the first core function |
+| P37 | low | **`codemeta.json`.** Generate with `codemetar::write_codemeta()` once the package has content; add the file to `.Rbuildignore`. | Expected by rOpenSci; not generated because `codemetar` was not available. | v1.0 |
 | P38 | low | **Confirm the name on CRAN itself.** `hcesfort` is absent from the GitHub mirror of CRAN (`cran/hcesfort` does not exist, while `cran/srvyr` does), which is indirect evidence; `available::available("hcesfort")` needs a network that reaches CRAN. | The roadmap asked for the check; only the indirect one was possible. | before v1.0 |
 | P39 | medium | **Maintainer e-mail.** `DESCRIPTION` uses the GitHub no-reply address already public in the commit history. CRAN needs an address that receives mail. | Avoids publishing a personal address without the maintainer's say-so. | before v1.0 |
 | P40 | medium | **Dependencies enter `DESCRIPTION` when first used.** `Imports` is empty in the skeleton: listing a package that no code imports produces a check note. | Keeps `check()` at 0 notes; the list agreed in `CLAUDE.md` is the ceiling, not the starting point. | 2 onwards |
@@ -125,7 +288,8 @@ silently". They cost little and each maps to a defect found in the original
 
 ## Questions for the maintainer
 
-Each question gives the recommended option first.
+Answered on 2026-11-12: see "Decisions (2026-11-12)" above. Kept for the
+numbering. Each question gives the recommended option first.
 
 1. **Acceptance strategy (P1).** Reproduce the original figures first with the
    original choices as explicit options, then correct the defaults and record
