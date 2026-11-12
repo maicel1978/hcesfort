@@ -28,9 +28,16 @@
 #' @param by `NULL`, or names of domain columns of the design (households
 #'   table), such as `"region"`; each combination of their values is a
 #'   domain.
-#' @param domain `NULL`, or the name of a logical column of `x` or of the
-#'   design: only rows where it is `TRUE` enter the domain (for example
-#'   `"energy_plausible"`).
+#' @param domain `NULL`, or the name of a logical column: only households
+#'   where it is `TRUE` enter the domain. Looked up in `domain_from` when
+#'   given, else in `x`, then in the design.
+#' @param domain_from `NULL`, or a table returned by hcesfort with
+#'   `household_id` and the column `domain`, one row per household of the
+#'   design (for example the result of [flag_energy_plausibility()], or of
+#'   [vehicle_coverage()] filtered to one vehicle). A household whose flag
+#'   is missing is outside the domain and counted in the log
+#'   (`domain_flag_missing`). Its log rows not already in the log of `x`
+#'   are added, so the thresholds behind the flag stay with the estimate.
 #' @param ci_method Interval method for proportions, passed to
 #'   [survey::svyciprop()].
 #' @param level Confidence level.
@@ -57,14 +64,15 @@
 #' estimate_prevalence(design, use, "acquired", by = "region")
 #' @export
 estimate_prevalence <- function(design, x, value, statistic = "proportion",
-                                by = NULL, domain = NULL, ci_method = "logit",
-                                level = 0.95, df = "domain") {
+                                by = NULL, domain = NULL, domain_from = NULL,
+                                ci_method = "logit", level = 0.95,
+                                df = "domain") {
   require_design(design)
   require_hces(x, "hces_tbl")
-  args <- check_estimate_args(design, x, statistic, by, domain, ci_method,
-                              level, df)
-  a <- align_values(design, x, value, args$x_domain)
-  cells <- by_cells(design, by, args$design_domain)
+  check_estimate_args(design, x, statistic, by, ci_method, level, df)
+  d <- resolve_domain(design, x, domain, domain_from)
+  a <- align_values(design, x, value, d$x_domain)
+  cells <- by_cells(design, by, d$inside)
   out <- lapply(seq_len(nrow(a$keys)), function(k) {
     dplyr::bind_rows(lapply(seq_along(cells$masks), function(j) {
       est <- with_lonely_psu(design, estimate_cell(
@@ -78,8 +86,9 @@ estimate_prevalence <- function(design, x, value, statistic = "proportion",
   out$variable <- rep(value, nrow(out))
   log <- estimate_log("estimate_prevalence", design, x, value, statistic,
                       ci_method, df, out)
-  new_hces_tbl(out, "hces_estimate", dplyr::bind_rows(audit_get(x), log),
-               c(names(a$keys), by))
+  log <- dplyr::bind_rows(domain_input_log(x, domain_from), log,
+                          domain_log("estimate_prevalence", domain, d))
+  new_hces_tbl(out, "hces_estimate", log, c(names(a$keys), by))
 }
 
 # One estimate on the design: `y` the values of the households (NA outside
@@ -118,6 +127,13 @@ estimate_cell <- function(design, y, mask, statistic, ci_method, level,
   )
   na_row[c("estimate", "se", "ci_low", "ci_high")] <- as.list(unname(r))
   na_row
+}
+
+# The log of `x` followed by the rows of the log of `domain_from` it does
+# not hold yet.
+domain_input_log <- function(x, domain_from) {
+  if (is.null(domain_from)) return(audit_get(x))
+  audit_union(audit_get(x), audit_get(domain_from))
 }
 
 # Evaluate `expr` with the option survey.lonely.psu set to the choice

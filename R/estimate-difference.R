@@ -51,15 +51,15 @@
 #' estimate_difference(design, risk, "p_inadequate", reference = "baseline")
 #' @export
 estimate_difference <- function(design, x, value, reference, by = NULL,
-                                domain = NULL, level = 0.95,
-                                df = "domain") {
+                                domain = NULL, domain_from = NULL,
+                                level = 0.95, df = "domain") {
   require_design(design)
   require_hces(x, "hces_tbl")
   check_reference_scenario(x, reference)
-  args <- check_estimate_args(design, x, "mean", by, domain, "logit", level,
-                              df)
-  a <- align_values(design, x, value, args$x_domain)
-  cells <- by_cells(design, by, args$design_domain)
+  check_estimate_args(design, x, "mean", by, "logit", level, df)
+  d <- resolve_domain(design, x, domain, domain_from)
+  a <- align_values(design, x, value, d$x_domain)
+  cells <- by_cells(design, by, d$inside)
   rest <- setdiff(names(a$keys), "scenario")
   other <- group_id(a$keys, rest)
   ref <- which(a$keys$scenario == reference)
@@ -80,7 +80,9 @@ estimate_difference <- function(design, x, value, reference, by = NULL,
   out$variable <- rep(value, nrow(out))
   log <- estimate_log("estimate_difference", design, x, value, "mean",
                       "logit", df, out)
-  new_hces_tbl(out, "hces_estimate", dplyr::bind_rows(audit_get(x), log),
+  log <- dplyr::bind_rows(domain_input_log(x, domain_from), log,
+                          domain_log("estimate_difference", domain, d))
+  new_hces_tbl(out, "hces_estimate", log,
                c(names(a$keys), "reference", by))
 }
 

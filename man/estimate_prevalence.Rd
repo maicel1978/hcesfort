@@ -11,6 +11,7 @@ estimate_prevalence(
   statistic = "proportion",
   by = NULL,
   domain = NULL,
+  domain_from = NULL,
   ci_method = "logit",
   level = 0.95,
   df = "domain"
@@ -30,9 +31,17 @@ estimate_prevalence(
 table), such as \code{"region"}; each combination of their values is a
 domain.}
 
-\item{domain}{\code{NULL}, or the name of a logical column of \code{x} or of the
-design: only rows where it is \code{TRUE} enter the domain (for example
-\code{"energy_plausible"}).}
+\item{domain}{\code{NULL}, or the name of a logical column: only households
+where it is \code{TRUE} enter the domain. Looked up in \code{domain_from} when
+given, else in \code{x}, then in the design.}
+
+\item{domain_from}{\code{NULL}, or a table returned by hcesfort with
+\code{household_id} and the column \code{domain}, one row per household of the
+design (for example the result of \code{\link[=flag_energy_plausibility]{flag_energy_plausibility()}}, or of
+\code{\link[=vehicle_coverage]{vehicle_coverage()}} filtered to one vehicle). A household whose flag
+is missing is outside the domain and counted in the log
+(\code{domain_flag_missing}). Its log rows not already in the log of \code{x}
+are added, so the thresholds behind the flag stay with the estimate.}
 
 \item{ci_method}{Interval method for proportions, passed to
 \code{\link[survey:svyciprop]{survey::svyciprop()}}.}

@@ -249,3 +249,80 @@ test_that("the example chain runs to estimates", {
   expect_identical(nrow(e), 5L * 2L)
   expect_true(all(e$ci_low <= e$estimate & e$estimate <= e$ci_high))
 })
+
+# domain_from (correction 3): a household table carrying the flag. Flag:
+# TRUE for households 1, 2, 3, 6, 7; FALSE for 4; NA for 5 and 8.
+es_flags <- function(flag = c(TRUE, TRUE, TRUE, FALSE, NA, TRUE, TRUE, NA)) {
+  t <- new_hces_tbl(data.frame(household_id = 8:1, plausible = rev(flag)),
+                    "hces_intake", key = "household_id")
+  audit_add(t, "flag_energy_plausibility", "intake", "note", "range", 8L,
+            detail = "1000 to 4000 kcal")
+}
+
+test_that("domain_from: the flag of another table is a domain", {
+  x <- es_result()
+  flag <- c(TRUE, TRUE, TRUE, FALSE, NA, TRUE, TRUE, NA)
+  e <- pick_est(estimate_prevalence(es_design(), x, "p", domain = "plausible",
+                                    domain_from = es_flags()), "base")
+  y <- x$p[x$scenario == "base"]
+  sub <- ref_design(y, flag %in% TRUE)
+  r <- survey::svyciprop(~y, sub, method = "logit", df = survey::degf(sub))
+  expect_equal(e$estimate, as.vector(stats::coef(r)), tolerance = 1e-8)
+  expect_equal(e$se, as.vector(survey::SE(r)), tolerance = 1e-8)
+  expect_identical(e$n, 5L)
+  d <- pick_est(estimate_difference(es_design(), x, "p", reference = "base",
+                                    domain = "plausible",
+                                    domain_from = es_flags()), "fort")
+  dy <- x$p[x$scenario == "fort"] - y
+  rd <- survey::svymean(~y, ref_design(dy, flag %in% TRUE))
+  expect_equal(d$estimate, as.vector(stats::coef(rd)), tolerance = 1e-8)
+  expect_equal(d$se, as.vector(survey::SE(rd)), tolerance = 1e-8)
+})
+
+test_that("domain_from: log of the flag, missing flags counted once", {
+  x <- es_result()
+  x <- audit_add(x, "flag_energy_plausibility", "intake", "note", "range",
+                 8L, detail = "1000 to 4000 kcal")
+  e <- estimate_prevalence(es_design(), x, "p", domain = "plausible",
+                           domain_from = es_flags())
+  log <- audit_log(e)
+  expect_identical(sum(log$cause == "range"), 1L)
+  expect_identical(log$detail[log$cause == "domain"],
+                   "plausible (domain_from)")
+  expect_identical(log$n_households[log$cause == "domain_flag_missing"], 2L)
+  e2 <- estimate_prevalence(es_design(), es_result(), "p",
+                            domain = "plausible", domain_from = es_flags())
+  expect_identical(sum(audit_log(e2)$cause == "range"), 1L)
+  e3 <- estimate_prevalence(es_design(), es_result(), "p", domain = "ok")
+  expect_identical(audit_log(e3)$detail[audit_log(e3)$cause == "domain"],
+                   "ok (x)")
+})
+
+test_that("domain_from: one row per household, same households", {
+  x <- es_result()
+  two <- new_hces_tbl(data.frame(household_id = c(1:8, 1),
+                                 plausible = TRUE, vehicle = c(rep("a", 8),
+                                                               "b")),
+                      "hces_vehicle_use", key = c("household_id", "vehicle"))
+  err <- expect_error(estimate_prevalence(es_design(), x, "p",
+                                          domain = "plausible",
+                                          domain_from = two),
+                      class = "hcesfort_error_key")
+  expect_match(conditionMessage(err), "one vehicle")
+  short <- dplyr::filter(es_flags(), household_id != 3)
+  err <- expect_error(estimate_prevalence(es_design(), x, "p",
+                                          domain = "plausible",
+                                          domain_from = short),
+                      class = "hcesfort_error_join")
+  expect_identical(err$n, 1L)
+  expect_error(estimate_prevalence(es_design(), x, "p", domain = "nope",
+                                   domain_from = es_flags()),
+               class = "hcesfort_error_argument")
+  expect_error(estimate_prevalence(es_design(), x, "p", domain = "plausible",
+                                   domain_from = as.data.frame(es_flags())),
+               class = "hcesfort_error_audit")
+  err <- expect_error(estimate_prevalence(es_design(), x, "p",
+                                          domain = "plausible"),
+                      class = "hcesfort_error_argument")
+  expect_match(conditionMessage(err), "domain_from")
+})

@@ -55,6 +55,22 @@ audit_merge <- function(x, ...) {
   x
 }
 
+# Log `a` followed by the rows of log `b` that `a` does not already hold,
+# compared as whole rows with multiplicity: a row twice in `b` and once in
+# `a` is appended once.
+audit_union <- function(a, b) {
+  if (nrow(b) == 0) return(a)
+  id <- function(log) {
+    do.call(paste, c(lapply(log, as.character), sep = "\r"))
+  }
+  ka <- id(a)
+  kb <- id(b)
+  seen <- table(factor(ka, levels = unique(kb)))
+  occurrence <- stats::ave(seq_along(kb), kb, FUN = seq_along)
+  keep <- occurrence > as.integer(seen[kb])
+  dplyr::bind_rows(a, b[keep, ])
+}
+
 # The log of `x`, or an empty log when it has none.
 audit_get <- function(x) {
   log <- attr(x, "audit", exact = TRUE)

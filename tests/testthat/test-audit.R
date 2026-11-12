@@ -67,3 +67,14 @@ test_that("audit_add() starts a log on a table without one", {
                  cause = "all", n_records = 1)
   expect_identical(nrow(attr(x, "audit")), 1L)
 })
+
+test_that("audit_union() appends the rows not held, with multiplicity", {
+  r <- function(cause) audit_row("s", "t", "note", cause, 1L)
+  a <- dplyr::bind_rows(r("x"), r("y"), r("y"))
+  b <- dplyr::bind_rows(r("y"), r("z"), r("y"), r("y"), r("x"))
+  u <- audit_union(a, b)
+  expect_identical(u$cause, c("x", "y", "y", "z", "y"))
+  expect_identical(audit_union(a, a), a)
+  expect_identical(audit_union(a, new_audit_log()), a)
+  expect_identical(audit_union(new_audit_log(), b), b)
+})

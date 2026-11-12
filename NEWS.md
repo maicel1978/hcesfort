@@ -182,6 +182,13 @@
   pp. 81 and 91) and `ear_bioavailability` (0.18 for iron), written in the
   log, rescaling nothing. Before, iron passed in `requirements` without a
   distribution was assessed by the cut-point without a word.
+* Household flags as domains (review of v0.1, H3): `estimate_prevalence()`
+  and `estimate_difference()` take `domain_from`, a household table of the
+  package holding the logical column named by `domain` (one row per
+  household of the design, checked). The energy-plausibility sensitivity
+  analysis of the original can now be run on the risk tables; the log of
+  the estimate records the domain, its origin, the households with a
+  missing flag and the log of the flag.
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is

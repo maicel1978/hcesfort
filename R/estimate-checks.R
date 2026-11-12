@@ -22,10 +22,9 @@ check_value_column <- function(x, value, call = rlang::caller_env()) {
   invisible(TRUE)
 }
 
-# Check the arguments of the estimators; returns where `domain` lives:
-# `x_domain` (a column of `x`) or `design_domain` (a design variable).
-check_estimate_args <- function(design, x, statistic, by, domain,
-                                ci_method, level, df,
+# Check the arguments of the estimators (the domain: resolve_domain()).
+check_estimate_args <- function(design, x, statistic, by, ci_method,
+                                level, df,
                                 call = rlang::caller_env()) {
   bad <- function(arg, msg) {
     abort_hcesfort("argument", msg, arg = arg, call = call)
@@ -54,31 +53,15 @@ check_estimate_args <- function(design, x, statistic, by, domain,
                          any(by %in% c("household_id", key)))) {
     bad("by", "{.arg by} must name domain columns of the households table.")
   }
-  where <- domain_place(domain, x, vars)
-  if (is.na(where)) {
-    bad("domain", "{.arg domain} must name a logical column of {.arg x} or
-        of the households table.")
-  }
-  list(x_domain = if (identical(where, "x")) domain,
-       design_domain = if (identical(where, "design")) domain)
-}
-
-# "x", "design", "none" (domain NULL) or NA (not found).
-domain_place <- function(domain, x, vars) {
-  if (is.null(domain)) return("none")
-  if (!rlang::is_string(domain)) return(NA_character_)
-  if (is.logical(x[[domain]])) return("x")
-  if (is.logical(vars[[domain]])) return("design")
-  NA_character_
+  invisible(TRUE)
 }
 
 # The cells of `by`: a tibble of their levels (one row per combination
 # present in the design, sorted) and, per cell, the households of the
-# design that belong to it (and to `design_domain` when given).
-by_cells <- function(design, by, design_domain) {
+# design that belong to it (and to the domain `inside` when given).
+by_cells <- function(design, by, inside = NULL) {
   vars <- design$variables
-  inside <- if (is.null(design_domain)) rep(TRUE, nrow(vars)) else
-    vars[[design_domain]] %in% TRUE
+  if (is.null(inside)) inside <- rep(TRUE, nrow(vars))
   if (length(by) == 0) {
     return(list(levels = dplyr::tibble(.rows = 1), masks = list(inside)))
   }

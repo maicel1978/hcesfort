@@ -39,7 +39,7 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
   - [x] 11b.0 Design note `docs/design-review-v0.1.md` (corrections 1, 2, 3, 8, 10; 4 accepted); its ten decisions approved as recommended 2026-11-12.
   - [x] 11b.1 Record loss: columns and `min_records_used` (H1).
   - [x] 11b.2 `cutpoint_valid`, `ear_bioavailability` (H2, L9).
-  - [ ] 11b.3 `domain_from` (H3).
+  - [x] 11b.3 `domain_from` (H3).
   - [ ] 11b.4 `apply_scenario()` checks AFE and outlier decision (H4, P76).
   - [ ] 11b.5 Recalibrate `hces_example`; full-chain golden test (H6, M11).
   - [ ] 11b.6 Degenerate proportions, lonely PSU, surviving mutations (M5, M6, P84, T1–T4).
