@@ -9,7 +9,7 @@
 #'
 #' * `"proportion"`: a 0/1 indicator or a probability (`p_inadequate`,
 #'   `above_ul_total`, `acquired`); interval by [survey::svyciprop()] with
-#'   `ci_method` (`"logit"` by default, which stays within [0, 1]; `"mean"`
+#'   `ci_method` (`"logit"` by default, which stays between 0 and 1; `"mean"`
 #'   is the symmetric interval of the original analysis, E24).
 #' * `"mean"`: [survey::svymean()] and a *t* interval.
 #' * `"median"`: [survey::svyquantile()] at 0.5, interval by its default
@@ -37,7 +37,7 @@
 #' @param df `"domain"`, `"design"` or a number.
 #' @returns A tibble of class `hces_estimate` (and `hces_tbl`): the group
 #'   columns of `x`, the `by` columns, `statistic`, `variable`, `estimate`,
-#'   `se`, `ci_low`, `ci_high`, `level`, `df`, `n` (households in the
+#'   `se`, `ci_low`, `ci_high`, `conf_level`, `df`, `n` (households in the
 #'   domain) and `n_missing` (households of the `by` domain whose value is
 #'   missing). Its audit log continues the log of `x`.
 #' @seealso [estimate_difference()], [flag_precision()].
@@ -88,14 +88,14 @@ estimate_cell <- function(design, y, mask, statistic, ci_method, level,
                           df) {
   inside <- mask & !is.na(y)
   y[is.na(y)] <- 0
-  d <- stats::update(design, .y = y, .inside = inside)
-  sub <- subset(d, .inside)
+  d <- stats::update(design, .y = y)
+  sub <- d[inside, ]
   n <- sum(inside)
   dfv <- if (identical(df, "domain")) survey::degf(sub) else
     if (identical(df, "design")) survey::degf(design) else df
   na_row <- dplyr::tibble(statistic = statistic, estimate = NA_real_,
                           se = NA_real_, ci_low = NA_real_,
-                          ci_high = NA_real_, level = level, df = dfv,
+                          ci_high = NA_real_, conf_level = level, df = dfv,
                           n = n, n_missing = sum(mask & !inside))
   if (n == 0) return(na_row)
   r <- switch(

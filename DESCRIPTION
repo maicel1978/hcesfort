@@ -20,9 +20,11 @@ Depends:
 Imports:
     cli,
     dplyr,
-    rlang
+    rlang,
+    srvyr,
+    stats,
+    survey
 Suggests:
-    survey,
     testthat (>= 3.0.0),
     withr
 Config/testthat/edition: 3

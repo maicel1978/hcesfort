@@ -174,6 +174,20 @@ The maintainer approved as recommended the eleven choices of section 11 of
 
 P6 is changed by choice 3 of task 9. P69, P70, P74 stay open for v0.2.
 
+## Decisions (2026-11-12, task 11)
+
+The maintainer approved as recommended the six choices for task 11 listed
+in `docs/handoff.md`:
+
+| # | Decision |
+|---|---|
+| 1 | `as_hces_design(lonely_psu =)` is required, no default, with the values of `survey.lonely.psu`; applied per call, the global option restored. |
+| 2 | Proportions: `ci_method = "logit"` by default (`survey::svyciprop()`); `"mean"` reproduces the original's symmetric interval. |
+| 3 | Degrees of freedom: `df = "domain"` by default (`degf()` of the domain subset); `"design"` or a number as options. |
+| 4 | Medians: the default interval of `survey::svyquantile()` (Woodruff). |
+| 5 | Precision: a separate `flag_precision(estimates, min_n, max_half_width)`, both limits required. |
+| 6 | Differences between scenarios: mean of the within-household difference against a required `reference` scenario, as a domain of the full design. |
+
 ## Proposal P42: food-matching support module (2026-11-12)
 
 Proposed by the maintainer; assessed here, not implemented. Status:
