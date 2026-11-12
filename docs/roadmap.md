@@ -48,6 +48,8 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
   - [x] 11b.9 Renames (L1, L2).
   - [x] 11b.10 `reference_energy()`, `qty_vehicle_g_d_pc`, `who2009_levels()` (M10, M8, P71).
 - [ ] 12. Vignettes in English and Spanish: from standard tables to risk by scenario (synthetic data); how to write an adapter; plotting results with `ggplot2`. The pkgdown site waits for v1.0.
+- [ ] 12b. Country results report template (`use_report_template()`), organised by decision questions. Design: `docs/design-report-template.md`.
+  - [ ] 12b.0 Design written (2026-11-12); waits for the approval of its eleven decisions.
 
 ## v0.1, companion repository `hcesfort.engih2018`: ENGIH 2018 adapter (needs the microdata)
 - [ ] A1. Stage-level control figures exported from the original pipeline (record counts by section and drop cause, grams by section, AFE distribution, median intake per nutrient), md5 of the microdata, and the three checks left open on E4 (energy of Sec 3A alone by days with a record, upper tail by days, the eighth day) plus the number of records in dozens (E2). Run by the maintainer when the microdata are at hand.
