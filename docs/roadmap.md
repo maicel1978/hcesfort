@@ -17,8 +17,18 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
 - [x] 7. `link_composition()` and `fill_composition()`, with coverage over all records; `unmatched_foods()` (P42, part a).
 - [x] 7b. `check_crosswalk()`: quality controls of the crosswalk as flags, thresholds given by the caller (P42, part d).
 - [x] 8. `apparent_intake()` with the `include` flag, household status and energy-plausibility flag; `nutrient_density()`.
-- [ ] 9. `unfortified_baseline()`, `apply_scenario()` (level basis, compliance) and `vehicle_coverage()`.
-- [ ] 10. `inadequacy()` and `above_ul()`.
+- [ ] 9. `unfortified_baseline()`, `apply_scenario()` (level basis, compliance) and `vehicle_coverage()`. Design: `docs/design-task9.md`.
+  - [x] 9.0 Design written (2026-11-12); waits for the maintainer's approval of its section 11.
+  - [ ] 9.1 Contracts: `form`, `vehicle_group`, table `enrichment`, example data.
+  - [ ] 9.2 `unfortified_baseline()`.
+  - [ ] 9.3 `vehicle_coverage()`.
+  - [ ] 9.4 `apply_scenario()`; specification, `NEWS.md`, self-review.
+- [ ] 10. `inadequacy()` and `above_ul()`. Design: `docs/design-task10.md`.
+  - [x] 10.0 Design written (2026-11-12); waits for the maintainer's approval of its section 9.
+  - [ ] 10.1 Reference tables: `ul_unit`, `ul_form`.
+  - [ ] 10.2 `inadequacy()`: cut-point and coverage rule.
+  - [ ] 10.3 Probability approach.
+  - [ ] 10.4 `above_ul()`; `NEWS.md`, self-review.
 - [ ] 11. `as_hces_design()`, `estimate_prevalence()` and `estimate_difference()` on a complex design, subsets as domains.
 - [ ] 12. Vignettes in English and Spanish: from standard tables to risk by scenario (synthetic data); how to write an adapter; plotting results with `ggplot2`. The pkgdown site waits for v1.0.
 

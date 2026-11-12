@@ -394,6 +394,20 @@ empty tables kept their column types.
 | P65 | low | **`share_grams` of `unmatched_foods()` is `NaN` when no record has grams.** Harmless (nothing to rank by grams), but a classed warning or `NA` would be clearer. | Edge case. | 12 |
 
 
+## Open items from the design of tasks 9 and 10 (2026-11-12)
+
+Designs: `docs/design-task9.md` and `docs/design-task10.md`, waiting for
+approval. Items left out of v0.1 on purpose, or to be measured later:
+
+| ID | Priority | Item | Rationale | Roadmap task |
+|---|---|---|---|---|
+| P69 | high | **All-or-nothing compliance model.** A share `compliance` of each vehicle carries the full level and the rest none; the household result is a probability (with one vehicle, `c × indicator(full) + (1 − c) × indicator(baseline)`; with several, over the combinations of vehicles, assumed independent). v0.1 implements the average-content model only, named by a required argument. | The two models give the same mean and different shares below the EAR and above the UL; average content understates the share above the UL when few households are near it. | v0.2 (Fable designs), or task 9 if choice 5 of the design goes the other way |
+| P70 | medium | **Iron bioavailability by source.** `absorbed = b_diet × baseline + b_added × added`, instead of one value for the whole intake. Needs absorption values per compound and diet with a verifiable source. | WHO 2009 sets different levels per iron compound because absorption differs; one value overstates scenarios with poorly absorbed compounds. | v0.2 |
+| P71 | low | **Helper from `ref_who2009_flour` rows to scenario rows.** Must make the reading of vitamin A (`form`) an argument without default. | The mapping is short, but repeated by every user of the WHO table. | 12 (vignette first) |
+| P72 | low | **Compare `vehicles$vehicle_fraction` with `enrichment$ingredient_fraction`.** Two fractions describe the flour of one food on two bases (purchased food, composition row); a check that lists pairs that disagree beyond a tolerance given by the caller. | Same kind of duplication as E12. | 9 or v0.2 |
+| P73 | medium | **Two points where acceptance step 1 may not match exactly.** (a) The original picked the rows of the baseline by the food's description, the package by composition id. (b) The original's vehicle grams are edible grams of the records that survived E3; the package uses purchased grams of every included record. Measure both with the microdata; add an option only if a difference appears. | Acceptance step 1 needs the original choices as explicit options. | A3 |
+| P74 | low | **Step function for the iron probability.** IOM (2001, Appendix I) tabulates the probability of inadequacy by ranges of intake; offer it as `interpolation = "step"` once the tables are opened and entered in `data-raw/` with their place. | Fidelity to the cited source; the difference from linear interpolation is small. | v0.2 |
+
 ## Questions for the maintainer
 
 Answered on 2026-11-12: see "Decisions (2026-11-12)" above. Kept for the
