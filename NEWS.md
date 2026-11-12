@@ -22,6 +22,8 @@
   `validate_composition()` and `validate_scenarios()`. Missing nutrient
   values are counted per nutrient, never read as zero; a scenario without
   `compliance` gets 1 and the assumption is written in the audit log.
+* `hces_example`: a synthetic survey with every input table, invented
+  values only, built by `data-raw/hces_example.R`.
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is

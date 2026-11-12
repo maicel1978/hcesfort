@@ -10,7 +10,7 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
   - [x] 2.1 Classed errors and audit-log format and carrier.
   - [x] 2.2 Validators of `households`, `members`, `acquisitions` and their cross-table check.
   - [x] 2.3 Validators of the user-supplied tables and nutrient registry.
-- [ ] 3. Synthetic example dataset in the standard schema (invented households, composition, vehicles, one scenario), documented as synthetic.
+- [x] 3. Synthetic example dataset in the standard schema (invented households, composition, vehicles, one scenario), documented as synthetic.
 - [ ] 4. Reference data with sources in `data-raw/` (EAR, UL and the form it applies to, energy requirements, WHO 2009 levels, iron requirement distribution, DFE and RAE factors). Unverifiable values stay `# SOURCE PENDING` and are not shipped.
 - [ ] 5. `adult_equivalents()`.
 - [ ] 6. `convert_units()` (typed factors) and `flag_outliers()`.

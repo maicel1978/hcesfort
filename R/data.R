@@ -1,0 +1,48 @@
+#' Synthetic example survey
+#'
+#' An invented household survey, with every table hcesfort takes as input,
+#' for examples, tests and vignettes. **All values are invented**: nothing
+#' comes from a real survey, food composition table or fortification
+#' standard, and the numbers must not be used for analysis. The tables are
+#' plain data frames in the standard schemas ([hces_schema()]); they pass
+#' the validators of the package.
+#'
+#' The data contain, on purpose, the cases the package has to handle and
+#' count: a household that did not answer the food module and one without
+#' acquisitions; a member without age and one without sex; an acquisition
+#' without quantity, one without unit, one left out by the section rule,
+#' one with an implausibly large quantity and one in a unit without factor
+#' (`"sack"`); two recall periods (7 and 30 days); a volume factor without
+#' density; an unmatched and an unvalidated food; a missing nutrient value
+#' and an enriched composition row; a food with two vehicles; a scenario
+#' level given for a compound.
+#'
+#' @format A list of nine elements:
+#' \describe{
+#'   \item{households}{40 households in 2 strata and 8 primary sampling
+#'     units, with a `region` domain.}
+#'   \item{members}{Members of the households, with age, sex and pregnancy
+#'     and lactation flags.}
+#'   \item{acquisitions}{Food acquisitions in survey units.}
+#'   \item{unit_factors}{Factors from survey units to grams, millilitres
+#'     or pieces.}
+#'   \item{crosswalk}{Survey foods matched to the composition table.}
+#'   \item{nutrients}{Named character vector of units for
+#'     [nutrient_registry()]: energy, iron, folate and vitamin A.}
+#'   \item{composition}{An invented composition table of 12 foods, per
+#'     100 g edible portion.}
+#'   \item{vehicles}{Fraction of each food that is a fortification
+#'     vehicle.}
+#'   \item{scenarios}{Two invented fortification scenarios.}
+#' }
+#' @source Invented by the package authors; built by
+#'   `data-raw/hces_example.R` in the source repository.
+#' @examples
+#' survey <- validate_survey(
+#'   hces_example$households, hces_example$members,
+#'   hces_example$acquisitions
+#' )
+#' audit_log(survey$acquisitions)
+#' nutrients <- nutrient_registry(hces_example$nutrients)
+#' validate_composition(hces_example$composition, nutrients)
+"hces_example"
