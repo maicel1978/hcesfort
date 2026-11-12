@@ -18,7 +18,7 @@ validate_enrichment(x, nutrients)
 Check a table of enrichment rules against its data contract
 (\code{hces_schema("enrichment")}) and return it as a validated table, with its
 audit log started. Each row says what enrichment added to one nutrient of
-one composition row, so that \code{unfortified_baseline()} can remove it.
+one composition row, so that \code{\link[=unfortified_baseline]{unfortified_baseline()}} can remove it.
 }
 \details{
 A row states the amount in exactly one of two ways: by a reference pair
@@ -28,7 +28,7 @@ gram of the food in the state of the row), or by \code{added}, the amount per
 100 g in the unit of the registry. Both, neither, or an incomplete pair is
 an \code{hcesfort_error_value}. A \code{source} starting with \code{"SOURCE PENDING"}
 is counted (\code{source_pending}). Whether the ids exist in the composition
-table is checked by \code{unfortified_baseline()}.
+table is checked by \code{\link[=unfortified_baseline]{unfortified_baseline()}}.
 }
 \examples{
 nutrients <- nutrient_registry(c(iron = "mg"))
@@ -41,5 +41,5 @@ enrichment <- data.frame(
 audit_log(validate_enrichment(enrichment, nutrients))
 }
 \seealso{
-\code{unfortified_baseline()}, \link{hcesfort_errors}.
+\code{\link[=unfortified_baseline]{unfortified_baseline()}}, \link{hcesfort_errors}.
 }

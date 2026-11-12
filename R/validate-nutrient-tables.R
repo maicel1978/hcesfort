@@ -126,7 +126,7 @@ validate_scenarios <- function(x, nutrients) {
 #' Check a table of enrichment rules against its data contract
 #' (`hces_schema("enrichment")`) and return it as a validated table, with its
 #' audit log started. Each row says what enrichment added to one nutrient of
-#' one composition row, so that `unfortified_baseline()` can remove it.
+#' one composition row, so that [unfortified_baseline()] can remove it.
 #'
 #' A row states the amount in exactly one of two ways: by a reference pair
 #' (`enriched_ref_id`, `unenriched_ref_id` and `ingredient_fraction`: the
@@ -135,11 +135,11 @@ validate_scenarios <- function(x, nutrients) {
 #' 100 g in the unit of the registry. Both, neither, or an incomplete pair is
 #' an `hcesfort_error_value`. A `source` starting with `"SOURCE PENDING"`
 #' is counted (`source_pending`). Whether the ids exist in the composition
-#' table is checked by `unfortified_baseline()`.
+#' table is checked by [unfortified_baseline()].
 #'
 #' @inheritParams validate_composition
 #' @returns `x` as a tibble of class `hces_enrichment` (and `hces_tbl`).
-#' @seealso `unfortified_baseline()`, [hcesfort_errors].
+#' @seealso [unfortified_baseline()], [hcesfort_errors].
 #' @examples
 #' nutrients <- nutrient_registry(c(iron = "mg"))
 #' enrichment <- data.frame(

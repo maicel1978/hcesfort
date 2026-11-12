@@ -20,7 +20,7 @@ or pieces.}
 \item{composition}{An invented composition table of 13 foods, per
 100 g edible portion.}
 \item{enrichment}{What enrichment added to the enriched pasta and
-flour, for \code{unfortified_baseline()}.}
+flour, for \code{\link[=unfortified_baseline]{unfortified_baseline()}}.}
 \item{vehicles}{Fraction of each food that is a fortification
 vehicle, by product class, with a vehicle group.}
 \item{scenarios}{Two invented fortification scenarios.}
