@@ -1,3 +1,7 @@
 linters: linters_with_defaults()
 encoding: "UTF-8"
-exclusions: list("data-raw")
+exclusions: list(
+    "data-raw",
+    "inst/report/en/report.qmd" = list(line_length_linter = Inf),
+    "inst/report/es/report.qmd" = list(line_length_linter = Inf)
+  )
