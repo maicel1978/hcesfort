@@ -45,6 +45,16 @@
   `missing = "zero"`). Infants get the requirement of their month of age
   when it is known (the original used the mean of the first year for all,
   `infants = "annual_mean"`).
+* `convert_units()`: acquired quantities to grams and grams per day with a
+  typed table of unit factors (`mass_g`, `volume_ml` times a density,
+  `count` times a piece weight). A unit counted in pieces is never read as
+  grams (E2: the original converted a dozen as 12 g), and a volume without
+  density is not converted unless the caller gives a density (E18: the
+  original used the density of water for every liquid). The choice between
+  a food-specific and a generic factor is a required argument (the original
+  used the generic first, `priority = "generic"`). Records without grams are
+  kept, with the reason, and counted in the audit log before anything is
+  dropped (E3).
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is
