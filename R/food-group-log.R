@@ -56,3 +56,40 @@ no_value_rows <- function(rec, x, used, group, nutrients) {
   }
   dplyr::bind_rows(rows)
 }
+
+# Abort with hcesfort_error_join when households of `x` are not in the
+# design (`ids`).
+check_group_ids <- function(x, ids, call = rlang::caller_env()) {
+  absent <- setdiff(unique(x$household_id), ids)
+  if (length(absent) == 0) return(invisible(TRUE))
+  abort_hcesfort("join", c(
+    "{length(absent)} household{?s} of {.arg x} {?is/are} not in the
+    design.",
+    "i" = "Build the design from the households table of the analysis."
+  ), table = "x", other = "design", columns = "household_id",
+  n = length(absent), call = call)
+}
+
+# Audit rows of food_group_shares().
+shares_log <- function(design, df, out) {
+  step <- "food_group_shares"
+  note <- function(cause, detail) {
+    audit_row(step, "estimate", "note", cause, nrow(out), detail = detail)
+  }
+  flag <- function(cause, f) {
+    if (!any(f)) return(NULL)
+    audit_row(step, "estimate", "flagged", cause, sum(f),
+              detail = paste(unique(out$variable[f]), collapse = ", "))
+  }
+  dplyr::bind_rows(
+    audit_row(step, "estimate", "input", "all", nrow(out),
+              nrow(design$variables)),
+    note("statistic", "share"),
+    note("ci_method", "logit_delta"),
+    note("df", as.character(df)),
+    note("lonely_psu", attr(design, "hces_lonely_psu", exact = TRUE)),
+    flag("empty_domain", out$n == 0),
+    flag("zero_total", out$n > 0 & is.na(out$estimate)),
+    flag("degenerate_share", !is.na(out$se) & out$se == 0)
+  )
+}
