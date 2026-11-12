@@ -44,8 +44,7 @@ State: `devtools::check()` 0 errors, 0 warnings, 0 notes;
 
 ## Open questions
 
-- P87 (choices taken in implementation, six items) for the maintainer to
-  confirm.
+- P87: approved as recommended on 2026-11-12 (`docs/improvements.md`).
 - Zinc `ear_bioavailability` stays `# SOURCE PENDING` (IOM 2001,
   chapter 12, not read).
 

@@ -206,6 +206,13 @@ The maintainer approved as recommended the ten decisions of section 8 of
 | 9 | P60 is done by the adapter's join; `min_group_count` only if acceptance step 1 needs it. |
 | 10 | Sources: IOM 2000 (*Applications in Dietary Assessment*) to be opened at `nap.nationalacademies.org` if reachable, else the rows stay `pending`. **Opened** on 2026-11-12 (doi:10.17226/9956), chapter 4: the cut-point "simply requires the distribution of requirements to be symmetrical" and "does not work … with iron requirements in menstruating women where the requirement distribution is known to be highly skewed" (p. 81); "in the absence of additional information … it is implicitly assumed … that the unknown distribution is symmetrical around the median requirement" and the probability approach is recommended for iron (p. 91). Entered in `data-raw/SOURCES.md` as `IOM 2000b`. |
 
+The maintainer approved as recommended, on 2026-11-12, the six choices of
+P87 (implementation of 11b.1 to 11b.7): `ear_bioavailability` optional;
+grams share read from the `apparent_intake` rows of the log;
+`n_members` required in the `afe` of `vehicle_coverage()`; degenerate
+proportions handled alike for every `ci_method`; outlier decision compared
+as a string; no new vehicle-side note beyond `added_understated`.
+
 Implemented as roadmap items 11b.1 to 11b.10.
 
 ## Proposal P42: food-matching support module (2026-11-12)
@@ -535,7 +542,7 @@ implementation:
 
 | Id | Priority | Proposal | Why | Task |
 |---|---|---|---|---|
-| P87 | medium | **Choices taken in implementation, to confirm.** (1) `ear_bioavailability` is an optional column of `requirements` (absent = not stated); only `cutpoint_valid` is required. (2) The grams share reported by the record-loss gate is read from the `apparent_intake` rows of the log (all minus not included, and used), because `hces_intake` keeps only per-household shares. (3) `vehicle_coverage()` requires `n_members` in `afe` (`hcesfort_error_schema`). (4) A degenerate proportion is handled the same way for every `ci_method`, `"beta"` included. (5) The outlier decision compared by `apply_scenario()` is a string: the `outliers` choice and the rule of the last `flag_outliers()` in the log. (6) The vehicle-side note of correction 1 already existed as `added_understated` (households); no new row was added. | CLAUDE.md: no interpretation chosen silently. | 12 |
+| P87 | closed (approved 2026-11-12) | **Choices taken in implementation, to confirm.** (1) `ear_bioavailability` is an optional column of `requirements` (absent = not stated); only `cutpoint_valid` is required. (2) The grams share reported by the record-loss gate is read from the `apparent_intake` rows of the log (all minus not included, and used), because `hces_intake` keeps only per-household shares. (3) `vehicle_coverage()` requires `n_members` in `afe` (`hcesfort_error_schema`). (4) A degenerate proportion is handled the same way for every `ci_method`, `"beta"` included. (5) The outlier decision compared by `apply_scenario()` is a string: the `outliers` choice and the rule of the last `flag_outliers()` in the log. (6) The vehicle-side note of correction 1 already existed as `added_understated` (households); no new row was added. | CLAUDE.md: no interpretation chosen silently. | 12 |
 | P88 | low | **`check_required()` reads the caller's formals.** It uses `sys.function(-1)`; a wrapper that forwards arguments would be checked against its own formals. A test checks every exported function. | Robustness. | v0.2 |
 
 ## Questions for the maintainer
