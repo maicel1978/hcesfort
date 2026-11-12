@@ -1,85 +1,79 @@
 # Handoff
 
 - **Date:** 2026-11-12
-- **Session:** roadmap items 11b.8 to 11b.10 and the closing of task 11b
-  (corrections of the v0.1 review). Model: Opus 5.5 (see the commit
-  trailers).
-- **Branch:** `main`. Stopped because task 12 is for Sonnet
-  (`docs/model-routing.md`).
+- **Session:** tasks 11c (food-group shares) and 12b (report template).
+  Model: Opus 5.5 (see the commit trailers).
+- **Branch:** `main`.
 
 ## What was done
 
 | Commit | Content |
 |---|---|
-| `1a24f31` | P87 recorded as approved |
-| `3456435` | 11b.8 Logs merged without repeated branches; `audit_summary()`, `audit_record()` |
-| `9ee1d77` | 11b.9 `estimate_households()`; `flag_energy_plausibility(intake, energy, lower, upper)`; `adult_equivalents(missing_members =)` |
-| `5013ab1` | 11b.10 `reference_energy()`; `qty_vehicle_g_d_pc`; `who2009_levels()` |
-| `1e8b5ef` | P89 approved; P90 decided: the per capita availability is the ratio of weighted totals of grams and members (`survey::svyratio()`), shown in the help of `who2009_levels()` and tested at 1e-8; specification updated |
-| `7b8be62` | Close 11b: self-review fixes (silent drop in `who2009_levels()`, `get()` in `reference_energy()`, missing test); P91–P94 |
-| this commit | This handoff |
+| `a6b8cfc` | Nine decisions of `docs/design-food-group-shares.md` recorded as approved |
+| `38d3d3a` | 11c.1 Contract `food_groups`, `validate_food_groups()`, example grouping |
+| `09e7c52` | 11c.2 `food_group_intake()` with its log |
+| `4b4a398` | 11c.3 `food_group_shares()` and the internal `ratio_cell()` |
+| `0dd67e0` | 11c.4 Golden chain with shares, E1 in `NEWS.md`, specification, P99–P101 |
+| `dda5e95` | 12b.1 `expenditure_group` in `hces_example` |
+| `c11373d` | Fix: `estimate_households()` on a table keyed by household only |
+| `d460898`, `1eccf0d`, `9b53962` | 12b.2 `use_report_template()`, template in English and Spanish, tests, P102–P106 |
 
 State: `devtools::check()` 0 errors, 0 warnings, 0 notes;
-`lintr::lint_package()` clean; 1,482 tests pass; coverage 99.5%.
+`lintr::lint_package()` clean; about 1,680 tests pass; coverage 99.6%
+before 12b (not re-measured after).
+
+E1 on `hces_example`: the cereal share falls from 37.2% to 27.3% for
+folate and from 50.0% to 47.7% for iron on the baseline.
 
 ## Exact next step
 
-**Sonnet** starts task 12 (`docs/roadmap.md`): vignettes in English
-(Spanish version of the main one), from standard tables to risk by
-scenario on `hces_example`; how to write an adapter (`audit_record()`,
-`restore_audit()`); plotting results with `ggplot2`. The main vignette
-must:
+**Sonnet** starts task 12 (vignettes), now with the template: the main
+vignette should show `food_group_shares()` and point to
+`use_report_template()`. See the previous handoff's list (use
+`reference_energy()`, the per person flour availability as in
+`?who2009_levels`, `audit_summary()` at the end).
 
-- use `reference_energy()` for `reference_kcal`;
-- compute the flour availability per person as in the example of
-  `?who2009_levels` (ratio of totals, P90), then call `who2009_levels()`;
-- show `audit_summary()` at the end of the chain.
+## Open questions for the maintainer
 
-## Parallel design track (Fable, 2026-11-12)
-
-Does not change the next step above. Two design notes were added:
-
-- `docs/design-report-template.md`: country report template by decision
-  questions. **Approved** (roadmap 12b). Not to be implemented before 11c.
-- `docs/design-food-group-shares.md`: `food_group_intake()` and
-  `food_group_shares()` on the unfortified baseline (roadmap 11c).
-  **Waits for the approval of its nine decisions**; then Opus implements
-  it by its commit plan (section 7).
-
-The vignette on the template (task 12) waits for 12b.
-
-## Open questions
-
-None for the maintainer. Open items for later: P91 (a helper for the
-ratio, v0.2), P92–P94 (low). Zinc `ear_bioavailability` stays
-`# SOURCE PENDING`.
+1. P99 and P103 of `docs/improvements.md`: choices taken in
+   implementation, to confirm (recommended: confirm as written).
+2. P102: the template was knitted, not rendered with Quarto (Quarto is
+   not installed here and installing it was refused). Recommended: render
+   it once by hand (point 1 below) and add Quarto to CI.
 
 ## Recommended model for the next session
 
-**Sonnet 5.5** (task 12, vignettes).
+**Sonnet 5.5** (task 12).
 
 ## Maintainer review points
 
-1. **The WHO 2009 boundary rule.**
+1. **The report renders with Quarto, in both languages.**
 
    ```r
-   sapply(c(74.9, 75, 149.5, 150, 300, 300.1), function(a)
-     unique(hcesfort::who2009_levels(a, "low")$availability_g_d))
+   d <- file.path(tempdir(), "rep"); hcesfort::use_report_template(d, "es")
+   quarto::quarto_render(file.path(d, "report.qmd"))  # or: quarto render
+   browseURL(file.path(d, "report.html"))
    ```
 
-2. **The per person availability of the example.**
-
-   ```r
-   example(who2009_levels, package = "hcesfort")
-   coef(r)   # about 77 g per person per day on hces_example
-   ```
-
-3. **The merged audit log reads well.**
+2. **The E1 effect and the shares against `svyratio()` typed by hand.**
 
    ```r
    devtools::load_all()
    source("tests/testthat/test-golden-example.R", local = TRUE)
    ch <- golden_chain()
-   anyDuplicated(audit_log(ch$s))   # 0
-   audit_summary(ch$s)
+   subset(ch$shares, food_group == "cereals")
+   g <- ch$groups; h <- hces_example$households
+   est <- g$intake_status == "estimated"
+   num <- tapply(ifelse(g$food_group == "cereals", g$iron_mg, 0)[est],
+                 g$household_id[est], sum)
+   den <- tapply(g$iron_mg[est], g$household_id[est], sum)
+   w <- h$weight[match(names(num), h$household_id)]
+   sum(w * num) / sum(w * den)   # equals the cereals iron_mg estimate
+   ```
+
+3. **The `unclassified` share and the log of missing values.**
+
+   ```r
+   subset(ch$shares, food_group == "unclassified")
+   subset(audit_log(ch$groups), step == "food_group_intake")
    ```
