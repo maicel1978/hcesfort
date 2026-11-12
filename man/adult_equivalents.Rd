@@ -86,8 +86,7 @@ it.
 }
 \examples{
 # Reference: woman of 18-30 years, 55 kg, physical activity level 1.76.
-eq <- subset(ref_bmr_equations, sex == "female" & age_from == 18)
-reference <- (eq$slope_kcal_kg * 55 + eq$intercept_kcal) * 1.76
+reference <- reference_energy("female", 25, weight_kg = 55, pal = 1.76)
 afe <- adult_equivalents(
   hces_example$members, reference_kcal = reference,
   weight_kg = c(female = 55, male = 65), pal = 1.76

@@ -94,7 +94,13 @@ nonnormal distribution of iron requirements". A secondary source, cited in
 - `who2009_wheat_flour_levels.csv`: availability categories are kept as
   printed (`<75`, `75-149`, `150-300`, `>300` g/day); the numeric bounds
   repeat the printed numbers and do not decide which category a boundary
-  value belongs to. `NR` (not recommended) is a missing level with
+  value belongs to. The text of the report (p. 1) gives the second range as
+  "75-150 g/day"; `who2009_levels()` places 75 to below 150 in `75-149`
+  and 300 in `150-300`. Basis, quoted with the PDF open (md5 above) on
+  2026-11-12: the table header reads "estimated average per capita wheat
+  flour availability (g/day)", and the ranges were proposed "based on
+  available data from the Food Balance Sheets of FAO and World
+  Bank-supported Household Income and Expenditure Surveys (HIES)". `NR` (not recommended) is a missing level with
   `recommended = FALSE`. The table header gives the "level of nutrient to be
   added in parts per million"; ppm is mg/kg.
 - The iron requirement percentiles are of **dietary** iron at the stated

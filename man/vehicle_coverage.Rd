@@ -38,11 +38,12 @@ A tibble of class \code{hces_vehicle_use} (and \code{hces_tbl}), key
 \code{household_id}, \code{use_status}, \code{afe} and \code{n_members} (of the household,
 from \code{afe}), \code{level}, \code{vehicle}, \code{acquired},
 \code{n_records} (included records of the vehicle's foods),
-\code{n_records_no_grams} and \code{qty_vehicle_g_d} (grams of vehicle per AFE
+\code{n_records_no_grams}, \code{qty_vehicle_g_d} (grams of vehicle per AFE
 per day; missing unless \code{use_status} is \code{estimated}, and for
-\code{combined} rows). The audit log continues the logs of \code{grams},
-\code{vehicles}, \code{afe} and \code{households}; the outlier decision travels as
-in \code{\link[=apparent_intake]{apparent_intake()}}.
+\code{combined} rows) and \code{qty_vehicle_g_d_pc} (grams of vehicle per
+member per day, under the same rule). The audit log continues the
+logs of \code{grams}, \code{vehicles}, \code{afe} and \code{households}; the outlier
+decision travels as in \code{\link[=apparent_intake]{apparent_intake()}}.
 }
 \description{
 For each household and each vehicle, whether the household acquired the
@@ -78,16 +79,26 @@ counted them as non-consumers; an adapter that wants that sets the
 missing values to \code{FALSE} explicitly. A household whose records of a
 vehicle all lack grams has \code{acquired = TRUE} and a quantity that
 understates its use; it is counted (\code{acquired_without_grams}).
+
+\code{qty_vehicle_g_d_pc} is the household's grams divided by its number of
+members, not by its AFE. It is the basis of the bands of
+\link{ref_who2009_flour} (see \code{\link[=who2009_levels]{who2009_levels()}}): WHO (2009, Table 1) gives
+the "level of nutrient to be added in parts per million (ppm) by
+estimated average per capita wheat flour availability (g/day)", and
+the text says the ranges were proposed "based on available data from
+the Food Balance Sheets of FAO and World Bank-supported Household
+Income and Expenditure Surveys". The grams here are those acquired by
+households, not the flour milled or imported, and the design-based mean
+of this column weights households, not persons.
 }
 \examples{
 grams <- convert_units(
   hces_example$acquisitions, hces_example$unit_factors,
   priority = "food"
 )
-eq <- subset(ref_bmr_equations, sex == "female" & age_from == 18)
 afe <- adult_equivalents(
   hces_example$members,
-  reference_kcal = (eq$slope_kcal_kg * 55 + eq$intercept_kcal) * 1.76,
+  reference_kcal = reference_energy("female", 25, 55, pal = 1.76),
   weight_kg = c(female = 55, male = 65), pal = 1.76
 )
 use <- vehicle_coverage(grams, hces_example$vehicles, afe,

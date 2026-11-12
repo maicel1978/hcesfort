@@ -30,10 +30,9 @@ published source.
 \examples{
 grams <- convert_units(hces_example$acquisitions,
                        hces_example$unit_factors, priority = "food")
-eq <- subset(ref_bmr_equations, sex == "female" & age_from == 18)
 afe <- adult_equivalents(
   hces_example$members,
-  reference_kcal = (eq$slope_kcal_kg * 55 + eq$intercept_kcal) * 1.76,
+  reference_kcal = reference_energy("female", 25, 55, pal = 1.76),
   weight_kg = c(female = 55, male = 65), pal = 1.76
 )
 use <- vehicle_coverage(grams, hces_example$vehicles, afe,

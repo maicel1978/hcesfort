@@ -215,7 +215,7 @@ NULL
 #'     `"75-149"`, `"150-300"`, `">300"` g per day).}
 #'   \item{availability_from_g_d, availability_to_g_d}{The numbers of the
 #'     category as printed; they do not decide which category a boundary
-#'     value belongs to.}
+#'     value belongs to. [who2009_levels()] states the rule it applies.}
 #'   \item{level_mg_kg}{Level of nutrient to be added, mg per kg of flour;
 #'     missing when not recommended.}
 #'   \item{recommended}{`FALSE` where the table says "not recommended".}

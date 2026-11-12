@@ -204,3 +204,24 @@ test_that("the outlier rule of flag_outliers() is the decision recorded", {
            "probs=0.25,0.75; multiplier=3; min_group=2; type=7")
   )
 })
+
+test_that("grams per member by hand", {
+  # Same records; h1 has 4 members (AFE 2), h2 has 2 members (AFE 1).
+  # h1: flour 200 / 4 = 50; wheat 260 / 4 = 65. h2: bread 50 / 2 = 25.
+  afe <- vc_afe()
+  afe$n_members <- c(4, 2, 1, 1, 1, 1)
+  u <- vehicle_coverage(vc_grams(), vc_vehicles(), afe, vc_households(),
+                        combine = list(any = c("wheat", "sugar")))
+  expect_equal(pick(u, 1, "flour", "qty_vehicle_g_d_pc"), 50)
+  expect_equal(pick(u, 1, "wheat", "qty_vehicle_g_d_pc"), 65)
+  expect_equal(pick(u, 2, "bread", "qty_vehicle_g_d_pc"), 25)
+  expect_equal(pick(u, 1, "flour", "qty_vehicle_g_d"), 100)
+  # Missing under the same rule as the grams per AFE.
+  expect_identical(is.na(u$qty_vehicle_g_d_pc), is.na(u$qty_vehicle_g_d))
+  expect_true(is.na(pick(u, 1, "any", "qty_vehicle_g_d_pc")))
+  expect_true(is.na(pick(u, 3, "sugar", "qty_vehicle_g_d_pc")))
+  # Invariant: grams per member times members = grams per AFE times AFE.
+  ok <- !is.na(u$qty_vehicle_g_d)
+  expect_equal(u$qty_vehicle_g_d_pc[ok] * u$n_members[ok],
+               u$qty_vehicle_g_d[ok] * u$afe[ok], tolerance = 1e-12)
+})

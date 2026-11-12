@@ -107,9 +107,7 @@ test_that("meal share is used only when asked, and NA is flagged", {
 })
 
 test_that("the reference woman has exactly one AFE with the shipped tables", {
-  eq <- ref_bmr_equations[ref_bmr_equations$sex == "female" &
-                            ref_bmr_equations$age_from == 18, ]
-  reference <- (eq$slope_kcal_kg * 55 + eq$intercept_kcal) * 1.76
+  reference <- reference_energy("female", 25, weight_kg = 55, pal = 1.76)
   woman <- data.frame(household_id = 1, member_id = 1, age_years = 25,
                       sex = "female")
   out <- adult_equivalents(woman, reference,

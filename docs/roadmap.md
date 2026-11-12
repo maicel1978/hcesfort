@@ -46,7 +46,7 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
   - [x] 11b.7 Classed errors for missing arguments; unclear messages (M9, L3).
   - [x] 11b.8 Audit log: merge without repeats, `audit_summary()`, `audit_record()` (M7, P50).
   - [x] 11b.9 Renames (L1, L2).
-  - [ ] 11b.10 `reference_energy()`, `qty_vehicle_g_d_pc`, `who2009_levels()` (M10, M8, P71).
+  - [x] 11b.10 `reference_energy()`, `qty_vehicle_g_d_pc`, `who2009_levels()` (M10, M8, P71).
 - [ ] 12. Vignettes in English and Spanish: from standard tables to risk by scenario (synthetic data); how to write an adapter; plotting results with `ggplot2`. The pkgdown site waits for v1.0.
 
 ## v0.1, companion repository `hcesfort.engih2018`: ENGIH 2018 adapter (needs the microdata)

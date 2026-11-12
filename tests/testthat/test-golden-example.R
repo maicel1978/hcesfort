@@ -9,11 +9,9 @@ golden_chain <- function() {
   n <- nutrient_registry(ex$nutrients)
   g <- convert_units(ex$acquisitions, ex$unit_factors, priority = "food")
   b <- unfortified_baseline(ex$composition, ex$enrichment, n)
-  bmr <- hcesfort::ref_bmr_equations
-  eq <- bmr[bmr$sex == "female" & bmr$age_from == 18, ]
   afe <- adult_equivalents(
     ex$members,
-    reference_kcal = (eq$slope_kcal_kg * 55 + eq$intercept_kcal) * 1.76,
+    reference_kcal = reference_energy("female", 25, 55, pal = 1.76),
     weight_kg = c(female = 55, male = 65), pal = 1.76
   )
   intake <- apparent_intake(link_composition(g, ex$crosswalk, b), afe,

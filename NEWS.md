@@ -237,6 +237,14 @@
   causes are `energy_below_lower` and `energy_above_upper`;
   `adult_equivalents(missing = )` is `missing_members = `. The new names
   no longer shadow `base::min()`, `base::max()` or `base::missing()`.
+* Small additions (review of v0.1, M10, M8, P71): `reference_energy()`
+  computes the energy requirement of the reference person from the BMR
+  equations (the examples and the "reference woman is 1 AFE" test use
+  it); `vehicle_coverage()` returns `qty_vehicle_g_d_pc`, grams of vehicle
+  per member per day, the per capita basis of the WHO 2009 bands;
+  `who2009_levels()` returns the rows of `ref_who2009_flour` for an
+  availability and an extraction rate, with a stated rule for the
+  boundary values (75 and 149.5 in `75-149`, 300 in `150-300`).
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is

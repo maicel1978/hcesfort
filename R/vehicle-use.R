@@ -33,6 +33,17 @@
 #' vehicle all lack grams has `acquired = TRUE` and a quantity that
 #' understates its use; it is counted (`acquired_without_grams`).
 #'
+#' `qty_vehicle_g_d_pc` is the household's grams divided by its number of
+#' members, not by its AFE. It is the basis of the bands of
+#' [ref_who2009_flour] (see [who2009_levels()]): WHO (2009, Table 1) gives
+#' the "level of nutrient to be added in parts per million (ppm) by
+#' estimated average per capita wheat flour availability (g/day)", and
+#' the text says the ranges were proposed "based on available data from
+#' the Food Balance Sheets of FAO and World Bank-supported Household
+#' Income and Expenditure Surveys". The grams here are those acquired by
+#' households, not the flour milled or imported, and the design-based mean
+#' of this column weights households, not persons.
+#'
 #' @param grams Table returned by [convert_units()], [flag_outliers()] or
 #'   [link_composition()].
 #' @param vehicles Vehicles table ([hces_schema()]`("vehicles")`),
@@ -48,21 +59,21 @@
 #'   `household_id`, `use_status`, `afe` and `n_members` (of the household,
 #'   from `afe`), `level`, `vehicle`, `acquired`,
 #'   `n_records` (included records of the vehicle's foods),
-#'   `n_records_no_grams` and `qty_vehicle_g_d` (grams of vehicle per AFE
+#'   `n_records_no_grams`, `qty_vehicle_g_d` (grams of vehicle per AFE
 #'   per day; missing unless `use_status` is `estimated`, and for
-#'   `combined` rows). The audit log continues the logs of `grams`,
-#'   `vehicles`, `afe` and `households`; the outlier decision travels as
-#'   in [apparent_intake()].
+#'   `combined` rows) and `qty_vehicle_g_d_pc` (grams of vehicle per
+#'   member per day, under the same rule). The audit log continues the
+#'   logs of `grams`, `vehicles`, `afe` and `households`; the outlier
+#'   decision travels as in [apparent_intake()].
 #' @seealso [apply_scenario()], [apparent_intake()].
 #' @examples
 #' grams <- convert_units(
 #'   hces_example$acquisitions, hces_example$unit_factors,
 #'   priority = "food"
 #' )
-#' eq <- subset(ref_bmr_equations, sex == "female" & age_from == 18)
 #' afe <- adult_equivalents(
 #'   hces_example$members,
-#'   reference_kcal = (eq$slope_kcal_kg * 55 + eq$intercept_kcal) * 1.76,
+#'   reference_kcal = reference_energy("female", 25, 55, pal = 1.76),
 #'   weight_kg = c(female = 55, male = 65), pal = 1.76
 #' )
 #' use <- vehicle_coverage(grams, hces_example$vehicles, afe,
@@ -94,7 +105,8 @@ vehicle_coverage <- function(grams, vehicles, afe, households,
     no_food_records = !h$household_id %in% x$household_id,
     no_afe = is.na(afe_h) | afe_h <= 0
   ), none = "estimated")
-  out <- use_rows(x[used, ], items, h$household_id, status, afe_h)
+  out <- use_rows(x[used, ], items, h$household_id, status, afe_h,
+                  household_members(afe, h$household_id))
   out <- household_afe_columns(out, afe)
   log <- vehicle_log(x, reasons, used, v, items, out, status)
   log <- dplyr::bind_rows(audit_combine(x, v, afe, h), log)
@@ -104,15 +116,21 @@ vehicle_coverage <- function(grams, vehicles, afe, households,
   out
 }
 
-# `out` with the AFE and the number of members of each household, after
-# `use_status`.
-household_afe_columns <- function(out, afe, call = rlang::caller_env()) {
+# The number of members of each household of `ids`, from `afe`; an
+# `hcesfort_error_schema` when `afe` lacks the column.
+household_members <- function(afe, ids, call = rlang::caller_env()) {
   if (is.null(afe[["n_members"]])) {
     abort_hcesfort("schema", c(
       "{.arg afe} lacks the column {.field n_members}.",
       "i" = "Pass the table returned by {.fn adult_equivalents}."
     ), table = "afe", columns = "n_members", call = call)
   }
+  afe$n_members[match(ids, afe$household_id)]
+}
+
+# `out` with the AFE and the number of members of each household, after
+# `use_status`.
+household_afe_columns <- function(out, afe) {
   i <- match(out$household_id, afe$household_id)
   out$afe <- afe$afe[i]
   out$n_members <- afe$n_members[i]
@@ -154,7 +172,7 @@ vehicle_items <- function(v, combine) {
 
 # One row per household of `ids` and item (household-major order):
 # records, records without grams, acquired and grams per AFE per day.
-use_rows <- function(x, items, ids, status, afe_h) {
+use_rows <- function(x, items, ids, status, afe_h, members_h) {
   keys <- unique(items[c("level", "vehicle")])
   nk <- nrow(keys)
   items$item <- match(paste(items$level, items$vehicle, sep = "\r"),
@@ -183,5 +201,7 @@ use_rows <- function(x, items, ids, status, afe_h) {
   out$acquired[known] <- out$n_records[known] > 0
   ok <- out$use_status == "estimated" & out$level != "combined"
   out$qty_vehicle_g_d <- ifelse(ok, qty / rep(afe_h, each = nk), NA_real_)
+  out$qty_vehicle_g_d_pc <- ifelse(ok, qty / rep(members_h, each = nk),
+                                   NA_real_)
   out
 }
