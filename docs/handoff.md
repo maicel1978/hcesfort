@@ -1,91 +1,98 @@
 # Handoff
 
 - **Date:** 2026-11-12
-- **Model that worked:** Fable 5.2 (design only; no package code changed)
+- **Model that worked:** Opus 5.5
 - **Branch:** `main`
 
 ## What was done
 
 | Commit | Content |
 |---|---|
-| see `git log` | `docs/design-task9.md`: unfortified baseline, vehicle use, scenarios (level basis, enrichment subtraction, compliance). |
-| same | `docs/design-task10.md`: `inadequacy()` (cut-point, probability approach with bioavailability) and `above_ul()` (added only against diet plus added). |
-| same | Roadmap sub-items 9.0–9.4 and 10.0–10.4; P69–P74 in `docs/improvements.md`. |
+| `2b2ea2f` | Approval of the designs of tasks 9 and 10 recorded; contracts `form`, `vehicle_group`, `enrichment` (9.1) |
+| `b583de8` | `unfortified_baseline()` (9.2) |
+| `a3053c8` | `vehicle_coverage()` (9.3) |
+| `768c3a9`, `1096235` | `apply_scenario()`; close task 9 (9.4) |
+| `c9af011` | `ul_unit`, `ul_form` in the reference tables (10.1) |
+| `dd770a1`, `b0c0059` | `inadequacy()` (10.2, 10.3); `survey` in Suggests |
+| `b0b29f8` | `above_ul()`; close task 10 (10.4) |
+| this commit | Handoff; drafts of task 11 kept outside the package |
 
-No file under `R/`, `tests/` or `data-raw/` was touched, so the state of the
-last code commit stands (`442f3b7`: `devtools::check()` 0/0/0, lint clean,
-768 tests, coverage 100%). `check()` was not run again in this session.
+State: `devtools::check()` 0/0/0, `lintr::lint_package()` clean, all tests
+pass, coverage near 100% (checked with `covr` during the session).
+Tasks 9 and 10 are closed. Self-review items: P75–P81 in
+`docs/improvements.md`.
 
-Why the session stopped: both designs are written and need the maintainer's
-approval; what follows is implementation, which `docs/model-routing.md`
-assigns to Opus.
+Why the session stopped: the maintainer asked to stop. Task 11 had just
+started; its two draft files (`as_hces_design()` and
+`estimate_prevalence()`, untested, missing helpers) were moved out of `R/`
+to `docs/drafts-task11/` so the package stays green.
 
 ## Exact next step
 
-1. The maintainer answers section 11 of `docs/design-task9.md` (11 choices)
-   and section 9 of `docs/design-task10.md` (10 choices). "Approved as
-   recommended" is enough; otherwise the numbers that change.
-2. Opus records the answers in `docs/improvements.md` ("Decisions, design of
-   tasks 9 and 10"), sets the status line of each design to approved, and
-   implements task 9 by the commit plan of its section 10, starting with
-   9.1 (contracts: `form`, `vehicle_group`, table `enrichment`, example
-   data). Task 10 follows by its section 8.
+1. The maintainer answers the questions below (task 11).
+2. Implement task 11 by sub-items 11.1–11.4 of the roadmap, starting from the
+   drafts: missing helpers are `check_value_column()`,
+   `check_estimate_args()`, `by_cells()`, `estimate_log()`, then
+   `estimate_difference()` and `flag_precision()`. Add `survey` and `srvyr`
+   to Imports. Test every estimator against `survey::svyciprop()`,
+   `svymean()`, `svyquantile()` on a hand-built design (1e-8).
 
-If an answer changes choice 5 of task 9 (compliance: both models now) or
-choice 5 of task 10 (bioavailability by source now), that part goes back to
-Fable for its design before it is implemented.
+## Open questions (task 11), each with the recommendation
 
-## Open questions
-
-The 21 choices of the two designs. The ones that change results or
-contracts most:
-
-- Task 9, choice 3: floor of the enrichment subtraction at
-  `fraction × unenriched` instead of zero (changes the accepted P6).
-- Task 9, choice 5: compliance by average content only in v0.1.
-- Task 9, choices 1, 6, 7: new table `enrichment`, new columns `form` and
-  `vehicle_group`.
-- Task 10, choice 7: the folate upper level is in µg of folic acid; the
-  shipped table gives it the unit µg DFE. To be read at IOM 1998, p. 281
-  before `ul_unit` is entered.
-- Task 10, choice 9: a nutrient below `min_coverage` is an error.
+1. **Strata with a single PSU.** `as_hces_design(lonely_psu =)` required, no
+   default, values of `survey.lonely.psu`; applied per call and the global
+   option restored. *Recommended* (P12 asks for an explicit choice).
+2. **Interval for proportions.** Default `ci_method = "logit"`
+   (`survey::svyciprop()` default, stays in [0, 1]); `"mean"` reproduces the
+   original's symmetric interval in acceptance step 1. *Recommended.*
+3. **Degrees of freedom.** Default `df = "domain"` (`degf()` of the domain
+   subset, what the original's report states and what `survey` does on a
+   subset); options `"design"` or a number. *Recommended.*
+4. **Median interval.** `survey::svyquantile()` default (Woodruff,
+   `interval.type = "mean"`, `qrule = "math"`). *Recommended*; the original
+   gave no interval for medians.
+5. **Precision rule.** A separate `flag_precision(estimates, min_n,
+   max_half_width)` with both limits required (the original's n < 50 and
+   10 pp have no source), not built into the estimators. *Recommended:*
+   detect, then decide.
+6. **Paired differences.** Mean of the within-household difference between a
+   scenario and a reference scenario (`reference` required), on households
+   estimated in both, as a domain of the full design. *Recommended* (the
+   original's method, `07:213-226`).
 
 ## Recommended model for the next session
 
-**Opus 5.5**: implementation of task 9 from the approved design.
+**Opus 5.5**: implementation of task 11 once the questions are answered.
 
 ## Maintainer review points
 
-1. **The level formula reproduces the constants of the original**
-   (`06_escenarios_fortificacion.R:42-43`), with the factors stated one by
-   one (design of task 9, section 5).
+1. **The upper-level units read for task 10.1** (IOM 1998, pp. 280 and 282;
+   IOM 2001, pp. 127 and 143–145). They were read through the online reader
+   of the National Academies Press; check the places.
 
    ```r
    library(hcesfort)
-   dfe <- subset(ref_conversions, from_form == "folic_acid")$factor
-   c(iron_mg = 55 * 1 / 10,                 # original: 55 * 0.1
-     folate_ug_dfe = 1.8 * 1000 / 10 * dfe, # original: 1.8 * 100 * 1.7
-     vitamin_a_ug_rae = 10 * 1000 / 10 * 1) # original: 10 * 100, read as retinol
+   ref_requirements[, c("nutrient", "unit", "ul", "ul_unit", "ul_applies_to")]
+   ref_conversions[, c("from_form", "ul_form", "ul_form_location")]
    ```
 
-2. **The iron probability and its tails** (design of task 10, section 3):
-   1 below P2.5, 0 above P97.5, a jump of 0.025 at each end.
+2. **The baseline of the example: what enrichment removed** (pasta C04:
+   iron 3.3 → 1.5, folate 400 → 136).
+
+   ```r
+   n <- nutrient_registry(hces_example$nutrients)
+   b <- unfortified_baseline(hces_example$composition,
+                             hces_example$enrichment, n)
+   b[b$composition_id %in% c("C02", "C04", "C13"),
+     c("composition_id", "iron_mg", "folate_ug_dfe", "baseline_status")]
+   ```
+
+3. **The iron probability on the shipped table** (design of task 10,
+   section 3): 1, 0.975, 0.5, 0.025, 0 and 0.5.
 
    ```r
    d <- subset(ref_iron_requirements, group == "females_menstruating_adult")
-   p <- function(intake, b) {
-     1 - stats::approx(d$requirement_mg_d, d$percentile / 100,
-                       xout = intake * b / d$bioavailability[1],
-                       yleft = 0, yright = 1)$y
-   }
-   p(c(4, 4.42, 8.07, 18.23, 19), 0.18)  # 1, 0.975, 0.5, 0.025, 0
-   p(14.526, 0.10)                       # 0.5
-   ```
-
-3. **The unit of the folate upper level in the shipped table.** It reads
-   µg DFE; the original compares the UL with folic acid (added ÷ 1.7).
-
-   ```r
-   subset(ref_requirements, nutrient == "folate",
-          c(nutrient, unit, ear, ul, ul_applies_to, location))
+   t <- hcesfort:::distribution_table(d, "iron", "mg", NULL)
+   hcesfort:::p_inadequate_probability(c(4, 4.42, 8.07, 18.23, 19), 0.18, t)
+   hcesfort:::p_inadequate_probability(14.526, 0.10, t)
    ```
