@@ -190,3 +190,70 @@ test_that("records of zero grams give zero intake and no coverage", {
   expect_equal(i$energy_kcal[2], 0)
   expect_true(is.na(i$iron_mg_coverage[2]))
 })
+
+# Record loss (correction 1). By hand from ai_content(): included records
+# h1 3 (used 2: salt is not linked), h2 1 (1; the 200 g record is not
+# included), h3 1 (0), h4 none, h5 1 (1), h6 1 (1). Purchased grams of the
+# included records: h1 160 (used 150), h3 10 (0), h2, h5, h6 100 (100).
+# Overall: records 5 / 7; grams 450 / 470.
+test_that("record loss per household, by records and by grams", {
+  i <- apparent_intake(ai_content(), ai_afe(), ai_households())
+  expect_equal(i$n_records_included, c(3, 1, 1, 0, 1, 1))
+  expect_equal(i$share_records_used, c(2 / 3, 1, 0, NA, 1, 1))
+  expect_equal(i$share_grams_used, c(150 / 160, 1, 0, NA, 1, 1))
+})
+
+test_that("an excluded outlier counts as a record not used", {
+  x <- ai_content()
+  x$outlier <- x$record_id == 2
+  i <- apparent_intake(x, ai_afe(), ai_households(), outliers = "exclude")
+  expect_equal(i$share_records_used[1], 1 / 3)
+  expect_equal(i$share_grams_used[1], 100 / 160)
+})
+
+ai_req <- function() {
+  data.frame(nutrient = "iron", unit = "mg", ear = 1, ul = 45, ul_unit = "mg",
+             ul_applies_to = "total")
+}
+
+test_that("the record-loss gate is overall, with both shares", {
+  i <- apparent_intake(ai_content(), ai_afe(), ai_households())
+  err <- expect_error(inadequacy(i, ai_req(), min_coverage = 0,
+                                 min_records_used = 0.72),
+                      class = "hcesfort_error_coverage")
+  expect_identical(err$measure, "records_used")
+  expect_equal(err$coverage, 5 / 7)
+  expect_equal(err$shares, c(records = 5 / 7, grams = 450 / 470))
+  expect_error(above_ul(i, ai_req(), min_coverage = 0,
+                        min_records_used = 0.72),
+               class = "hcesfort_error_coverage")
+  r <- inadequacy(i, ai_req(), min_coverage = 0, min_records_used = 5 / 7)
+  expect_equal(unique(r$share_records_used[r$household_id == 1]), 2 / 3)
+  log <- audit_log(r)
+  note <- log[log$step == "inadequacy" & log$cause == "records_used", ]
+  expect_equal(note$n_records, 7)
+  expect_equal(note$n_households, 5)
+  expect_match(note$detail, "records: 0.7143; grams: 0.9574")
+  u <- above_ul(i, ai_req(), min_coverage = 0, min_records_used = 0)
+  expect_equal(u$share_records_used, i$share_records_used)
+})
+
+test_that("min_records_used is required, in [0, 1]", {
+  i <- apparent_intake(ai_content(), ai_afe(), ai_households())
+  for (bad in list(NULL, -0.1, 1.5, NA_real_, c(0.5, 0.6), "0.5")) {
+    expect_error(inadequacy(i, ai_req(), min_coverage = 0,
+                            min_records_used = bad),
+                 class = "hcesfort_error_argument")
+  }
+  err <- expect_error(above_ul(i, ai_req(), min_coverage = 0),
+                      class = "hcesfort_error_argument")
+  expect_identical(err$arg, "min_records_used")
+})
+
+test_that("the composition-value gate names its measure", {
+  i <- apparent_intake(ai_content(), ai_afe(), ai_households())
+  err <- expect_error(inadequacy(i, ai_req(), min_coverage = 0.99,
+                                 min_records_used = 0),
+                      class = "hcesfort_error_coverage")
+  expect_identical(err$measure, "composition_value")
+})

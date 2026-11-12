@@ -31,7 +31,9 @@
 #' children have lower upper levels and are the most exposed to excess from
 #' fortified staples, and a household figure says nothing about them.
 #' `min_coverage` applies to the diet part of each comparison, as in
-#' [inadequacy()]; low coverage understates the share above the UL.
+#' [inadequacy()]; low coverage understates the share above the UL. So
+#' does record loss: `min_records_used` is required and gated as in
+#' [inadequacy()].
 #'
 #' @inheritParams inadequacy
 #' @param requirements A table with one row per nutrient: `nutrient`,
@@ -44,7 +46,7 @@
 #'   `intake_status`, `nutrient`, `ul`, `ul_unit`, `ul_applies_to`,
 #'   `ul_scope`, `amount_added`, `amount_total`, `above_ul_added` (missing
 #'   for `total_intake`), `above_ul_total` (missing without a diet part) and
-#'   `coverage` (of the diet part).
+#'   `coverage` (of the diet part) and `share_records_used`.
 #' @seealso [inadequacy()], [apply_scenario()].
 #' @examples
 #' nutrients <- nutrient_registry(hces_example$nutrients)
@@ -64,15 +66,17 @@
 #'                         hces_example$households)
 #' s <- apply_scenario(intake, use, hces_example$scenarios,
 #'                     compliance_model = "average_content")
-#' ul <- above_ul(s, ref_requirements, min_coverage = 0.8)
+#' ul <- above_ul(s, ref_requirements, min_coverage = 0.8,
+#'               min_records_used = 0.6)
 #' table(ul$nutrient, ul$ul_scope)
 #' @export
 above_ul <- function(x, requirements, conversions = hcesfort::ref_conversions,
-                     min_coverage) {
+                     min_coverage, min_records_used) {
   require_hces(x, c("hces_intake", "hces_scenario_intake"))
   x <- audit_check_rows(x, "above_ul")
   nutrients <- attr(x, "nutrients", exact = TRUE)
   min_coverage <- check_min_coverage(min_coverage)
+  min_used <- check_min_records_used(min_records_used)
   req <- check_requirements(requirements, nutrients, "ul",
                             extra = c("ul_unit", "ul_applies_to"))
   check_conversions(conversions)
@@ -86,12 +90,14 @@ above_ul <- function(x, requirements, conversions = hcesfort::ref_conversions,
     ul_parts(x, nutrients, req[i, ], conversions)
   })
   diet <- unique(unlist(lapply(parts, `[[`, "diet")))
+  used <- check_records_used(x, min_used)
   cov <- check_coverage(x, nutrients, diet, min_coverage)
   rows <- lapply(seq_len(nrow(req)), function(i) {
     ul_rows(x, nutrients, req[i, ], parts[[i]])
   })
   out <- if (length(rows) == 0) ul_rows_empty(x) else dplyr::bind_rows(rows)
-  log <- above_ul_log(x, req, parts, cov, min_coverage)
+  log <- dplyr::bind_rows(above_ul_log(x, req, parts, cov, min_coverage),
+                          records_used_row("above_ul", x, used, min_used))
   new_hces_tbl(out, "hces_above_ul", dplyr::bind_rows(audit_get(x), log),
                c("scenario", "household_id", "nutrient"), nutrients)
 }
@@ -124,7 +130,8 @@ ul_rows <- function(x, nutrients, r, p) {
     amount_added = if (p$scope == "not_assessable") NA_real_ else added,
     amount_total = total,
     above_ul_added = if (form_scope) added > r$ul else NA,
-    above_ul_total = total > r$ul, coverage = coverage
+    above_ul_total = total > r$ul, coverage = coverage,
+    share_records_used = x$share_records_used
   )
 }
 

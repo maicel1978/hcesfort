@@ -36,7 +36,16 @@
 #' `hcesfort_error_coverage`: a share below a requirement computed with
 #' much of the grams missing is a different quantity. `0` accepts any
 #' coverage and says so in the log. The coverage of each household is
-#' returned, so a domain can be defined on it.
+#' returned, so a domain can be defined on it. Coverage is measured on the
+#' records used: it does not see the records that never reached the sum.
+#'
+#' **Record loss.** `min_records_used` is required. The share of the
+#' included records that were used ([apparent_intake()],
+#' `share_records_used`), over all households with at least one included
+#' record whatever their status, unweighted, on the baseline, must reach
+#' it; otherwise the call fails with `hcesfort_error_coverage` (field
+#' `measure = "records_used"`). The share by purchased grams is reported
+#' with it. `0` accepts any loss and says so in the log.
 #'
 #' @param x Table returned by [apply_scenario()] or [apparent_intake()].
 #' @param requirements A table with one row per nutrient: `nutrient`, `unit`
@@ -47,14 +56,17 @@
 #'   one per nutrient of the registry assessed by the probability approach.
 #' @param bioavailability Named list of one or more values in (0, 1] per
 #'   nutrient of `distribution`; required with it.
-#' @param min_coverage Minimum share of grams with a value, in `[0, 1]`.
+#' @param min_coverage Minimum share of the edible grams used that have a
+#'   composition value, in `[0, 1]`.
+#' @param min_records_used Minimum overall share of the included records
+#'   that were used, in `[0, 1]`.
 #' @returns A tibble of class `hces_inadequacy` (and `hces_tbl`), long, key
 #'   `scenario` + `household_id` + `nutrient` + `bioavailability`:
 #'   `scenario` (missing for an `hces_intake`), `household_id`,
 #'   `intake_status`, `nutrient`, `unit`, `intake`, `added`, `coverage`,
-#'   `method` (`"ear_cutpoint"` or `"probability"`), `ear`,
-#'   `bioavailability` and `p_inadequate` (missing when the household is not
-#'   `estimated`).
+#'   `share_records_used`, `method` (`"ear_cutpoint"` or `"probability"`),
+#'   `ear`, `bioavailability` and `p_inadequate` (missing when the household
+#'   is not `estimated`).
 #' @seealso [above_ul()], [apply_scenario()].
 #' @examples
 #' nutrients <- nutrient_registry(hces_example$nutrients)
@@ -75,20 +87,23 @@
 #' risk <- inadequacy(intake, ref_requirements,
 #'                    distribution = list(iron = iron),
 #'                    bioavailability = list(iron = c(0.10, 0.18)),
-#'                    min_coverage = 0.8)
+#'                    min_coverage = 0.8, min_records_used = 0.6)
 #' aggregate(p_inadequate ~ nutrient + bioavailability, risk, mean,
 #'           na.action = na.pass)
 #' @export
 inadequacy <- function(x, requirements, distribution = NULL,
-                       bioavailability = NULL, min_coverage) {
+                       bioavailability = NULL, min_coverage,
+                       min_records_used) {
   require_hces(x, c("hces_intake", "hces_scenario_intake"))
   x <- audit_check_rows(x, "inadequacy")
   nutrients <- attr(x, "nutrients", exact = TRUE)
   min_coverage <- check_min_coverage(min_coverage)
+  min_used <- check_min_records_used(min_records_used)
   req <- check_requirements(requirements, nutrients, "ear")
   dist <- check_distribution(distribution, bioavailability, nutrients)
   cut <- setdiff(req$nutrient, names(dist))
   assessed <- c(cut, names(dist))
+  used <- check_records_used(x, min_used)
   cov <- check_coverage(x, nutrients, assessed, min_coverage)
   rows <- c(
     lapply(cut, function(n) {
@@ -105,6 +120,8 @@ inadequacy <- function(x, requirements, distribution = NULL,
   out <- dplyr::bind_rows(rows)
   log <- inadequacy_log(x, req, dist, bioavailability, cov, out, nutrients,
                         min_coverage)
+  log <- dplyr::bind_rows(log, records_used_row("inadequacy", x, used,
+                                                min_used))
   new_hces_tbl(out, "hces_inadequacy", dplyr::bind_rows(audit_get(x), log),
                c("scenario", "household_id", "nutrient", "bioavailability"),
                nutrients)
@@ -122,7 +139,8 @@ risk_base <- function(x, nutrients, n) {
     scenario = scenario, household_id = x$household_id,
     intake_status = x$intake_status, nutrient = n,
     unit = nutrients$unit[nutrients$nutrient == n], intake = x[[col]],
-    added = added, coverage = x[[paste0(col, "_coverage")]]
+    added = added, coverage = x[[paste0(col, "_coverage")]],
+    share_records_used = x$share_records_used
   )
 }
 

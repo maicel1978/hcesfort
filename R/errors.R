@@ -23,9 +23,13 @@
 #' * `hcesfort_error_audit`: a table that should carry an audit log does
 #'   not, or its log lacks a step the function requires. Fields: `arg`,
 #'   `expected`.
-#' * `hcesfort_error_coverage`: the share of grams with a composition value
-#'   for a nutrient is below the minimum the caller set. Fields:
-#'   `nutrients`, `coverage`, `min_coverage`.
+#' * `hcesfort_error_coverage`: a share the caller set a minimum for is
+#'   below it. Field `measure` says which: `"composition_value"`, the share
+#'   of the edible grams used that have a composition value, per nutrient
+#'   (`min_coverage`); `"records_used"`, the share of the included records
+#'   that were used (`min_records_used`; field `shares` gives it by records
+#'   and by grams). Fields: `measure`, `nutrients`, `coverage`,
+#'   `min_coverage` (the threshold).
 #'
 #' The fields are elements of the condition object (`e$table`, `e$rows`).
 #' Messages state what failed and in which table, list the offending columns

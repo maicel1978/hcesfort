@@ -8,7 +8,8 @@ above_ul(
   x,
   requirements,
   conversions = hcesfort::ref_conversions,
-  min_coverage
+  min_coverage,
+  min_records_used
 )
 }
 \arguments{
@@ -21,7 +22,11 @@ above_ul(
 \item{conversions}{Conversions table with the column \code{ul_form}, by
 default \link{ref_conversions}.}
 
-\item{min_coverage}{Minimum share of grams with a value, in \verb{[0, 1]}.}
+\item{min_coverage}{Minimum share of the edible grams used that have a
+composition value, in \verb{[0, 1]}.}
+
+\item{min_records_used}{Minimum overall share of the included records
+that were used, in \verb{[0, 1]}.}
 }
 \value{
 A tibble of class \code{hces_above_ul} (and \code{hces_tbl}), long, key
@@ -29,7 +34,7 @@ A tibble of class \code{hces_above_ul} (and \code{hces_tbl}), long, key
 \code{intake_status}, \code{nutrient}, \code{ul}, \code{ul_unit}, \code{ul_applies_to},
 \code{ul_scope}, \code{amount_added}, \code{amount_total}, \code{above_ul_added} (missing
 for \code{total_intake}), \code{above_ul_total} (missing without a diet part) and
-\code{coverage} (of the diet part).
+\code{coverage} (of the diet part) and \code{share_records_used}.
 }
 \description{
 For each household, scenario and nutrient with an upper level (UL),
@@ -65,7 +70,9 @@ is that of adults, applied to intake per adult female equivalent:
 children have lower upper levels and are the most exposed to excess from
 fortified staples, and a household figure says nothing about them.
 \code{min_coverage} applies to the diet part of each comparison, as in
-\code{\link[=inadequacy]{inadequacy()}}; low coverage understates the share above the UL.
+\code{\link[=inadequacy]{inadequacy()}}; low coverage understates the share above the UL. So
+does record loss: \code{min_records_used} is required and gated as in
+\code{\link[=inadequacy]{inadequacy()}}.
 }
 \examples{
 nutrients <- nutrient_registry(hces_example$nutrients)
@@ -85,7 +92,8 @@ use <- vehicle_coverage(grams, hces_example$vehicles, afe,
                         hces_example$households)
 s <- apply_scenario(intake, use, hces_example$scenarios,
                     compliance_model = "average_content")
-ul <- above_ul(s, ref_requirements, min_coverage = 0.8)
+ul <- above_ul(s, ref_requirements, min_coverage = 0.8,
+              min_records_used = 0.6)
 table(ul$nutrient, ul$ul_scope)
 }
 \seealso{

@@ -22,7 +22,7 @@ risk <- function(r, scenario, h, nutrient, b = NA) {
 }
 
 test_that("cut-point by hand for two nutrients and two scenarios", {
-  r <- inadequacy(as_run(), in_req(), min_coverage = 0.9)
+  r <- inadequacy(as_run(), in_req(), min_coverage = 0.9, min_records_used = 0)
   expect_s3_class(r, c("hces_inadequacy", "hces_tbl"))
   expect_identical(risk(r, "baseline", 1, "iron"), 1)
   expect_identical(risk(r, "s1", 1, "iron"), 0)
@@ -38,7 +38,8 @@ test_that("cut-point by hand for two nutrients and two scenarios", {
 })
 
 test_that("an intake equal to the EAR is adequate; intake 0 is not", {
-  r <- inadequacy(as_run(), in_req(iron = 6.5), min_coverage = 0)
+  r <- inadequacy(as_run(), in_req(iron = 6.5), min_coverage = 0,
+                  min_records_used = 0)
   expect_identical(risk(r, "s1", 1, "iron"), 0)
   expect_identical(risk(r, "baseline", 1, "vitamin_a"), 1)
 })
@@ -46,7 +47,7 @@ test_that("an intake equal to the EAR is adequate; intake 0 is not", {
 test_that("probability approach by hand, two bioavailabilities", {
   r <- inadequacy(as_run(), in_req(), distribution = list(iron = in_dist()),
                   bioavailability = list(iron = c(0.1, 0.2)),
-                  min_coverage = 0.9)
+                  min_coverage = 0.9, min_records_used = 0)
   iron <- r[r$nutrient == "iron", ]
   expect_identical(unique(iron$method), "probability")
   expect_identical(nrow(iron), 3L * 3L * 2L)
@@ -68,7 +69,7 @@ test_that("the six probabilities of the shipped table (design, section 3)", {
 
 test_that("an hces_intake works and has no scenario", {
   p <- as_pipeline()
-  r <- inadequacy(p$intake, in_req(), min_coverage = 0)
+  r <- inadequacy(p$intake, in_req(), min_coverage = 0, min_records_used = 0)
   expect_true(all(is.na(r$scenario)))
   expect_identical(r$added[r$household_id == 1], c(0, 0, 0))
   expect_identical(r$added[r$household_id == 3], c(NA_real_, NA, NA))
@@ -76,7 +77,8 @@ test_that("an hces_intake works and has no scenario", {
 
 test_that("the audit log counts by hand", {
   r <- inadequacy(as_run(), in_req(), distribution = list(iron = in_dist()),
-                  bioavailability = list(iron = 0.2), min_coverage = 0)
+                  bioavailability = list(iron = 0.2), min_coverage = 0,
+                  min_records_used = 0)
   log <- audit_log(r)
   log <- log[log$step == "inadequacy", ]
   expect_identical(log$n_records[log$cause == "all"], 9L)
@@ -95,28 +97,32 @@ test_that("coverage below the minimum is a coverage error", {
   s <- as_run()
   s$iron_mg_coverage[s$household_id == 1] <- 0.5
   # Overall: (0.5 x 240 + 1 x 50) / 290 = 0.586.
-  err <- expect_error(inadequacy(s, in_req(), min_coverage = 0.6),
+  err <- expect_error(inadequacy(s, in_req(), min_coverage = 0.6,
+                                 min_records_used = 0),
                       class = "hcesfort_error_coverage")
   expect_identical(err$nutrients, "iron")
   expect_equal(err$coverage, 170 / 290)
-  expect_s3_class(inadequacy(s, in_req(), min_coverage = 0.5),
+  expect_s3_class(inadequacy(s, in_req(), min_coverage = 0.5,
+                             min_records_used = 0),
                   "hces_inadequacy")
   expect_error(inadequacy(s, in_req()), class = "hcesfort_error_argument")
-  expect_error(inadequacy(s, in_req(), min_coverage = 2),
+  expect_error(inadequacy(s, in_req(), min_coverage = 2, min_records_used = 0),
                class = "hcesfort_error_argument")
 })
 
 test_that("requirements: key, units and schema errors", {
   s <- as_run()
-  expect_error(inadequacy(s, rbind(in_req(), in_req()), min_coverage = 0),
+  expect_error(inadequacy(s, rbind(in_req(), in_req()), min_coverage = 0,
+                          min_records_used = 0),
                class = "hcesfort_error_key")
   req <- in_req()
   req$unit[[1]] <- "ug"
-  expect_error(inadequacy(s, req, min_coverage = 0),
+  expect_error(inadequacy(s, req, min_coverage = 0, min_records_used = 0),
                class = "hcesfort_error_units")
-  expect_error(inadequacy(s, req[-3], min_coverage = 0),
+  expect_error(inadequacy(s, req[-3], min_coverage = 0, min_records_used = 0),
                class = "hcesfort_error_schema")
-  expect_error(inadequacy(as.data.frame(s), in_req(), min_coverage = 0),
+  expect_error(inadequacy(as.data.frame(s), in_req(), min_coverage = 0,
+                          min_records_used = 0),
                class = "hcesfort_error_audit")
 })
 
@@ -124,7 +130,7 @@ test_that("distribution and bioavailability errors", {
   s <- as_run()
   run <- function(d = list(iron = in_dist()), b = list(iron = 0.2)) {
     inadequacy(s, in_req(), distribution = d, bioavailability = b,
-               min_coverage = 0)
+               min_coverage = 0, min_records_used = 0)
   }
   two <- rbind(in_dist(), transform(in_dist(), group = "men"))
   expect_error(run(list(iron = two)), class = "hcesfort_error_key")
@@ -139,13 +145,14 @@ test_that("distribution and bioavailability errors", {
   expect_error(run(b = list(iron = 1.2)), class = "hcesfort_error_argument")
   expect_error(run(list(zinc = in_dist())), class = "hcesfort_error_argument")
   expect_error(inadequacy(s, in_req(), bioavailability = list(iron = 0.2),
-                          min_coverage = 0),
+                          min_coverage = 0, min_records_used = 0),
                class = "hcesfort_error_argument")
 })
 
 test_that("against survey::svymean on a hand-built design", {
   r <- inadequacy(as_run(), in_req(), distribution = list(iron = in_dist()),
-                  bioavailability = list(iron = 0.1), min_coverage = 0)
+                  bioavailability = list(iron = 0.1), min_coverage = 0,
+                  min_records_used = 0)
   w <- c(1, 3)
   for (n in c("folate", "iron")) {
     one <- r[r$scenario == "s1" & r$nutrient == n &
@@ -166,7 +173,8 @@ test_that("invariants: bounds and monotonicity", {
   run <- function(p = as_pipeline(), req = in_req(), b = 0.2, k = 1,
                   sc = as_scenarios()) {
     inadequacy(as_run(sc, p), req, distribution = list(iron = in_dist(k)),
-               bioavailability = list(iron = b), min_coverage = 0)
+               bioavailability = list(iron = b), min_coverage = 0,
+               min_records_used = 0)
   }
   r <- run()
   ok <- !is.na(r$p_inadequate)
@@ -188,7 +196,8 @@ test_that("invariants: bounds and monotonicity", {
 
 test_that("invariant: b = b0 compares the intake with the table itself", {
   r <- inadequacy(as_run(), in_req(), distribution = list(iron = in_dist()),
-                  bioavailability = list(iron = 0.2), min_coverage = 0)
+                  bioavailability = list(iron = 0.2), min_coverage = 0,
+                  min_records_used = 0)
   one <- r[r$nutrient == "iron" & !is.na(r$intake), ]
   f <- stats::approx(c(2, 4, 8), c(0.025, 0.5, 0.975), xout = one$intake,
                      yleft = 0, yright = 1)$y
@@ -196,8 +205,9 @@ test_that("invariant: b = b0 compares the intake with the table itself", {
 })
 
 test_that("invariant: row order of requirements", {
-  r1 <- inadequacy(as_run(), in_req(), min_coverage = 0)
-  r2 <- inadequacy(as_run(), in_req()[4:1, ], min_coverage = 0)
+  r1 <- inadequacy(as_run(), in_req(), min_coverage = 0, min_records_used = 0)
+  r2 <- inadequacy(as_run(), in_req()[4:1, ], min_coverage = 0,
+                   min_records_used = 0)
   k <- function(r) paste(r$scenario, r$household_id, r$nutrient)
   expect_identical(r2$p_inadequate[match(k(r1), k(r2))], r1$p_inadequate)
 })
@@ -205,7 +215,7 @@ test_that("invariant: row order of requirements", {
 test_that("no nutrient with an EAR gives no rows; missing intakes stay NA", {
   req <- in_req()
   req$ear <- NA_real_
-  r <- inadequacy(as_run(), req, min_coverage = 0)
+  r <- inadequacy(as_run(), req, min_coverage = 0, min_records_used = 0)
   expect_identical(nrow(r), 0L)
   expect_s3_class(r, "hces_inadequacy")
   t <- distribution_table(in_dist(), "iron", "mg", NULL)

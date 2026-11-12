@@ -188,6 +188,26 @@ in `docs/handoff.md`:
 | 5 | Precision: a separate `flag_precision(estimates, min_n, max_half_width)`, both limits required. |
 | 6 | Differences between scenarios: mean of the within-household difference against a required `reference` scenario, as a domain of the full design. |
 
+## Decisions (2026-11-12, corrections of the v0.1 review)
+
+The maintainer approved as recommended the ten decisions of section 8 of
+`docs/design-review-v0.1.md`:
+
+| # | Decision |
+|---|---|
+| 1 | The gate on record loss is overall, not per household, and counts every household with at least one included record. |
+| 2 | The new gate raises `hcesfort_error_coverage` with a field `measure` (`"records_used"`; the existing gate sets `"composition_value"`). |
+| 3 | `<nutrient>_coverage`, `coverage` and `min_coverage` keep their names; the help and the error message are corrected. |
+| 4 | `cutpoint_valid` is a required column of `requirements`; `TRUE` is shipped for the nutrients with no skewed requirement recorded. |
+| 5 | `ear_bioavailability` only informs (log note, no rescaling); zinc is shipped as `NA` with `# SOURCE PENDING`. |
+| 6 | Names: `estimate_households()`, `domain_from`, `audit_summary()`, `audit_record()`, `reference_energy()`, `who2009_levels()`, `min_records_used`, `lower`/`upper`, `missing_members`. |
+| 7 | Audit logs are merged by whole rows with multiplicity; no call id, no `print` method. |
+| 8 | `who2009_levels()` only filters the table. |
+| 9 | P60 is done by the adapter's join; `min_group_count` only if acceptance step 1 needs it. |
+| 10 | Sources: IOM 2000 (*Applications in Dietary Assessment*) to be opened at `nap.nationalacademies.org` if reachable, else the rows stay `pending`. **Opened** on 2026-11-12 (doi:10.17226/9956), chapter 4: the cut-point "simply requires the distribution of requirements to be symmetrical" and "does not work … with iron requirements in menstruating women where the requirement distribution is known to be highly skewed" (p. 81); "in the absence of additional information … it is implicitly assumed … that the unknown distribution is symmetrical around the median requirement" and the probability approach is recommended for iron (p. 91). Entered in `data-raw/SOURCES.md` as `IOM 2000b`. |
+
+Implemented as roadmap items 11b.1 to 11b.10.
+
 ## Proposal P42: food-matching support module (2026-11-12)
 
 Proposed by the maintainer; assessed here, not implemented. Status:

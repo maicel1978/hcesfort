@@ -166,6 +166,14 @@
   `significant` column (E24). `flag_precision()`: flags estimates on few
   households or with wide intervals, both limits required (the original's
   50 households and 10 points have no source).
+* Record loss (review of v0.1, H1): `apparent_intake()` returns
+  `n_records_included`, `share_records_used` and `share_grams_used` per
+  household; `inadequacy()` and `above_ul()` return `share_records_used`
+  and take a required `min_records_used`, an overall gate on the share of
+  included records used (`hcesfort_error_coverage` with
+  `measure = "records_used"`). The composition gate (`min_coverage`) only
+  sees the records used: in `hces_example` every `_coverage` was 1 while a
+  third of the included records never reached the intake.
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is

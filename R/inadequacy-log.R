@@ -49,3 +49,14 @@ not_estimated_rows <- function(step, table, x) {
     audit_row(step, table, "flagged", "not_estimated", n, n, detail = s)
   })
 }
+
+# Note row of the record-loss gate: the overall shares by records and by
+# grams, and the threshold.
+records_used_row <- function(step, x, shares, min_records_used) {
+  one <- if (is.null(x[["scenario"]])) x else x[x$scenario == x$scenario[1], ]
+  shown <- ifelse(is.na(shares), "NA", format(round(shares, 4)))
+  audit_row(step, step, "note", "records_used", sum(one$n_records_included),
+            sum(one$n_records_included > 0),
+            detail = paste0("records: ", shown[[1]], "; grams: ", shown[[2]],
+                            " (min_records_used ", min_records_used, ")"))
+}

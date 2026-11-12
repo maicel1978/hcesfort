@@ -20,6 +20,16 @@
 #' Missing values are therefore never hidden (E21), and the risk step can
 #' require a minimum coverage.
 #'
+#' **Record loss.** The coverage columns say nothing about the records that
+#' never reached the sum (no grams, no composition link, an excluded
+#' outlier). `share_records_used` is the share of the household's included
+#' records that were used; `share_grams_used` the same share by purchased
+#' grams per day (`qty_g_d`), over the included records that have grams. A
+#' record without grams is in neither term, so `share_grams_used` is an
+#' upper bound of what was kept. A record left out by `outliers =
+#' "exclude"` counts as not used. [inadequacy()] and [above_ul()] require a
+#' minimum overall share (`min_records_used`).
+#'
 #' Status, in this order: `food_module_nonresponse` (`households` says the
 #' household did not answer the food module), `no_food_records` (no
 #' record in `content`), `all_records_lost` (records, none used), `no_afe`
@@ -36,6 +46,7 @@
 #' @returns A tibble of class `hces_intake` (and `hces_tbl`), one row per
 #'   household of `households`, in its order: `household_id`,
 #'   `intake_status`, `afe`, `n_records` (in `content`), `n_records_used`,
+#'   `n_records_included`, `share_records_used`, `share_grams_used`,
 #'   `qty_edible_g_d` (edible grams per AFE per day), one column per
 #'   nutrient (amount per AFE per day, in the unit of the registry) and its
 #'   `_coverage` column. The registry travels with the table. The audit log
@@ -78,6 +89,7 @@ apparent_intake <- function(content, afe, households, outliers = NULL) {
   out <- dplyr::tibble(household_id = h$household_id, intake_status = status,
                        afe = afe_h, n_records = sums$n_records,
                        n_records_used = sums$n_used)
+  out <- dplyr::bind_cols(out, records_used_shares(sums))
   per_afe <- function(v) ifelse(ok, v / afe_h, NA_real_)
   out$qty_edible_g_d <- per_afe(sums$edible)
   for (col in nutrients$column) {
@@ -116,9 +128,13 @@ household_sums <- function(x, used, ids, nutrients) {
            USE.NAMES = FALSE)
   }
   edible <- total(x$qty_edible_g_d, used)
+  inc <- x$include
+  g <- !is.na(x$qty_g_d)
   out <- list(n_records = tabulate(k, nbins = n),
               n_used = tabulate(k[used], nbins = n), edible = edible,
-              coverage = list())
+              n_included = tabulate(k[inc], nbins = n),
+              g_included = total(x$qty_g_d, inc & g),
+              g_used = total(x$qty_g_d, used & g), coverage = list())
   for (col in nutrients$column) {
     has <- used & !is.na(x[[col]])
     out[[col]] <- total(x[[col]], has)
@@ -127,6 +143,18 @@ household_sums <- function(x, used, ids, nutrients) {
     out$coverage[[col]] <- cov
   }
   out
+}
+
+# Record loss per household: records included, and the shares of them used,
+# by count and by purchased grams (records without grams are in neither
+# term). NA when the denominator is 0.
+records_used_shares <- function(sums) {
+  share <- function(a, b) ifelse(b > 0, a / b, NA_real_)
+  dplyr::tibble(
+    n_records_included = sums$n_included,
+    share_records_used = share(sums$n_used, sums$n_included),
+    share_grams_used = share(sums$g_used, sums$g_included)
+  )
 }
 
 # The status of each household of `h`, in the documented order.

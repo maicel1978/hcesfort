@@ -9,7 +9,8 @@ inadequacy(
   requirements,
   distribution = NULL,
   bioavailability = NULL,
-  min_coverage
+  min_coverage,
+  min_records_used
 )
 }
 \arguments{
@@ -26,16 +27,20 @@ one per nutrient of the registry assessed by the probability approach.}
 \item{bioavailability}{Named list of one or more values in (0, 1] per
 nutrient of \code{distribution}; required with it.}
 
-\item{min_coverage}{Minimum share of grams with a value, in \verb{[0, 1]}.}
+\item{min_coverage}{Minimum share of the edible grams used that have a
+composition value, in \verb{[0, 1]}.}
+
+\item{min_records_used}{Minimum overall share of the included records
+that were used, in \verb{[0, 1]}.}
 }
 \value{
 A tibble of class \code{hces_inadequacy} (and \code{hces_tbl}), long, key
 \code{scenario} + \code{household_id} + \code{nutrient} + \code{bioavailability}:
 \code{scenario} (missing for an \code{hces_intake}), \code{household_id},
 \code{intake_status}, \code{nutrient}, \code{unit}, \code{intake}, \code{added}, \code{coverage},
-\code{method} (\code{"ear_cutpoint"} or \code{"probability"}), \code{ear},
-\code{bioavailability} and \code{p_inadequate} (missing when the household is not
-\code{estimated}).
+\code{share_records_used}, \code{method} (\code{"ear_cutpoint"} or \code{"probability"}),
+\code{ear}, \code{bioavailability} and \code{p_inadequate} (missing when the household
+is not \code{estimated}).
 }
 \description{
 For each household, scenario and nutrient, whether the apparent intake
@@ -75,7 +80,16 @@ baseline) must reach it, otherwise the call fails with
 \code{hcesfort_error_coverage}: a share below a requirement computed with
 much of the grams missing is a different quantity. \code{0} accepts any
 coverage and says so in the log. The coverage of each household is
-returned, so a domain can be defined on it.
+returned, so a domain can be defined on it. Coverage is measured on the
+records used: it does not see the records that never reached the sum.
+
+\strong{Record loss.} \code{min_records_used} is required. The share of the
+included records that were used (\code{\link[=apparent_intake]{apparent_intake()}},
+\code{share_records_used}), over all households with at least one included
+record whatever their status, unweighted, on the baseline, must reach
+it; otherwise the call fails with \code{hcesfort_error_coverage} (field
+\code{measure = "records_used"}). The share by purchased grams is reported
+with it. \code{0} accepts any loss and says so in the log.
 }
 \examples{
 nutrients <- nutrient_registry(hces_example$nutrients)
@@ -96,7 +110,7 @@ iron <- subset(ref_iron_requirements,
 risk <- inadequacy(intake, ref_requirements,
                    distribution = list(iron = iron),
                    bioavailability = list(iron = c(0.10, 0.18)),
-                   min_coverage = 0.8)
+                   min_coverage = 0.8, min_records_used = 0.6)
 aggregate(p_inadequate ~ nutrient + bioavailability, risk, mean,
           na.action = na.pass)
 }

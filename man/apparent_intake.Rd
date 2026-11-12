@@ -22,6 +22,7 @@ validated or not: the households the result must cover.}
 A tibble of class \code{hces_intake} (and \code{hces_tbl}), one row per
 household of \code{households}, in its order: \code{household_id},
 \code{intake_status}, \code{afe}, \code{n_records} (in \code{content}), \code{n_records_used},
+\code{n_records_included}, \code{share_records_used}, \code{share_grams_used},
 \code{qty_edible_g_d} (edible grams per AFE per day), one column per
 nutrient (amount per AFE per day, in the unit of the registry) and its
 \verb{_coverage} column. The registry travels with the table. The audit log
@@ -48,6 +49,15 @@ edible grams used that have a value for the nutrient (1 when complete;
 \code{NA} when the records used weigh zero grams).
 Missing values are therefore never hidden (E21), and the risk step can
 require a minimum coverage.
+
+\strong{Record loss.} The coverage columns say nothing about the records that
+never reached the sum (no grams, no composition link, an excluded
+outlier). \code{share_records_used} is the share of the household's included
+records that were used; \code{share_grams_used} the same share by purchased
+grams per day (\code{qty_g_d}), over the included records that have grams. A
+record without grams is in neither term, so \code{share_grams_used} is an
+upper bound of what was kept. A record left out by \code{outliers = "exclude"} counts as not used. \code{\link[=inadequacy]{inadequacy()}} and \code{\link[=above_ul]{above_ul()}} require a
+minimum overall share (\code{min_records_used}).
 
 Status, in this order: \code{food_module_nonresponse} (\code{households} says the
 household did not answer the food module), \code{no_food_records} (no

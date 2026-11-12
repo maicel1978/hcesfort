@@ -29,9 +29,13 @@ Fields: \code{table}, \code{other}, \code{columns}, \code{n}.
 \item \code{hcesfort_error_audit}: a table that should carry an audit log does
 not, or its log lacks a step the function requires. Fields: \code{arg},
 \code{expected}.
-\item \code{hcesfort_error_coverage}: the share of grams with a composition value
-for a nutrient is below the minimum the caller set. Fields:
-\code{nutrients}, \code{coverage}, \code{min_coverage}.
+\item \code{hcesfort_error_coverage}: a share the caller set a minimum for is
+below it. Field \code{measure} says which: \code{"composition_value"}, the share
+of the edible grams used that have a composition value, per nutrient
+(\code{min_coverage}); \code{"records_used"}, the share of the included records
+that were used (\code{min_records_used}; field \code{shares} gives it by records
+and by grams). Fields: \code{measure}, \code{nutrients}, \code{coverage},
+\code{min_coverage} (the threshold).
 }
 
 The fields are elements of the condition object (\code{e$table}, \code{e$rows}).

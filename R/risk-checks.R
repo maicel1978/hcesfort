@@ -1,17 +1,70 @@
 # Checks shared by inadequacy() and above_ul(): the requirements table,
 # the minimum coverage and the overall coverage of each nutrient.
 
-# `min_coverage`: required, one number in [0, 1].
-check_min_coverage <- function(min_coverage, call = rlang::caller_env()) {
-  if (!missing(min_coverage) && is.numeric(min_coverage) &&
-        length(min_coverage) == 1 && !is.na(min_coverage) &&
-        min_coverage >= 0 && min_coverage <= 1) {
-    return(min_coverage)
+# A required share: one number in [0, 1], named `arg` in the message.
+check_share_arg <- function(value, arg, what, call = rlang::caller_env()) {
+  if (!missing(value) && is.numeric(value) && length(value) == 1 &&
+        !is.na(value) && value >= 0 && value <= 1) {
+    return(value)
   }
   abort_hcesfort("argument", c(
-    "{.arg min_coverage} must be one number in [0, 1].",
-    "i" = "It has no default; 0 accepts any coverage and says so in the log."
-  ), arg = "min_coverage", call = call)
+    "{.arg {arg}} must be one number in [0, 1].",
+    "i" = "It has no default; 0 accepts any {what} and says so in the log."
+  ), arg = arg, call = call)
+}
+
+# `min_coverage`: required, one number in [0, 1].
+check_min_coverage <- function(min_coverage, call = rlang::caller_env()) {
+  if (missing(min_coverage)) min_coverage <- NULL
+  check_share_arg(min_coverage, "min_coverage", "coverage", call)
+}
+
+# `min_records_used`: required, one number in [0, 1].
+check_min_records_used <- function(min_records_used,
+                                   call = rlang::caller_env()) {
+  if (missing(min_records_used)) min_records_used <- NULL
+  check_share_arg(min_records_used, "min_records_used", "record loss", call)
+}
+
+# Overall record loss on the baseline: used over included records of the
+# households with at least one included record, whatever their status,
+# unweighted; and the same share by purchased grams, read from the log of
+# apparent_intake(). Abort with hcesfort_error_coverage (measure
+# "records_used") below `min_records_used`. Returns both shares.
+check_records_used <- function(x, min_records_used,
+                               call = rlang::caller_env()) {
+  one <- if (is.null(x[["scenario"]])) x else x[x$scenario == x$scenario[1], ]
+  n_inc <- sum(one$n_records_included)
+  shares <- c(records = if (n_inc > 0) sum(one$n_records_used) / n_inc else
+                NA_real_,
+              grams = grams_used_share(x))
+  if (is.na(shares[["records"]]) || shares[["records"]] >= min_records_used) {
+    return(shares)
+  }
+  shown <- format(round(shares, 3))
+  abort_hcesfort("coverage", c(
+    "The share of included records used is below {.arg min_records_used} =
+    {min_records_used}.",
+    "x" = cli_escape(paste0("Records used: ", shown[[1]],
+                            " (by purchased grams: ", shown[[2]], ").")),
+    "i" = paste(
+      "Rank the foods lost with {.fn unmatched_foods} and fix their unit",
+      "factors or crosswalk rows, or lower {.arg min_records_used}."
+    )
+  ), measure = "records_used", nutrients = character(0),
+  coverage = shares[["records"]], shares = shares,
+  min_coverage = min_records_used, call = call)
+}
+
+# Overall share of the purchased grams of the included records that were
+# used, from the rows of apparent_intake() in the log of `x`.
+grams_used_share <- function(x) {
+  log <- audit_get(x)
+  l <- log[log$step == "apparent_intake" & log$table == "nutrient_content", ]
+  g <- function(cause) sum(l$qty_g[l$cause == cause])
+  if (!any(l$cause == "all")) return(NA_real_)
+  inc <- g("all") - g("not_included")
+  if (is.na(inc) || inc <= 0) NA_real_ else g("used") / inc
 }
 
 # The rows of `requirements` for registry nutrients with a value in
@@ -73,12 +126,16 @@ check_coverage <- function(x, nutrients, assessed, min_coverage,
   }
   shown <- paste0(names(cov)[low], " (", format(round(cov[low], 3)), ")")
   abort_hcesfort("coverage", c(
-    "Coverage is below {.arg min_coverage} = {min_coverage}.",
+    paste(
+      "The share of the edible grams used that have a composition value",
+      "is below {.arg min_coverage} = {min_coverage}."
+    ),
     "x" = cli_escape(paste0("Below: ", paste(shown, collapse = ", "), ".")),
     "i" = paste(
       "Fill the gaps with {.fn fill_composition}, or leave these",
-      "nutrients out of {.arg requirements}."
+      "nutrients out of {.arg requirements}. Records that never reached",
+      "the sum are gated by {.arg min_records_used}."
     )
-  ), nutrients = names(cov)[low], coverage = unname(cov[low]),
-  min_coverage = min_coverage, call = call)
+  ), measure = "composition_value", nutrients = names(cov)[low],
+  coverage = unname(cov[low]), min_coverage = min_coverage, call = call)
 }

@@ -1,7 +1,7 @@
 # Design of the corrections of the v0.1 review (1, 2, 3, 8, 10; 4 accepted)
 
-Status: **proposed 2026-11-12**; the decisions of section 8 wait for the
-maintainer. Implemented by Opus once approved, one commit per correction.
+Status: **approved as recommended 2026-11-12** (decisions of section 8;
+see `docs/improvements.md`). Implemented by Opus, one commit per correction.
 
 Inputs read: `docs/review-v0.1.md` (H1–H4, M7, M8, M10, M12, L1, L2, L9) and
 the maintainer's answers to its section 11; `R/intake.R`, `R/inadequacy.R`,
