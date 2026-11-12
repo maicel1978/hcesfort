@@ -7,6 +7,7 @@
 - `docs/analysis-map.md`: mapping from the ENGIH 2018 analysis to the package, with the errors found (E1–E26).
 - `docs/roadmap.md`: tasks in order; work only on the first open task.
 - `docs/improvements.md`: proposals, their status and the decisions taken.
+- `docs/model-routing.md`: which model does which work and when to stop and hand off; `docs/handoff.md` (if present): state left by the previous session, continue from it.
 
 ## Scope of the package
 - The core is survey-agnostic: no survey, country, food list or fixed set of nutrients in `R/`. It must adapt to any HCES through tables that satisfy the contracts.
@@ -36,6 +37,17 @@ Known errors of the original analysis are not ported: they are fixed and recorde
 - Never claim something works without running it: every claim is backed by a test or by the output of `devtools::test()` / `devtools::check()`.
 - Never call a function from another package without checking that it exists and how it is called (`?pkg::fun`, or by running it).
 - Every reference value or citation has a verifiable source. If it cannot be verified, write `# SOURCE PENDING` and say so. Never invent it.
+
+## Verification against independent references
+- Every estimator is tested against a direct computation with the reference implementation (`survey::svymean`, `survey::svyciprop`, `survey::svyquantile`) on a small hand-built design; results must agree to 1e-8.
+- Every core function has at least one invariant test, for example: scaling all quantities by k scales intake by k; adding a fortificant never lowers intake; the reference woman has exactly 1 AFE; the proportion below the requirement never increases when the requirement decreases; results do not depend on row order.
+- Reference values (task 4) are taken only from the parameter files in analisis_ENGIH2018/data/raw/ or from a document opened in the session. `data-raw/SOURCES.md` lists each value with document, table or page, and status (`verified` or `pending`). The maintainer checks the pending ones.
+
+## Maintainer review points
+At the end of each task, `docs/handoff.md` lists up to three things the maintainer should check by hand, each with the R code to do it.
+
+## Chat economy
+Keep chat replies short: what was done, what comes next, questions. Details go in files and commit messages.
 
 ## Questions
 On any doubt about method, data or scope: stop and ask. Ask all questions at once, numbered, each with the recommended option and why. Never choose an interpretation silently. While waiting, continue with work that does not depend on the answer.
