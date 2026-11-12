@@ -195,6 +195,15 @@
   `outlier_decision`); `apply_scenario()` refuses a pair built with a
   different AFE or outlier decision (`hcesfort_error_join`). Before, a
   scenario could add fortificant from records the baseline had excluded.
+* `hces_example` recalibrated (review of v0.1, H6): quantities scale with
+  household size, the planted defects stay in a few records (milk has a
+  density; one milk record in cups has not), a fourteenth food (pumpkin)
+  carries vitamin A, and the folic acid level of `flour_and_sugar` is
+  4.5 mg/kg. Median energy is now about 2,200 kcal per AFE per day
+  (518 before), 90% of the included records reach the intake (68%
+  before), and two households pass the folic acid UL. A golden test runs
+  the whole chain and compares 17 figures with values computed without
+  the package (`data-raw/golden_example.R`), at 1e-8.
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is

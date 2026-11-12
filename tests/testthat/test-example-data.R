@@ -60,3 +60,12 @@ test_that("every validated food code has a vehicle or composition row", {
   expect_true(all(matched %in% e$composition$composition_id))
   expect_true(all(e$acquisitions$food_code %in% e$crosswalk$food_code))
 })
+
+test_that("planted units: one record without factor, one without density", {
+  g <- convert_units(hces_example$acquisitions, hces_example$unit_factors,
+                     priority = "food")
+  expect_identical(sum(g$grams_status == "no_density"), 1L)
+  expect_identical(g$food_code[g$grams_status == "no_density"], "milk")
+  expect_identical(sum(g$grams_status == "no_factor"), 1L)
+  expect_gt(mean(g$food_code[g$grams_status == "converted"] == "milk"), 0)
+})

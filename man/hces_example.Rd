@@ -17,7 +17,7 @@ or pieces.}
 \item{crosswalk}{Survey foods matched to the composition table.}
 \item{nutrients}{Named character vector of units for
 \code{\link[=nutrient_registry]{nutrient_registry()}}: energy, iron, folate and vitamin A.}
-\item{composition}{An invented composition table of 13 foods, per
+\item{composition}{An invented composition table of 14 foods, per
 100 g edible portion.}
 \item{enrichment}{What enrichment added to the enriched pasta and
 flour, for \code{\link[=unfortified_baseline]{unfortified_baseline()}}.}
@@ -47,12 +47,20 @@ count: a household that did not answer the food module and one without
 acquisitions; a member without age and one without sex; an acquisition
 without quantity, one without unit, one left out by the section rule,
 one with an implausibly large quantity and one in a unit without factor
-(\code{"sack"}); two recall periods (7 and 30 days); a volume factor without
-density; an unmatched and an unvalidated food; a missing nutrient value
+(\code{"sack"}); a milk record in cups, a volume unit without a density for
+milk; two recall periods (7 and 30 days); an unmatched and an
+unvalidated food; a missing nutrient value
 and two enriched composition rows with the rules that remove what
 enrichment added; a food with two vehicles of different groups; a
 scenario that fortifies only some vehicles of a group; a scenario level
-given for a compound.
+given for a compound. The planted defects stay in a few records, so
+that most included records reach the intake.
+
+Quantities were recalibrated (2026-11-12) so that results read like a
+survey: the median apparent energy intake is about 2,200 kcal per adult
+female equivalent per day, iron, folate and vitamin A straddle their
+requirements, and the scenario \code{flour_and_sugar} takes a few households
+above the upper level of folic acid.
 }
 \examples{
 survey <- validate_survey(
