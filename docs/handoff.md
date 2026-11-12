@@ -1,57 +1,67 @@
 # Handoff
 
 - **Date:** 2026-11-12
-- **Session:** roadmap items 11b.8 to 11b.10 (corrections of the v0.1
-  review). Model: Opus 5.5 (see the commit trailers).
-- **Branch:** `main`.
+- **Session:** roadmap items 11b.8 to 11b.10 and the closing of task 11b
+  (corrections of the v0.1 review). Model: Opus 5.5 (see the commit
+  trailers).
+- **Branch:** `main`. Stopped because task 12 is for Sonnet
+  (`docs/model-routing.md`).
 
 ## What was done
 
 | Commit | Content |
 |---|---|
-| `1a24f31` | The six choices of P87 recorded as approved (`docs/improvements.md`) |
-| `3456435` | 11b.8 `audit_combine()`: every merge of several logs without repeated branches (21 repeated rows gone from the log of `apply_scenario()` on `hces_example`); exported `audit_summary()` and `audit_record()` |
+| `1a24f31` | P87 recorded as approved |
+| `3456435` | 11b.8 Logs merged without repeated branches; `audit_summary()`, `audit_record()` |
 | `9ee1d77` | 11b.9 `estimate_households()`; `flag_energy_plausibility(intake, energy, lower, upper)`; `adult_equivalents(missing_members =)` |
-| `5013ab1` | 11b.10 `reference_energy()`; `qty_vehicle_g_d_pc` in `vehicle_coverage()`; `who2009_levels()`; WHO 2009 basis quoted with the PDF open (md5 matches `data-raw/SOURCES.md`); P89, P90 |
+| `5013ab1` | 11b.10 `reference_energy()`; `qty_vehicle_g_d_pc`; `who2009_levels()` |
+| `1e8b5ef` | P89 approved; P90 decided: the per capita availability is the ratio of weighted totals of grams and members (`survey::svyratio()`), shown in the help of `who2009_levels()` and tested at 1e-8; specification updated |
+| `7b8be62` | Close 11b: self-review fixes (silent drop in `who2009_levels()`, `get()` in `reference_energy()`, missing test); P91–P94 |
 | this commit | This handoff |
 
 State: `devtools::check()` 0 errors, 0 warnings, 0 notes;
-`lintr::lint_package()` clean; 1,474 tests pass; the golden values did
-not change.
+`lintr::lint_package()` clean; 1,482 tests pass; coverage 99.5%.
 
 ## Exact next step
 
-**Opus** closes task 11b: update `docs/specification.md` (exported
-functions `audit_summary()`, `audit_record()`, `reference_energy()`,
-`who2009_levels()`; the renames), self-review as an rOpenSci reviewer,
-coverage (`covr::package_coverage()` ≥ 90%), tick 11b in
-`docs/roadmap.md`, and write this handoff. Then task 12 (Sonnet).
+**Sonnet** starts task 12 (`docs/roadmap.md`): vignettes in English
+(Spanish version of the main one), from standard tables to risk by
+scenario on `hces_example`; how to write an adapter (`audit_record()`,
+`restore_audit()`); plotting results with `ggplot2`. The main vignette
+must:
+
+- use `reference_energy()` for `reference_kcal`;
+- compute the flour availability per person as in the example of
+  `?who2009_levels` (ratio of totals, P90), then call `who2009_levels()`;
+- show `audit_summary()` at the end of the chain.
 
 ## Open questions
 
-- **P89** (five choices taken in implementation of 11b.8–11b.10) for the
-  maintainer to confirm; see `docs/improvements.md`.
-- **P90** Mean availability per capita for `who2009_levels()`: weight by
-  households (mean of `qty_vehicle_g_d_pc`) or by persons (ratio of
-  totals, `survey::svyratio`)? Methodological: Fable, before the vignette.
-- Zinc `ear_bioavailability` stays `# SOURCE PENDING`.
+None for the maintainer. Open items for later: P91 (a helper for the
+ratio, v0.2), P92–P94 (low). Zinc `ear_bioavailability` stays
+`# SOURCE PENDING`.
 
 ## Recommended model for the next session
 
-**Opus 5.5** to close 11b; P90 needs **Fable** before task 12.
+**Sonnet 5.5** (task 12, vignettes).
 
 ## Maintainer review points
 
-1. **The WHO 2009 quotations and the boundary rule.**
+1. **The WHO 2009 boundary rule.**
 
    ```r
-   # Open https://iris.who.int/handle/10665/111837 (Table 1, and p. 1:
-   # "75-150 g/day" in the text, "75-149" in the table).
    sapply(c(74.9, 75, 149.5, 150, 300, 300.1), function(a)
      unique(hcesfort::who2009_levels(a, "low")$availability_g_d))
    ```
 
-2. **The merged audit log has no repeated branch and reads well.**
+2. **The per person availability of the example.**
+
+   ```r
+   example(who2009_levels, package = "hcesfort")
+   coef(r)   # about 77 g per person per day on hces_example
+   ```
+
+3. **The merged audit log reads well.**
 
    ```r
    devtools::load_all()
@@ -59,12 +69,4 @@ coverage (`covr::package_coverage()` ≥ 90%), tick 11b in
    ch <- golden_chain()
    anyDuplicated(audit_log(ch$s))   # 0
    audit_summary(ch$s)
-   ```
-
-3. **Grams per member against grams per AFE.**
-
-   ```r
-   u <- ch$use[ch$use$vehicle == "flour" &
-                 ch$use$use_status == "estimated", ]
-   all.equal(u$qty_vehicle_g_d_pc * u$n_members, u$qty_vehicle_g_d * u$afe)
    ```
