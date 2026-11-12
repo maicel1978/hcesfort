@@ -12,8 +12,7 @@
 | `f491a81` | Task 6, part 2: `flag_outliers()` (rule as required arguments, scale and level, not-assessed causes); self-review items P59–P62 in `docs/improvements.md`. |
 
 On the last commit: `devtools::check()` 0/0/0; `lintr::lint_package()`
-clean; 610 tests; coverage 100% before the last small change (run
-`covr::package_coverage()` to confirm).
+clean; 610 tests; coverage 100%.
 
 Environment notes: as in the previous handoff (`LANG=C.UTF-8
 LC_ALL=C.UTF-8 _R_CHECK_SYSTEM_CLOCK_=0` for check; `R CMD INSTALL .`
@@ -71,8 +70,10 @@ to change. Nothing blocks task 7.
          generic = gg$qty_g_d[which(d)])
    ```
 
-3. **The original outlier rule is one explicit call, and per AFE changes
-   the flags (E9).**
+3. **The rule is explicit, and per AFE changes the flags (E9).** The
+   original rule (`c(0.005, 0.995)`, 5, 20) assesses nothing in the small
+   example (groups under 20 records: all `NA`, counted in the log); a
+   looser rule shows the difference.
 
    ```r
    eq <- subset(ref_bmr_equations, sex == "female" & age_from == 18)
@@ -80,8 +81,10 @@ to change. Nothing blocks task 7.
    afe <- adult_equivalents(hces_example$members, ref, c(female = 55, male = 65), 1.76)
    orig <- flag_outliers(gf, "food_code", "household", "record",
                          c(0.005, 0.995), 5, 20)
+   table(orig$outlier, useNA = "ifany")
+   hh <- flag_outliers(gf, "food_code", "household", "record", c(0.1, 0.9), 1.5, 5)
    per_afe <- flag_outliers(gf, "food_code", "per_afe", "record",
-                            c(0.005, 0.995), 5, 20, afe = afe)
-   table(orig$outlier, per_afe$outlier, useNA = "ifany")
+                            c(0.1, 0.9), 1.5, 5, afe = afe)
+   table(household = hh$outlier, per_afe = per_afe$outlier, useNA = "ifany")
    subset(audit_log(per_afe), step == "flag_outliers")
    ```
