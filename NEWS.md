@@ -24,6 +24,18 @@
   `compliance` gets 1 and the assumption is written in the audit log.
 * `hces_example`: a synthetic survey with every input table, invented
   values only, built by `data-raw/hces_example.R`.
+* Reference tables with their source, each row read in the document and
+  located by table and page (`?reference_tables`): EAR and UL with the
+  intake the UL applies to (`ref_requirements`), percentiles of iron
+  requirements (`ref_iron_requirements`), energy requirements
+  (`ref_energy_requirements`) and BMR equations (`ref_bmr_equations`),
+  conversion factors to DFE and RAE (`ref_conversions`), and the WHO 2009
+  wheat flour levels (`ref_who2009_flour`). Values that could not be
+  checked are not shipped. Compared with the parameter files of the
+  original ENGIH 2018 analysis, every value agrees with its document; the
+  WHO 2009 vitamin B12 and vitamin A rows, marked unconfirmed there, are
+  now verified (Table 1), and the vitamin E UL (1,000 mg, supplementary
+  alpha-tocopherol only), left blank there, is entered.
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is

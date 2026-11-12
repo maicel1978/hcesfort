@@ -1,0 +1,13 @@
+sex,age_from,age_to,slope_kcal_kg,intercept_kcal,see_kcal,source,location,status
+male,0,3,59.512,-30.4,70,"FAO/WHO/UNU 2004, Human energy requirements",Table 5.2,verified
+male,3,10,22.706,504.3,67,"FAO/WHO/UNU 2004, Human energy requirements",Table 5.2,verified
+male,10,18,17.686,658.2,105,"FAO/WHO/UNU 2004, Human energy requirements",Table 5.2,verified
+male,18,30,15.057,692.2,153,"FAO/WHO/UNU 2004, Human energy requirements",Table 5.2,verified
+male,30,60,11.472,873.1,167,"FAO/WHO/UNU 2004, Human energy requirements",Table 5.2,verified
+male,60,Inf,11.711,587.7,164,"FAO/WHO/UNU 2004, Human energy requirements",Table 5.2,verified
+female,0,3,58.317,-31.1,59,"FAO/WHO/UNU 2004, Human energy requirements",Table 5.2,verified
+female,3,10,20.315,485.9,70,"FAO/WHO/UNU 2004, Human energy requirements",Table 5.2,verified
+female,10,18,13.384,692.6,111,"FAO/WHO/UNU 2004, Human energy requirements",Table 5.2,verified
+female,18,30,14.818,486.6,119,"FAO/WHO/UNU 2004, Human energy requirements",Table 5.2,verified
+female,30,60,8.126,845.6,111,"FAO/WHO/UNU 2004, Human energy requirements",Table 5.2,verified
+female,60,Inf,9.082,658.5,108,"FAO/WHO/UNU 2004, Human energy requirements",Table 5.2,verified

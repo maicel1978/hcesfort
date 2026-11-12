@@ -271,6 +271,24 @@ the key check did not allow the generic `food_code = NA` of
 | P49 | low | **Error messages name the table, not the argument.** `validate_composition(x, ...)` says "`composition` has...", while the argument is `x`. Consistent across validators and clearer for the user, but differs from the tidyverse habit of naming the argument. | Style. | 12 |
 | P50 | low | **No `print()` method for `hces_survey` and `hces_tbl`.** Printing a validated table shows a plain tibble; the log is reached with `audit_log()` (design section 4). | Discoverability. | 12 |
 
+## Open items from task 4 (2026-11-12)
+
+Every reference value was read in the source document during the session
+(FAO, IOM and WHO texts opened online; places in `data-raw/SOURCES.md`).
+All values used by the original analysis agree with the documents. Two
+values stay pending and are not shipped (vitamin D: the intake its UL
+applies to; retinyl palmitate to RAE). Self-review, as an rOpenSci reviewer
+would:
+
+| ID | Priority | Item | Rationale | Roadmap task |
+|---|---|---|---|---|
+| P51 | medium | **`ref_requirements` covers one group (women 19–30 years).** Other life stages (children, men, pregnancy, lactation) are entered from the same IOM summary tables when a function needs them. | The method uses the reference woman; a per-person analysis (prevalence by persons, v0.2) needs every life stage. | 10 or v0.2 |
+| P52 | medium | **Nutrient names differ between WHO 2009 and the registry.** WHO gives folic acid (a compound) where the requirement is folate in DFE; vitamin A is given "as nutrient" without its form. The mapping from a WHO row to a scenario row (`level_basis`, `compound`, conversion through `ref_conversions`) belongs to the scenario design. | E8; the scenario contract already has `level_basis` and `compound`. | 9 (Fable design) |
+| P53 | medium | **Adults' energy needs weight and PAL from the user.** `ref_bmr_equations` ships the equations only; body weight and physical activity level are arguments without default (the 55/65 kg and PAL 1.76 of the original come from the ENGIH methodology and belong to the adapter). Infants are monthly; averaging the twelve months, as the original did, is an explicit option. | No hidden default (CLAUDE.md). | 5 |
+| P54 | low | **The md5 test of `data-raw/` runs only from the source tree.** `R CMD check` (and so CI) tests the installed package, where `data-raw/` is absent, and the test is skipped. A CI step running `devtools::test()` from the checkout would enforce it. | The check exists and runs locally before every commit. | 12 or v1.0 |
+| P55 | low | **Long tables carry the unit in a `unit` column.** `ref_requirements` holds several nutrients, so `ear` and `ul` cannot carry a unit suffix; the unit is a column written as in `nutrient_registry()`. Functions that use it must check the unit against the registry. | A deliberate exception to "column names carry the unit". | 10 |
+| P56 | low | **`sex = "both"` in `ref_iron_requirements`.** Young children's percentiles are pooled for both sexes; the members contract uses `female`/`male`. The function that picks a group must accept `both`. | Join rule to state in task 10. | 10 |
+
 ## Part A. From the review of the original analysis
 
 | ID | Priority | Proposal | Rationale | Roadmap task |

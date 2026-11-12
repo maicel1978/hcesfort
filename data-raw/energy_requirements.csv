@@ -1,0 +1,59 @@
+sex,age_from,age_to,age_unit,energy_kcal_d,physical_activity,source,location,status
+male,0,1,month,518,not applicable,"FAO/WHO/UNU 2004, Human energy requirements",Table 3.2,verified
+male,1,2,month,570,not applicable,"FAO/WHO/UNU 2004, Human energy requirements",Table 3.2,verified
+male,2,3,month,596,not applicable,"FAO/WHO/UNU 2004, Human energy requirements",Table 3.2,verified
+male,3,4,month,569,not applicable,"FAO/WHO/UNU 2004, Human energy requirements",Table 3.2,verified
+male,4,5,month,608,not applicable,"FAO/WHO/UNU 2004, Human energy requirements",Table 3.2,verified
+male,5,6,month,639,not applicable,"FAO/WHO/UNU 2004, Human energy requirements",Table 3.2,verified
+male,6,7,month,653,not applicable,"FAO/WHO/UNU 2004, Human energy requirements",Table 3.2,verified
+male,7,8,month,680,not applicable,"FAO/WHO/UNU 2004, Human energy requirements",Table 3.2,verified
+male,8,9,month,702,not applicable,"FAO/WHO/UNU 2004, Human energy requirements",Table 3.2,verified
+male,9,10,month,731,not applicable,"FAO/WHO/UNU 2004, Human energy requirements",Table 3.2,verified
+male,10,11,month,752,not applicable,"FAO/WHO/UNU 2004, Human energy requirements",Table 3.2,verified
+male,11,12,month,775,not applicable,"FAO/WHO/UNU 2004, Human energy requirements",Table 3.2,verified
+female,0,1,month,464,not applicable,"FAO/WHO/UNU 2004, Human energy requirements",Table 3.2,verified
+female,1,2,month,517,not applicable,"FAO/WHO/UNU 2004, Human energy requirements",Table 3.2,verified
+female,2,3,month,550,not applicable,"FAO/WHO/UNU 2004, Human energy requirements",Table 3.2,verified
+female,3,4,month,537,not applicable,"FAO/WHO/UNU 2004, Human energy requirements",Table 3.2,verified
+female,4,5,month,571,not applicable,"FAO/WHO/UNU 2004, Human energy requirements",Table 3.2,verified
+female,5,6,month,599,not applicable,"FAO/WHO/UNU 2004, Human energy requirements",Table 3.2,verified
+female,6,7,month,604,not applicable,"FAO/WHO/UNU 2004, Human energy requirements",Table 3.2,verified
+female,7,8,month,629,not applicable,"FAO/WHO/UNU 2004, Human energy requirements",Table 3.2,verified
+female,8,9,month,652,not applicable,"FAO/WHO/UNU 2004, Human energy requirements",Table 3.2,verified
+female,9,10,month,676,not applicable,"FAO/WHO/UNU 2004, Human energy requirements",Table 3.2,verified
+female,10,11,month,694,not applicable,"FAO/WHO/UNU 2004, Human energy requirements",Table 3.2,verified
+female,11,12,month,712,not applicable,"FAO/WHO/UNU 2004, Human energy requirements",Table 3.2,verified
+male,1,2,year,948,moderate,"FAO/WHO/UNU 2004, Human energy requirements",Table 4.2,verified
+male,2,3,year,1129,moderate,"FAO/WHO/UNU 2004, Human energy requirements",Table 4.2,verified
+male,3,4,year,1252,moderate,"FAO/WHO/UNU 2004, Human energy requirements",Table 4.2,verified
+male,4,5,year,1360,moderate,"FAO/WHO/UNU 2004, Human energy requirements",Table 4.2,verified
+male,5,6,year,1467,moderate,"FAO/WHO/UNU 2004, Human energy requirements",Table 4.2,verified
+male,6,7,year,1573,moderate,"FAO/WHO/UNU 2004, Human energy requirements",Table 4.2,verified
+male,7,8,year,1692,moderate,"FAO/WHO/UNU 2004, Human energy requirements",Table 4.2,verified
+male,8,9,year,1830,moderate,"FAO/WHO/UNU 2004, Human energy requirements",Table 4.2,verified
+male,9,10,year,1978,moderate,"FAO/WHO/UNU 2004, Human energy requirements",Table 4.2,verified
+male,10,11,year,2150,moderate,"FAO/WHO/UNU 2004, Human energy requirements",Table 4.2,verified
+male,11,12,year,2341,moderate,"FAO/WHO/UNU 2004, Human energy requirements",Table 4.2,verified
+male,12,13,year,2548,moderate,"FAO/WHO/UNU 2004, Human energy requirements",Table 4.2,verified
+male,13,14,year,2770,moderate,"FAO/WHO/UNU 2004, Human energy requirements",Table 4.2,verified
+male,14,15,year,2990,moderate,"FAO/WHO/UNU 2004, Human energy requirements",Table 4.2,verified
+male,15,16,year,3178,moderate,"FAO/WHO/UNU 2004, Human energy requirements",Table 4.2,verified
+male,16,17,year,3322,moderate,"FAO/WHO/UNU 2004, Human energy requirements",Table 4.2,verified
+male,17,18,year,3410,moderate,"FAO/WHO/UNU 2004, Human energy requirements",Table 4.2,verified
+female,1,2,year,865,moderate,"FAO/WHO/UNU 2004, Human energy requirements",Table 4.3,verified
+female,2,3,year,1047,moderate,"FAO/WHO/UNU 2004, Human energy requirements",Table 4.3,verified
+female,3,4,year,1156,moderate,"FAO/WHO/UNU 2004, Human energy requirements",Table 4.3,verified
+female,4,5,year,1241,moderate,"FAO/WHO/UNU 2004, Human energy requirements",Table 4.3,verified
+female,5,6,year,1330,moderate,"FAO/WHO/UNU 2004, Human energy requirements",Table 4.3,verified
+female,6,7,year,1428,moderate,"FAO/WHO/UNU 2004, Human energy requirements",Table 4.3,verified
+female,7,8,year,1554,moderate,"FAO/WHO/UNU 2004, Human energy requirements",Table 4.3,verified
+female,8,9,year,1698,moderate,"FAO/WHO/UNU 2004, Human energy requirements",Table 4.3,verified
+female,9,10,year,1854,moderate,"FAO/WHO/UNU 2004, Human energy requirements",Table 4.3,verified
+female,10,11,year,2006,moderate,"FAO/WHO/UNU 2004, Human energy requirements",Table 4.3,verified
+female,11,12,year,2149,moderate,"FAO/WHO/UNU 2004, Human energy requirements",Table 4.3,verified
+female,12,13,year,2276,moderate,"FAO/WHO/UNU 2004, Human energy requirements",Table 4.3,verified
+female,13,14,year,2379,moderate,"FAO/WHO/UNU 2004, Human energy requirements",Table 4.3,verified
+female,14,15,year,2449,moderate,"FAO/WHO/UNU 2004, Human energy requirements",Table 4.3,verified
+female,15,16,year,2491,moderate,"FAO/WHO/UNU 2004, Human energy requirements",Table 4.3,verified
+female,16,17,year,2503,moderate,"FAO/WHO/UNU 2004, Human energy requirements",Table 4.3,verified
+female,17,18,year,2503,moderate,"FAO/WHO/UNU 2004, Human energy requirements",Table 4.3,verified
