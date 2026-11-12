@@ -4,7 +4,8 @@
 # on exit, requires it on entry, and records changes in the number of rows.
 
 # Attributes of a carrier that are re-attached by the package.
-carrier_attrs <- c("audit", "audit_rows", "audit_key", "nutrients")
+carrier_attrs <- c("audit", "audit_rows", "audit_key", "nutrients",
+                   "outlier_decision")
 
 # A carrier: `data` as a tibble of class `c(class, "hces_tbl")`, with its
 # log, its key columns, its current number of rows and, for tables with

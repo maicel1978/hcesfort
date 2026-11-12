@@ -45,12 +45,14 @@
 #'   `list(any_staple = c("wheat_flour", "sugar"))`.
 #' @returns A tibble of class `hces_vehicle_use` (and `hces_tbl`), key
 #'   `household_id` + `level` + `vehicle`, in the order of `households`:
-#'   `household_id`, `use_status`, `level`, `vehicle`, `acquired`,
+#'   `household_id`, `use_status`, `afe` and `n_members` (of the household,
+#'   from `afe`), `level`, `vehicle`, `acquired`,
 #'   `n_records` (included records of the vehicle's foods),
 #'   `n_records_no_grams` and `qty_vehicle_g_d` (grams of vehicle per AFE
 #'   per day; missing unless `use_status` is `estimated`, and for
 #'   `combined` rows). The audit log continues the logs of `grams`,
-#'   `vehicles`, `afe` and `households`.
+#'   `vehicles`, `afe` and `households`; the outlier decision travels as
+#'   in [apparent_intake()].
 #' @seealso [apply_scenario()], [apparent_intake()].
 #' @examples
 #' grams <- convert_units(
@@ -92,11 +94,29 @@ vehicle_coverage <- function(grams, vehicles, afe, households,
     no_afe = is.na(afe_h) | afe_h <= 0
   ), none = "estimated")
   out <- use_rows(x[used, ], items, h$household_id, status, afe_h)
+  out <- household_afe_columns(out, afe)
   log <- vehicle_log(x, reasons, used, v, items, out, status)
   log <- dplyr::bind_rows(audit_get(x), audit_get(v), audit_get(afe),
                           audit_get(h), log)
-  new_hces_tbl(out, "hces_vehicle_use", log,
-               c("household_id", "level", "vehicle"))
+  out <- new_hces_tbl(out, "hces_vehicle_use", log,
+                      c("household_id", "level", "vehicle"))
+  attr(out, "outlier_decision") <- outlier_decision(x, outliers)
+  out
+}
+
+# `out` with the AFE and the number of members of each household, after
+# `use_status`.
+household_afe_columns <- function(out, afe, call = rlang::caller_env()) {
+  if (is.null(afe[["n_members"]])) {
+    abort_hcesfort("schema", c(
+      "{.arg afe} lacks the column {.field n_members}.",
+      "i" = "Pass the table returned by {.fn adult_equivalents}."
+    ), table = "afe", columns = "n_members", call = call)
+  }
+  i <- match(out$household_id, afe$household_id)
+  out$afe <- afe$afe[i]
+  out$n_members <- afe$n_members[i]
+  dplyr::relocate(out, "afe", "n_members", .after = "use_status")
 }
 
 # Reasons a record of `grams` is left out of vehicle use.

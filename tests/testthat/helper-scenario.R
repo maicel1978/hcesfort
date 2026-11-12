@@ -44,7 +44,8 @@ as_pipeline <- function(scale = 1, baseline = TRUE) {
     comp <- unfortified_baseline(comp, no_rules(), as_registry())
   }
   h <- data.frame(household_id = 1:3, weight = 1, stratum = 1, psu = 1:3)
-  afe <- new_hces_tbl(data.frame(household_id = 1:3, afe = c(2, 1, 1)),
+  afe <- new_hces_tbl(data.frame(household_id = 1:3, n_members = 1,
+                                 afe = c(2, 1, 1)),
                       "hces_afe", key = "household_id")
   v <- data.frame(food_code = c("flour", "sugar", "pasta"),
                   vehicle = c("flour", "sugar", "pasta"),

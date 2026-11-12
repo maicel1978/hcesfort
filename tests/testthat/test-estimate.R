@@ -239,7 +239,7 @@ test_that("the example chain runs to estimates", {
                      priority = "food")
   afe <- new_hces_tbl(
     data.frame(household_id = hces_example$households$household_id,
-               afe = 1),
+               n_members = 1, afe = 1),
     "hces_afe", key = "household_id"
   )
   use <- vehicle_coverage(g, hces_example$vehicles, afe,

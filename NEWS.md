@@ -189,6 +189,12 @@
   analysis of the original can now be run on the risk tables; the log of
   the estimate records the domain, its origin, the households with a
   missing flag and the log of the flag.
+* Intake and vehicle use on the same footing (review of v0.1, H4, P76):
+  `vehicle_coverage()` returns `afe` and `n_members`; `apparent_intake()`
+  and `vehicle_coverage()` keep their outlier decision (attribute
+  `outlier_decision`); `apply_scenario()` refuses a pair built with a
+  different AFE or outlier decision (`hcesfort_error_join`). Before, a
+  scenario could add fortificant from records the baseline had excluded.
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is

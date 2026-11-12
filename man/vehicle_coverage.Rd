@@ -35,12 +35,14 @@ of vehicle or group names, for example
 \value{
 A tibble of class \code{hces_vehicle_use} (and \code{hces_tbl}), key
 \code{household_id} + \code{level} + \code{vehicle}, in the order of \code{households}:
-\code{household_id}, \code{use_status}, \code{level}, \code{vehicle}, \code{acquired},
+\code{household_id}, \code{use_status}, \code{afe} and \code{n_members} (of the household,
+from \code{afe}), \code{level}, \code{vehicle}, \code{acquired},
 \code{n_records} (included records of the vehicle's foods),
 \code{n_records_no_grams} and \code{qty_vehicle_g_d} (grams of vehicle per AFE
 per day; missing unless \code{use_status} is \code{estimated}, and for
 \code{combined} rows). The audit log continues the logs of \code{grams},
-\code{vehicles}, \code{afe} and \code{households}.
+\code{vehicles}, \code{afe} and \code{households}; the outlier decision travels as
+in \code{\link[=apparent_intake]{apparent_intake()}}.
 }
 \description{
 For each household and each vehicle, whether the household acquired the

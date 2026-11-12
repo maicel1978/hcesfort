@@ -257,3 +257,12 @@ test_that("the composition-value gate names its measure", {
                       class = "hcesfort_error_coverage")
   expect_identical(err$measure, "composition_value")
 })
+
+test_that("the outlier decision travels with the intake", {
+  x <- ai_content()
+  x$outlier <- FALSE
+  i <- apparent_intake(x, ai_afe(), ai_households(), outliers = "keep")
+  expect_identical(attr(i, "outlier_decision"), "keep; rule not logged")
+  expect_identical(attr(dplyr::filter(i, TRUE), "outlier_decision"),
+                   attr(i, "outlier_decision"))
+})

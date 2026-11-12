@@ -67,6 +67,7 @@ check_scenario_use <- function(x, use, s, call = rlang::caller_env()) {
     ), table = "scenarios", other = "use", columns = "vehicle", n = n,
     call = call)
   }
+  check_scenario_basis(x, use, call)
   ids <- unique(use$household_id)
   est <- unique(use$household_id[use$use_status == "estimated"])
   missing <- x$household_id[x$intake_status == "estimated" &
@@ -122,4 +123,36 @@ scenario_log <- function(x, use, s, out, names_s, added_cols, model) {
     note("added_understated", understated, names_s, kind = "flagged",
          households = TRUE)
   )
+}
+
+# Abort with hcesfort_error_join when `intake` and `use` were built with a
+# different AFE for a household or a different outlier decision.
+check_scenario_basis <- function(x, use, call) {
+  a <- x$afe
+  b <- use$afe[match(x$household_id, use$household_id)]
+  differ <- xor(is.na(a), is.na(b)) | (!is.na(a) & !is.na(b) & a != b)
+  n <- sum(differ)
+  if (n > 0) {
+    abort_hcesfort("join", c(
+      "{.arg intake} and {.arg use} were built with different AFE.",
+      "x" = "{n} household{?s} differ{?s/}, for example
+      {.val {utils::head(x$household_id[differ], 3)}}.",
+      "i" = "Build both from the same {.fn adult_equivalents} table."
+    ), table = "intake", other = "use", columns = "afe", n = n, call = call)
+  }
+  d <- vapply(list(x, use), function(t) {
+    v <- attr(t, "outlier_decision", exact = TRUE)
+    if (is.null(v)) "not recorded" else v
+  }, character(1))
+  if (d[[1]] != d[[2]]) {
+    abort_hcesfort("join", c(
+      "{.arg intake} and {.arg use} were built with different outlier
+      decisions.",
+      "x" = cli_escape(paste0("intake: ", d[[1]], "; use: ", d[[2]], ".")),
+      "i" = "Pass the same grams and the same {.arg outliers} choice to
+      {.fn apparent_intake} and {.fn vehicle_coverage}."
+    ), table = "intake", other = "use", columns = "outlier", n = NA_integer_,
+    call = call)
+  }
+  invisible(TRUE)
 }

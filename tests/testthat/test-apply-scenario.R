@@ -167,8 +167,8 @@ test_that("a form in the registry gets its total updated", {
                      food_state = "raw", source = "test fixture")
   comp <- unfortified_baseline(comp, no_rules(), r)
   h <- data.frame(household_id = 1, weight = 1, stratum = 1, psu = 1)
-  afe <- new_hces_tbl(data.frame(household_id = 1, afe = 1), "hces_afe",
-                      key = "household_id")
+  afe <- new_hces_tbl(data.frame(household_id = 1, n_members = 1, afe = 1),
+                      "hces_afe", key = "household_id")
   v <- data.frame(food_code = "flour", vehicle = "flour",
                   vehicle_fraction = 1, source = "test fixture")
   g <- convert_units(a, f, priority = "food")
@@ -199,7 +199,7 @@ test_that("the example data run end to end", {
                      priority = "food")
   afe <- new_hces_tbl(
     data.frame(household_id = hces_example$households$household_id,
-               afe = 1),
+               n_members = 1, afe = 1),
     "hces_afe", key = "household_id"
   )
   intake <- apparent_intake(
@@ -219,4 +219,37 @@ test_that("a scenarios table without rows returns the baseline only", {
   s <- as_run(as_scenarios()[0, ])
   expect_identical(unique(s$scenario), "baseline")
   expect_identical(nrow(s), 3L)
+})
+
+# Intake and vehicle use on the same footing (correction 4).
+test_that("vehicle use carries the AFE and members of each household", {
+  use <- as_pipeline()$use
+  expect_identical(names(use)[1:4],
+                   c("household_id", "use_status", "afe", "n_members"))
+  expect_equal(use$afe[use$vehicle == "flour"], c(2, 1, 1))
+  expect_equal(use$n_members[use$vehicle == "flour"], c(1, 1, 1))
+  expect_identical(attr(use, "outlier_decision"), "none")
+  expect_identical(attr(as_pipeline()$intake, "outlier_decision"), "none")
+})
+
+test_that("apply_scenario() refuses intake and use built on another AFE", {
+  p <- as_pipeline()
+  use <- dplyr::mutate(p$use, afe = ifelse(household_id == 2, 3, afe))
+  err <- expect_error(apply_scenario(p$intake, use, as_scenarios(),
+                                     compliance_model = "average_content"),
+                      class = "hcesfort_error_join")
+  expect_identical(err$columns, "afe")
+  expect_identical(err$n, 1L)
+})
+
+test_that("apply_scenario() refuses another outlier decision", {
+  p <- as_pipeline()
+  intake <- p$intake
+  attr(intake, "outlier_decision") <- "exclude; by=food_code"
+  intake <- dplyr::filter(intake, TRUE)
+  err <- expect_error(apply_scenario(intake, p$use, as_scenarios(),
+                                     compliance_model = "average_content"),
+                      class = "hcesfort_error_join")
+  expect_identical(err$columns, "outlier")
+  expect_match(conditionMessage(err), "exclude; by=food_code")
 })

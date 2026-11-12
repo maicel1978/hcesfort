@@ -49,7 +49,9 @@
 #'   `n_records_included`, `share_records_used`, `share_grams_used`,
 #'   `qty_edible_g_d` (edible grams per AFE per day), one column per
 #'   nutrient (amount per AFE per day, in the unit of the registry) and its
-#'   `_coverage` column. The registry travels with the table. The audit log
+#'   `_coverage` column. The registry travels with the table, and so does
+#'   the outlier decision (attribute `outlier_decision`: the choice and the
+#'   rule of [flag_outliers()], or `"none"`). The audit log
 #'   continues the logs of `content`, `afe` and `households`.
 #' @seealso [flag_energy_plausibility()], [nutrient_density()],
 #'   [audit_log()].
@@ -99,7 +101,9 @@ apparent_intake <- function(content, afe, households, outliers = NULL) {
   }
   log <- intake_log(x, reasons, used, out, nutrients)
   log <- dplyr::bind_rows(audit_get(x), audit_get(afe), audit_get(h), log)
-  new_hces_tbl(out, "hces_intake", log, "household_id", nutrients)
+  out <- new_hces_tbl(out, "hces_intake", log, "household_id", nutrients)
+  attr(out, "outlier_decision") <- outlier_decision(x, outliers)
+  out
 }
 
 # A named list of logical vectors, one per reason a record is left out of

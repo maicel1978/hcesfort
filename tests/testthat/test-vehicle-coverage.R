@@ -176,7 +176,7 @@ test_that("a link_composition() table is accepted, and the example runs", {
                               hces_example$composition, nutrients)
   afe <- new_hces_tbl(
     data.frame(household_id = hces_example$households$household_id,
-               afe = 1),
+               n_members = 1, afe = 1),
     "hces_afe", key = "household_id"
   )
   u1 <- vehicle_coverage(g, hces_example$vehicles, afe,
@@ -191,4 +191,16 @@ test_that("a vehicles table without rows gives no rows", {
   u <- vc_run(vehicles = vc_vehicles()[0, ])
   expect_identical(nrow(u), 0L)
   expect_s3_class(u, "hces_vehicle_use")
+})
+
+test_that("the outlier rule of flag_outliers() is the decision recorded", {
+  g <- flag_outliers(vc_grams(), by = "food_code", scale = "household",
+                     level = "record", probs = c(0.25, 0.75),
+                     multiplier = 3, min_group = 2)
+  u <- vc_run(g, outliers = "exclude")
+  expect_identical(
+    attr(u, "outlier_decision"),
+    paste0("exclude; by=food_code; scale=household; level=record; ",
+           "probs=0.25,0.75; multiplier=3; min_group=2; type=7")
+  )
 })

@@ -83,8 +83,8 @@ ul_form_run <- function(level = 1) {
                      nutrient = character(0), source = character(0))
   comp <- unfortified_baseline(comp, none, r)
   h <- data.frame(household_id = 1, weight = 1, stratum = 1, psu = 1)
-  afe <- new_hces_tbl(data.frame(household_id = 1, afe = 1), "hces_afe",
-                      key = "household_id")
+  afe <- new_hces_tbl(data.frame(household_id = 1, n_members = 1, afe = 1),
+                      "hces_afe", key = "household_id")
   v <- data.frame(food_code = "flour", vehicle = "flour",
                   vehicle_fraction = 1, source = "test fixture")
   g <- convert_units(a, f, priority = "food")

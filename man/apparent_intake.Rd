@@ -25,7 +25,9 @@ household of \code{households}, in its order: \code{household_id},
 \code{n_records_included}, \code{share_records_used}, \code{share_grams_used},
 \code{qty_edible_g_d} (edible grams per AFE per day), one column per
 nutrient (amount per AFE per day, in the unit of the registry) and its
-\verb{_coverage} column. The registry travels with the table. The audit log
+\verb{_coverage} column. The registry travels with the table, and so does
+the outlier decision (attribute \code{outlier_decision}: the choice and the
+rule of \code{\link[=flag_outliers]{flag_outliers()}}, or \code{"none"}). The audit log
 continues the logs of \code{content}, \code{afe} and \code{households}.
 }
 \description{

@@ -28,6 +28,17 @@ check_outlier_decision <- function(outliers, x, arg = "content",
   ), arg = "outliers", call = call)
 }
 
+# The outlier decision a table was built with, in one line: "none" when
+# `x` has no column `outlier`, else the choice and the rule written by the
+# last flag_outliers() of its log.
+outlier_decision <- function(x, outliers) {
+  if (is.null(outliers)) return("none")
+  log <- audit_get(x)
+  rule <- log$detail[log$step == "flag_outliers" & log$kind == "input"]
+  rule <- if (length(rule) > 0) rule[[length(rule)]] else "rule not logged"
+  paste0(outliers, "; ", rule)
+}
+
 # Abort when household ids have incompatible types, or when `x` (named
 # `arg` in messages) or `afe` have households absent from `households`.
 check_intake_ids <- function(x, afe, h, arg = "content",
