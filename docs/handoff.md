@@ -33,12 +33,38 @@ run `devtools::document()` with the same `LANG`/`LC_ALL`; `lintr` needs
 
 ## Exact next step
 
-Task 5: `adult_equivalents()`. Open questions for its design are in
-`docs/improvements.md`, P53.
+Task 5: `adult_equivalents()`, once the maintainer answers the questions
+below (they decide its interface). Context: `docs/improvements.md` P53;
+`docs/analysis-map.md` rows 12-13, E10, E25; members contract in
+`R/schema-standard.R`.
 
-## Open questions
+## Open questions (task 5)
 
-None blocking.
+1. **Adult energy requirement.** Body weight and physical activity level
+   (PAL) as required arguments without default (`weight_kg = c(female =,
+   male =)`, `pal =`), with an optional per-member `weight_kg` column that
+   overrides them? *Recommended: yes;* no hidden default, and the ENGIH
+   adapter passes 55/65 kg and PAL 1.76 explicitly.
+2. **Reference person.** Given as a number of kcal/day (`reference_kcal`),
+   with a documented example that computes 2,290.8 from `ref_bmr_equations`,
+   rather than as sex, age, weight and PAL? *Recommended: kcal;* one number,
+   visible in the call, and any convention can produce it.
+3. **Infants.** Use the monthly FAO table when `age_months` is present, and
+   the mean of the twelve months (the original rule) otherwise, counting
+   those infants in the audit log? *Recommended: yes;* the mean stays as the
+   legacy option for acceptance step 1.
+4. **Pregnancy and lactation.** No extra energy in v0.1: the flags are not
+   used, and flagged members are counted in the audit log? *Recommended:
+   yes;* the FAO additions per trimester were not opened in this session
+   and the original did not apply them.
+5. **Members without age or sex (E10).** The household's AFE is `NA` and the
+   household is flagged (counted in the log), and the decision to exclude it
+   is taken in task 8? The original rule (zero AFE) is a legacy option.
+   *Recommended: yes;* "detect, then decide".
+6. **Meals at home (E25).** When `meals_home_share` is present, multiply
+   each member's AFE by it only if the caller says so (`meal_share =
+   TRUE/FALSE`, required when the column exists)? *Recommended: yes;* no
+   silent use of an optional column, and no hidden default.
 
 ## Recommended model for the next session
 
