@@ -25,7 +25,7 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
   - [x] 9.4 `apply_scenario()`; specification, `NEWS.md`, self-review.
 - [ ] 10. `inadequacy()` and `above_ul()`. Design: `docs/design-task10.md`.
   - [x] 10.0 Design written (2026-11-12); approved as recommended 2026-11-12.
-  - [ ] 10.1 Reference tables: `ul_unit`, `ul_form`.
+  - [x] 10.1 Reference tables: `ul_unit`, `ul_form`.
   - [ ] 10.2 `inadequacy()`: cut-point and coverage rule.
   - [ ] 10.3 Probability approach.
   - [ ] 10.4 `above_ul()`; `NEWS.md`, self-review.

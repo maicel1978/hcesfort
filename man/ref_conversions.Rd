@@ -13,6 +13,12 @@ A tibble:
 \item{factor}{Multiplier.}
 \item{condition}{When the factor applies.}
 \item{source, location}{Document, chapter, table and page.}
+\item{ul_form}{The upper level the form counts towards, as named in
+\code{ref_requirements$ul_applies_to}: \code{"folic_acid"} for folic acid,
+\code{"preformed_vitamin_a"} for retinol; missing for food folate and the
+carotenoids, which no UL of the table covers.}
+\item{ul_form_location}{Chapter and page that place the form under
+that upper level.}
 }
 }
 \source{

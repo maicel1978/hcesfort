@@ -43,15 +43,19 @@ NULL
 #' @format A tibble with one row per nutrient and population group:
 #' \describe{
 #'   \item{nutrient}{Nutrient name.}
-#'   \item{unit}{Unit of `ear` and `ul`, written as in [nutrient_registry()]
+#'   \item{unit}{Unit of `ear`, written as in [nutrient_registry()]
 #'     (`"mg"`, `"ug"`, `"ug_dfe"`, `"ug_rae"`).}
 #'   \item{expressed_as}{What the value measures (for example
 #'     `"dietary folate equivalents"`, `"alpha-tocopherol"`).}
 #'   \item{sex, age_from, age_to}{Population group; ages in years,
 #'     `[age_from, age_to)`.}
 #'   \item{ear}{Estimated Average Requirement per day.}
-#'   \item{ul}{Tolerable Upper Intake Level per day; missing where none was
-#'     set.}
+#'   \item{ul}{Tolerable Upper Intake Level per day, in `ul_unit`; missing
+#'     where none was set.}
+#'   \item{ul_unit}{Unit of `ul`. It differs from `unit` where the UL
+#'     applies to a form: the folate UL is in µg of folic acid, not DFE
+#'     (IOM 1998, p. 282); the vitamin A UL in µg of preformed vitamin A,
+#'     not RAE (IOM 2001, pp. 143–145).}
 #'   \item{ul_applies_to}{Intake the UL refers to: `"total"` (food, water
 #'     and supplements), `"preformed_vitamin_a"`, `"folic_acid"` (folate
 #'     from fortified food or supplements) or
@@ -64,7 +68,8 @@ NULL
 #'   10.17226/6015, 10.17226/9810, 10.17226/10026.
 #' @family reference tables
 #' @examples
-#' ref_requirements[, c("nutrient", "unit", "ear", "ul", "ul_applies_to")]
+#' ref_requirements[, c("nutrient", "unit", "ear", "ul", "ul_unit",
+#'                      "ul_applies_to")]
 "ref_requirements"
 
 #' Distribution of iron requirements
@@ -168,6 +173,12 @@ NULL
 #'   \item{factor}{Multiplier.}
 #'   \item{condition}{When the factor applies.}
 #'   \item{source, location}{Document, chapter, table and page.}
+#'   \item{ul_form}{The upper level the form counts towards, as named in
+#'     `ref_requirements$ul_applies_to`: `"folic_acid"` for folic acid,
+#'     `"preformed_vitamin_a"` for retinol; missing for food folate and the
+#'     carotenoids, which no UL of the table covers.}
+#'   \item{ul_form_location}{Chapter and page that place the form under
+#'     that upper level.}
 #' }
 #' @source Institute of Medicine (1998, 2001). Dietary Reference Intakes.
 #'   Washington, DC: The National Academies Press; doi 10.17226/6015,

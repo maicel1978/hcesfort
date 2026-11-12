@@ -47,6 +47,21 @@ cited by number.
 | `requirements.csv` | `vitamin_d` | EAR 10 µg and UL 100 µg are verified (IOM 2011, pp. 388 and 444); `ul_applies_to = total` is not | The chapters read (summary, 1, 5, 6) were not found to state whether the UL refers to total intake. IOM 2001 says so as a general rule (Summary, p. 27), but that is another report. | Find the statement in IOM 2011 (chapter 1 or the UL chapter); if it says total intake, set `status` to `verified`. |
 | `nutrient_conversions.csv` | `retinyl_palmitate` | no value | No document opened gives a factor from mass of retinyl palmitate to retinol activity (analysis map, E8). A value derived from molecular weights is a computation, not a source. | Give a document with the factor, or decide that scenario levels for vitamin A must be given as retinol. |
 
+## Upper-level unit and form (added 2026-11-12, task 10)
+
+`requirements.csv` gains `ul_unit`, the unit of `ul`, and
+`nutrient_conversions.csv` gains `ul_form` and `ul_form_location`, the upper
+level a form counts towards. Read in the documents on 2026-11-12:
+
+| Value | Place |
+|---|---|
+| Folate UL in µg of folic acid (not DFE); applies to folate from fortified food or supplements | IOM 1998, chapter 8, p. 280 (UL for adults of 1 mg/day, LOAEL 5 mg/day divided by a UF of 5) and p. 282 ("the UL of 1,000 µg/day of folic acid") |
+| Vitamin A UL in µg of preformed vitamin A (not RAE); applies to preformed vitamin A from food, fortified food and supplements | IOM 2001, chapter 4, p. 143 (3,000 µg/day of preformed vitamin A, women 19–50 years), pp. 143–145 (ULs given as µg/day of preformed vitamin A) and p. 127 |
+| Iron, zinc: UL in mg, the unit of the EAR (total intake) | the places already given for their UL |
+| Vitamin E: UL in mg of supplementary alpha-tocopherol | IOM 2000, chapter 6, p. 259, already given |
+
+The folate UL was cited at p. 281 before; the value is stated on p. 280.
+
 ## Notes on use
 
 - `requirements.csv` covers one group (women 19–30 years), the reference

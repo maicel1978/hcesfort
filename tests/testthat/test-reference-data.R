@@ -63,6 +63,24 @@ test_that("requirements: EAR below UL, vocabulary of ul_applies_to", {
   expect_s3_class(nutrient_registry(rlang::set_names(r$unit, r$nutrient)),
                   "hces_nutrients")
   expect_false("vitamin_d" %in% r$nutrient)
+  # ul_unit: a mass unit wherever there is a UL; the unit of the EAR for
+  # total intake; the mass of the form for folate and vitamin A.
+  expect_identical(is.na(r$ul), is.na(r$ul_unit))
+  total <- has_ul & r$ul_applies_to == "total"
+  expect_identical(r$ul_unit[total], r$unit[total])
+  expect_identical(r$ul_unit[r$nutrient %in% c("folate", "vitamin_a")],
+                   c("ug", "ug"))
+})
+
+test_that("conversions: ul_form names an upper level of the requirements", {
+  cv <- ref_conversions
+  used <- cv$ul_form[!is.na(cv$ul_form)]
+  expect_true(all(used %in% ref_requirements$ul_applies_to))
+  expect_identical(cv$ul_form[cv$from_form == "folic_acid"], "folic_acid")
+  expect_identical(cv$ul_form[cv$from_form == "retinol"],
+                   "preformed_vitamin_a")
+  expect_true(is.na(cv$ul_form[cv$from_form == "food_folate"]))
+  expect_false(anyNA(cv$ul_form_location))
 })
 
 test_that("iron: 13 increasing percentiles per group; median near EAR", {

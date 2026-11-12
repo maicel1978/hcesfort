@@ -8,15 +8,19 @@
 A tibble with one row per nutrient and population group:
 \describe{
 \item{nutrient}{Nutrient name.}
-\item{unit}{Unit of \code{ear} and \code{ul}, written as in \code{\link[=nutrient_registry]{nutrient_registry()}}
+\item{unit}{Unit of \code{ear}, written as in \code{\link[=nutrient_registry]{nutrient_registry()}}
 (\code{"mg"}, \code{"ug"}, \code{"ug_dfe"}, \code{"ug_rae"}).}
 \item{expressed_as}{What the value measures (for example
 \code{"dietary folate equivalents"}, \code{"alpha-tocopherol"}).}
 \item{sex, age_from, age_to}{Population group; ages in years,
 \verb{[age_from, age_to)}.}
 \item{ear}{Estimated Average Requirement per day.}
-\item{ul}{Tolerable Upper Intake Level per day; missing where none was
-set.}
+\item{ul}{Tolerable Upper Intake Level per day, in \code{ul_unit}; missing
+where none was set.}
+\item{ul_unit}{Unit of \code{ul}. It differs from \code{unit} where the UL
+applies to a form: the folate UL is in µg of folic acid, not DFE
+(IOM 1998, p. 282); the vitamin A UL in µg of preformed vitamin A,
+not RAE (IOM 2001, pp. 143–145).}
 \item{ul_applies_to}{Intake the UL refers to: \code{"total"} (food, water
 and supplements), \code{"preformed_vitamin_a"}, \code{"folic_acid"} (folate
 from fortified food or supplements) or
@@ -45,7 +49,8 @@ IOM (2011), but the intake its UL applies to was not found stated in the
 report, so the row stays pending in \verb{data-raw/}.
 }
 \examples{
-ref_requirements[, c("nutrient", "unit", "ear", "ul", "ul_applies_to")]
+ref_requirements[, c("nutrient", "unit", "ear", "ul", "ul_unit",
+                     "ul_applies_to")]
 }
 \seealso{
 Other reference tables:
