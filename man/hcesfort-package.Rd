@@ -25,5 +25,10 @@ Useful links:
 \author{
 \strong{Maintainer}: Maicel E. Monzón-Pérez \email{21109332+maicel1978@users.noreply.github.com} [copyright holder]
 
+Authors:
+\itemize{
+  \item Maicel E. Monzón-Pérez \email{21109332+maicel1978@users.noreply.github.com} [copyright holder]
+}
+
 }
 \keyword{internal}

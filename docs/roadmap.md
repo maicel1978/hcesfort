@@ -7,7 +7,7 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
 - [x] 1. Skeleton: `DESCRIPTION`, MIT licence, testthat 3, roxygen2 markdown, `NEWS.md`, `README`, `.gitignore` with `data-raw/private/` and without `docs/`, `.Rbuildignore`, GitHub Actions (R CMD check on three OS, test coverage, lint), `CITATION`, contributing guide, code of conduct, and a test that enforces the size limits. Left open, see `docs/improvements.md` (P36–P38): `srr` annotation workflow, `codemeta.json`, name check on CRAN itself.
 - [ ] 2. Data contracts: schemas of the standard and user-supplied tables, constructors and validators, classed errors, nutrient registry, audit-log carrier (chosen by test) and its format (counts of records, households and grams by cause). Design: `docs/design-task2.md`.
   - [x] 2.0 Design written (carrier chosen by experiment); approved 2026-11-12.
-  - [ ] 2.1 Classed errors and audit-log format and carrier.
+  - [x] 2.1 Classed errors and audit-log format and carrier.
   - [ ] 2.2 Validators of `households`, `members`, `acquisitions` and their cross-table check.
   - [ ] 2.3 Validators of the user-supplied tables and nutrient registry.
 - [ ] 3. Synthetic example dataset in the standard schema (invented households, composition, vehicles, one scenario), documented as synthetic.

@@ -1,5 +1,3 @@
-linters: linters_with_defaults(
-    cyclocomp_linter = NULL
-  )
+linters: linters_with_defaults()
 encoding: "UTF-8"
 exclusions: list("data-raw")
