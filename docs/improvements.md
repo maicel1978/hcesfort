@@ -142,6 +142,38 @@ Consequences: `members` gains the optional column `weight_kg`; the schemas
 engine accepts `Inf` in a column whose interval is closed at infinity
 (`"(0, Inf]"`).
 
+## Decisions (2026-11-12, design of tasks 9 and 10)
+
+The maintainer approved as recommended the eleven choices of section 11 of
+`docs/design-task9.md` and the ten choices of section 9 of
+`docs/design-task10.md`. In short:
+
+| Task | # | Decision |
+|---|---|---|
+| 9 | 1 | New user table `enrichment`, keyed by composition row (`composition_id` + `nutrient`); the baseline no longer takes `vehicles`. |
+| 9 | 2 | The amount removed is stated by reference pair (`enriched_ref_id`, `unenriched_ref_id`, `ingredient_fraction`) or by `added`. |
+| 9 | 3 | Floor of the subtraction: `fraction × unenriched` for a pair row, 0 for an `added` row (changes P6, which said zero). |
+| 9 | 4 | `apply_scenario()` refuses an intake whose log has no `unfortified_baseline` step (`hcesfort_error_audit`). |
+| 9 | 5 | Compliance: average content in v0.1, named by the required argument `compliance_model`; all or nothing in v0.2 (P69). |
+| 9 | 6 | New column `form` in `scenarios`, required when the nutrient's unit is an equivalent (DFE, RAE, NE, ATE). |
+| 9 | 7 | New column `vehicle_group` in `vehicles`; a scenario names vehicles; coverage is also given by group. |
+| 9 | 8 | Vehicle grams on the purchased basis, from every included record with grams (P73). |
+| 9 | 9 | `vehicle_coverage()` returns household rows, not estimates; its product feeds `apply_scenario()`. |
+| 9 | 10 | Households without food records have `acquired` missing; the original's denominator is an explicit step of the adapter. |
+| 9 | 11 | Output of `apply_scenario()` wide, like `hces_intake`, with the baseline as a scenario named `baseline_label`. |
+| 10 | 1 | `inadequacy()` and `above_ul()` return household rows (`p_inadequate`, `above_ul_*`); estimation is task 11. |
+| 10 | 2 | Probability approach generic, `distribution = list(<nutrient> = table)`; no nutrient named in `R/`. |
+| 10 | 3 | `bioavailability` required, no default; several values allowed. |
+| 10 | 4 | Linear interpolation between percentiles; probability 1 below the lowest and 0 above the highest, documented as a convention (step table: P74). |
+| 10 | 5 | One bioavailability for diet and fortificant in v0.1; by source later (P70). |
+| 10 | 6 | `above_ul()` returns both comparisons (added only; diet plus added) with `ul_scope`; "added only" is a lower bound. |
+| 10 | 7 | New column `ul_unit` in `ref_requirements`, entered after reading the cited pages; the folate UL is compared in µg of folic acid. |
+| 10 | 8 | New column `ul_form` in `ref_conversions`, linking a form to the upper level it counts towards. |
+| 10 | 9 | `min_coverage` required; a nutrient below it is `hcesfort_error_coverage`; household coverage is returned. |
+| 10 | 10 | `requirements` must hold one row per nutrient (the caller selects the group). |
+
+P6 is changed by choice 3 of task 9. P69, P70, P74 stay open for v0.2.
+
 ## Proposal P42: food-matching support module (2026-11-12)
 
 Proposed by the maintainer; assessed here, not implemented. Status:
@@ -396,8 +428,8 @@ empty tables kept their column types.
 
 ## Open items from the design of tasks 9 and 10 (2026-11-12)
 
-Designs: `docs/design-task9.md` and `docs/design-task10.md`, waiting for
-approval. Items left out of v0.1 on purpose, or to be measured later:
+Designs: `docs/design-task9.md` and `docs/design-task10.md`, approved
+2026-11-12. Items left out of v0.1 on purpose, or to be measured later:
 
 | ID | Priority | Item | Rationale | Roadmap task |
 |---|---|---|---|---|

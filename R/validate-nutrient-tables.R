@@ -75,8 +75,14 @@ check_nutrient_units <- function(x, nutrients, call = rlang::caller_env()) {
 #'
 #' `level_basis` says what the level measures: the nutrient itself
 #' (`"nutrient"`) or the compound that carries it (`"compound"`); in the
-#' second case `nutrient_fraction`, the mass of nutrient per mass of
-#' compound, is required. `nutrient` must be a nutrient of the registry.
+#' second case `nutrient_fraction`, the mass of the form per mass of
+#' compound, is required; in the first it must be missing (a row with both
+#' would be ambiguous). `form` names the form of the nutrient the level is a
+#' mass of (`"folic_acid"`, `"retinol"`): `apply_scenario()` requires it
+#' when the unit of the nutrient is an equivalent (DFE, RAE) and reads the
+#' factor from the conversions table. `nutrient` must be a nutrient of the
+#' registry. A `source` starting with `"SOURCE PENDING"` is counted
+#' (`source_pending`).
 #'
 #' `compliance`, the share of the vehicle actually fortified, is optional.
 #' When the column is absent it is added as 1 and the assumption is written
@@ -100,11 +106,85 @@ validate_scenarios <- function(x, nutrients) {
   if (added) x$compliance <- rep(1, nrow(x))
   validate_table(
     x, schema_scenarios(nutrients), "validate_scenarios",
-    function(x) list(compliance_assumed_full = rep(added, nrow(x))),
+    function(x) {
+      list(compliance_assumed_full = rep(added, nrow(x)),
+           source_pending = is_source_pending(x$source))
+    },
     extra = function(x, call) {
       check_required_when(x, "nutrient_fraction",
                           x$level_basis == "compound", "scenarios",
                           "`level_basis` is compound", call)
+      check_absent_when(x, "nutrient_fraction",
+                        x$level_basis == "nutrient", "scenarios",
+                        "`level_basis` is nutrient", call)
     }
   )
+}
+
+#' Validate enrichment rules
+#'
+#' Check a table of enrichment rules against its data contract
+#' (`hces_schema("enrichment")`) and return it as a validated table, with its
+#' audit log started. Each row says what enrichment added to one nutrient of
+#' one composition row, so that `unfortified_baseline()` can remove it.
+#'
+#' A row states the amount in exactly one of two ways: by a reference pair
+#' (`enriched_ref_id`, `unenriched_ref_id` and `ingredient_fraction`: the
+#' enriched and the unenriched ingredient, and the grams of ingredient per
+#' gram of the food in the state of the row), or by `added`, the amount per
+#' 100 g in the unit of the registry. Both, neither, or an incomplete pair is
+#' an `hcesfort_error_value`. A `source` starting with `"SOURCE PENDING"`
+#' is counted (`source_pending`). Whether the ids exist in the composition
+#' table is checked by `unfortified_baseline()`.
+#'
+#' @inheritParams validate_composition
+#' @returns `x` as a tibble of class `hces_enrichment` (and `hces_tbl`).
+#' @seealso `unfortified_baseline()`, [hcesfort_errors].
+#' @examples
+#' nutrients <- nutrient_registry(c(iron = "mg"))
+#' enrichment <- data.frame(
+#'   composition_id = c("bread", "pasta"), nutrient = "iron",
+#'   enriched_ref_id = c("flour_enriched", NA),
+#'   unenriched_ref_id = c("flour", NA), ingredient_fraction = c(0.6, NA),
+#'   added = c(NA, 2), source = "invented example"
+#' )
+#' audit_log(validate_enrichment(enrichment, nutrients))
+#' @export
+validate_enrichment <- function(x, nutrients) {
+  require_registry(nutrients)
+  if (is.data.frame(x)) {
+    for (col in setdiff(enrichment_ways, names(x))) {
+      x[[col]] <- rep(NA, nrow(x))
+    }
+  }
+  validate_table(
+    x, schema_enrichment(nutrients), "validate_enrichment",
+    function(x) list(source_pending = is_source_pending(x$source)),
+    extra = check_enrichment_ways
+  )
+}
+
+# Columns of the two ways of stating what enrichment added.
+enrichment_ways <- c("enriched_ref_id", "unenriched_ref_id",
+                     "ingredient_fraction", "added")
+
+# Abort with hcesfort_error_value unless each row gives exactly one way:
+# the complete pair, or `added`.
+check_enrichment_ways <- function(x, call) {
+  given <- !is.na(as.data.frame(x)[enrichment_ways[1:3]])
+  pair <- rowSums(given) == 3
+  rows <- which(rowSums(given) %in% 1:2 | pair == !is.na(x$added))
+  if (length(rows) == 0) {
+    return(invisible(x))
+  }
+  abort_hcesfort("value", c(
+    "Each row of {.arg enrichment} needs exactly one way to state the amount.",
+    "x" = cli_escape(problem_bullet("both, neither or an incomplete pair",
+                                    rows)),
+    "i" = paste(
+      "Give {.field enriched_ref_id}, {.field unenriched_ref_id} and",
+      "{.field ingredient_fraction}, or {.field added}."
+    )
+  ), table = "enrichment", columns = enrichment_ways, rows = rows,
+  n = length(rows), call = call)
 }

@@ -1,8 +1,7 @@
 # Design of roadmap task 9: unfortified baseline, vehicle use, scenarios
 
-Status: **proposed, waiting for the maintainer's approval** of the choices of
-section 11. Nothing here is implemented. After approval the implementation
-goes to Opus (`docs/model-routing.md`).
+Status: **approved 2026-11-12** (all choices of section 11 as
+recommended; see `docs/improvements.md`). Implemented by Opus.
 
 Inputs read: P5, P6, P32, P45, P52 of `docs/improvements.md`; E1, E5, E6, E7,
 E8, E12, E23 of `docs/analysis-map.md`; `R/schema-user.R`; the reference

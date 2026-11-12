@@ -5,7 +5,7 @@
 \alias{hces_example}
 \title{Synthetic example survey}
 \format{
-A list of nine elements:
+A list of ten elements:
 \describe{
 \item{households}{40 households in 2 strata and 8 primary sampling
 units, with a \code{region} domain.}
@@ -17,10 +17,12 @@ or pieces.}
 \item{crosswalk}{Survey foods matched to the composition table.}
 \item{nutrients}{Named character vector of units for
 \code{\link[=nutrient_registry]{nutrient_registry()}}: energy, iron, folate and vitamin A.}
-\item{composition}{An invented composition table of 12 foods, per
+\item{composition}{An invented composition table of 13 foods, per
 100 g edible portion.}
+\item{enrichment}{What enrichment added to the enriched pasta and
+flour, for \code{unfortified_baseline()}.}
 \item{vehicles}{Fraction of each food that is a fortification
-vehicle.}
+vehicle, by product class, with a vehicle group.}
 \item{scenarios}{Two invented fortification scenarios.}
 }
 }
@@ -47,8 +49,10 @@ without quantity, one without unit, one left out by the section rule,
 one with an implausibly large quantity and one in a unit without factor
 (\code{"sack"}); two recall periods (7 and 30 days); a volume factor without
 density; an unmatched and an unvalidated food; a missing nutrient value
-and an enriched composition row; a food with two vehicles; a scenario
-level given for a compound.
+and two enriched composition rows with the rules that remove what
+enrichment added; a food with two vehicles of different groups; a
+scenario that fortifies only some vehicles of a group; a scenario level
+given for a compound.
 }
 \examples{
 survey <- validate_survey(

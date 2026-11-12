@@ -1,10 +1,10 @@
 # The synthetic dataset must pass every validator and contain the cases
 # it is documented to contain (data-raw/hces_example.R).
 
-test_that("hces_example has its nine tables", {
+test_that("hces_example has its ten tables", {
   expect_named(hces_example, c(
     "households", "members", "acquisitions", "unit_factors", "crosswalk",
-    "nutrients", "composition", "vehicles", "scenarios"
+    "nutrients", "composition", "enrichment", "vehicles", "scenarios"
   ))
   expect_identical(nrow(hces_example$households), 40L)
   expect_identical(length(unique(hces_example$households$psu)), 8L)
@@ -41,8 +41,14 @@ test_that("the user tables pass with the planted notes", {
   )
   log <- audit_log(validate_composition(e$composition, r))
   expect_identical(log$detail[-1], "folate_ug_dfe")
-  expect_identical(sum(e$composition$fortified), 1L)
-  expect_s3_class(validate_vehicles(e$vehicles), "hces_vehicles")
+  expect_identical(sum(e$composition$fortified), 2L)
+  expect_identical(audit_log(validate_enrichment(e$enrichment, r))$cause,
+                   "all")
+  expect_true(all(c(e$enrichment$composition_id, e$enrichment$enriched_ref_id,
+                    e$enrichment$unenriched_ref_id) %in%
+                    e$composition$composition_id))
+  v <- validate_vehicles(e$vehicles)
+  expect_identical(sort(unique(v$vehicle_group)), "wheat_flour")
   expect_identical(audit_log(validate_scenarios(e$scenarios, r))$cause,
                    "all")
 })

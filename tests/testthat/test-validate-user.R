@@ -99,3 +99,25 @@ test_that("vehicles: fraction 0 and duplicated pairs fail", {
   v$vehicle[3] <- "wheat_flour"
   expect_error(validate_vehicles(v), class = "hcesfort_error_key")
 })
+
+test_that("vehicles: groups pass when a food has one vehicle per group", {
+  v <- fixture_vehicles()
+  v$vehicle_group <- c("wheat", "wheat", NA)
+  out <- validate_vehicles(v)
+  expect_identical(out$vehicle_group, c("wheat", "wheat", NA))
+})
+
+test_that("vehicles: two vehicles of one group for a food are a key error", {
+  v <- fixture_vehicles()
+  v$vehicle_group <- c("wheat", "wheat", "wheat")
+  err <- expect_error(validate_vehicles(v), class = "hcesfort_error_key")
+  expect_identical(err$rows, 3L)
+  expect_identical(err$columns, c("food_code", "vehicle_group"))
+})
+
+test_that("vehicles: SOURCE PENDING followed by a note is counted", {
+  v <- fixture_vehicles()
+  v$source[[1]] <- "SOURCE PENDING: read as flour"
+  log <- audit_log(validate_vehicles(v))
+  expect_identical(log$n_records[log$cause == "source_pending"], 2L)
+})

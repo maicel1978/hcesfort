@@ -1,9 +1,7 @@
 # Design of roadmap task 10: `inadequacy()` and `above_ul()`
 
-Status: **proposed, waiting for the maintainer's approval** of the choices of
-section 9. Nothing here is implemented. It builds on
-`docs/design-task9.md` (product `hces_scenario_intake`, column `form`).
-After approval the implementation goes to Opus.
+Status: **approved 2026-11-12** (all choices of section 9 as
+recommended; see `docs/improvements.md`). Implemented by Opus.
 
 Inputs read: P7, P11, P51, P55, P56 of `docs/improvements.md`; E5, E7, E13,
 E14, E21 of `docs/analysis-map.md`; `ref_requirements`,

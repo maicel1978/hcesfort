@@ -118,3 +118,79 @@ test_that("results do not depend on row order", {
   expect_identical(audit_log(validate_composition(x[3:1, ], r)),
                    audit_log(validate_composition(x, r)))
 })
+
+test_that("scenarios: nutrient fraction with basis nutrient is a value error", {
+  s <- fixture_scenarios()
+  s$nutrient_fraction[[1]] <- 0.5
+  err <- expect_error(validate_scenarios(s, fixture_nutrients()),
+                      class = "hcesfort_error_value")
+  expect_identical(err$rows, 1L)
+  expect_identical(err$columns, "nutrient_fraction")
+})
+
+test_that("scenarios: form is kept and a pending source is counted", {
+  s <- fixture_scenarios()
+  s$form <- c(NA, "folic_acid")
+  s$source[[2]] <- "SOURCE PENDING"
+  out <- validate_scenarios(s, fixture_nutrients())
+  expect_identical(out$form, c(NA, "folic_acid"))
+  log <- audit_log(out)
+  expect_identical(log$n_records[log$cause == "source_pending"], 1L)
+})
+
+# Enrichment rules: one by reference pair, one by amount added.
+fixture_enrichment <- function() {
+  data.frame(
+    composition_id = c("C01", "C02"), nutrient = c("iron", "folate"),
+    enriched_ref_id = c("C03", NA), unenriched_ref_id = c("C04", NA),
+    ingredient_fraction = c(0.6, NA), added = c(NA, 100),
+    source = c("invented", "SOURCE PENDING")
+  )
+}
+
+test_that("enrichment: both ways pass, pending source counted", {
+  out <- validate_enrichment(fixture_enrichment(), fixture_nutrients())
+  expect_s3_class(out, "hces_enrichment")
+  log <- audit_log(out)
+  expect_identical(log$cause, c("all", "source_pending"))
+  expect_identical(log$n_records, c(2L, 1L))
+})
+
+test_that("enrichment: absent columns of one way are added as missing", {
+  e <- fixture_enrichment()[2, c("composition_id", "nutrient", "added",
+                                 "source")]
+  out <- validate_enrichment(e, fixture_nutrients())
+  expect_true(is.na(out$enriched_ref_id))
+  e0 <- e[0, ]
+  expect_identical(nrow(validate_enrichment(e0, fixture_nutrients())), 0L)
+})
+
+test_that("enrichment: both, neither or a partial pair is a value error", {
+  e <- fixture_enrichment()
+  e <- rbind(e, e, e)
+  e$composition_id <- paste0("C", 1:6)
+  e$added[[1]] <- 5
+  e$added[[2]] <- NA
+  e$unenriched_ref_id[[3]] <- NA
+  err <- expect_error(validate_enrichment(e, fixture_nutrients()),
+                      class = "hcesfort_error_value")
+  expect_identical(err$rows, 1:3)
+})
+
+test_that("enrichment: key, vocabulary and fraction are checked", {
+  e <- fixture_enrichment()
+  e$composition_id[[2]] <- "C01"
+  e$nutrient[[2]] <- "iron"
+  expect_error(validate_enrichment(e, fixture_nutrients()),
+               class = "hcesfort_error_key")
+  e <- fixture_enrichment()
+  e$nutrient[[1]] <- "zinc"
+  expect_error(validate_enrichment(e, fixture_nutrients()),
+               class = "hcesfort_error_value")
+  e <- fixture_enrichment()
+  e$ingredient_fraction[[1]] <- 1.2
+  expect_error(validate_enrichment(e, fixture_nutrients()),
+               class = "hcesfort_error_value")
+  expect_error(validate_enrichment(e, "iron"),
+               class = "hcesfort_error_argument")
+})

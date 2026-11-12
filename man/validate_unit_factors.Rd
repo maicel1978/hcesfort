@@ -39,7 +39,11 @@ duplicated key.
 \code{missing_edible_portion}. A validated row without \code{composition_id}
 or without \code{match_type} is an error: a validated row is a match that
 enters the calculation.
-\item \code{vehicles}: \code{source_pending} (\code{source} is \code{"SOURCE PENDING"}).
+\item \code{vehicles}: \code{source_pending} (\code{source} is \code{"SOURCE PENDING"}). The
+optional \code{vehicle_group} gathers vehicles that share one substance
+(flour, bread and pasta made of wheat flour); a food may belong to
+several vehicles, but to at most one vehicle of each group, otherwise
+its grams would count twice in the group (\code{hcesfort_error_key}).
 }
 }
 \examples{

@@ -21,7 +21,11 @@
 #'   `missing_edible_portion`. A validated row without `composition_id`
 #'   or without `match_type` is an error: a validated row is a match that
 #'   enters the calculation.
-#' * `vehicles`: `source_pending` (`source` is `"SOURCE PENDING"`).
+#' * `vehicles`: `source_pending` (`source` is `"SOURCE PENDING"`). The
+#'   optional `vehicle_group` gathers vehicles that share one substance
+#'   (flour, bread and pasta made of wheat flour); a food may belong to
+#'   several vehicles, but to at most one vehicle of each group, otherwise
+#'   its grams would count twice in the group (`hcesfort_error_key`).
 #'
 #' @inheritParams validate_households
 #' @returns `x` as a tibble of class `hces_unit_factors`, `hces_crosswalk`
@@ -65,9 +69,38 @@ validate_crosswalk <- function(x) {
 #' @rdname validate_unit_factors
 #' @export
 validate_vehicles <- function(x) {
-  validate_table(x, schema_vehicles(), "validate_vehicles", function(x) {
-    list(source_pending = grepl("^(# )?SOURCE PENDING$", x$source))
-  })
+  validate_table(
+    x, schema_vehicles(), "validate_vehicles",
+    function(x) list(source_pending = is_source_pending(x$source)),
+    extra = check_vehicle_groups
+  )
+}
+
+# TRUE where a source is the marker of a value not yet verified.
+is_source_pending <- function(source) {
+  grepl("^(# )?SOURCE PENDING", source)
+}
+
+# Abort with hcesfort_error_key when a food has two vehicles of one group.
+check_vehicle_groups <- function(x, call) {
+  group <- x[["vehicle_group"]]
+  if (is.null(group)) {
+    return(invisible(x))
+  }
+  grouped <- !is.na(group)
+  rows <- which(grouped)[duplicated(
+    data.frame(x$food_code, group)[grouped, , drop = FALSE]
+  )]
+  if (length(rows) == 0) {
+    return(invisible(x))
+  }
+  bullet <- problem_bullet("second vehicle of a group", rows)
+  abort_hcesfort("key", c(
+    "In {.arg vehicles} a food has two vehicles of one {.field vehicle_group}.",
+    "x" = cli_escape(bullet),
+    "i" = "Its grams would count twice in the group: keep one vehicle."
+  ), table = "vehicles", columns = c("food_code", "vehicle_group"),
+  rows = rows, n = length(rows), call = call)
 }
 
 # Abort with hcesfort_error_value when `column` is missing (absent or NA)
@@ -81,6 +114,22 @@ check_required_when <- function(x, column, when, table, condition, call) {
   bullet <- problem_bullet(paste0("`", column, "` is missing"), rows)
   abort_hcesfort("value", c(
     "{.arg {table}} needs {.field {column}} when {condition}.",
+    "x" = cli_escape(bullet)
+  ), table = table, columns = column, rows = rows, n = length(rows),
+  call = call)
+}
+
+# Abort with hcesfort_error_value when `column` has a value in rows where
+# `when` is TRUE.
+check_absent_when <- function(x, column, when, table, condition, call) {
+  values <- if (is.null(x[[column]])) rep(NA, nrow(x)) else x[[column]]
+  rows <- which(when & !is.na(values))
+  if (length(rows) == 0) {
+    return(invisible(x))
+  }
+  bullet <- problem_bullet(paste0("`", column, "` is given"), rows)
+  abort_hcesfort("value", c(
+    "{.arg {table}} must leave {.field {column}} missing when {condition}.",
     "x" = cli_escape(bullet)
   ), table = table, columns = column, rows = rows, n = length(rows),
   call = call)

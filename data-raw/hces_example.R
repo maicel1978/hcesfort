@@ -21,8 +21,10 @@
 # - unit factors of the three types, a volume factor without density;
 # - a crosswalk with an unmatched food, an unvalidated match and a missing
 #   edible portion;
-# - a composition table with a missing nutrient value and an enriched row;
-# - a food with two vehicles; a scenario with a compound-based level.
+# - a composition table with a missing nutrient value, an enriched pasta and
+#   an enriched flour, and the enrichment rules that remove what was added;
+# - a food with two vehicles of different groups; a scenario with a
+#   compound-based level.
 
 set.seed(20261112)
 
@@ -123,53 +125,76 @@ nutrients <- c(energy = "kcal", iron = "mg", folate = "ug_dfe",
                vitamin_a = "ug_rae")
 
 composition <- data.frame(
-  composition_id = sprintf("C%02d", 1:12),
+  composition_id = sprintf("C%02d", 1:13),
   description = c("rice, white, raw", "wheat flour, unfortified",
                   "bread, white", "pasta, dry, enriched", "beans, dry",
                   "vegetable oil", "sugar, white", "milk, whole",
                   "egg, whole, raw", "chicken, raw", "banana, raw",
-                  "biscuit, sweet"),
-  energy_kcal = c(360, 364, 266, 371, 333, 884, 387, 61, 143, 215, 89, 480),
-  iron_mg = c(0.8, 1.2, 1.5, 3.3, 5, 0, 0.1, 0, 1.8, 0.9, 0.3, 2),
-  folate_ug_dfe = c(8, 26, 40, 400, 390, 0, 0, 5, 47, 7, 20, NA),
-  vitamin_a_ug_rae = c(0, 0, 0, 0, 0, 0, 0, 46, 160, 40, 3, 10),
+                  "biscuit, sweet", "wheat flour, enriched"),
+  energy_kcal = c(360, 364, 266, 371, 333, 884, 387, 61, 143, 215, 89, 480,
+                  364),
+  iron_mg = c(0.8, 1.2, 1.5, 3.3, 5, 0, 0.1, 0, 1.8, 0.9, 0.3, 2, 3),
+  folate_ug_dfe = c(8, 26, 40, 400, 390, 0, 0, 5, 47, 7, 20, NA, 290),
+  vitamin_a_ug_rae = c(0, 0, 0, 0, 0, 0, 0, 46, 160, 40, 3, 10, 0),
   basis = "per_100g_edible",
   food_state = c("raw", "raw", "as_consumed", "raw", "raw", "raw", "raw",
-                 "as_consumed", "raw", "raw", "raw", "as_consumed"),
-  fortified = c(FALSE, FALSE, FALSE, TRUE, rep(FALSE, 8)),
+                 "as_consumed", "raw", "raw", "raw", "as_consumed", "raw"),
+  fortified = c(FALSE, FALSE, FALSE, TRUE, rep(FALSE, 8), TRUE),
   source = "synthetic: invented"
 )
 
+# What enrichment added: the enriched pasta (C04) is made of flour only, so
+# its ingredient is the enriched flour (C13) against the unfortified flour
+# (C02) at fraction 1; the enriched flour is its own reference. By hand,
+# iron: pasta 3.3 - 1 x (3 - 1.2) = 1.5; flour 1.2. Folate: pasta
+# 400 - (290 - 26) = 136; flour 26.
+enrichment <- data.frame(
+  composition_id = c("C04", "C04", "C13", "C13"),
+  nutrient = c("iron", "folate", "iron", "folate"),
+  enriched_ref_id = "C13", unenriched_ref_id = "C02",
+  ingredient_fraction = 1, added = NA_real_,
+  source = "synthetic: invented"
+)
+
+# Vehicles by product class; the three wheat products share the group
+# "wheat_flour". The biscuit carries flour and sugar.
 vehicles <- data.frame(
   food_code = c("wheat_flour", "bread", "pasta", "biscuit", "biscuit",
                 "sugar"),
-  vehicle = c("wheat_flour", "wheat_flour", "wheat_flour", "wheat_flour",
-              "sugar", "sugar"),
+  vehicle = c("flour", "bread", "pasta", "bread", "sugar", "sugar"),
+  vehicle_group = c("wheat_flour", "wheat_flour", "wheat_flour",
+                    "wheat_flour", NA, NA),
   vehicle_fraction = c(1, 0.6, 1, 0.5, 0.25, 1),
   source = "synthetic: invented"
 )
 
-scenarios <- data.frame(
-  scenario = c("flour", "flour", "flour_and_sugar", "flour_and_sugar",
-               "flour_and_sugar"),
-  vehicle = c("wheat_flour", "wheat_flour", "wheat_flour", "wheat_flour",
-              "sugar"),
-  nutrient = c("iron", "folate", "iron", "folate", "vitamin_a"),
-  level_mg_kg = c(40, 2, 40, 2, 10),
-  level_basis = c("nutrient", "compound", "nutrient", "compound",
-                  "nutrient"),
-  compound = c("iron compound", "folic acid", "iron compound", "folic acid",
-               "vitamin A compound"),
-  nutrient_fraction = c(NA, 1, NA, 1, NA),
-  compliance = c(0.8, 0.8, 0.8, 0.8, 0.6),
-  source = "synthetic: invented"
+# Scenario "flour" fortifies flour and bread only; "flour_and_sugar" also
+# pasta, and sugar with vitamin A given as an invented compound.
+wheat <- function(scenario, products) {
+  data.frame(
+    scenario = scenario, vehicle = rep(products, each = 2),
+    nutrient = c("iron", "folate"), level_mg_kg = c(40, 2),
+    level_basis = "nutrient", compound = NA_character_,
+    form = c(NA, "folic_acid"), nutrient_fraction = NA_real_,
+    compliance = 0.8, source = "synthetic: invented"
+  )
+}
+scenarios <- rbind(
+  wheat("flour", c("flour", "bread")),
+  wheat("flour_and_sugar", c("flour", "bread", "pasta")),
+  data.frame(
+    scenario = "flour_and_sugar", vehicle = "sugar", nutrient = "vitamin_a",
+    level_mg_kg = 10, level_basis = "compound",
+    compound = "vitamin A compound", form = "retinol",
+    nutrient_fraction = 0.5, compliance = 0.6, source = "synthetic: invented"
+  )
 )
 
 hces_example <- list(
   households = households, members = members, acquisitions = acquisitions,
   unit_factors = unit_factors, crosswalk = crosswalk,
-  nutrients = nutrients, composition = composition, vehicles = vehicles,
-  scenarios = scenarios
+  nutrients = nutrients, composition = composition, enrichment = enrichment,
+  vehicles = vehicles, scenarios = scenarios
 )
 
 save(hces_example, file = "data/hces_example.rda", compress = "xz",
