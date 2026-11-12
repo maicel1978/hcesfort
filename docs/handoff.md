@@ -6,96 +6,72 @@
 
 ## What was done
 
-Task 2 (data contracts) is complete.
-
 | Commit | Content |
 |---|---|
-| `9407338` | Maintainer's approval of the nine choices of `docs/design-task2.md` recorded in `docs/improvements.md`; P42 split (task 7: `unmatched_foods()`; new task 7b: `check_crosswalk()`; rest in v0.2). |
-| `e90f9e0` | 2.1: classed errors (`?hcesfort_errors`), audit-log format, carrier `hces_tbl`, `audit_log()`, `restore_audit()`, carrier regression test. Imports cli, dplyr, rlang; Suggests withr. `.lintr` no longer names `cyclocomp_linter`. |
-| `ce9be35` | 2.2 part 1: schema engine (columns and types, key, values). |
-| `a8a3c56` | 2.2 part 2: `validate_households()`, `validate_members()`, `validate_acquisitions()`, `validate_survey()`, `hces_schema()`. |
-| `05cef28` | 2.3: `nutrient_registry()`, validators of `unit_factors`, `crosswalk`, `vehicles`, `composition`, `scenarios`. |
-| this commit | Self-review (P43 to P50 in `docs/improvements.md`), this file. |
+| `9407338` … `381d6dd` | Task 2 complete (contracts, classed errors, audit log, validators, nutrient registry); see `git log` and `NEWS.md`. |
+| `eb27adc` | Maintainer's decisions P43 (later product named `hces_nutrient_content`) and P44 (`validate_crosswalk()` rejects a validated row without `composition_id`); same-model rule in `docs/model-routing.md`. |
+| `ccdb956` | Task 3: `hces_example`, synthetic dataset built by `data-raw/hces_example.R` (deterministic, md5 `b41b24c39dbeefccfb045c59d81125b3`), tests that it passes every validator with the planted notes. |
 
-On `05cef28`: `devtools::check()` 0 errors, 0 warnings, 0 notes;
-`lintr::lint_package()` clean; coverage 100% (`covr::package_coverage()`).
+On `ccdb956`: `devtools::check()` 0/0/0; `lintr::lint_package()` clean.
 
-Deviations from the design, all small:
+Environment notes: run checks as
+`LANG=C.UTF-8 LC_ALL=C.UTF-8 _R_CHECK_SYSTEM_CLOCK_=0 Rscript -e 'devtools::check()'`;
+run `devtools::document()` with the same `LANG`/`LC_ALL` (otherwise the
+author's accents are escaped in `man/hcesfort-package.Rd`); `lintr` needs
+`R CMD INSTALL .` first.
 
-- The value checks live in their own file, `R/schema-values.R`, and the
-  validators of `composition` and `scenarios` in
-  `R/validate-nutrient-tables.R`, to keep files and commits small.
-- `hces_schema()` returns a `key` column besides those the design lists.
-- `external_change` rows give the absolute difference in `n_records` and
-  `"removed"` or `"added"` in `detail`.
-- Validators write a `note` row only for causes with at least one record.
-- `vehicles` writes the note cause `source_pending`, not in the design's
-  vocabulary list (the design says "counted as a note" without a name).
-- The carrier regression test covers dplyr and base verbs only; tidyr and
-  srvyr verbs wait for those packages to enter `Imports` (P46).
-
-Environment notes (unchanged): run checks as
-`LANG=C.UTF-8 LC_ALL=C.UTF-8 _R_CHECK_SYSTEM_CLOCK_=0 Rscript -e 'devtools::check()'`,
-and `devtools::document()` with the same `LANG`/`LC_ALL`, or roxygen writes
-the accented author name as `<c3><b3>` escapes in
-`man/hcesfort-package.Rd`. `lintr` needs the package installed
-(`R CMD INSTALL .`) or it reports internal functions as undefined.
+Why the session stopped: the context used was estimated near 50%, the
+threshold of the same-model rule. Task 4 needs much reading.
 
 ## Exact next step
 
-Task 3: synthetic example dataset in the standard schema (invented
-households, members, acquisitions, unit factors, crosswalk, composition,
-vehicles, one scenario), built by a script in `data-raw/`, documented as
-synthetic, passing every `validate_*()` of task 2. Imports or Suggests
-needed: none new (`usethis` is not in the agreed list; write the `.rda`
-with `save()` or check with the maintainer).
+Task 4: reference data with sources in `data-raw/` (EAR, UL and the form it
+applies to, energy requirements, WHO 2009 levels, iron requirement
+distribution, DFE and RAE factors).
+
+1. Attach `maicel1978/analisis_ENGIH2018` (branch `main`) with the
+   `add_repo` tool, read access, and list `data/raw/`. Values come only from
+   its parameter files or from a document opened in the session
+   (`CLAUDE.md`, Verification).
+2. One CSV per table in `data-raw/`, with a `source` column; `data-raw/SOURCES.md`
+   lists each value with document, table or page, and status (`verified`
+   or `pending`). Pending values are `# SOURCE PENDING` and are not shipped.
+3. Shipped tables go to `R/sysdata.rda` or `data/` (decide by whether
+   users call them directly; each replaceable by argument), with md5 of
+   each `data-raw/` file checked by a test.
 
 ## Open questions
 
-1. **P43:** the class `hces_nutrients` belongs to the registry; the later
-   product the design also called `hces_nutrients` needs another name
-   (proposed: `hces_nutrient_content`). Agree?
-2. **P44:** a validated crosswalk row without `composition_id`: accept and
-   count as `unmatched_food` (current), or reject as an error?
-   Recommended: reject, since "validated" should mean "this match enters the
-   calculation".
+None.
 
 ## Recommended model for the next session
 
-**Opus 5.5**: task 3 (synthetic data) is implementation.
+**Opus 5.5**: task 4.
 
 ## Maintainer review points
 
-1. **A survey through the validators and its log.** Run the example of
-   `?validate_survey` and read the log; then remove a household and check
-   that the error names the orphan rows.
+1. **The synthetic data look invented, not real.** Read the composition
+   and scenario values and check that nobody could take them for a real
+   table or standard:
 
    ```r
-   # From the package folder: install, then attach (example() needs the
-   # installed help).
-   devtools::install()
    library(hcesfort)
-   example(validate_survey)
-   audit_log(survey$acquisitions)
-   try(validate_survey(households[-2, ], members, acquisitions))
+   hces_example$composition
+   hces_example$scenarios
    ```
 
-2. **The wording of the errors.** Are they clear to an adapter author?
+2. **The planted cases are where the documentation says.**
 
    ```r
-   h <- data.frame(household_id = c(1, 1, 2.5), weight = c(0, 1, 1),
-                   stratum = factor("a"), psu = 1:3)
-   try(validate_households(h))           # types first
-   h$stratum <- "a"; h$household_id <- c(1, 1, 3)
-   try(validate_households(h))           # then the key
-   h$household_id <- 1:3
-   try(validate_households(h))           # then the values
+   s <- validate_survey(hces_example$households, hces_example$members,
+                        hces_example$acquisitions)
+   lapply(s, audit_log)
    ```
 
-3. **A user's filter is recorded, not ignored.**
+3. **P44 in action**: a validated row without a match is now an error.
 
    ```r
-   a <- validate_acquisitions(acquisitions)
-   a2 <- dplyr::filter(a, food_code != "oil")
-   audit_log(validate_acquisitions(a2))  # last row: external_change, 1 removed
+   cw <- hces_example$crosswalk
+   cw$composition_id[1] <- NA
+   try(validate_crosswalk(cw))
    ```
