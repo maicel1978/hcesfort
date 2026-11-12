@@ -104,6 +104,7 @@ not tied to the nutrients of the first case.
 | Design | `as_hces_design()` | households + choice for single-PSU strata → `srvyr` design on the full sample |
 | Estimation | `estimate_households()`, `estimate_difference()`, `flag_precision()` | design + result table → proportions, means and medians with intervals by group and domain; paired differences between scenarios; precision flag with limits given by the caller |
 | Group shares | `food_group_shares()` | design + intake by group → share of each group in the mean intake per equivalent, by nutrient and domain (ratio of weighted totals, logit interval) |
+| Report | `use_report_template()` | path + language → Quarto template of the country report, by decision questions (English, Spanish), run on `hces_example` as shipped |
 
 Subsets are always estimated as domains of the full design.
 

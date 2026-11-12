@@ -268,6 +268,17 @@
   as the result of `apparent_intake()` (`unique()` of a tibble without
   columns); it now estimates one group. Found while writing the report
   template.
+* `use_report_template(path, lang)` copies a Quarto template of the
+  country results report, in English or Spanish, laid out by the
+  questions a decision-maker asks (risk by nutrient and by group, food
+  sources, reach of each vehicle, who is left out, what each scenario
+  would change, what the figures cannot answer), with the method in
+  annexes mapped to STROBE-nut. Every number comes from the package;
+  headlines choose the wording the intervals support and stop the render
+  when an assumption fails. It renders as shipped on `hces_example`,
+  which gains an invented socioeconomic domain, `expenditure_group`.
+  `ggplot2`, `knitr` and `rmarkdown` join Suggests (used by the template
+  and its tests only).
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is

@@ -416,6 +416,26 @@ estimated households, now documented.
 | P100 | low | **`food_group_shares()` calls `svyratio()` once per nutrient, group and domain**, each on an updated copy of the design. On a national survey (8,000 households, 15 groups, 4 nutrients, 10 domains) that is 600 calls; one call per nutrient and domain with every group as numerator would do. | Performance. | v0.2 |
 | P101 | low | **No domain argument in `food_group_shares()`** (only `by`); a logical `domain` or `domain_from`, as in `estimate_households()`, would allow shares among, for example, households with plausible energy. | Consistency of the estimators. | v0.2 |
 
+## Open items from task 12b (2026-11-12)
+
+Self-review of 12b as an rOpenSci reviewer would. Fixed in the task:
+`estimate_households()` failed on a table keyed by household only (the
+energy figure of annex D found it); the Q1 headline named a "greatest"
+risk while its interval overlapped the second (it now says the two
+cannot be ranked); Q6 named as "not changed" a nutrient the action does
+not touch (rows with `se = 0` are now left out); the paired change by
+the equity domain (D6) was missing; full article titles typed from
+memory in the references were removed (only the details recorded in the
+design remain).
+
+| Id | Priority | Proposal | Why | Task |
+|---|---|---|---|---|
+| P102 | high | **The template was never rendered with Quarto in this session.** Quarto is not installed here and installing it was refused; the tests knit every chunk with `knitr` on `hces_example` in both languages, and a Quarto test runs (and is skipped otherwise) where Quarto exists. The maintainer should render `report.qmd` once (review point of `docs/handoff.md`) and CI could install Quarto (`quarto-dev/quarto-actions/setup`). | Never claim something works without running it. | 12 |
+| P103 | medium | **Choices taken in implementation, to confirm.** (1) Headlines adapt their wording to the intervals (overlap: no ranking; all households reached: a sentence without a figure) and stop only when an assumption fails (reference scenario absent, shares not adding to 1, no action lowering any risk), instead of stopping whenever the example wording does not hold. (2) Q2 headline uses the first domain of `domains` and the nutrient of highest risk; Q3 the same nutrient. (3) Above the UL is read from `above_ul_total` where the diet part is known, else `above_ul_added`. (4) New param `equity_domain` for the paired change by group (D6). (5) The `line_length_linter` is switched off for the two `report.qmd` files (captions and YAML), not for the R files. (6) Column names of `actions.csv` and `decisions.csv` stay in English in both languages; their content is translated. | CLAUDE.md: no interpretation chosen silently. | 12 |
+| P104 | low | **Met need and the other thresholds of Aaron et al. 2017 (D9)** are not wired: only `raw_coverage_threshold` draws a line in Q4. | D9 asks to show them when passed. | v0.2 |
+| P105 | low | **Annex G asks for the md5 of the input files in prose**; `_results.R` could compute it when the ADAPTER block names files. | Reproducibility. | v0.2 |
+| P106 | low | **Labels are codes** (`vitamin_a`, `wheat_flour`, domain names) in headlines and figures; a small label table in the ADAPTER block would print names. | Readability for decision-makers. | 12 |
+
 ## Open items from task 2 (2026-11-12)
 
 Self-review of task 2, done as an rOpenSci reviewer would. Items in scope

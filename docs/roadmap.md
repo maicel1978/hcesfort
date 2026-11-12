@@ -54,8 +54,10 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
   - [x] 11c.2 `food_group_intake()` with its log.
   - [x] 11c.3 `food_group_shares()` and the internal ratio helper.
   - [x] 11c.4 Golden chain, `NEWS.md` (E1), specification, self-review.
-- [ ] 12b. Country results report template (`use_report_template()`), organised by decision questions, in English and Spanish; invented socioeconomic domain in `hces_example`. Needs 11c for Q3. Design: `docs/design-report-template.md`.
+- [x] 12b. Country results report template (`use_report_template()`), organised by decision questions, in English and Spanish; invented socioeconomic domain in `hces_example`. Needs 11c for Q3. Design: `docs/design-report-template.md`.
   - [x] 12b.0 Design written (2026-11-12); its eleven decisions approved as recommended 2026-11-12 (D10 amended).
+  - [x] 12b.1 Invented `expenditure_group` in `hces_example` (G6).
+  - [x] 12b.2 `use_report_template()`, template files in English and Spanish, tests (knit on `hces_example`, headline guards, exported functions); fix of `estimate_households()` on a table keyed by household only.
 
 ## v0.1, companion repository `hcesfort.engih2018`: ENGIH 2018 adapter (needs the microdata)
 - [ ] A1. Stage-level control figures exported from the original pipeline (record counts by section and drop cause, grams by section, AFE distribution, median intake per nutrient), md5 of the microdata, and the three checks left open on E4 (energy of Sec 3A alone by days with a record, upper tail by days, the eighth day) plus the number of records in dozens (E2). Run by the maintainer when the microdata are at hand.
