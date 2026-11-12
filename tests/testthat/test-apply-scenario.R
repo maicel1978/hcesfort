@@ -287,3 +287,9 @@ test_that("the example data run end to end", {
   ok <- s$intake_status == "estimated"
   expect_true(all(s$iron_mg_added[ok] >= 0))
 })
+
+test_that("a scenarios table without rows returns the baseline only", {
+  s <- as_run(as_scenarios()[0, ])
+  expect_identical(unique(s$scenario), "baseline")
+  expect_identical(nrow(s), 3L)
+})

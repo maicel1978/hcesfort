@@ -440,6 +440,24 @@ Designs: `docs/design-task9.md` and `docs/design-task10.md`, approved
 | P73 | medium | **Two points where acceptance step 1 may not match exactly.** (a) The original picked the rows of the baseline by the food's description, the package by composition id. (b) The original's vehicle grams are edible grams of the records that survived E3; the package uses purchased grams of every included record. Measure both with the microdata; add an option only if a difference appears. | Acceptance step 1 needs the original choices as explicit options. | A3 |
 | P74 | low | **Step function for the iron probability.** IOM (2001, Appendix I) tabulates the probability of inadequacy by ranges of intake; offer it as `interpolation = "step"` once the tables are opened and entered in `data-raw/` with their place. | Fidelity to the cited source; the difference from linear interpolation is small. | v0.2 |
 
+## Open items from task 9 (2026-11-12)
+
+Self-review of `unfortified_baseline()`, `vehicle_coverage()` and
+`apply_scenario()`, as an rOpenSci reviewer would. Fixed in the task: a
+households table without `food_module_response` gave `vehicle_coverage()`
+statuses of length zero; a scenarios table without rows failed on column
+types (it now returns the baseline only); a cell below the floor of the
+subtraction would have been raised to the floor (it is now kept, so no
+cell increases, and flagged). Decisions taken in implementation, within
+the approved design:
+
+| ID | Priority | Item | Rationale | Roadmap task |
+|---|---|---|---|---|
+| P75 | medium | **Choices of task 9 taken in implementation.** (1) `unfortified_baseline()` rejects a table that already has `baseline_status` (applying the rules twice would remove the enrichment twice); the design left "reject or no change" open. (2) A cell whose value is already below the floor `f × U` is kept, not raised, and flagged `floored`; so "no cell increases" holds and "subtract ≥ replace" holds only where `v ≥ f × U`. (3) `n_records` of `vehicle_coverage()` counts included records (after the outlier decision), not every record of the food. (4) A household without the food module or without records has `qty_vehicle_g_d` missing, like `acquired`. (5) The pending sources of `vehicles` and `enrichment` are counted once, by their validators (`source_pending`), whose rows travel in the log; `apply_scenario()` adds `scenario_source_pending` in its own step, as the design asked. (6) `SOURCE PENDING` is recognised as a prefix, so a source can carry the adapter's reading after it. (7) `added` is missing, not 0, for households whose intake is not estimated. | CLAUDE.md: no interpretation chosen silently. | 9 |
+| P76 | medium | **`apply_scenario()` checks statuses, not AFE values.** It requires that every household estimated in `intake` is estimated in `use`, but not that both were divided by the same AFE. A check that the AFE of each household agrees (`use` does not keep it today) would close the gap; adding `afe` to `hces_vehicle_use` is enough. | Two AFE tables give silently inconsistent totals. | 11 |
+| P77 | low | **A `form` given for a nutrient in a plain mass unit is not used.** For iron (`mg`), `form = "ferrous_fumarate"` is accepted and ignored: the factor is 1 and no form column is returned. A note in the log would make that visible. | Nothing silent. | 10 or 12 |
+| P78 | low | **`hces_example` has no md5 entry.** `data-raw/MD5` registers the reference CSVs; the example is rebuilt deterministically by its script. Register `data/hces_example.rda` if the build is to be checked like the reference tables. | Reproducibility rule of CLAUDE.md. | 12 |
+
 ## Questions for the maintainer
 
 Answered on 2026-11-12: see "Decisions (2026-11-12)" above. Kept for the

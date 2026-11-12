@@ -28,14 +28,14 @@ scenario_targets <- function(s, nutrients, conversions,
   in_registry <- form %in% nutrients$nutrient
   form_unit[in_registry] <- nutrients$unit[match(form[in_registry],
                                                  nutrients$nutrient)]
-  form_col <- ifelse(in_registry,
-                     nutrients$column[match(form, nutrients$nutrient)],
-                     paste0(form, "_", form_unit))
+  form_col <- paste0(form, "_", form_unit)
+  form_col[in_registry] <- nutrients$column[match(form[in_registry],
+                                                  nutrients$nutrient)]
   tagged <- !is.na(conv$factor)
-  nutrient_amount <- ifelse(
+  nutrient_amount <- as.double(ifelse(
     tagged, mass_mg * mg_kg_to_per_100g(conv$from_unit) * conv$factor,
     mass_mg * mg_kg_to_per_100g(unit_base(unit))
-  )
+  ))
   rows <- dplyr::tibble(
     scenario = s$scenario, vehicle = s$vehicle, target = "nutrient",
     column = nutrients$column[match(s$nutrient, nutrients$nutrient)],

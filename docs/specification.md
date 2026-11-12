@@ -67,10 +67,15 @@ Tables the user supplies alongside (not survey data, still external):
 - `composition`: composition id, nutrient columns with the unit in the name,
   plus metadata: basis, edition, state of the food, source. Optional columns
   for the forms an upper level applies to (`retinol_ug`, `folic_acid_ug`).
-- `vehicles`: food code → vehicle, flour (or vehicle) fraction, source.
+- `enrichment`: composition id + nutrient → what enrichment added, by a
+  reference pair (enriched and unenriched rows, ingredient fraction) or by
+  an amount `added`, source.
+- `vehicles`: food code → vehicle, vehicle group*, vehicle fraction (of the
+  food as purchased), source.
 - `scenarios`: scenario, vehicle, nutrient, `level_mg_kg`, level basis
-  (`nutrient` or `compound`), compound*, nutrient fraction*, compliance
-  (default 1), source.
+  (`nutrient` or `compound`), compound*, form* (required when the unit of
+  the nutrient is an equivalent), nutrient fraction* (only with basis
+  `compound`), compliance (default 1, noted in the log), source.
 
 Nutrients are handled through a registry (name, unit, column), so the core is
 not tied to the nutrients of the first case.
@@ -86,9 +91,9 @@ not tied to the nutrients of the first case.
 | Composition | `link_composition()`, `fill_composition()` | grams + crosswalk + composition → nutrients per record, with coverage over all records |
 | Apparent intake | `apparent_intake()` | nutrients + equivalents → intake per equivalent per day, one row per household of `households`, with a status |
 | Plausibility | energy-plausibility flag | intake → flag |
-| Baseline | `unfortified_baseline()` | composition + vehicles → baseline composition (removes enrichment only) |
-| Scenarios | `apply_scenario()` | baseline + scenarios + vehicles → added and total intake per household |
-| Vehicles | `vehicle_coverage()` | grams + vehicles → coverage, consumption among consumers, combined reach |
+| Baseline | `unfortified_baseline()` | composition + enrichment → baseline composition (removes enrichment only) |
+| Vehicles | `vehicle_coverage()` | grams + vehicles + equivalents → vehicle use per household (acquired, grams per AFE), by vehicle, group and combination |
+| Scenarios | `apply_scenario()` | baseline intake + vehicle use + scenarios → total and added intake per household and scenario, baseline included |
 | Risk | `inadequacy()` | intake + requirements; method `"ear_cutpoint"` or `"iron_probability"` (bioavailability as an argument) |
 | Upper level | `above_ul()` | intake + UL and the form it applies to |
 | Density | `nutrient_density()` | intake + energy → per 1,000 kcal |

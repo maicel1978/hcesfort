@@ -186,3 +186,9 @@ test_that("a link_composition() table is accepted, and the example runs", {
   expect_identical(u1$qty_vehicle_g_d, u2$qty_vehicle_g_d)
   expect_identical(nrow(u1), 40L * 5L)
 })
+
+test_that("a vehicles table without rows gives no rows", {
+  u <- vc_run(vehicles = vc_vehicles()[0, ])
+  expect_identical(nrow(u), 0L)
+  expect_s3_class(u, "hces_vehicle_use")
+})

@@ -100,6 +100,37 @@
   given by the user (the original's 500 and 6,000 kcal are one call, not a
   default). `nutrient_density()`: nutrients per 1,000 kcal (or another
   amount).
+* `unfortified_baseline()`: removes what enrichment added to a composition
+  table, cell by cell, from a table of rules with their source
+  (`hces_schema("enrichment")`, `validate_enrichment()`), so intake can be
+  computed without the fortification a scenario adds. The original
+  replaced the iron and folate of every derived product by those of its
+  flour, deleting the nutrients of the other ingredients (E6); the default
+  now subtracts the difference between the enriched and the unenriched
+  ingredient times its fraction, never below what the unenriched
+  ingredient brings. The original rule is `method =
+  "replace_by_ingredient"`.
+* `vehicle_coverage()`: vehicle use per household, vehicle, vehicle group
+  and combination of vehicles, on the purchased basis, from one vehicles
+  table (the original defined the vehicles twice by regular expressions,
+  E12). Households without food records keep a missing `acquired` and stay
+  in the frame, with the same denominator as risk (E5; the original counted
+  them as non-consumers).
+* `apply_scenario()`: total and added intake per household under each
+  scenario, the baseline included. It refuses an intake not built on an
+  unfortified baseline: the original's prevalence script used the enriched
+  composition (E1). The level basis is stated in each scenario row: compound
+  to form (`nutrient_fraction`), the form (`form`) and its equivalent factor
+  read from the conversions table, instead of the constants 1.7 and "read as
+  retinol" in the code (E8, P52). Compliance enters under a named model
+  (`compliance_model = "average_content"`), required when a compliance is
+  below 1 (the original assumed full compliance without saying so, P32).
+  The amount of the form is kept apart (`folic_acid_ug_added`) for the
+  upper level.
+* `vehicles` gains the optional column `vehicle_group`; `scenarios` the
+  optional column `form`, and `nutrient_fraction` must be missing when the
+  basis is `nutrient`. `nutrient_density()` and `flag_energy_plausibility()`
+  accept the scenario table.
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is
