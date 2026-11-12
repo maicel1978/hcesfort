@@ -101,7 +101,7 @@ apparent_intake <- function(content, afe, households, outliers = NULL) {
                                               NA_real_)
   }
   log <- intake_log(x, reasons, used, out, nutrients)
-  log <- dplyr::bind_rows(audit_get(x), audit_get(afe), audit_get(h), log)
+  log <- dplyr::bind_rows(audit_combine(x, afe, h), log)
   out <- new_hces_tbl(out, "hces_intake", log, "household_id", nutrients)
   attr(out, "outlier_decision") <- outlier_decision(x, outliers)
   out

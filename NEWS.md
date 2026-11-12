@@ -220,6 +220,15 @@
   distribution names the rules it breaks (field `failed`);
   `flag_energy_plausibility()` and `flag_precision()` name the argument
   that failed.
+* Audit log (review of v0.1, M7, P50): when a function takes several
+  tables that share a branch (the validated acquisitions reach
+  `apply_scenario()` through both `intake` and `use`), the rows of that
+  branch appear once in the merged log (before: once per branch; 21
+  repeated rows in the log of `apply_scenario()` on `hces_example`).
+  New `audit_summary()`: what each step excluded, flagged or filled, with
+  the share of the records it received. New `audit_record()`: an adapter
+  or a user states in the log what it did to a table between two
+  functions of the package.
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is

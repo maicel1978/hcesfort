@@ -89,7 +89,7 @@ unfortified_baseline <- function(composition, enrichment, nutrients = NULL,
   ), none = "unchanged")
   forms <- forms_without_rule(e, nutrients, conversions)
   log <- baseline_log(rules, method, out, forms, nrow(e))
-  log <- dplyr::bind_rows(audit_get(comp), audit_get(e), log)
+  log <- dplyr::bind_rows(audit_combine(comp, e), log)
   new_hces_tbl(out, "hces_composition", log, "composition_id", nutrients)
 }
 

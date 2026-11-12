@@ -93,7 +93,7 @@ apply_scenario <- function(intake, use, scenarios,
                   added_cols)
   }))
   log <- scenario_log(x, use, s, out, names_s, added_cols, compliance_model)
-  log <- dplyr::bind_rows(audit_get(x), audit_get(use), audit_get(s), log)
+  log <- dplyr::bind_rows(audit_combine(x, use, s), log)
   new_hces_tbl(out, "hces_scenario_intake", log,
                c("scenario", "household_id"), nutrients)
 }

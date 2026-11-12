@@ -145,7 +145,7 @@ estimate_cell <- function(design, y, mask, statistic, ci_method, level,
 # not hold yet.
 domain_input_log <- function(x, domain_from) {
   if (is.null(domain_from)) return(audit_get(x))
-  audit_union(audit_get(x), audit_get(domain_from))
+  audit_combine(x, domain_from)
 }
 
 # TRUE when every value is 0 or every value is 1: the proportion is exact

@@ -49,7 +49,7 @@ fill_composition <- function(composition, fills, nutrients = NULL) {
   gap <- is.na(current)
   for (i in which(gap)) out[[column[i]]][row[i]] <- f$value[i]
   log <- fill_log(column, gap, nrow(out))
-  log <- dplyr::bind_rows(audit_get(comp), audit_get(f), log)
+  log <- dplyr::bind_rows(audit_combine(comp, f), log)
   new_hces_tbl(out, "hces_composition", log, "composition_id", nutrients)
 }
 

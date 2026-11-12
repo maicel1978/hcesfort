@@ -96,3 +96,15 @@ test_that("the recalibrated example reads like a survey (H6)", {
   expect_true(any(above))
   expect_false(all(above[ch$ul$intake_status == "estimated"]))
 })
+
+test_that("the logs of the full chain hold no branch twice", {
+  # Every input of apply_scenario() derives from the same validated
+  # tables; before 11b.8 their rows were repeated once per branch.
+  ch <- golden_chain()
+  for (x in ch[c("intake", "use", "s", "risk", "ul")]) {
+    expect_false(anyDuplicated(audit_log(x)) > 0)
+  }
+  steps <- audit_log(ch$s)$step
+  expect_identical(sum(steps == "validate_acquisitions" &
+                         audit_log(ch$s)$kind == "input"), 1L)
+})

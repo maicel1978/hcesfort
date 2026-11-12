@@ -78,7 +78,7 @@ link_composition <- function(grams, crosswalk, composition,
   out$match_status <- first_reason(reasons[-1], none = "matched")
   out$composition_status <- status
   log <- link_log(out, reasons, nutrients, linked$yield_assumed)
-  log <- dplyr::bind_rows(audit_get(g), audit_get(cw), audit_get(comp), log)
+  log <- dplyr::bind_rows(audit_combine(g, cw, comp), log)
   new_hces_tbl(out, "hces_nutrient_content", log, "record_id", nutrients)
 }
 

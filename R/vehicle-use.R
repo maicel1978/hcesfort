@@ -97,8 +97,7 @@ vehicle_coverage <- function(grams, vehicles, afe, households,
   out <- use_rows(x[used, ], items, h$household_id, status, afe_h)
   out <- household_afe_columns(out, afe)
   log <- vehicle_log(x, reasons, used, v, items, out, status)
-  log <- dplyr::bind_rows(audit_get(x), audit_get(v), audit_get(afe),
-                          audit_get(h), log)
+  log <- dplyr::bind_rows(audit_combine(x, v, afe, h), log)
   out <- new_hces_tbl(out, "hces_vehicle_use", log,
                       c("household_id", "level", "vehicle"))
   attr(out, "outlier_decision") <- outlier_decision(x, outliers)

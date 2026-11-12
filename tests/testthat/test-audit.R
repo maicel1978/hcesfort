@@ -49,6 +49,18 @@ test_that("audit_merge() keeps the primary log first", {
   expect_identical(audit_log(merged)$table, c("acquisitions", "members"))
 })
 
+test_that("audit_combine() keeps a branch shared by two inputs once", {
+  # x and y both derive from the same validated table (row "fixture");
+  # y adds one note. The merged log holds "fixture" once, then the note.
+  x <- fixture_carrier()
+  y <- audit_add(fixture_carrier(), step = "y", table = "members",
+                 kind = "note", cause = "missing_age", n_records = 1)
+  log <- audit_combine(x, y)
+  expect_identical(log$step, c("fixture", "y"))
+  expect_identical(audit_combine(y, x), audit_log(y))
+  expect_identical(audit_combine(), new_audit_log())
+})
+
 test_that("audit_merge() with no other table leaves the log unchanged", {
   x <- fixture_carrier()
   expect_identical(audit_log(audit_merge(x)), audit_log(x))

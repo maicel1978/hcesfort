@@ -48,10 +48,17 @@ audit_add <- function(x, ...) {
   x
 }
 
-# `x` with the logs of the tables in `...` appended to its own, in order.
+# The log of the first table in `...` followed by the rows of the logs of
+# the others that it does not already hold (see `audit_union()`), so that a
+# branch shared by two inputs (a validated households table, for example)
+# appears once. Every merge of two logs goes through this function.
+audit_combine <- function(...) {
+  Reduce(audit_union, lapply(list(...), audit_get), new_audit_log())
+}
+
+# `x` with the logs of the tables in `...` merged into its own.
 audit_merge <- function(x, ...) {
-  others <- lapply(list(...), audit_get)
-  attr(x, "audit") <- dplyr::bind_rows(c(list(audit_get(x)), others))
+  attr(x, "audit") <- audit_combine(x, ...)
   x
 }
 

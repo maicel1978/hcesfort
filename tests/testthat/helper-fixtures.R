@@ -16,6 +16,29 @@ fixture_carrier <- function() {
   new_hces_tbl(data, "hces_acquisitions", audit = log, key = "record_id")
 }
 
+# A carrier for audit_summary() whose log has, by hand,
+#  1 s1/acquisitions input   10 records
+#  2 s1/acquisitions excluded 2 records  -> share 2/10 = 0.2
+#  3 s1/acquisitions note     4 records  -> not summarised
+#  4 s2/grams        flagged  3 records  -> no input of s2: NA
+#  5 s1/acquisitions input    8 records  (second run of s1)
+#  6 s1/acquisitions filled   2 records  -> share 2/8 = 0.25
+#  7 s3/acquisitions external_change 1 record -> NA
+summary_fixture <- function() {
+  x <- fixture_carrier()
+  attr(x, "audit") <- audit_row(
+    step = c("s1", "s1", "s1", "s2", "s1", "s1", "s3"),
+    table = c(rep("acquisitions", 3), "grams", rep("acquisitions", 3)),
+    kind = c("input", "excluded", "note", "flagged", "input", "filled",
+             "external_change"),
+    cause = c("all", "no_qty", "x", "outlier", "all", "unit", "rows"),
+    n_records = c(10, 2, 4, 3, 8, 2, 1),
+    n_households = c(5, 1, 2, 2, 4, 1, NA),
+    qty_g = c(1000, 50, NA, 30, 900, 20, NA)
+  )
+  x
+}
+
 # Standard tables of an invented survey of three households. Household 3 has
 # no members and no acquisitions. By hand:
 # members: 1 missing age (household 1), 1 missing sex (household 2);
