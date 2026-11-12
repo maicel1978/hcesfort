@@ -77,11 +77,16 @@ schema_registry <- function() {
   list(
     households = schema_households,
     members = schema_members,
-    acquisitions = schema_acquisitions
+    acquisitions = schema_acquisitions,
+    unit_factors = schema_unit_factors,
+    crosswalk = schema_crosswalk,
+    composition = schema_composition,
+    vehicles = schema_vehicles,
+    scenarios = schema_scenarios
   )
 }
 
-#' Schema of a standard table
+#' Schema of an input table
 #'
 #' Returns the data contract of one of the tables hcesfort takes as input:
 #' its columns, their type, whether they are required, whether a missing
@@ -93,12 +98,20 @@ schema_registry <- function() {
 #' numeric and finite; `flag` is logical; `text` is character. Columns not
 #' in the schema are kept untouched by the validators.
 #'
-#' @param table Name of the table: `"households"`, `"members"` or
-#'   `"acquisitions"`.
+#' The schemas of `composition` and `scenarios` depend on the nutrient
+#' registry: `hces_schema("composition")` shows one placeholder row,
+#' `<nutrient>_<unit>`, for the nutrient columns, and `nutrient` in
+#' `scenarios` must be a nutrient of the registry.
+#'
+#' @param table Name of the table: `"households"`, `"members"`,
+#'   `"acquisitions"`, `"unit_factors"`, `"crosswalk"`, `"composition"`,
+#'   `"vehicles"` or `"scenarios"`.
 #' @returns A tibble with columns `column`, `type`, `required`, `na`
 #'   (`TRUE` when a missing value is accepted), `key` (`TRUE` for the
 #'   columns of the key), `rule` and `description`.
-#' @seealso [validate_households()], [validate_survey()].
+#' @seealso [validate_households()], [validate_survey()],
+#'   [validate_unit_factors()], [validate_composition()],
+#'   [validate_scenarios()].
 #' @examples
 #' hces_schema("acquisitions")
 #' @export

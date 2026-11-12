@@ -2,13 +2,14 @@
 % Please edit documentation in R/schema-standard.R
 \name{hces_schema}
 \alias{hces_schema}
-\title{Schema of a standard table}
+\title{Schema of an input table}
 \usage{
 hces_schema(table)
 }
 \arguments{
-\item{table}{Name of the table: \code{"households"}, \code{"members"} or
-\code{"acquisitions"}.}
+\item{table}{Name of the table: \code{"households"}, \code{"members"},
+\code{"acquisitions"}, \code{"unit_factors"}, \code{"crosswalk"}, \code{"composition"},
+\code{"vehicles"} or \code{"scenarios"}.}
 }
 \value{
 A tibble with columns \code{column}, \code{type}, \code{required}, \code{na}
@@ -26,10 +27,17 @@ these rules.
 Types: \code{id} is text or a whole number (a factor is rejected); \code{number} is
 numeric and finite; \code{flag} is logical; \code{text} is character. Columns not
 in the schema are kept untouched by the validators.
+
+The schemas of \code{composition} and \code{scenarios} depend on the nutrient
+registry: \code{hces_schema("composition")} shows one placeholder row,
+\verb{<nutrient>_<unit>}, for the nutrient columns, and \code{nutrient} in
+\code{scenarios} must be a nutrient of the registry.
 }
 \examples{
 hces_schema("acquisitions")
 }
 \seealso{
-\code{\link[=validate_households]{validate_households()}}, \code{\link[=validate_survey]{validate_survey()}}.
+\code{\link[=validate_households]{validate_households()}}, \code{\link[=validate_survey]{validate_survey()}},
+\code{\link[=validate_unit_factors]{validate_unit_factors()}}, \code{\link[=validate_composition]{validate_composition()}},
+\code{\link[=validate_scenarios]{validate_scenarios()}}.
 }

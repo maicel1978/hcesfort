@@ -37,3 +37,37 @@ test_that("hces_schema() rejects an unknown table", {
   expect_error(hces_schema(c("members", "households")),
                class = "hcesfort_error_argument")
 })
+
+test_that("hces_schema() describes the user-supplied tables", {
+  for (table in c("unit_factors", "crosswalk", "composition", "vehicles",
+                  "scenarios")) {
+    expect_s3_class(hces_schema(table), "tbl_df")
+  }
+  s <- hces_schema("composition")
+  expect_true("<nutrient>_<unit>" %in% s$column)
+  s <- hces_schema("unit_factors")
+  expect_identical(s$column[s$key], c("unit", "food_code"))
+})
+
+test_that("user-table schemas list the columns their validators require", {
+  r <- fixture_nutrients()
+  cases <- list(
+    unit_factors = list(fixture_unit_factors(), validate_unit_factors),
+    crosswalk = list(fixture_crosswalk(), validate_crosswalk),
+    vehicles = list(fixture_vehicles(), validate_vehicles),
+    composition = list(fixture_composition(),
+                       function(x) validate_composition(x, r)),
+    scenarios = list(fixture_scenarios(),
+                     function(x) validate_scenarios(x, r))
+  )
+  for (table in names(cases)) {
+    required <- with(hces_schema(table), column[required])
+    required <- setdiff(required, "<nutrient>_<unit>")
+    for (col in required) {
+      x <- cases[[table]][[1]]
+      x[[col]] <- NULL
+      expect_error(cases[[table]][[2]](x), class = "hcesfort_error_schema",
+                   info = paste(table, col))
+    }
+  }
+})

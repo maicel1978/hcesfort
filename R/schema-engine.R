@@ -35,7 +35,7 @@ check_schema <- function(x, schema, call = rlang::caller_env()) {
   }
   check_columns(x, schema, table, call)
   check_types(x, schema, table, call)
-  check_key(x, attr(schema, "key"), table, call)
+  check_key(x, schema, table, call)
   check_values(x, schema, table, call)
   invisible(x)
 }
@@ -72,10 +72,14 @@ check_types <- function(x, schema, table, call) {
   ), table = table, columns = bad$column, call = call)
 }
 
-# TRUE when vector `v` has schema type `type`.
+# TRUE when vector `v` has schema type `type`. A column that is entirely
+# a logical NA (as `data.frame(x = NA)` makes it) fits any type.
 type_ok <- function(v, type) {
   if (is.factor(v)) {
     return(FALSE)
+  }
+  if (is.logical(v) && all(is.na(v))) {
+    return(TRUE)
   }
   switch(type,
     id = is.character(v) || is.integer(v) ||
@@ -93,10 +97,16 @@ type_bullet <- function(column, type, v) {
   paste0("`", column, "` must be ", type, ", not ", got, ".")
 }
 
-# Key columns must be complete and unique together.
-check_key <- function(x, key, table, call) {
-  rows_na <- which(!stats::complete.cases(x[key]))
-  rows_dup <- which(duplicated(x[key]) & stats::complete.cases(x[key]))
+# Key columns must be unique together, and complete except in the key
+# columns whose schema accepts a missing value (in `unit_factors`, a missing
+# `food_code` means "every food" and is a value of the key). Optional key
+# columns absent from `x` are left out of the key.
+check_key <- function(x, schema, table, call) {
+  key <- intersect(attr(schema, "key"), names(x))
+  strict <- intersect(key, schema$column[!schema$na])
+  complete <- stats::complete.cases(x[strict])
+  rows_na <- which(!complete)
+  rows_dup <- which(duplicated(x[key]) & complete)
   if (length(rows_na) + length(rows_dup) == 0) {
     return(invisible(x))
   }

@@ -44,7 +44,7 @@
 #' validate_households(households)
 #' @export
 validate_households <- function(x) {
-  validate_table(x, "households", "validate_households", function(x) {
+  validate_table(x, schema_households(), "validate_households", function(x) {
     list(food_module_nonresponse = if (!is.null(x$food_module_response)) {
       !x$food_module_response
     })
@@ -54,7 +54,7 @@ validate_households <- function(x) {
 #' @rdname validate_households
 #' @export
 validate_members <- function(x) {
-  validate_table(x, "members", "validate_members", function(x) {
+  validate_table(x, schema_members(), "validate_members", function(x) {
     list(missing_age = is.na(x$age_years), missing_sex = is.na(x$sex))
   })
 }
@@ -62,33 +62,36 @@ validate_members <- function(x) {
 #' @rdname validate_households
 #' @export
 validate_acquisitions <- function(x) {
-  validate_table(x, "acquisitions", "validate_acquisitions", function(x) {
+  flags <- function(x) {
     list(
       missing_quantity = is.na(x$quantity),
       missing_unit = is.na(x$unit),
       not_included = !x$include
     )
-  })
+  }
+  validate_table(x, schema_acquisitions(), "validate_acquisitions", flags)
 }
 
 # Shared body of the validators. `flags` returns a named list of logical
-# vectors, one per cause of note.
-validate_table <- function(x, table, step, flags,
-                           call = rlang::caller_env()) {
-  schema <- schema_registry()[[table]]()
+# vectors, one per cause of note; a name "cause:detail" fills `detail`.
+# `extra` runs checks that span columns, after the schema.
+validate_table <- function(x, schema, step, flags, extra = NULL,
+                           nutrients = NULL, call = rlang::caller_env()) {
+  table <- attr(schema, "table")
   class <- paste0("hces_", table)
   key <- attr(schema, "key")
-  if (inherits(x, class) && inherits(x, "hces_tbl")) {
-    x <- audit_check_rows(x, step)
-    check_schema(x, schema, call)
-    return(new_hces_tbl(x, class, audit_get(x), key))
-  }
+  revalidate <- inherits(x, class) && inherits(x, "hces_tbl")
+  if (revalidate) x <- audit_check_rows(x, step)
   check_schema(x, schema, call)
+  if (!is.null(extra)) extra(x, call)
+  if (revalidate) {
+    return(new_hces_tbl(x, class, audit_get(x), key, nutrients))
+  }
   log <- dplyr::bind_rows(
     audit_row(step, table, "input", "all", nrow(x), n_distinct_hh(x)),
     count_notes(x, step, table, flags(x))
   )
-  new_hces_tbl(x, class, log, key)
+  new_hces_tbl(x, class, log, key, nutrients)
 }
 
 # Note rows for the causes in `flags` that count at least one record.
@@ -98,11 +101,14 @@ count_notes <- function(x, step, table, flags) {
     return(new_audit_log())
   }
   households <- vapply(flags, function(f) n_distinct_hh(x[f, ]), 1L)
-  audit_row(step, table, "note", names(flags),
-            vapply(flags, sum, 1L), households)
+  cause <- sub(":.*$", "", names(flags))
+  detail <- ifelse(grepl(":", names(flags)), sub("^[^:]*:", "", names(flags)),
+                   NA_character_)
+  audit_row(step, table, "note", cause, vapply(flags, sum, 1L), households,
+            detail = detail)
 }
 
-# Number of distinct households of a table.
+# Number of distinct households of a table; NA when it has no household.
 n_distinct_hh <- function(x) {
-  length(unique(x$household_id))
+  if (is.null(x$household_id)) NA_integer_ else length(unique(x$household_id))
 }

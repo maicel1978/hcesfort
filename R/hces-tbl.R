@@ -4,16 +4,19 @@
 # on exit, requires it on entry, and records changes in the number of rows.
 
 # Attributes of a carrier that are re-attached by the package.
-carrier_attrs <- c("audit", "audit_rows", "audit_key")
+carrier_attrs <- c("audit", "audit_rows", "audit_key", "nutrients")
 
 # A carrier: `data` as a tibble of class `c(class, "hces_tbl")`, with its
-# log, its key columns and its current number of rows.
-new_hces_tbl <- function(data, class, audit = new_audit_log(), key) {
+# log, its key columns, its current number of rows and, for tables with
+# nutrient columns, its nutrient registry.
+new_hces_tbl <- function(data, class, audit = new_audit_log(), key,
+                         nutrients = NULL) {
   data <- dplyr::as_tibble(data)
   class(data) <- c(class, "hces_tbl", "tbl_df", "tbl", "data.frame")
   attr(data, "audit") <- audit
   attr(data, "audit_key") <- key
   attr(data, "audit_rows") <- nrow(data)
+  attr(data, "nutrients") <- nutrients
   data
 }
 
