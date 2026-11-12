@@ -394,7 +394,7 @@ of `docs/design-food-group-shares.md`:
 ## Open items from the design of the food-group shares (2026-11-12)
 
 The nine decisions of section 10 of `docs/design-food-group-shares.md`
-were approved as recommended (see above).
+were approved as recommended (see above). Implemented in task 11c.
 
 | Id | Priority | Proposal | Why | Task |
 |---|---|---|---|---|
@@ -402,6 +402,19 @@ were approved as recommended (see above).
 | P96 | medium | **Gate on value coverage per group and nutrient**, mirroring `min_coverage` of `inadequacy()`. In v0.1 the grams without a value are logged, not gated. | A group with poor composition coverage is understated. | after A3 |
 | P97 | low | **Share of the national supply** (household totals) as a second basis next to amounts per AFE. | Large households weigh more in the supply. | v0.2 |
 | P98 | medium | **Export the ratio helper** as `estimate_ratio()` (P91) and add the contrast between two domains (G3 of the report design). | One way to estimate. | v0.2 |
+
+## Open items from task 11c (2026-11-12)
+
+Self-review of 11c as an rOpenSci reviewer would. Fixed in the task: a
+domain without degrees of freedom gave `NaN` warnings in the interval
+(now no interval); the `used` row of the new log counts only records of
+estimated households, now documented.
+
+| Id | Priority | Proposal | Why | Task |
+|---|---|---|---|---|
+| P99 | high | **Choices taken in implementation, to confirm.** (1) A share of exactly 0 or 1 has `se = 0` and **no interval** (`ci_low`, `ci_high` missing), the rule of the degenerate proportions of 11b.6; the design note said "an interval equal to the estimate" while citing that rule. (2) `acquired` is `NA` unless the household is `estimated`, so `estimate_households(value = "acquired")` gives the share among estimated households. (3) `validate_food_groups()` raises `hcesfort_error_key` for a duplicated food and `hcesfort_error_value` for a missing, empty or reserved group (the design's test list said `hcesfort_error_schema` for all), as every other validator. (4) Groups are in the order of first appearance in `food_groups`, `unclassified` last and only when a food of `content` has no group. (5) The rows `unclassified` and `no_nutrient_value` count the used records of estimated households; the log cause for foods of the grouping absent from `content` keeps the design's name `group_not_in_content`. | CLAUDE.md: no interpretation chosen silently. | 12b |
+| P100 | low | **`food_group_shares()` calls `svyratio()` once per nutrient, group and domain**, each on an updated copy of the design. On a national survey (8,000 households, 15 groups, 4 nutrients, 10 domains) that is 600 calls; one call per nutrient and domain with every group as numerator would do. | Performance. | v0.2 |
+| P101 | low | **No domain argument in `food_group_shares()`** (only `by`); a logical `domain` or `domain_from`, as in `estimate_households()`, would allow shares among, for example, households with plausible energy. | Consistency of the estimators. | v0.2 |
 
 ## Open items from task 2 (2026-11-12)
 

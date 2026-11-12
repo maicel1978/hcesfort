@@ -26,8 +26,12 @@ golden_chain <- function() {
                      min_records_used = 0.8)
   ul <- above_ul(s, req, min_coverage = 0.8,
                  min_records_used = 0.8)
+  content <- link_composition(g, ex$crosswalk, b)
+  groups <- food_group_intake(content, ex$food_groups, afe, ex$households)
+  design <- as_hces_design(ex$households, lonely_psu = "adjust")
   list(afe = afe, intake = intake, use = use, s = s, risk = risk, ul = ul,
-       design = as_hces_design(ex$households, lonely_psu = "adjust"))
+       groups = groups, shares = food_group_shares(design, groups),
+       design = design)
 }
 
 test_that("the full chain on hces_example reproduces the golden values", {
@@ -52,6 +56,10 @@ test_that("the full chain on hces_example reproduces the golden values", {
                                        reference = "baseline"), "flour")
   folic <- ch$ul[ch$ul$nutrient == "folate" &
                    ch$ul$scenario == "flour_and_sugar", ]
+  share <- function(col) {
+    ch$shares[ch$shares$food_group == "cereals" &
+                ch$shares$variable == col, ]
+  }
   got <- c(
     afe_sum = sum(ch$afe$afe, na.rm = TRUE),
     n_estimated = nrow(est),
@@ -70,7 +78,11 @@ test_that("the full chain on hces_example reproduces the golden values", {
     prev_iron_b010_baseline = p_iron$estimate,
     se_iron_b010_baseline = p_iron$se,
     diff_folate_flour = d_folate$estimate,
-    se_diff_folate_flour = d_folate$se
+    se_diff_folate_flour = d_folate$se,
+    share_cereals_folate = share("folate_ug_dfe")$estimate,
+    se_share_cereals_folate = share("folate_ug_dfe")$se,
+    share_cereals_iron = share("iron_mg")$estimate,
+    se_share_cereals_iron = share("iron_mg")$se
   )
   expect_setequal(names(got), names(gold))
   for (nm in names(gold)) {
@@ -99,10 +111,42 @@ test_that("the logs of the full chain hold no branch twice", {
   # Every input of apply_scenario() derives from the same validated
   # tables; before 11b.8 their rows were repeated once per branch.
   ch <- golden_chain()
-  for (x in ch[c("intake", "use", "s", "risk", "ul")]) {
+  for (x in ch[c("intake", "use", "s", "risk", "ul", "groups", "shares")]) {
     expect_false(anyDuplicated(audit_log(x)) > 0)
   }
   steps <- audit_log(ch$s)$step
   expect_identical(sum(steps == "validate_acquisitions" &
                          audit_log(ch$s)$kind == "input"), 1L)
+})
+
+test_that("E1: the baseline lowers the share of the enriched group", {
+  # The shares on the composition as linked (with the enriched pasta) are
+  # computed by hand here: food_group_shares() refuses that table.
+  ex <- hcesfort::hces_example
+  ch <- golden_chain()
+  n <- nutrient_registry(ex$nutrients)
+  g <- convert_units(ex$acquisitions, ex$unit_factors, priority = "food")
+  raw <- link_composition(g, ex$crosswalk, validate_composition(
+    ex$composition, n
+  ))
+  expect_error(food_group_intake(raw, ex$food_groups, ch$afe,
+                                 ex$households),
+               class = "hcesfort_error_audit")
+  est <- ch$intake$household_id[ch$intake$intake_status == "estimated"]
+  w <- ex$households$weight[match(est, ex$households$household_id)]
+  afe <- ch$afe$afe[match(est, ch$afe$household_id)]
+  used <- raw$include & raw$composition_status == "linked"
+  cereal <- raw$food_code %in%
+    ex$food_groups$food_code[ex$food_groups$food_group == "cereals"]
+  by_hh <- function(v, f) {
+    vapply(est, function(h) sum(v[f & raw$household_id == h], na.rm = TRUE),
+           1)
+  }
+  for (col in c("folate_ug_dfe", "iron_mg")) {
+    linked <- sum(w * by_hh(raw[[col]], used & cereal) / afe) /
+      sum(w * by_hh(raw[[col]], used) / afe)
+    base <- ch$shares$estimate[ch$shares$food_group == "cereals" &
+                                 ch$shares$variable == col]
+    expect_lt(base, linked)
+  }
 })

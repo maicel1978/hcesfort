@@ -72,6 +72,8 @@ Tables the user supplies alongside (not survey data, still external):
   an amount `added`, source.
 - `vehicles`: food code → vehicle, vehicle group*, vehicle fraction (of the
   food as purchased), source.
+- `food_groups`: food code → food group, source (one group per food;
+  `unclassified` is reserved). No classification is shipped.
 - `scenarios`: scenario, vehicle, nutrient, `level_mg_kg`, level basis
   (`nutrient` or `compound`), compound*, form* (required when the unit of
   the nutrient is an equivalent), nutrient fraction* (only with basis
@@ -97,9 +99,11 @@ not tied to the nutrients of the first case.
 | Scenarios | `apply_scenario()` | baseline intake + vehicle use + scenarios → total and added intake per household and scenario, baseline included |
 | Risk | `inadequacy()` | intake + requirements (+ requirement distributions) → probability below the requirement per household, scenario and nutrient: EAR cut-point, or the probability approach for the nutrients given a distribution (bioavailability as a required argument); minimum coverage required |
 | Upper level | `above_ul()` | intake + UL, its unit and the form it applies to → above the UL per household, scenario and nutrient: total intake, or the form (added part, diet part where the composition has it) |
+| Food groups | `food_group_intake()` | baseline nutrients + food groups + equivalents → amount per equivalent per day by household and group (foods without a group in `unclassified`) |
 | Density | `nutrient_density()` | intake + energy → per 1,000 kcal |
 | Design | `as_hces_design()` | households + choice for single-PSU strata → `srvyr` design on the full sample |
 | Estimation | `estimate_households()`, `estimate_difference()`, `flag_precision()` | design + result table → proportions, means and medians with intervals by group and domain; paired differences between scenarios; precision flag with limits given by the caller |
+| Group shares | `food_group_shares()` | design + intake by group → share of each group in the mean intake per equivalent, by nutrient and domain (ratio of weighted totals, logit interval) |
 
 Subsets are always estimated as domains of the full design.
 
@@ -144,8 +148,8 @@ synthetic dataset.
 - Harmonised average requirements (H-AR; Allen et al., 2020) as an alternative
   reference table.
 - Prevalence weighted by persons, in addition to households.
-- Food-group shares under a fortification scenario (the shares on the
-  unfortified baseline are roadmap task 11c).
+- Food-group shares under a fortification scenario (P95); the shares on
+  the unfortified baseline are in v0.1.
 - Maps and plotting helpers (the user's `ggplot2`/`sf` code; shown in a
   vignette at most).
 - Peru adapter: the survey is not confirmed; the contracts assume no

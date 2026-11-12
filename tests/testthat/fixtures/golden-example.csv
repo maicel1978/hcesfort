@@ -16,3 +16,7 @@ prev_iron_b010_baseline,0.924596250787626
 se_iron_b010_baseline,0.0296926445425727
 diff_folate_flour,-0.233709986037131
 se_diff_folate_flour,0.0737050031383075
+share_cereals_folate,0.272998234654722
+se_share_cereals_folate,0.0286312455294432
+share_cereals_iron,0.477258224679225
+se_share_cereals_iron,0.0330700441239258

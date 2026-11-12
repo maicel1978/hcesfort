@@ -33,7 +33,8 @@ least one used record of the group; \code{NA} unless the household is
 nutrient, per AFE and day. Amounts are \code{NA} unless \code{intake_status} is
 \code{"estimated"}; a group not acquired has zeros. The audit log
 (\code{step = "food_group_intake"}) counts the records excluded by cause,
-the used records without a group (\code{unclassified}), the foods of
+the records used by estimated households (\code{used}) and, among them,
+those without a group (\code{unclassified}), the foods of
 \code{food_groups} absent from \code{content} (\code{group_not_in_content}) and, per
 group and nutrient, the used records without a value
 (\code{no_nutrient_value}, detail \code{"<group>: <column>"}).

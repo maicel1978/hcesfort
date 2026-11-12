@@ -248,6 +248,22 @@
   availability per person is the ratio of the weighted totals of grams
   and members (`survey::svyratio()`), not the mean of the households'
   grams per member; the help shows how to compute it.
+* Food-group shares on the unfortified baseline (E1 corrected). New user
+  table `food_groups` (`validate_food_groups()`), `food_group_intake()`
+  (amount per AFE and day by household and food group, the foods without
+  a group in `unclassified`) and `food_group_shares()` (share of each
+  group in the mean apparent intake per AFE, a ratio of weighted totals
+  by `survey::svyratio()` with a logit interval). The original
+  (`scripts/08_grupos_alimentos.R`) computed the shares on the
+  composition with enriched rice, pasta and bread, read a missing
+  nutrient value as zero, dropped the groups under 1% and gave no
+  standard error. `food_group_intake()` refuses a composition that has
+  not passed through `unfortified_baseline()`; there is no legacy option,
+  and `grupos_micronutrientes.csv` is not reproduced by the acceptance
+  test. On `hces_example` the share of cereals, the group of the enriched
+  pasta, falls from 37.2% to 27.3% (95% CI 20.9–34.8%) for folate and
+  from 50.0% to 47.7% (39.8–55.8%) for iron when the baseline replaces the
+  composition as linked.
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is

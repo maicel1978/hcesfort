@@ -80,7 +80,7 @@ then excluded as outliers (328,173 remain).
 | 29 | Nutrient density per 1,000 kcal; critical density | `07:107`, `diagnostico_densidad_critica.R` | core | `nutrient_density()` (missing from the specification) | The reports rely on it for geographic comparison. |
 | 30 | Estimation by domain with the complex design; precision flag | `07:117-175` | core | `estimate()` | Precision rule (n < 50 or CI half-width > 10 pp) as arguments. |
 | 31 | Paired differences between scenarios | `07:227-273` | core | `paired_difference()` | Mean of the within-household difference under the design. |
-| 32 | Food-group shares | `08` | core (v0.2) | `food_group_shares()` | Known error E1. |
+| 32 | Food-group shares | `08` | core (v0.1, task 11c) | `food_group_intake()`, `food_group_shares()` | Known error E1, fixed: the baseline step is required. |
 | 33 | Maps | `09` | out of the core | vignette or v0.2 | Depends on `sf`, `biscale`, `cowplot`; geometry is country-specific. |
 | 34 | Maize-flour annex (coverage only) | `anexo_harina_maiz.R` | — | covered by `vehicle_coverage()` | |
 | 35 | Control figures | `guardar_cifras_control.R` | test | acceptance test (task 10) | |

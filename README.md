@@ -21,6 +21,8 @@ scenarios), the package will:
 
 - convert acquisitions to grams and to nutrients, per adult equivalent and day;
 - model fortification scenarios on an unfortified baseline;
+- estimate the share of each food group in the apparent intake, on that
+  baseline;
 - estimate the risk of inadequate intake (EAR cut-point, probability approach
   for iron) and the share above the upper level, with the complex design of
   the survey;

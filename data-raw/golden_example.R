@@ -12,7 +12,8 @@
 # 65 kg; infants by the mean of their months; a member without age or sex
 # leaves the household without AFE; unit factors by food first; no outlier
 # rule; average-content compliance; iron by the probability approach for
-# menstruating adult women.
+# menstruating adult women; food-group shares with the example grouping
+# (the egg unclassified).
 #
 # Run from the package root: Rscript data-raw/golden_example.R
 
@@ -172,6 +173,24 @@ pi <- survey::svyciprop(~y_iron, sub, method = "logit",
 pd <- survey::svymean(~y_diff, sub)
 options(old)
 
+# 8. Food-group shares on the baseline: ratio of weighted totals of the
+# amounts per AFE of the cereals and of every group, estimated households.
+fg <- ex$food_groups
+group <- fg$food_group[match(a$food_code, fg$food_code)]
+group[is.na(group)] <- "unclassified"
+share_of <- function(col, g) {
+  num <- sum_by(content[, col], used & group == g) / hh$afe
+  hh$num <- ifelse(estimated, num, 0)
+  hh$den <- ifelse(estimated, intake[, col], 0)
+  d <- survey::svydesign(ids = ~psu, strata = ~stratum, weights = ~weight,
+                         nest = TRUE, data = hh)
+  old <- options(survey.lonely.psu = "adjust")
+  on.exit(options(old))
+  survey::svyratio(~num, ~den, d[estimated, ])
+}
+sh_folate <- share_of("folate_ug_dfe", "cereals")
+sh_iron <- share_of("iron_mg", "cereals")
+
 golden <- data.frame(
   name = c("afe_sum", "n_estimated", "share_records_used",
            "mean_energy_kcal", "mean_iron_mg", "mean_folate_ug_dfe",
@@ -180,14 +199,18 @@ golden <- data.frame(
            "mean_vitamin_a_flour_and_sugar", "n_above_folic_acid_ul",
            "prev_folate_baseline", "se_folate_baseline",
            "prev_iron_b010_baseline", "se_iron_b010_baseline",
-           "diff_folate_flour", "se_diff_folate_flour"),
+           "diff_folate_flour", "se_diff_folate_flour",
+           "share_cereals_folate", "se_share_cereals_folate",
+           "share_cereals_iron", "se_share_cereals_iron"),
   value = c(sum(hh$afe, na.rm = TRUE), sum(estimated), records_share,
             colMeans(intake[estimated, ]),
             mean(vehicle_g("flour")[estimated]),
             mean(added("flour_and_sugar", "folate")[estimated]),
             mean(vita_fs[estimated]), sum(folic_fs > ul_folic, na.rm = TRUE),
             stats::coef(pf), survey::SE(pf), stats::coef(pi), survey::SE(pi),
-            stats::coef(pd), survey::SE(pd))
+            stats::coef(pd), survey::SE(pd),
+            stats::coef(sh_folate), survey::SE(sh_folate),
+            stats::coef(sh_iron), survey::SE(sh_iron))
 )
 utils::write.csv(transform(golden, value = sprintf("%.15g", value)),
                  "tests/testthat/fixtures/golden-example.csv",

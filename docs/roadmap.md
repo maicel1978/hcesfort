@@ -48,12 +48,12 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
   - [x] 11b.9 Renames (L1, L2).
   - [x] 11b.10 `reference_energy()`, `qty_vehicle_g_d_pc`, `who2009_levels()` (M10, M8, P71).
 - [ ] 12. Vignettes in English and Spanish: from standard tables to risk by scenario (synthetic data); how to write an adapter; plotting results with `ggplot2`. The pkgdown site waits for v1.0.
-- [ ] 11c. `food_group_intake()` and `food_group_shares()` on the unfortified baseline (E1), brought forward from v0.2. Design: `docs/design-food-group-shares.md`.
+- [x] 11c. `food_group_intake()` and `food_group_shares()` on the unfortified baseline (E1), brought forward from v0.2. Design: `docs/design-food-group-shares.md`.
   - [x] 11c.0 Design written (2026-11-12); its nine decisions approved as recommended 2026-11-12.
-  - [ ] 11c.1 Contract `food_groups`, validator, example data.
-  - [ ] 11c.2 `food_group_intake()` with its log.
-  - [ ] 11c.3 `food_group_shares()` and the internal ratio helper.
-  - [ ] 11c.4 Golden chain, `NEWS.md` (E1), specification, self-review.
+  - [x] 11c.1 Contract `food_groups`, validator, example data.
+  - [x] 11c.2 `food_group_intake()` with its log.
+  - [x] 11c.3 `food_group_shares()` and the internal ratio helper.
+  - [x] 11c.4 Golden chain, `NEWS.md` (E1), specification, self-review.
 - [ ] 12b. Country results report template (`use_report_template()`), organised by decision questions, in English and Spanish; invented socioeconomic domain in `hces_example`. Needs 11c for Q3. Design: `docs/design-report-template.md`.
   - [x] 12b.0 Design written (2026-11-12); its eleven decisions approved as recommended 2026-11-12 (D10 amended).
 

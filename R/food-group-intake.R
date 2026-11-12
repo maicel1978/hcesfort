@@ -34,7 +34,8 @@
 #'   nutrient, per AFE and day. Amounts are `NA` unless `intake_status` is
 #'   `"estimated"`; a group not acquired has zeros. The audit log
 #'   (`step = "food_group_intake"`) counts the records excluded by cause,
-#'   the used records without a group (`unclassified`), the foods of
+#'   the records used by estimated households (`used`) and, among them,
+#'   those without a group (`unclassified`), the foods of
 #'   `food_groups` absent from `content` (`group_not_in_content`) and, per
 #'   group and nutrient, the used records without a value
 #'   (`no_nutrient_value`, detail `"<group>: <column>"`).
