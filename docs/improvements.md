@@ -123,6 +123,25 @@ The maintainer approved the nine choices of section 10 of
 | 8 | `composition$basis` must be `per_100g_edible`; other bases are converted by the adapter. | Task 2.3 |
 | 9 | P42 is split: ranking (`unmatched_foods()`, task 7) and quality controls (`check_crosswalk()`, task 7b) in v0.1; candidates, seeds and the review round trip in v0.2, before the Peru adapter. | Roadmap tasks 7, 7b and v0.2 |
 
+## Decisions (2026-11-12, task 5)
+
+The maintainer accepted the six recommendations put in `docs/handoff.md`
+after task 4. Applied in `adult_equivalents()`:
+
+| # | Decision |
+|---|---|
+| 1 | Adults: BMR (`ref_bmr_equations`) at the weight given per sex (`weight_kg = c(female =, male =)`, required, no default) times `pal` (required). An optional `weight_kg` column of `members` overrides the weight of its member. |
+| 2 | The reference person is one number, `reference_kcal`; the help page shows how to compute 2,290.8 kcal from `ref_bmr_equations`. |
+| 3 | Infants: monthly requirement when `age_months` is known; otherwise the mean of the twelve months, counted as `infant_annual_mean`. `infants = "annual_mean"` is the rule of the original. |
+| 4 | Pregnancy and lactation add no energy in v0.1; flagged members are counted (`pregnant_or_lactating_no_extra`). |
+| 5 | A member without age or sex leaves the household's AFE `NA`, flagged (`missing_age_or_sex`, `household_without_afe`); exclusion is decided in task 8. `missing = "zero"` is the rule of the original (E10). |
+| 6 | `meals_home_share` is used only with `meal_share = TRUE`; the argument is required when the column exists (E25). |
+
+Consequences: `members` gains the optional column `weight_kg`; the schemas
+`energy_requirements` and `bmr_equations` join `hces_schema()`; the schema
+engine accepts `Inf` in a column whose interval is closed at infinity
+(`"(0, Inf]"`).
+
 ## Proposal P42: food-matching support module (2026-11-12)
 
 Proposed by the maintainer; assessed here, not implemented. Status:
@@ -284,10 +303,12 @@ would:
 |---|---|---|---|---|
 | P51 | medium | **`ref_requirements` covers one group (women 19–30 years).** Other life stages (children, men, pregnancy, lactation) are entered from the same IOM summary tables when a function needs them. | The method uses the reference woman; a per-person analysis (prevalence by persons, v0.2) needs every life stage. | 10 or v0.2 |
 | P52 | medium | **Nutrient names differ between WHO 2009 and the registry.** WHO gives folic acid (a compound) where the requirement is folate in DFE; vitamin A is given "as nutrient" without its form. The mapping from a WHO row to a scenario row (`level_basis`, `compound`, conversion through `ref_conversions`) belongs to the scenario design. | E8; the scenario contract already has `level_basis` and `compound`. | 9 (Fable design) |
-| P53 | medium | **Adults' energy needs weight and PAL from the user.** `ref_bmr_equations` ships the equations only; body weight and physical activity level are arguments without default (the 55/65 kg and PAL 1.76 of the original come from the ENGIH methodology and belong to the adapter). Infants are monthly; averaging the twelve months, as the original did, is an explicit option. | No hidden default (CLAUDE.md). | 5 |
+| P53 | closed 2026-11-12: decisions 1-3 of task 5 | **Adults' energy needs weight and PAL from the user.** `ref_bmr_equations` ships the equations only; body weight and physical activity level are arguments without default (the 55/65 kg and PAL 1.76 of the original come from the ENGIH methodology and belong to the adapter). Infants are monthly; averaging the twelve months, as the original did, is an explicit option. | No hidden default (CLAUDE.md). | 5 |
 | P54 | low | **The md5 test of `data-raw/` runs only from the source tree.** `R CMD check` (and so CI) tests the installed package, where `data-raw/` is absent, and the test is skipped. A CI step running `devtools::test()` from the checkout would enforce it. | The check exists and runs locally before every commit. | 12 or v1.0 |
 | P55 | low | **Long tables carry the unit in a `unit` column.** `ref_requirements` holds several nutrients, so `ear` and `ul` cannot carry a unit suffix; the unit is a column written as in `nutrient_registry()`. Functions that use it must check the unit against the registry. | A deliberate exception to "column names carry the unit". | 10 |
 | P56 | low | **`sex = "both"` in `ref_iron_requirements`.** Young children's percentiles are pooled for both sexes; the members contract uses `female`/`male`. The function that picks a group must accept `both`. | Join rule to state in task 10. | 10 |
+| P57 | medium | **Energy for pregnancy and lactation.** FAO/WHO/UNU 2004 gives additions per trimester and for lactation; they enter `ref_energy_requirements` and `adult_equivalents()` once read in the document, with an explicit option. | Decision 4 of task 5 leaves them out in v0.1. | v0.2 |
+| P58 | low | **Member-level requirements are not returned.** `adult_equivalents()` returns households only; prevalence by persons (v0.2) needs each member's requirement and AFE. A `level = "member"` option or a second function. | Not needed by v0.1. | v0.2 |
 
 ## Part A. From the review of the original analysis
 

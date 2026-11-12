@@ -28,7 +28,9 @@ check_values <- function(x, schema, table, call) {
 column_problems <- function(v, spec) {
   found <- list(
     "is missing" = if (!spec$na) which(is.na(v)),
-    "is not finite" = if (spec$type == "number") which(is.infinite(v)),
+    "is not finite" = if (spec$type == "number" && !allows_inf(spec$bounds)) {
+      which(is.infinite(v))
+    },
     "is outside its interval" = if (!is.na(spec$bounds)) {
       which(!in_bounds(v, spec$bounds))
     },
@@ -44,6 +46,12 @@ column_problems <- function(v, spec) {
     column = rep(spec$column, length(found)), what = what,
     rows = unname(found)
   )
+}
+
+# TRUE when an interval is closed at infinity ("(0, Inf]"): the column
+# accepts Inf, as the open last interval of an age table does.
+allows_inf <- function(bounds) {
+  !is.na(bounds) && endsWith(bounds, "Inf]")
 }
 
 # Parse an interval such as "[0, 1]" or "(0, Inf)".

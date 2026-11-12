@@ -36,6 +36,15 @@
   WHO 2009 vitamin B12 and vitamin A rows, marked unconfirmed there, are
   now verified (Table 1), and the vitamin E UL (1,000 mg, supplementary
   alpha-tocopherol only), left blank there, is entered.
+* `adult_equivalents()`: adult female equivalents per household from the
+  energy requirement of each member (FAO/WHO/UNU 2004 tables for infants
+  and children; BMR times PAL for adults, with weights and PAL given by the
+  caller) and the requirement of a reference person. Members without age or
+  sex leave the household without AFE and are flagged, instead of counting
+  zero as in the original analysis (E10; the original rule is
+  `missing = "zero"`). Infants get the requirement of their month of age
+  when it is known (the original used the mean of the first year for all,
+  `infants = "annual_mean"`).
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is

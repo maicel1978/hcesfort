@@ -39,7 +39,10 @@ schema_members <- function() {
                na = TRUE),
     schema_col("meals_home_share", "number",
                "share of meals taken at home", required = FALSE,
-               na = TRUE, bounds = "[0, 1]")
+               na = TRUE, bounds = "[0, 1]"),
+    schema_col("weight_kg", "number", paste(
+      "body weight, kg; used for adults' energy requirement when present"
+    ), required = FALSE, na = TRUE, bounds = "(0, Inf)")
   )
 }
 
@@ -82,7 +85,9 @@ schema_registry <- function() {
     crosswalk = schema_crosswalk,
     composition = schema_composition,
     vehicles = schema_vehicles,
-    scenarios = schema_scenarios
+    scenarios = schema_scenarios,
+    energy_requirements = schema_energy_requirements,
+    bmr_equations = schema_bmr_equations
   )
 }
 
@@ -105,7 +110,8 @@ schema_registry <- function() {
 #'
 #' @param table Name of the table: `"households"`, `"members"`,
 #'   `"acquisitions"`, `"unit_factors"`, `"crosswalk"`, `"composition"`,
-#'   `"vehicles"` or `"scenarios"`.
+#'   `"vehicles"`, `"scenarios"`, `"energy_requirements"` or
+#'   `"bmr_equations"`.
 #' @returns A tibble with columns `column`, `type`, `required`, `na`
 #'   (`TRUE` when a missing value is accepted), `key` (`TRUE` for the
 #'   columns of the key), `rule` and `description`.
