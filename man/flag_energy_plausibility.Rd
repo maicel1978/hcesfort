@@ -7,7 +7,8 @@
 flag_energy_plausibility(intake, column, min, max)
 }
 \arguments{
-\item{intake}{Table returned by \code{\link[=apparent_intake]{apparent_intake()}}.}
+\item{intake}{Table returned by \code{\link[=apparent_intake]{apparent_intake()}} or
+\code{\link[=apply_scenario]{apply_scenario()}}.}
 
 \item{column}{Energy column of the registry, for example
 \code{"energy_kcal"}; required.}

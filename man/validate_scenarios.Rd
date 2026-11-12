@@ -26,7 +26,7 @@ in mg per kg of vehicle (see \code{hces_schema("scenarios")}).
 second case \code{nutrient_fraction}, the mass of the form per mass of
 compound, is required; in the first it must be missing (a row with both
 would be ambiguous). \code{form} names the form of the nutrient the level is a
-mass of (\code{"folic_acid"}, \code{"retinol"}): \code{apply_scenario()} requires it
+mass of (\code{"folic_acid"}, \code{"retinol"}): \code{\link[=apply_scenario]{apply_scenario()}} requires it
 when the unit of the nutrient is an equivalent (DFE, RAE) and reads the
 factor from the conversions table. \code{nutrient} must be a nutrient of the
 registry. A \code{source} starting with \code{"SOURCE PENDING"} is counted

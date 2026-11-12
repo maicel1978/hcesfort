@@ -44,7 +44,7 @@ Remove from a composition table what enrichment or fortification added,
 so that intake can be computed without the fortification a scenario will
 add (E1, E6 of the original analysis). The result is a composition table
 and is passed to \code{\link[=link_composition]{link_composition()}} in place of the original;
-\code{apply_scenario()} refuses an intake not built on one.
+\code{\link[=apply_scenario]{apply_scenario()}} refuses an intake not built on one.
 }
 \details{
 Each row of \code{enrichment} (see \code{\link[=validate_enrichment]{validate_enrichment()}}) names a cell, a

@@ -6,7 +6,8 @@
 #' original ENGIH 2018 analysis used 500 and 6,000 kcal per AFE per day;
 #' those limits have no published source, so they are not a default.
 #'
-#' @param intake Table returned by [apparent_intake()].
+#' @param intake Table returned by [apparent_intake()] or
+#'   [apply_scenario()].
 #' @param column Energy column of the registry, for example
 #'   `"energy_kcal"`; required.
 #' @param min,max Limits of the plausible range, in the unit of `column`
@@ -36,7 +37,7 @@
 #' table(flagged$energy_plausible, useNA = "ifany")
 #' @export
 flag_energy_plausibility <- function(intake, column, min, max) {
-  require_hces(intake, "hces_intake")
+  require_hces(intake, c("hces_intake", "hces_scenario_intake"))
   x <- audit_check_rows(intake, "flag_energy_plausibility")
   column <- check_nutrient_column(column, x)
   if (missing(min) || missing(max) || !is.numeric(min) || !is.numeric(max) ||
@@ -63,8 +64,7 @@ flag_energy_plausibility <- function(intake, column, min, max) {
     count("energy_below_min", !is.na(e) & e < min),
     count("energy_above_max", !is.na(e) & e > max)
   )
-  new_hces_tbl(out, "hces_intake", dplyr::bind_rows(audit_get(x), log),
-               "household_id", attr(x, "nutrients", exact = TRUE))
+  same_carrier(out, x, dplyr::bind_rows(audit_get(x), log))
 }
 
 #' Nutrient density of the apparent intake
@@ -74,7 +74,8 @@ flag_energy_plausibility <- function(intake, column, min, max) {
 #' AFE or on the reference period, so it suits comparisons between groups
 #' whose recorded energy differs for reasons unrelated to diet.
 #'
-#' @param intake Table returned by [apparent_intake()].
+#' @param intake Table returned by [apparent_intake()] or
+#'   [apply_scenario()].
 #' @param energy Energy column of the registry, for example
 #'   `"energy_kcal"`; required.
 #' @param per Units of energy the density refers to (one positive number).
@@ -104,7 +105,7 @@ flag_energy_plausibility <- function(intake, column, min, max) {
 #' summary(d$iron_mg_per_1000kcal)
 #' @export
 nutrient_density <- function(intake, energy, per = 1000) {
-  require_hces(intake, "hces_intake")
+  require_hces(intake, c("hces_intake", "hces_scenario_intake"))
   x <- audit_check_rows(intake, "nutrient_density")
   energy <- check_nutrient_column(energy, x, "energy")
   if (is.null(per) || !is.numeric(per) || length(per) != 1 ||
@@ -129,8 +130,7 @@ nutrient_density <- function(intake, energy, per = 1000) {
       sum(zero)
     ))
   }
-  new_hces_tbl(out, "hces_intake", dplyr::bind_rows(audit_get(x), log),
-               "household_id", nutrients)
+  same_carrier(out, x, dplyr::bind_rows(audit_get(x), log))
 }
 
 # The name of a nutrient column of the registry stored on `x`; required.
@@ -144,4 +144,10 @@ check_nutrient_column <- function(column, x, arg = "column",
     "{.arg {arg}} must be one nutrient column of the registry.",
     "i" = "Columns: {.val {cols}}."
   ), arg = arg, call = call)
+}
+
+# `out` as a carrier of the class, key and registry of `x`, with `log`.
+same_carrier <- function(out, x, log) {
+  new_hces_tbl(out, class(x)[[1]], log, attr(x, "audit_key", exact = TRUE),
+               attr(x, "nutrients", exact = TRUE))
 }

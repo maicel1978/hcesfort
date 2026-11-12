@@ -4,7 +4,7 @@
 #' so that intake can be computed without the fortification a scenario will
 #' add (E1, E6 of the original analysis). The result is a composition table
 #' and is passed to [link_composition()] in place of the original;
-#' `apply_scenario()` refuses an intake not built on one.
+#' [apply_scenario()] refuses an intake not built on one.
 #'
 #' Each row of `enrichment` (see [validate_enrichment()]) names a cell, a
 #' composition row and a nutrient, and states what enrichment added to it,

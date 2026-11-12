@@ -78,7 +78,7 @@ check_nutrient_units <- function(x, nutrients, call = rlang::caller_env()) {
 #' second case `nutrient_fraction`, the mass of the form per mass of
 #' compound, is required; in the first it must be missing (a row with both
 #' would be ambiguous). `form` names the form of the nutrient the level is a
-#' mass of (`"folic_acid"`, `"retinol"`): `apply_scenario()` requires it
+#' mass of (`"folic_acid"`, `"retinol"`): [apply_scenario()] requires it
 #' when the unit of the nutrient is an equivalent (DFE, RAE) and reads the
 #' factor from the conversions table. `nutrient` must be a nutrient of the
 #' registry. A `source` starting with `"SOURCE PENDING"` is counted

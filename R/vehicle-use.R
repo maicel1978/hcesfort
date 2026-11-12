@@ -5,7 +5,7 @@
 #' day. The result has one row per household of `households` and per
 #' vehicle, so coverage, mean use and the reach of several vehicles can be
 #' estimated with the survey design (task 11); the function itself
-#' estimates nothing. The same table feeds `apply_scenario()`, so the
+#' estimates nothing. The same table feeds [apply_scenario()], so the
 #' vehicle is defined once for coverage and scenarios (E12).
 #'
 #' Grams are on the purchased basis: `qty_g_d * vehicle_fraction`, without
@@ -51,7 +51,7 @@
 #'   per day; missing unless `use_status` is `estimated`, and for
 #'   `combined` rows). The audit log continues the logs of `grams`,
 #'   `vehicles`, `afe` and `households`.
-#' @seealso `apply_scenario()`, [apparent_intake()].
+#' @seealso [apply_scenario()], [apparent_intake()].
 #' @examples
 #' grams <- convert_units(
 #'   hces_example$acquisitions, hces_example$unit_factors,
@@ -83,7 +83,11 @@ vehicle_coverage <- function(grams, vehicles, afe, households,
   used <- !Reduce(`|`, reasons)
   afe_h <- afe$afe[match(h$household_id, afe$household_id)]
   status <- first_reason(list(
-    food_module_nonresponse = h[["food_module_response"]] %in% FALSE,
+    food_module_nonresponse = if (is.null(h[["food_module_response"]])) {
+      rep(FALSE, nrow(h))
+    } else {
+      h$food_module_response %in% FALSE
+    },
     no_food_records = !h$household_id %in% x$household_id,
     no_afe = is.na(afe_h) | afe_h <= 0
   ), none = "estimated")

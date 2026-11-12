@@ -7,7 +7,8 @@
 nutrient_density(intake, energy, per = 1000)
 }
 \arguments{
-\item{intake}{Table returned by \code{\link[=apparent_intake]{apparent_intake()}}.}
+\item{intake}{Table returned by \code{\link[=apparent_intake]{apparent_intake()}} or
+\code{\link[=apply_scenario]{apply_scenario()}}.}
 
 \item{energy}{Energy column of the registry, for example
 \code{"energy_kcal"}; required.}

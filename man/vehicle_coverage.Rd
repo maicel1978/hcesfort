@@ -48,7 +48,7 @@ vehicle and how many grams of it per adult female equivalent (AFE) per
 day. The result has one row per household of \code{households} and per
 vehicle, so coverage, mean use and the reach of several vehicles can be
 estimated with the survey design (task 11); the function itself
-estimates nothing. The same table feeds \code{apply_scenario()}, so the
+estimates nothing. The same table feeds \code{\link[=apply_scenario]{apply_scenario()}}, so the
 vehicle is defined once for coverage and scenarios (E12).
 }
 \details{
@@ -94,5 +94,5 @@ use <- vehicle_coverage(grams, hces_example$vehicles, afe,
 table(use$vehicle, use$acquired, useNA = "ifany")
 }
 \seealso{
-\code{apply_scenario()}, \code{\link[=apparent_intake]{apparent_intake()}}.
+\code{\link[=apply_scenario]{apply_scenario()}}, \code{\link[=apparent_intake]{apparent_intake()}}.
 }
