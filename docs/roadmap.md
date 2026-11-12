@@ -8,7 +8,7 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
 - [ ] 2. Data contracts: schemas of the standard and user-supplied tables, constructors and validators, classed errors, nutrient registry, audit-log carrier (chosen by test) and its format (counts of records, households and grams by cause). Design: `docs/design-task2.md`.
   - [x] 2.0 Design written (carrier chosen by experiment); approved 2026-11-12.
   - [x] 2.1 Classed errors and audit-log format and carrier.
-  - [ ] 2.2 Validators of `households`, `members`, `acquisitions` and their cross-table check.
+  - [x] 2.2 Validators of `households`, `members`, `acquisitions` and their cross-table check.
   - [ ] 2.3 Validators of the user-supplied tables and nutrient registry.
 - [ ] 3. Synthetic example dataset in the standard schema (invented households, composition, vehicles, one scenario), documented as synthetic.
 - [ ] 4. Reference data with sources in `data-raw/` (EAR, UL and the form it applies to, energy requirements, WHO 2009 levels, iron requirement distribution, DFE and RAE factors). Unverifiable values stay `# SOURCE PENDING` and are not shipped.

@@ -10,6 +10,11 @@
   received, excluded, flagged or filled (`audit_log()`). A change in the
   number of rows made outside the package is recorded at the next step;
   `restore_audit()` re-attaches the log after a verb that drops it.
+* Data contracts of the standard tables `households`, `members` and
+  `acquisitions` (`hces_schema()`), checked by `validate_households()`,
+  `validate_members()`, `validate_acquisitions()` and, across the three
+  tables, `validate_survey()`. Missing measurements are counted in the audit
+  log; impossible values are classed errors.
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is
