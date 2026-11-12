@@ -65,7 +65,9 @@ piece (\code{piece_weight_g}). Without it, as for density.
 A factor with \code{food_code} missing is generic: it holds for every food in
 that unit. When a record has both a factor for its food and a generic
 one, \code{priority} decides which is used, and the log counts those records
-(\code{food_and_generic_factor}). The original ENGIH 2018 analysis used the
+(\code{food_and_generic_factor}). The choice is made before conversion: a
+chosen factor that cannot convert (a volume without density) is not
+replaced by the other one. The original ENGIH 2018 analysis used the
 generic factor first (\code{priority = "generic"}).
 
 Grams per day are \code{qty_g * household_share / period_days}; without the

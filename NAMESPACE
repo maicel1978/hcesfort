@@ -3,6 +3,7 @@
 export(adult_equivalents)
 export(audit_log)
 export(convert_units)
+export(flag_outliers)
 export(hces_schema)
 export(nutrient_registry)
 export(restore_audit)

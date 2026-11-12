@@ -20,7 +20,9 @@
 #' A factor with `food_code` missing is generic: it holds for every food in
 #' that unit. When a record has both a factor for its food and a generic
 #' one, `priority` decides which is used, and the log counts those records
-#' (`food_and_generic_factor`). The original ENGIH 2018 analysis used the
+#' (`food_and_generic_factor`). The choice is made before conversion: a
+#' chosen factor that cannot convert (a volume without density) is not
+#' replaced by the other one. The original ENGIH 2018 analysis used the
 #' generic factor first (`priority = "generic"`).
 #'
 #' Grams per day are `qty_g * household_share / period_days`; without the
@@ -79,8 +81,9 @@ convert_units <- function(acquisitions, unit_factors, priority,
   out$factor_from <- chosen$factor_from
   out$factor_type <- chosen$factor_type
   out$g_per_unit <- g
-  out$qty_g <- ifelse(converted, qty_g, NA_real_)
-  out$qty_g_d <- ifelse(converted, qty_g * share / a$period_days, NA_real_)
+  qty_g[!converted] <- NA_real_
+  out$qty_g <- qty_g
+  out$qty_g_d <- qty_g * share / a$period_days
   out$grams_status <- status
   log <- units_log(out, reasons, chosen, g, priority)
   new_hces_tbl(out, "hces_grams", dplyr::bind_rows(audit_get(a), log),
@@ -91,8 +94,7 @@ convert_units <- function(acquisitions, unit_factors, priority,
 # the food-specific and the generic factor are looked up by checked joins
 # and one is chosen by `priority`.
 choose_factor <- function(a, f, priority) {
-  keys <- dplyr::tibble(.row = seq_len(nrow(a)), food_code = a$food_code,
-                        unit = a$unit)
+  keys <- dplyr::tibble(food_code = a$food_code, unit = a$unit)
   cols <- c("factor", "factor_type", "density_g_ml", "piece_weight_g")
   f <- add_optional_factor_cols(f, a)
   food <- lookup_factor(keys, f[!is.na(f$food_code), ], c("food_code", "unit"),
@@ -103,25 +105,23 @@ choose_factor <- function(a, f, priority) {
   use_food <- has_food & (priority == "food" | !has_generic)
   out <- generic
   out[use_food, ] <- food[use_food, ]
-  out$factor_from <- ifelse(use_food, "food",
-                            ifelse(has_generic, "generic", NA_character_))
+  out$factor_from <- rep(NA_character_, nrow(a))
+  out$factor_from[has_generic] <- "generic"
+  out$factor_from[use_food] <- "food"
   out$both <- has_food & has_generic
   out
 }
 
-# Columns `cols` of `f` for each row of `keys`, joined by `by`: at most one
-# factor per record (the key of `f` is unique), records without a factor
-# get NA, and a missing key never matches.
+# Columns `cols` of `f` for each row of `keys`, in order, joined by `by`:
+# at most one factor per record (`relationship` aborts otherwise; the key
+# of `f` is unique), records without a factor get NA, and a missing key
+# never matches.
 lookup_factor <- function(keys, f, by, cols) {
   f <- f[c(by, cols)]
   out <- dplyr::left_join(
     keys, f, by = by, relationship = "many-to-one", unmatched = "drop",
     na_matches = "never"
   )
-  if (nrow(out) != nrow(keys) || !identical(out$.row, keys$.row)) {
-    rlang::abort("Internal error: factor lookup changed the records.",
-                 .internal = TRUE)
-  }
   out[cols]
 }
 

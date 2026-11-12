@@ -13,7 +13,7 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
 - [x] 3. Synthetic example dataset in the standard schema (invented households, composition, vehicles, one scenario), documented as synthetic.
 - [x] 4. Reference data with sources in `data-raw/` (EAR, UL and the form it applies to, energy requirements, WHO 2009 levels, iron requirement distribution, DFE and RAE factors). Unverifiable values stay `# SOURCE PENDING` and are not shipped.
 - [x] 5. `adult_equivalents()`.
-- [ ] 6. `convert_units()` (typed factors) and `flag_outliers()`.
+- [x] 6. `convert_units()` (typed factors) and `flag_outliers()`.
 - [ ] 7. `link_composition()` and `fill_composition()`, with coverage over all records; `unmatched_foods()` (P42, part a).
 - [ ] 7b. `check_crosswalk()`: quality controls of the crosswalk as flags, thresholds given by the caller (P42, part d).
 - [ ] 8. `apparent_intake()` with the `include` flag, household status and energy-plausibility flag; `nutrient_density()`.

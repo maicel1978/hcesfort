@@ -361,6 +361,21 @@ values in tests, no microdata in the repository, "ask, do not choose
 silently". They cost little and each maps to a defect found in the original
 (E3, E17, E8, E2).
 
+## Open items from task 6 (2026-11-12)
+
+Self-review of `convert_units()` and `flag_outliers()`, done as an rOpenSci
+reviewer would. Fixed in the task: an empty table gave columns of the
+wrong type and an error in `flag_outliers()`; a divisor of zero AFE gave an
+infinite value. The rest:
+
+| ID | Priority | Item | Rationale | Roadmap task |
+|---|---|---|---|---|
+| P59 | medium | **Choices of task 6 taken under delegation, to be confirmed.** (1) `priority` (food or generic factor first) is required, no default. (2) `household_share` is applied in `qty_g_d`; a missing share leaves the record without daily grams (`missing_household_share`). (3) The edible portion is not applied in `convert_units()`: it is a column of the crosswalk and the composition step applies it. (4) `flag_outliers()` counts only values with grams towards `min_group` and leaves small groups `NA` (not assessed), not `FALSE`. (5) At household level the records without grams are left out of the household's sum. | CLAUDE.md: no interpretation chosen silently. Each is one line to change. | 6 |
+| P60 | medium | **Reproducing the original outlier rule (task A3).** The original grouped by composition id (records without one formed one group), on edible grams per day, and counted every record of the group, with or without grams, towards the minimum of 20. With the package: add `composition_id` to the grams table before the call and group by it; the edible portion is a constant per food, so it changes the flags only where one composition id has foods with different portions; the count towards `min_group` differs where a group has records without grams. If step 1 does not reproduce the counts, a `min_group_count = "all"` option is the smallest change. | Acceptance step 1 needs the original choices as options. | A3 |
+| P61 | medium | **Weighted quantiles in `flag_outliers()`.** Quantiles are unweighted, as in the original (E9). A weighted option (household weights) makes the fences describe the population rather than the sample. Needs `households` as an argument. | Methodological; not needed to reproduce the original. | 11 or v0.2 (Fable) |
+| P62 | low | **Calling `flag_outliers()` twice overwrites `outlier`.** Both runs are in the log, with their rules; a second rule (for example per AFE after per household) needs its own column name. An argument `name = "outlier"` would allow several flags side by side. | Sensitivity analyses compare rules. | 8 |
+| P45 | medium, in part | `food_code` and `unit` types are now checked between `acquisitions` and `unit_factors`; the crosswalk and vehicles remain. | | 7, 9 |
+
 ## Questions for the maintainer
 
 Answered on 2026-11-12: see "Decisions (2026-11-12)" above. Kept for the

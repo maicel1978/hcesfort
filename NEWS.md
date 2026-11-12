@@ -55,6 +55,15 @@
   used the generic first, `priority = "generic"`). Records without grams are
   kept, with the reason, and counted in the audit log before anything is
   dropped (E3).
+* `flag_outliers()`: flags records far from their group (above a multiple
+  of an upper quantile, or above zero and below a lower quantile divided by
+  it) without removing them. Grouping, quantiles, multiplier, minimum group
+  size, scale (household, per capita, per AFE) and level (record, or the
+  household's total in the group) are arguments without default. The
+  original flagged on household grams per day by food with quantiles 0.5%
+  and 99.5%, multiplier 5 and 20 records (E9); that rule is one call, not
+  a default. Groups too small, records without grams and households without
+  AFE are not assessed and are counted in the audit log.
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is
