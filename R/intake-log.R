@@ -2,7 +2,8 @@
 
 # The outlier decision: required when `x` has the column `outlier`, NULL
 # otherwise.
-check_outlier_decision <- function(outliers, x, call = rlang::caller_env()) {
+check_outlier_decision <- function(outliers, x, arg = "content",
+                                   call = rlang::caller_env()) {
   has_column <- !is.null(x[["outlier"]])
   if (!has_column && is.null(outliers)) {
     return(NULL)
@@ -13,10 +14,10 @@ check_outlier_decision <- function(outliers, x, call = rlang::caller_env()) {
   }
   abort_hcesfort("argument", c(
     if (has_column) {
-      "{.arg content} has the column {.field outlier}: say what to do with
+      "{.arg {arg}} has the column {.field outlier}: say what to do with
       the flagged records."
     } else {
-      "{.arg outliers} is given but {.arg content} has no column
+      "{.arg outliers} is given but {.arg {arg}} has no column
       {.field outlier}."
     },
     "i" = if (has_column) {
@@ -27,10 +28,11 @@ check_outlier_decision <- function(outliers, x, call = rlang::caller_env()) {
   ), arg = "outliers", call = call)
 }
 
-# Abort when household ids have incompatible types, or when `content` or
-# `afe` have households absent from `households`.
-check_intake_ids <- function(x, afe, h, call = rlang::caller_env()) {
-  for (other in list(list("content", x), list("afe", afe))) {
+# Abort when household ids have incompatible types, or when `x` (named
+# `arg` in messages) or `afe` have households absent from `households`.
+check_intake_ids <- function(x, afe, h, arg = "content",
+                             call = rlang::caller_env()) {
+  for (other in list(list(arg, x), list("afe", afe))) {
     ids <- other[[2]]$household_id
     if (length(ids) > 0 && !same_id_type(ids, h$household_id)) {
       abort_hcesfort("join", c(
