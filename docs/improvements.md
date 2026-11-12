@@ -488,6 +488,22 @@ design:
 | P80 | low | **The probability approach ignores a requirement whose percentiles tie.** `stats::approx()` collapses tied requirements by their mean percentile; the shipped tables have none. A tie could instead be an error. | Edge case. | v0.2 |
 | P81 | low | **`above_ul()` cannot compare a UL given in IU.** `retinol_iu` belongs to `preformed_vitamin_a`, but no scenario adds IU (levels are in mg per kg), so it never appears; a composition column in IU would have to be converted by the adapter. | Units explicit. | v0.2 |
 
+## Open items from task 11 (2026-11-12)
+
+Self-review of `as_hces_design()`, `estimate_prevalence()`,
+`estimate_difference()` and `flag_precision()`, as an rOpenSci reviewer
+would. Fixed in the task: the confidence level column was named `level`,
+which clashed with the column `level` of `hces_vehicle_use` (now
+`conf_level`); a helper named `check_reference()` overwrote the check of
+the reference tables of the same name (renamed). Choices taken in
+implementation:
+
+| ID | Priority | Item | Rationale | Roadmap task |
+|---|---|---|---|---|
+| P82 | medium | **Choices of task 11 taken in implementation.** (1) The groups of an estimate are the key columns of the result table other than `household_id`. (2) `by` takes domain columns of the households table only; a household with a missing `by` value forms its own cell (`NA`). (3) `n_missing` counts the households of the `by` cell outside the domain: value missing or `domain` not `TRUE`. (4) A probability (`p_inadequate`) is estimated as a proportion by `svyciprop()`; its logit interval comes from a quasi-binomial fit, valid for values between 0 and 1. (5) Errors raised by `survey` (a lonely PSU under `"fail"`) are passed on unclassed. | CLAUDE.md: no interpretation chosen silently. | 11 |
+| P83 | medium | **Speed of the estimators.** Each cell (group × domain) updates and subsets the design once; with ENGIH's 8,892 households, 3 scenarios, 7 nutrients, 2 bioavailabilities and 30 provinces this is about 1,000 subsets. If too slow in A3, compute all groups of one domain with one `svyby()` call. | Measured only with the microdata. | A3 |
+| P84 | low | **Classed error for a lonely PSU.** Catch the error of `survey` under `lonely_psu = "fail"` and re-raise it as `hcesfort_error_value` with the strata concerned. | Messages state what failed and how to fix it. | 12 |
+
 ## Questions for the maintainer
 
 Answered on 2026-11-12: see "Decisions (2026-11-12)" above. Kept for the

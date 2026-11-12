@@ -150,6 +150,22 @@
   (the folate UL is in µg of folic acid, not DFE; the vitamin A UL in µg of
   preformed vitamin A); `ref_conversions$ul_form` links a form to the upper
   level it counts towards. New error class `hcesfort_error_coverage`.
+* `as_hces_design()`: the survey design of the households (primary
+  sampling units nested in strata, weights) as a `srvyr` design. The choice
+  for strata with a single PSU is a required argument and is applied per
+  call, never left in the global options (E24).
+* `estimate_prevalence()`: proportions, means and medians of a result
+  table with standard errors and intervals, by group and domain, always as
+  domains of the full design (the original took subsets before declaring
+  the design, E5). Proportions use the logit interval of
+  `survey::svyciprop()` by default, which stays between 0 and 1 (the
+  original's symmetric interval is `ci_method = "mean"`); medians have an
+  interval (E24). Degrees of freedom are those of the domain by default.
+* `estimate_difference()`: paired differences between scenarios, the mean
+  of the within-household difference, with its interval; no
+  `significant` column (E24). `flag_precision()`: flags estimates on few
+  households or with wide intervals, both limits required (the original's
+  50 households and 10 points have no source).
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is

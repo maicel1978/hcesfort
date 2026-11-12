@@ -29,12 +29,12 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
   - [x] 10.2 `inadequacy()`: cut-point and coverage rule.
   - [x] 10.3 Probability approach.
   - [x] 10.4 `above_ul()`; `NEWS.md`, self-review.
-- [ ] 11. `as_hces_design()`, `estimate_prevalence()` and `estimate_difference()` on a complex design, subsets as domains.
+- [x] 11. `as_hces_design()`, `estimate_prevalence()` and `estimate_difference()` on a complex design, subsets as domains.
   - [x] 11.0 Choices approved as recommended 2026-11-12 (`docs/improvements.md`).
   - [x] 11.1 `as_hces_design()`; `survey` and `srvyr` to Imports.
   - [x] 11.2 `estimate_prevalence()` (proportion, mean, median), tested against `survey` to 1e-8.
   - [x] 11.3 `estimate_difference()` (paired, within household); `flag_precision()`.
-  - [ ] 11.4 `NEWS.md` (E5 domains, E24), specification, self-review.
+  - [x] 11.4 `NEWS.md` (E5 domains, E24), specification, self-review.
 - [ ] 12. Vignettes in English and Spanish: from standard tables to risk by scenario (synthetic data); how to write an adapter; plotting results with `ggplot2`. The pkgdown site waits for v1.0.
 
 ## v0.1, companion repository `hcesfort.engih2018`: ENGIH 2018 adapter (needs the microdata)
