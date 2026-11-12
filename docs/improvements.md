@@ -208,9 +208,10 @@ also fits the scope rule: it ships no crosswalk and decides nothing.
   the package ships none, and the vignette must use the synthetic table.
 
 **Dependencies.** `stringdist` in `Suggests`, used only by the candidate
-function, with a classed error if it is missing. It is not installed in the build
-environment today, so its interface and its own dependencies are still to be
-checked. Base `utils::adist()` is a fallback with
+function, with a classed error if it is missing. Checked in the build environment
+(version 0.9.17): compiled, imports only base `parallel`, and its q-gram
+methods (`method = "cosine"` or `"jaccard"`, `q = 2`) are insensitive to word
+order, which suits food descriptions better than edit distance. Base `utils::adist()` is a fallback with
 no dependency but only edit distance. No Excel dependency. No new `Imports`.
 
 **Where it goes.** v0.1: `unmatched_foods()` with task 7; `check_crosswalk()`
