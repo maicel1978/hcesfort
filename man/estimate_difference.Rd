@@ -78,8 +78,11 @@ use <- vehicle_coverage(grams, hces_example$vehicles, afe,
                         hces_example$households)
 s <- apply_scenario(intake, use, hces_example$scenarios,
                     compliance_model = "average_content")
-risk <- inadequacy(s, ref_requirements, min_coverage = 0.8,
-                   min_records_used = 0.6)
+iron <- subset(ref_iron_requirements,
+               group == "females_menstruating_adult")
+risk <- inadequacy(s, ref_requirements, distribution = list(iron = iron),
+                   bioavailability = list(iron = 0.10),
+                   min_coverage = 0.8, min_records_used = 0.6)
 design <- as_hces_design(hces_example$households, lonely_psu = "adjust")
 estimate_difference(design, risk, "p_inadequate", reference = "baseline")
 }

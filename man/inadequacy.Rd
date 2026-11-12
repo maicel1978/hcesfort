@@ -17,7 +17,8 @@ inadequacy(
 \item{x}{Table returned by \code{\link[=apply_scenario]{apply_scenario()}} or \code{\link[=apparent_intake]{apparent_intake()}}.}
 
 \item{requirements}{A table with one row per nutrient: \code{nutrient}, \code{unit}
-(the registry unit) and \code{ear}, such as one group of
+(the registry unit), \code{ear} and \code{cutpoint_valid} (optionally
+\code{ear_bioavailability}), such as one group of
 \link{ref_requirements}. Several rows for a nutrient are an
 \code{hcesfort_error_key}: select the group first.}
 
@@ -56,6 +57,17 @@ requirements, while nutrient requirements do not scale with energy.
 \strong{Cut-point.} For the nutrients of \code{requirements} with an \code{ear},
 \code{p_inadequate} is 1 when the intake is below the EAR and 0 otherwise
 (strict comparison: an intake equal to the EAR is adequate).
+
+\strong{Where the cut-point is not valid.} \code{requirements} must have the
+logical column \code{cutpoint_valid}. A nutrient with an \code{ear} and
+\code{cutpoint_valid = FALSE} (its requirement is skewed: iron in
+menstruating women, IOM 2000, \emph{Applications in Dietary Assessment},
+pp. 81 and 91) must be given in \code{distribution}; otherwise the call fails
+with \code{hcesfort_error_value}. There is no option to force the cut-point.
+The optional column \code{ear_bioavailability}, the absorption the EAR
+assumes, is written in the log for the cut-point nutrients that have
+it; it rescales nothing. For a diet of lower absorption, pass a
+requirements table derived for it.
 
 \strong{Probability approach.} For the nutrients named in \code{distribution} the
 cut-point is not valid (their requirement is skewed) and the caller gives

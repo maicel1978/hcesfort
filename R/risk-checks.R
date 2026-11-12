@@ -139,3 +139,56 @@ check_coverage <- function(x, nutrients, assessed, min_coverage,
   ), measure = "composition_value", nutrients = names(cov)[low],
   coverage = unname(cov[low]), min_coverage = min_coverage, call = call)
 }
+
+# The column `cutpoint_valid` of `requirements`: present, logical, never
+# missing where `ear` has a value; `ear_bioavailability`, when present, a
+# number in (0, 1] or missing.
+check_cutpoint_columns <- function(requirements, call = rlang::caller_env()) {
+  if (!is.data.frame(requirements)) return(invisible(TRUE))
+  v <- requirements[["cutpoint_valid"]]
+  if (is.null(v)) {
+    abort_hcesfort("schema", c(
+      "{.arg requirements} lacks the column {.field cutpoint_valid}.",
+      "i" = paste(
+        "Add it: {.val {FALSE}} where the requirement is skewed and the EAR",
+        "cut-point does not apply (iron), {.val {TRUE}} otherwise. See",
+        "{.code ref_requirements}."
+      )
+    ), table = "requirements", columns = "cutpoint_valid", call = call)
+  }
+  ear <- requirements[["ear"]]
+  has_ear <- if (is.null(ear)) rep(FALSE, nrow(requirements)) else !is.na(ear)
+  b <- requirements[["ear_bioavailability"]]
+  bad_b <- !is.null(b) &&
+    (!is.numeric(b) || any(!is.na(b) & (b <= 0 | b > 1)))
+  if (!is.logical(v) || anyNA(v[has_ear]) || bad_b) {
+    col <- if (bad_b) "ear_bioavailability" else "cutpoint_valid"
+    abort_hcesfort("value", c(
+      "{.field {col}} of {.arg requirements} has invalid values.",
+      "i" = paste(
+        "{.field cutpoint_valid} is TRUE or FALSE wherever {.field ear} has",
+        "a value; {.field ear_bioavailability} a number in (0, 1] or NA."
+      )
+    ), table = "requirements", columns = col, call = call)
+  }
+  invisible(TRUE)
+}
+
+# Abort with hcesfort_error_value when a nutrient whose cut-point is not
+# valid would be assessed by it (no entry in `dist`).
+check_cutpoint_valid <- function(req, dist, call = rlang::caller_env()) {
+  bad <- req$nutrient[!req$cutpoint_valid & !req$nutrient %in% names(dist)]
+  if (length(bad) == 0) {
+    return(invisible(TRUE))
+  }
+  abort_hcesfort("value", c(
+    "The EAR cut-point is not valid for {.val {bad}}: the requirement is
+    skewed ({.field cutpoint_valid} is FALSE).",
+    "i" = paste(
+      "Pass its requirement distribution in {.arg distribution} (as",
+      "{.code ref_iron_requirements} for iron), or leave it out of",
+      "{.arg requirements}."
+    )
+  ), table = "requirements", columns = "cutpoint_valid", n = length(bad),
+  call = call)
+}

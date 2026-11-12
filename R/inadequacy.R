@@ -13,6 +13,17 @@
 #' `p_inadequate` is 1 when the intake is below the EAR and 0 otherwise
 #' (strict comparison: an intake equal to the EAR is adequate).
 #'
+#' **Where the cut-point is not valid.** `requirements` must have the
+#' logical column `cutpoint_valid`. A nutrient with an `ear` and
+#' `cutpoint_valid = FALSE` (its requirement is skewed: iron in
+#' menstruating women, IOM 2000, *Applications in Dietary Assessment*,
+#' pp. 81 and 91) must be given in `distribution`; otherwise the call fails
+#' with `hcesfort_error_value`. There is no option to force the cut-point.
+#' The optional column `ear_bioavailability`, the absorption the EAR
+#' assumes, is written in the log for the cut-point nutrients that have
+#' it; it rescales nothing. For a diet of lower absorption, pass a
+#' requirements table derived for it.
+#'
 #' **Probability approach.** For the nutrients named in `distribution` the
 #' cut-point is not valid (their requirement is skewed) and the caller gives
 #' the percentiles of the requirement for one group: a table with
@@ -49,7 +60,8 @@
 #'
 #' @param x Table returned by [apply_scenario()] or [apparent_intake()].
 #' @param requirements A table with one row per nutrient: `nutrient`, `unit`
-#'   (the registry unit) and `ear`, such as one group of
+#'   (the registry unit), `ear` and `cutpoint_valid` (optionally
+#'   `ear_bioavailability`), such as one group of
 #'   [ref_requirements]. Several rows for a nutrient are an
 #'   `hcesfort_error_key`: select the group first.
 #' @param distribution `NULL`, or a named list of requirement distributions,
@@ -99,8 +111,10 @@ inadequacy <- function(x, requirements, distribution = NULL,
   nutrients <- attr(x, "nutrients", exact = TRUE)
   min_coverage <- check_min_coverage(min_coverage)
   min_used <- check_min_records_used(min_records_used)
+  check_cutpoint_columns(requirements)
   req <- check_requirements(requirements, nutrients, "ear")
   dist <- check_distribution(distribution, bioavailability, nutrients)
+  check_cutpoint_valid(req, dist)
   cut <- setdiff(req$nutrient, names(dist))
   assessed <- c(cut, names(dist))
   used <- check_records_used(x, min_used)
@@ -121,7 +135,8 @@ inadequacy <- function(x, requirements, distribution = NULL,
   log <- inadequacy_log(x, req, dist, bioavailability, cov, out, nutrients,
                         min_coverage)
   log <- dplyr::bind_rows(log, records_used_row("inadequacy", x, used,
-                                                min_used))
+                                                min_used),
+                          ear_bioavailability_rows(x, req, cut))
   new_hces_tbl(out, "hces_inadequacy", dplyr::bind_rows(audit_get(x), log),
                c("scenario", "household_id", "nutrient", "bioavailability"),
                nutrients)

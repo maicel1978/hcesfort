@@ -213,7 +213,7 @@ test_that("an excluded outlier counts as a record not used", {
 
 ai_req <- function() {
   data.frame(nutrient = "iron", unit = "mg", ear = 1, ul = 45, ul_unit = "mg",
-             ul_applies_to = "total")
+             ul_applies_to = "total", cutpoint_valid = TRUE)
 }
 
 test_that("the record-loss gate is overall, with both shares", {

@@ -7,7 +7,7 @@
 in_req <- function(iron = 3, folate = 320, vitamin_a = 50) {
   data.frame(nutrient = c("iron", "folate", "vitamin_a", "zinc"),
              unit = c("mg", "ug_dfe", "ug_rae", "mg"),
-             ear = c(iron, folate, vitamin_a, 6))
+             ear = c(iron, folate, vitamin_a, 6), cutpoint_valid = TRUE)
 }
 
 in_dist <- function(k = 1) {
@@ -221,4 +221,68 @@ test_that("no nutrient with an EAR gives no rows; missing intakes stay NA", {
   t <- distribution_table(in_dist(), "iron", "mg", NULL)
   expect_identical(p_inadequate_probability(c(NA, NA), 0.2, t),
                    c(NA_real_, NA_real_))
+})
+
+# Where the cut-point is not valid (correction 2).
+test_that("a nutrient with cutpoint_valid FALSE needs its distribution", {
+  req <- in_req()
+  req$cutpoint_valid[req$nutrient == "iron"] <- FALSE
+  err <- expect_error(inadequacy(as_run(), req, min_coverage = 0,
+                                 min_records_used = 0),
+                      class = "hcesfort_error_value")
+  expect_identical(err$columns, "cutpoint_valid")
+  expect_match(conditionMessage(err), "distribution")
+  r <- inadequacy(as_run(), req, distribution = list(iron = in_dist()),
+                  bioavailability = list(iron = 0.2), min_coverage = 0,
+                  min_records_used = 0)
+  expect_identical(unique(r$method[r$nutrient == "iron"]), "probability")
+  expect_error(inadequacy(as_run(), ref_requirements, min_coverage = 0,
+                          min_records_used = 0),
+               class = "hcesfort_error_value")
+})
+
+test_that("cutpoint_valid is a required, complete logical column", {
+  req <- in_req()
+  err <- expect_error(inadequacy(as_run(), req[names(req) != "cutpoint_valid"],
+                                 min_coverage = 0, min_records_used = 0),
+                      class = "hcesfort_error_schema")
+  expect_identical(err$columns, "cutpoint_valid")
+  req$cutpoint_valid[2] <- NA
+  expect_error(inadequacy(as_run(), req, min_coverage = 0,
+                          min_records_used = 0),
+               class = "hcesfort_error_value")
+  req <- in_req()
+  req$cutpoint_valid <- "TRUE"
+  expect_error(inadequacy(as_run(), req, min_coverage = 0,
+                          min_records_used = 0),
+               class = "hcesfort_error_value")
+  req <- in_req()
+  req$ear_bioavailability <- c(0.18, NA, 1.2, NA)
+  err <- expect_error(inadequacy(as_run(), req, min_coverage = 0,
+                                 min_records_used = 0),
+                      class = "hcesfort_error_value")
+  expect_identical(err$columns, "ear_bioavailability")
+})
+
+test_that("ear_bioavailability is written in the log, rescales nothing", {
+  req <- in_req()
+  req$ear_bioavailability <- c(0.18, NA, NA, NA)
+  r <- inadequacy(as_run(), req, min_coverage = 0, min_records_used = 0)
+  plain <- inadequacy(as_run(), in_req(), min_coverage = 0,
+                      min_records_used = 0)
+  expect_identical(r$p_inadequate, plain$p_inadequate)
+  log <- audit_log(r)
+  note <- log[log$cause == "ear_assumes_bioavailability", ]
+  expect_identical(note$detail, "iron: 0.18")
+  r <- inadequacy(as_run(), req, distribution = list(iron = in_dist()),
+                  bioavailability = list(iron = 0.2), min_coverage = 0,
+                  min_records_used = 0)
+  expect_false("ear_assumes_bioavailability" %in% audit_log(r)$cause)
+})
+
+test_that("ref_requirements: iron is not a cut-point nutrient", {
+  r <- ref_requirements
+  expect_identical(r$cutpoint_valid[r$nutrient == "iron"], FALSE)
+  expect_equal(r$ear_bioavailability[r$nutrient == "iron"], 0.18)
+  expect_true(all(r$cutpoint_valid[r$nutrient != "iron"]))
 })

@@ -60,3 +60,15 @@ records_used_row <- function(step, x, shares, min_records_used) {
             detail = paste0("records: ", shown[[1]], "; grams: ", shown[[2]],
                             " (min_records_used ", min_records_used, ")"))
 }
+
+# Note rows: the absorption the EAR of each cut-point nutrient assumes,
+# where `requirements` states it.
+ear_bioavailability_rows <- function(x, req, cut) {
+  b <- req[["ear_bioavailability"]]
+  if (is.null(b)) return(NULL)
+  keep <- req$nutrient %in% cut & !is.na(b)
+  if (!any(keep)) return(NULL)
+  audit_row("inadequacy", "inadequacy", "note", "ear_assumes_bioavailability",
+            rep(nrow(x), sum(keep)),
+            detail = paste0(req$nutrient[keep], ": ", b[keep]))
+}

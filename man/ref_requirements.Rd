@@ -25,14 +25,22 @@ not RAE (IOM 2001, pp. 143–145).}
 and supplements), \code{"preformed_vitamin_a"}, \code{"folic_acid"} (folate
 from fortified food or supplements) or
 \code{"supplemental_alpha_tocopherol"}; missing where there is no UL.}
+\item{cutpoint_valid}{\code{FALSE} when the requirement is known to be
+skewed, so the EAR cut-point does not apply (iron: IOM 2000,
+\emph{Applications in Dietary Assessment}, pp. 81 and 91). \code{TRUE} means
+no skewed requirement is recorded: the same report assumes symmetry
+by default (p. 91); it is not a positive finding.}
+\item{ear_bioavailability}{Absorption the EAR assumes, when the source
+states one (iron: 0.18); missing otherwise. Informative only.}
 \item{source}{Document.}
-\item{location}{Chapter and page of the EAR and of the UL.}
+\item{location}{Chapter and page of the EAR, of the UL and of the two
+columns above.}
 }
 }
 \source{
 Institute of Medicine (1998, 2000, 2001). Dietary Reference
 Intakes. Washington, DC: The National Academies Press; doi
-10.17226/6015, 10.17226/9810, 10.17226/10026.
+10.17226/6015, 10.17226/9810, 10.17226/9956, 10.17226/10026.
 }
 \usage{
 ref_requirements
