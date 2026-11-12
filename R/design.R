@@ -93,7 +93,10 @@ align_values <- function(design, x, value, domain,
     n = length(absent), call = call)
   }
   key <- setdiff(attr(x, "audit_key", exact = TRUE), "household_id")
-  keys <- unique(dplyr::as_tibble(x)[key])
+  # unique() fails on a tibble without columns: one group when the table
+  # is keyed by household only (apparent_intake()).
+  keys <- if (length(key) == 0) dplyr::tibble(.rows = 1) else
+    unique(dplyr::as_tibble(x)[key])
   g <- match(group_id(x, key), group_id(keys, key))
   y <- as.numeric(x[[value]])
   if (!is.null(domain)) y[!(x[[domain]] %in% TRUE)] <- NA_real_

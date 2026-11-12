@@ -264,6 +264,10 @@
   pasta, falls from 37.2% to 27.3% (95% CI 20.9–34.8%) for folate and
   from 50.0% to 47.7% (39.8–55.8%) for iron when the baseline replaces the
   composition as linked.
+* `estimate_households()` failed on a table keyed by household only, such
+  as the result of `apparent_intake()` (`unique()` of a tibble without
+  columns); it now estimates one group. Found while writing the report
+  template.
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is

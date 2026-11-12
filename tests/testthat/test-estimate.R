@@ -425,3 +425,20 @@ test_that("flag_precision() names the argument that failed", {
                       class = "hcesfort_error_argument")
   expect_identical(err$arg, "min_n")
 })
+
+test_that("a table keyed by household only is one group", {
+  # Before 12b, unique() of a tibble without columns failed here.
+  x <- es_result()
+  one <- new_hces_tbl(as.data.frame(x)[x$scenario == "fort",
+                                       c("household_id", "intake")],
+                      "hces_intake", key = "household_id")
+  e <- estimate_households(es_design(), one, "intake", statistic = "mean",
+                           by = "region")
+  expect_identical(names(e)[1], "region")
+  r <- survey::svymean(~y, ref_design(one$intake, es_households()$region ==
+                                        "a"))
+  expect_equal(e$estimate[e$region == "a"], as.vector(stats::coef(r)),
+               tolerance = 1e-8)
+  expect_identical(nrow(estimate_households(es_design(), one, "intake",
+                                            statistic = "median")), 1L)
+})
