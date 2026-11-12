@@ -244,7 +244,10 @@
   per member per day, the per capita basis of the WHO 2009 bands;
   `who2009_levels()` returns the rows of `ref_who2009_flour` for an
   availability and an extraction rate, with a stated rule for the
-  boundary values (75 and 149.5 in `75-149`, 300 in `150-300`).
+  boundary values (75 and 149.5 in `75-149`, 300 in `150-300`). The
+  availability per person is the ratio of the weighted totals of grams
+  and members (`survey::svyratio()`), not the mean of the households'
+  grams per member; the help shows how to compute it.
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is

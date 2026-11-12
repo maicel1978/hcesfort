@@ -29,13 +29,8 @@ reference_energy <- function(sex, age_years, weight_kg, pal,
   check_required()
   sex <- check_required_choice(sex, c("female", "male"))
   check_one_number(age_years, "age_years", lower = 0)
-  for (arg in c("weight_kg", "pal")) {
-    value <- get(arg)
-    if (!is.numeric(value) || length(value) != 1 || !is.finite(value) ||
-          value <= 0) {
-      abort_afe_arg(arg, "one positive number", rlang::current_env())
-    }
-  }
+  check_positive_number(weight_kg, "weight_kg")
+  check_positive_number(pal, "pal")
   check_reference(bmr, schema_bmr_equations(), "sex")
   row <- which(bmr$sex == sex & age_years >= bmr$age_from &
                  age_years < bmr$age_to)
@@ -118,10 +113,37 @@ who2009_levels <- function(availability_g_d, extraction,
   open <- startsWith(x$availability_g_d, ">")
   reached <- ifelse(open, availability_g_d > x$availability_from_g_d,
                     availability_g_d >= x$availability_from_g_d)
-  x <- x[reached, ]
   group <- paste(x$nutrient, x$extraction, x$compound, sep = "\r")
-  top <- stats::ave(x$availability_from_g_d, group, FUN = max)
+  check_band_reached(availability_g_d, unique(group[!reached]),
+                     unique(group[reached]))
+  x <- x[reached, ]
+  top <- stats::ave(x$availability_from_g_d, group[reached], FUN = max)
   x[x$availability_from_g_d == top, ]
+}
+
+# Abort when some nutrient and compound of the table has no band whose
+# lower bound `availability` reaches: its row would be dropped silently.
+check_band_reached <- function(availability, unreached, reached,
+                               call = rlang::caller_env()) {
+  lost <- setdiff(unreached, reached)
+  if (length(lost) == 0) return(invisible(TRUE))
+  lost <- gsub("\r", ", ", lost)
+  abort_hcesfort("value", c(
+    "No band of {.arg table} starts at or below {availability} g per day
+    for {length(lost)} nutrient{?s} and compound{?s}.",
+    "x" = "{.val {lost}}.",
+    "i" = "The lowest band of each must start at 0."
+  ), table = "table", columns = "availability_from_g_d",
+  rows = integer(0), n = length(lost), call = call)
+}
+
+# Abort unless `value` is one finite number > 0.
+check_positive_number <- function(value, arg, call = rlang::caller_env()) {
+  if (is.numeric(value) && length(value) == 1 && is.finite(value) &&
+        value > 0) {
+    return(invisible(value))
+  }
+  abort_afe_arg(arg, "one positive number", call)
 }
 
 # Abort unless `table` has the columns who2009_levels() reads, with the

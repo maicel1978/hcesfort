@@ -559,6 +559,22 @@ implementation:
 | P89 | closed (approved 2026-11-12) | **Choices taken in implementation, to confirm.** (1) `audit_summary()` gives one row per log row (a step run twice gives two rows, never a sum); the share is taken from the closest earlier `input` row of the same step and table. (2) `audit_record()` refuses a `step` equal to any object of the hcesfort namespace, with or without the `hcesfort::` prefix; `n_households`, `qty_g` and `detail` accept `NA` of any type. (3) The log causes of `flag_energy_plausibility()` were renamed with the arguments (`energy_below_lower`, `energy_above_upper`). (4) `who2009_levels()` boundary rule: the band with the highest lower bound reached, a `>` bound exclusive, so 75 and 149.5 are `75-149` and 300 is `150-300`. WHO 2009 prints `75-149` in Table 1 and "75-150 g/day" in the text; the rule follows the symbols `<` and `>`. (5) `reference_energy()` uses the BMR equation for every age, children included, while `adult_equivalents()` uses the energy table below 18 years; it is meant for an adult reference person. | CLAUDE.md: no interpretation chosen silently. | 12 |
 | P90 | closed (decided 2026-11-12, see Decisions) | **Per capita availability: households or persons.** WHO 2009 bands are an "estimated average per capita wheat flour availability", proposed from FAO Food Balance Sheets and household surveys. The design-based mean of `qty_vehicle_g_d_pc` weights households; a per-person average is the ratio of the weighted totals of grams and members (`survey::svyratio`). The two differ when household size and flour use are related. *Recommended:* document both in the vignette and offer the ratio as the default figure for `who2009_levels()`; a methodological choice for Fable. | The band chosen, hence the level, may change. | 12 |
 
+## Open items from the self-review of task 11b (2026-11-12)
+
+Self-review of 11b.1 to 11b.10, as an rOpenSci reviewer would. Fixed in
+the task: `who2009_levels()` dropped silently a nutrient and compound whose
+lowest band of a user table started above the availability (now
+`hcesfort_error_value`); `reference_energy()` checked its numbers through
+`get()` (now a plain helper); a missing `n_members` in `afe` had no test.
+Coverage 99.5% (`covr::package_coverage()`).
+
+| Id | Priority | Proposal | Why | Task |
+|---|---|---|---|---|
+| P91 | medium | **No helper for the per person availability.** The ratio of totals (P90) is computed with `survey::svyratio()` directly, as in the example of `who2009_levels()`; the user must join the vehicle rows to the households and apply the lonely-PSU choice by hand. An `estimate_ratio()` (or `statistic = "ratio"` in `estimate_households()`) would keep domains, groups and the log as for the other estimates. | One way to estimate; nothing silent. | v0.2 |
+| P92 | low | **`audit_summary()` is quadratic in the log length.** It looks back for the input row of each reported row; logs have tens to a few hundred rows. | Performance, only for very long chains. | v0.2 |
+| P93 | low | **Defensive branches without a test.** Six short error branches (`R/estimate.R`, `R/risk-checks.R`, `R/scenario-log.R`) are not reached by any test; together 0.5% of the code. | Coverage of error paths. | 12 |
+| P94 | low | **`who2009_levels()` does not check that the printed band and its bounds agree** (`availability_g_d` against `availability_from_g_d`) in a user table. | Replaced reference tables. | v0.2 |
+
 ## Questions for the maintainer
 
 Answered on 2026-11-12: see "Decisions (2026-11-12)" above. Kept for the

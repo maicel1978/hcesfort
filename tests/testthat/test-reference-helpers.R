@@ -106,7 +106,7 @@ test_that("who2009_levels() checks its arguments", {
 test_that("the per person availability of the help is the ratio of totals", {
   # Hand-built design: 4 households, 2 strata of 2 PSUs; household 4 has no
   # estimate. Ratio by hand over 1-3:
-  # (1*100 + 2*300 + 3*40) / (1*2 + 2*4 + 3*1) = 820 / 13.
+  # 100 + 600 + 120 = 820 grams over 2 + 8 + 3 = 13 members (weighted).
   h <- data.frame(household_id = 1:4, weight = c(1, 2, 3, 4),
                   stratum = c(1, 1, 2, 2), psu = 1:4,
                   flour_g_d = c(100, 300, 40, NA),
@@ -121,4 +121,16 @@ test_that("the per person availability of the help is the ratio of totals", {
   expect_false(isTRUE(all.equal(sum(h$weight[1:3] * pc) / 6, 820 / 13)))
   expect_identical(unique(who2009_levels(coef(r), "low")$availability_g_d),
                    "<75")
+})
+
+test_that("who2009_levels() fails when a compound has no band reached", {
+  # A user table whose iron bands start at 50: 20 g per day reaches none.
+  t <- ref_who2009_flour[ref_who2009_flour$nutrient %in% c("iron", "zinc") &
+                           ref_who2009_flour$extraction == "high", ]
+  t$availability_from_g_d[t$nutrient == "iron" &
+                            t$availability_g_d == "<75"] <- 50
+  err <- expect_error(who2009_levels(20, "high", table = t),
+                      class = "hcesfort_error_value")
+  expect_identical(err$n, 1L)
+  expect_identical(nrow(who2009_levels(60, "high", table = t)), 2L)
 })

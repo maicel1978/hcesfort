@@ -225,3 +225,13 @@ test_that("grams per member by hand", {
   expect_equal(u$qty_vehicle_g_d_pc[ok] * u$n_members[ok],
                u$qty_vehicle_g_d[ok] * u$afe[ok], tolerance = 1e-12)
 })
+
+test_that("an afe table without n_members is a schema error", {
+  afe <- vc_afe()
+  afe$n_members <- NULL
+  err <- expect_error(
+    vehicle_coverage(vc_grams(), vc_vehicles(), afe, vc_households()),
+    class = "hcesfort_error_schema"
+  )
+  expect_identical(err$columns, "n_members")
+})
