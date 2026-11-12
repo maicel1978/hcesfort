@@ -166,7 +166,8 @@ on it. A `print` method is not added; `audit_log()` is the accessor.
 Classes: `hces_households`, `hces_members`, `hces_acquisitions`,
 `hces_unit_factors`, `hces_crosswalk`, `hces_composition`, `hces_vehicles`,
 `hces_scenarios`, each also `hces_tbl`. Products of later tasks add theirs
-(`hces_grams`, `hces_nutrients`, `hces_intake`).
+(`hces_grams`, `hces_nutrient_content`, `hces_intake`; renamed from
+`hces_nutrients`, which is the registry, decision P43 of 2026-11-12).
 
 ## 5. Schemas of the standard tables (commit 2)
 
@@ -274,7 +275,8 @@ priority between a food-specific and a generic factor is an argument of
 | `edible_portion` | number | yes | in (0, 1] | edible fraction of the food as purchased, keyed by survey food |
 | `yield_factor`* | number | yes | > 0 | grams of the composition food per gram purchased, for a raw purchase matched to a cooked food |
 
-A validated row without `match_type` is an `hcesfort_error_value` (E20).
+A validated row without `match_type` is an `hcesfort_error_value` (E20);
+so is a validated row without `composition_id` (decision P44 of 2026-11-12).
 Unmatched, unvalidated and portion-less rows are counted as notes.
 
 ### Nutrient registry: `nutrient_registry()`

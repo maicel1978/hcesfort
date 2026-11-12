@@ -45,6 +45,8 @@ Recommended model per roadmap task (the roadmap may renumber; match by content):
 - the design of the current task is written and approved, and what remains is implementation;
 - the remaining work is mechanical (tests from an agreed list, documentation, lint, renames).
 
+**Same model → continue.** When the model recommended for the next task is the model of this session, do not stop or ask for a switch: go on with the next task in this session while the context used stays below 50%. Above 50%, follow the handoff protocol and recommend the same model. (Maintainer's rule, 2026-11-12.)
+
 **Any model → stop.** When the session quota (if visible to you) passes 85%, or the maintainer must decide something.
 
 ## How to stop (handoff protocol)

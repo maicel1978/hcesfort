@@ -54,6 +54,14 @@ test_that("crosswalk: validated row without match_type is a value error", {
   expect_identical(err$columns, "match_type")
 })
 
+test_that("crosswalk: validated row without composition_id is an error", {
+  x <- fixture_crosswalk()
+  x$composition_id[1] <- NA
+  err <- expect_error(validate_crosswalk(x), class = "hcesfort_error_value")
+  expect_identical(err$columns, "composition_id")
+  expect_identical(err$rows, 1L)
+})
+
 test_that("crosswalk: edible portion must be in (0, 1]", {
   for (bad in c(0, 1.2)) {
     x <- fixture_crosswalk()

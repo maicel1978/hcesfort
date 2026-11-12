@@ -25,8 +25,10 @@ schema_crosswalk <- function() {
   new_schema(
     "crosswalk", "food_code",
     schema_col("food_code", "id", "survey food code"),
-    schema_col("composition_id", "id", "composition food; missing = no match",
-               na = TRUE),
+    schema_col("composition_id", "id", paste(
+      "composition food; missing = no match; required when `validated` is",
+      "TRUE"
+    ), na = TRUE),
     schema_col("match_type", "text", paste(
       "kind of equivalence (exact, similar, proxy...); required when",
       "`validated` is TRUE"

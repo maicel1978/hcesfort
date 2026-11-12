@@ -36,8 +36,9 @@ the records they leave without grams. A missing \code{food_code} means the
 factor is valid for every food, and two such rows for one unit are a
 duplicated key.
 \item \code{crosswalk}: \code{unmatched_food} (no \code{composition_id}), \code{not_validated},
-\code{missing_edible_portion}. A validated row without \code{match_type} is an
-error.
+\code{missing_edible_portion}. A validated row without \code{composition_id}
+or without \code{match_type} is an error: a validated row is a match that
+enters the calculation.
 \item \code{vehicles}: \code{source_pending} (\code{source} is \code{"SOURCE PENDING"}).
 }
 }

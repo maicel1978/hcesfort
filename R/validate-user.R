@@ -18,8 +18,9 @@
 #'   factor is valid for every food, and two such rows for one unit are a
 #'   duplicated key.
 #' * `crosswalk`: `unmatched_food` (no `composition_id`), `not_validated`,
-#'   `missing_edible_portion`. A validated row without `match_type` is an
-#'   error.
+#'   `missing_edible_portion`. A validated row without `composition_id`
+#'   or without `match_type` is an error: a validated row is a match that
+#'   enters the calculation.
 #' * `vehicles`: `source_pending` (`source` is `"SOURCE PENDING"`).
 #'
 #' @inheritParams validate_households
@@ -53,8 +54,10 @@ validate_crosswalk <- function(x) {
       )
     },
     extra = function(x, call) {
-      check_required_when(x, "match_type", x$validated, "crosswalk",
-                          "`validated` is TRUE", call)
+      for (col in c("composition_id", "match_type")) {
+        check_required_when(x, col, x$validated, "crosswalk",
+                            "`validated` is TRUE", call)
+      }
     }
   )
 }
