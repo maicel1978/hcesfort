@@ -24,7 +24,8 @@ Recommended model per roadmap task (the roadmap may renumber; match by content):
 | 4 | Reference tables with sources | Opus |
 | 5 | Adult female equivalents | Opus |
 | 6 | Unit conversion, outlier flag | Opus |
-| 7 | Composition link and coverage | Opus |
+| 7 | Composition link and coverage; `unmatched_foods()` | Opus |
+| 7b | `check_crosswalk()` (crosswalk quality controls) | Opus |
 | 8 | Apparent intake | Opus |
 | 9 | Unfortified baseline, scenarios, vehicle coverage | **Fable** designs (level basis, enrichment subtraction); Opus implements |
 | 10 | Inadequacy (cut-point, iron probability) and UL forms | **Fable** designs; Opus implements |

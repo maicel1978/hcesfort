@@ -1,8 +1,9 @@
 # Design of roadmap task 2: data contracts, classed errors, audit log
 
-Status: **written 2026-11-12, waiting for the maintainer's approval.** Once
-approved, what remains is implementation (three commits, section 9), which
-`docs/model-routing.md` assigns to Opus.
+Status: **approved by the maintainer on 2026-11-12** (the nine choices of
+section 10, recorded in `docs/improvements.md`). What remains is
+implementation (three commits, section 9), which `docs/model-routing.md`
+assigns to Opus.
 
 Every call to another package named here was run in the build environment
 (R 4.3.3, dplyr 1.2.1, tidyr 1.3.2, rlang 1.3.0, cli 3.6.6, srvyr 1.3.1).

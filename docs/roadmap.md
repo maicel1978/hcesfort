@@ -6,7 +6,7 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
 - [x] 0. **Read the whole analysis** and write `docs/analysis-map.md`. Review recorded in `docs/improvements.md`.
 - [x] 1. Skeleton: `DESCRIPTION`, MIT licence, testthat 3, roxygen2 markdown, `NEWS.md`, `README`, `.gitignore` with `data-raw/private/` and without `docs/`, `.Rbuildignore`, GitHub Actions (R CMD check on three OS, test coverage, lint), `CITATION`, contributing guide, code of conduct, and a test that enforces the size limits. Left open, see `docs/improvements.md` (P36–P38): `srr` annotation workflow, `codemeta.json`, name check on CRAN itself.
 - [ ] 2. Data contracts: schemas of the standard and user-supplied tables, constructors and validators, classed errors, nutrient registry, audit-log carrier (chosen by test) and its format (counts of records, households and grams by cause). Design: `docs/design-task2.md`.
-  - [x] 2.0 Design written (carrier chosen by experiment); waits for the maintainer's approval.
+  - [x] 2.0 Design written (carrier chosen by experiment); approved 2026-11-12.
   - [ ] 2.1 Classed errors and audit-log format and carrier.
   - [ ] 2.2 Validators of `households`, `members`, `acquisitions` and their cross-table check.
   - [ ] 2.3 Validators of the user-supplied tables and nutrient registry.
@@ -14,7 +14,8 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
 - [ ] 4. Reference data with sources in `data-raw/` (EAR, UL and the form it applies to, energy requirements, WHO 2009 levels, iron requirement distribution, DFE and RAE factors). Unverifiable values stay `# SOURCE PENDING` and are not shipped.
 - [ ] 5. `adult_equivalents()`.
 - [ ] 6. `convert_units()` (typed factors) and `flag_outliers()`.
-- [ ] 7. `link_composition()` and `fill_composition()`, with coverage over all records. If P42 is accepted as split: `unmatched_foods()` here and `check_crosswalk()` as task 7b.
+- [ ] 7. `link_composition()` and `fill_composition()`, with coverage over all records; `unmatched_foods()` (P42, part a).
+- [ ] 7b. `check_crosswalk()`: quality controls of the crosswalk as flags, thresholds given by the caller (P42, part d).
 - [ ] 8. `apparent_intake()` with the `include` flag, household status and energy-plausibility flag; `nutrient_density()`.
 - [ ] 9. `unfortified_baseline()`, `apply_scenario()` (level basis, compliance) and `vehicle_coverage()`.
 - [ ] 10. `inadequacy()` and `above_ul()`.
@@ -28,7 +29,7 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
 - [ ] A4. Acceptance step 2: correct each erroneous default, one per commit, old and new figures in `NEWS.md`.
 
 ## v0.2: Peru and the article's open criticisms
-- [ ] Food-matching support module (P42): candidates by text similarity, seeds from validated crosswalks, review round trip. Before the Peru adapter.
+- [ ] Food-matching support module (P42, parts b, c, e): candidates by text similarity, seeds from validated crosswalks, review round trip. Before the Peru adapter.
 - [ ] Peru survey adapter (companion repository).
 - [ ] Retention factors.
 - [ ] H-AR reference table.

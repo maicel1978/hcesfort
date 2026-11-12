@@ -106,10 +106,27 @@ the evidence is a median and the test mixes both sections: energy of Sec 3A
 alone by days with a record; share of households above the plausibility
 ceiling by days with a record; the meaning of an eighth day.
 
+## Decisions (2026-11-12, design of task 2)
+
+The maintainer approved the nine choices of section 10 of
+`docs/design-task2.md` as recommended:
+
+| # | Choice | Applied in |
+|---|---|---|
+| 1 | Carrier: tibble subclass `hces_tbl`, log in the attribute `audit`, under the three rules of section 4 (no reliance on propagation, classed error on loss, staleness recorded). | Task 2.1 |
+| 2 | `validate_*()` is the single family: validator and constructor in one. | Tasks 2.2, 2.3 |
+| 3 | `record_id` and `member_id` are required. | Task 2.2 |
+| 4 | `stratum` and `psu` are required; a design without them passes explicit constant columns. | Task 2.2 |
+| 5 | Validators reject only impossible values; plausibility is a flag with thresholds given by the caller. | Tasks 2.2, 2.3, 6, 8 |
+| 6 | `sex` takes `"female"`/`"male"`; other codings are mapped by the adapter. | Task 2.2 |
+| 7 | `compliance` is optional; when absent it is added as 1 with a `compliance_assumed_full` note in the log. | Task 2.3 |
+| 8 | `composition$basis` must be `per_100g_edible`; other bases are converted by the adapter. | Task 2.3 |
+| 9 | P42 is split: ranking (`unmatched_foods()`, task 7) and quality controls (`check_crosswalk()`, task 7b) in v0.1; candidates, seeds and the review round trip in v0.2, before the Peru adapter. | Roadmap tasks 7, 7b and v0.2 |
+
 ## Proposal P42: food-matching support module (2026-11-12)
 
-Proposed by the maintainer; assessed here, not implemented. Status: **open,
-proposed for v0.2 before the Peru adapter.**
+Proposed by the maintainer; assessed here, not implemented. Status:
+**accepted as split on 2026-11-12** (decision 9 above).
 
 The proposal: a module that supports the matching of survey foods to food
 composition tables, with no AI inside the package: (a) rank unmatched foods by
@@ -222,8 +239,8 @@ right: the Peru crosswalk is its first real use, and the ENGIH crosswalk,
 already validated, is its test of recall (how often the validated match is
 among the top *k* candidates).
 
-**Decision needed from the maintainer:** accept the split (quality controls
-and ranking in v0.1, candidates and review in v0.2)? Recommended: yes.
+**Decision (2026-11-12):** split accepted (ranking and quality controls in
+v0.1, candidates and review in v0.2).
 
 ## Open items from task 1 (2026-11-10)
 
