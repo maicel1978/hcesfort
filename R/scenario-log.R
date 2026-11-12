@@ -1,20 +1,21 @@
 # Argument checks and audit rows of apply_scenario().
 
-# Abort with hcesfort_error_audit unless the log of `x` holds the step
-# unfortified_baseline() (E1).
-check_baseline_step <- function(x, call = rlang::caller_env()) {
+# Abort with hcesfort_error_audit unless the log of `x` (named `arg` in
+# the message) holds the step unfortified_baseline() (E1).
+check_baseline_step <- function(x, arg = "intake",
+                                call = rlang::caller_env()) {
   if ("unfortified_baseline" %in% audit_get(x)$step) {
     return(invisible(x))
   }
   abort_hcesfort("audit", c(
-    "{.arg intake} was not built on an unfortified baseline.",
+    "{.arg {arg}} was not built on an unfortified baseline.",
     "x" = "Its audit log has no step {.fn unfortified_baseline}.",
     "i" = paste(
       "Pass the composition through {.fn unfortified_baseline} before",
       "{.fn link_composition}; with nothing to remove, give it an empty",
       "{.arg enrichment} table."
     )
-  ), arg = "intake", expected = "unfortified_baseline", call = call)
+  ), arg = arg, expected = "unfortified_baseline", call = call)
 }
 
 # Abort on a bad compliance model or baseline label, or a scenario named
