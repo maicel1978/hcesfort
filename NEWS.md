@@ -79,6 +79,12 @@
 * `unmatched_foods()`: the foods with records not linked to the
   composition, what blocks them, and their weight in records and in grams
   (the original's list was empty by construction, E3).
+* `check_crosswalk()`: quality controls of the crosswalk as flag columns,
+  nothing changed: missing or conflicting edible portions, composition foods
+  shared by several foods, cooked or as-consumed rows without a yield
+  factor, missing nutrients, enriched rows, match types marked for review
+  and nutrients outside ranges given by the user (E20, E21, E1). With the
+  grams table, each food's records and grams rank the review.
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is

@@ -15,7 +15,7 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
 - [x] 5. `adult_equivalents()`.
 - [x] 6. `convert_units()` (typed factors) and `flag_outliers()`.
 - [x] 7. `link_composition()` and `fill_composition()`, with coverage over all records; `unmatched_foods()` (P42, part a).
-- [ ] 7b. `check_crosswalk()`: quality controls of the crosswalk as flags, thresholds given by the caller (P42, part d).
+- [x] 7b. `check_crosswalk()`: quality controls of the crosswalk as flags, thresholds given by the caller (P42, part d).
 - [ ] 8. `apparent_intake()` with the `include` flag, household status and energy-plausibility flag; `nutrient_density()`.
 - [ ] 9. `unfortified_baseline()`, `apply_scenario()` (level basis, compliance) and `vehicle_coverage()`.
 - [ ] 10. `inadequacy()` and `above_ul()`.

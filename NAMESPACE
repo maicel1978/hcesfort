@@ -2,6 +2,7 @@
 
 export(adult_equivalents)
 export(audit_log)
+export(check_crosswalk)
 export(convert_units)
 export(fill_composition)
 export(flag_outliers)
