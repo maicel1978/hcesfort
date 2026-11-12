@@ -85,6 +85,19 @@
   factor, missing nutrients, enriched rows, match types marked for review
   and nutrients outside ranges given by the user (E20, E21, E1). With the
   grams table, each food's records and grams rank the review.
+* `apparent_intake()`: nutrients per adult female equivalent per day, one
+  row per household of `households` with a status (`estimated`,
+  `food_module_nonresponse`, `no_food_records`, `all_records_lost`,
+  `no_afe`), so no household leaves the frame unseen (E5). Records not
+  included, not linked or, when asked, flagged as outliers are left out and
+  counted with their grams; the decision on outliers is a required
+  argument when the flag exists. Missing composition values add nothing and
+  each nutrient has a coverage column, the share of edible grams with a
+  value (E21; the original summed them as zero without saying so).
+* `flag_energy_plausibility()`: flags households outside an energy range
+  given by the user (the original's 500 and 6,000 kcal are one call, not a
+  default). `nutrient_density()`: nutrients per 1,000 kcal (or another
+  amount).
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is
