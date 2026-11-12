@@ -75,7 +75,7 @@ convert_units <- function(acquisitions, unit_factors, priority,
   share <- if (is.null(a[["household_share"]])) 1 else a[["household_share"]]
   qty_g <- a$quantity * g
   reasons <- grams_reasons(a, chosen, g, rep_len(share, nrow(a)))
-  status <- first_reason(reasons)
+  status <- first_reason(reasons, none = "converted")
   converted <- status == "converted"
   out <- dplyr::as_tibble(a)
   out$factor_from <- chosen$factor_from
@@ -152,10 +152,10 @@ grams_per_unit <- function(chosen, density_g_ml, piece_weight_g) {
   chosen$factor * multiplier
 }
 
-# The status of each record: "converted" or the first reason, in the
-# order of `reasons`, that left it without grams.
-first_reason <- function(reasons) {
-  status <- rep("converted", length(reasons[[1]]))
+# The status of each record: `none` or the first reason, in the order of
+# `reasons` (named logical vectors), that applies to it.
+first_reason <- function(reasons, none) {
+  status <- rep(none, length(reasons[[1]]))
   for (cause in rev(names(reasons))) status[reasons[[cause]]] <- cause
   status
 }

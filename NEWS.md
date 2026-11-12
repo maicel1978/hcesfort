@@ -64,6 +64,13 @@
   and 99.5%, multiplier 5 and 20 records (E9); that rule is one call, not
   a default. Groups too small, records without grams and households without
   AFE are not assessed and are counted in the audit log.
+* `link_composition()`: nutrients per record through the validated rows of
+  the crosswalk, with the edible portion (keyed by survey food) and an
+  optional yield factor. Every record is kept with its status; coverage is
+  counted over all records, by records and by grams, before anything is
+  dropped, and causes are not hierarchical (E3). A missing composition
+  value leaves the nutrient missing, never zero (E21). A validated match to
+  a composition id absent from the table is an error, not a silent loss.
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is
