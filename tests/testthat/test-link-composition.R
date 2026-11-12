@@ -97,6 +97,11 @@ test_that("the log measures coverage over all records and grams", {
   expect_equal(get("not_in_crosswalk", "n_records"), 2)
   expect_equal(get("not_in_crosswalk", "qty_g"), 10)
   expect_equal(get("no_grams_and_no_match", "n_records"), 1)
+  # rice and fish have no yield factor; oil has 2. Linked: 1, 2, 7.
+  yield <- l[l$cause == "yield_factor_assumed_one", ]
+  expect_equal(yield$kind, "note")
+  expect_equal(yield$n_records, 2)
+  expect_equal(yield$qty_g, 160)
   miss <- l[l$cause == "missing_nutrient_value", ]
   expect_equal(miss$detail, "iron_mg")
   expect_equal(miss$qty_g, 60)
@@ -139,6 +144,8 @@ test_that("without fortified or yield_factor the columns adapt", {
   x <- link_default(crosswalk = cw, composition = comp)
   expect_equal(x$qty_edible_g_d[2], 25)
   expect_false("fortified" %in% names(x))
+  log <- audit_log(x)
+  expect_equal(log$n_records[log$cause == "yield_factor_assumed_one"], 3)
 })
 
 test_that("joins are checked", {

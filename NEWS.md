@@ -71,6 +71,8 @@
   dropped, and causes are not hierarchical (E3). A missing composition
   value leaves the nutrient missing, never zero (E21). A validated match to
   a composition id absent from the table is an error, not a silent loss.
+  A missing yield factor counts as 1, and the linked records concerned are
+  counted in the audit log (`yield_factor_assumed_one`).
 * `fill_composition()`: fills missing composition values from a table of
   values with their source (`hces_schema("composition_fills")`); existing
   values are never overwritten and every filled cell is counted. The

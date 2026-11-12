@@ -12,9 +12,10 @@
 | `9fd03b2`, `aabdc73` | Task 7: `link_composition()`, `fill_composition()` (new contract `composition_fills`), `unmatched_foods()`. |
 | `4e3be0e` | Task 7b: `check_crosswalk()`. |
 | `ae2955d` | Task 8: `apparent_intake()`, `flag_energy_plausibility()`, `nutrient_density()`. |
+| see `git log` | P63, P66 and P67 accepted by the maintainer; change to P63: linked records whose missing `yield_factor` is taken as 1 are a `note` in the log of `link_composition()` (`yield_factor_assumed_one`). |
 
 On the last commit: `devtools::check()` 0/0/0; `lintr::lint_package()`
-clean; 764 tests; coverage 100%.
+clean; 768 tests; coverage 100%.
 
 The pipeline now runs end to end on `hces_example` up to intake per AFE
 (see the example of `?apparent_intake`).
@@ -42,21 +43,8 @@ the composition carries `fortified`; `hces_nutrient_content` carries
 
 ## Open questions
 
-Choices taken under delegation in tasks 7, 7b and 8, each one line to
-change (`docs/improvements.md`):
-
-1. **P63 (task 7).** Missing `yield_factor` = 1; nutrient columns keep
-   registry names (amount per day); a validated match absent from the
-   composition table is an error; new contract `composition_fills`.
-   *Recommended: accept.*
-2. **P66 (task 7b).** Validated rows only; flags as `flag_` columns; state
-   control from the composition's `food_state` without a yield factor;
-   ranges given by the user. *Recommended: accept.*
-3. **P67 (task 8).** A missing nutrient value adds nothing and each
-   nutrient gets a `_coverage` column (instead of `NA` for the whole
-   household); status order; outliers not assessed are kept; no
-   winsorising in v0.1. *Recommended: accept; the coverage column lets
-   task 10 require a minimum coverage chosen by the caller (P11).*
+None. P63, P66 and P67 were accepted on 2026-11-12 (P63 with the note on
+the yield factor, now implemented).
 
 ## Recommended model for the next session
 

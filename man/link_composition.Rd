@@ -30,7 +30,8 @@ first reason the record has no nutrients, \code{no_grams} or the
 \code{match_status}. The audit log continues the logs of \code{grams},
 \code{crosswalk} and \code{composition}. It counts each reason with the grams
 per day as acquired (\code{qty_g} of the log); records with no grams and no
-validated match also as \code{no_grams_and_no_match}; linked records; and,
+validated match also as \code{no_grams_and_no_match}; linked records;
+linked records whose yield factor was taken as 1; and,
 per nutrient, linked records without a value
 (\code{missing_nutrient_value}, \code{detail} = the column).
 }
@@ -45,12 +46,13 @@ records, by records and by grams, before anything is dropped.
 Only validated crosswalk rows enter the calculation. Edible grams per
 day are \code{qty_g_d * edible_portion * yield_factor}; a missing or absent
 \code{yield_factor} means no change of state between purchase and the
-composition row, and counts as 1. Nutrients per record are edible grams
-per day times the content per 100 g, divided by 100, in the unit of the
-registry (the columns keep the registry's names: \code{iron_mg} is mg per day
-for the household). A missing composition value leaves that nutrient
-missing for the record, never zero; fill gaps first with
-\code{\link[=fill_composition]{fill_composition()}}.
+composition row, and counts as 1; the linked records concerned are
+counted in the audit log (\code{yield_factor_assumed_one}). Nutrients per
+record are edible grams per day times the content per 100 g, divided by
+100, in the unit of the registry (the columns keep the registry's
+names: \code{iron_mg} is mg per day for the household). A missing
+composition value leaves that nutrient missing for the record, never
+zero; fill gaps first with \code{\link[=fill_composition]{fill_composition()}}.
 }
 \examples{
 grams <- convert_units(

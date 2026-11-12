@@ -9,12 +9,13 @@
 #' Only validated crosswalk rows enter the calculation. Edible grams per
 #' day are `qty_g_d * edible_portion * yield_factor`; a missing or absent
 #' `yield_factor` means no change of state between purchase and the
-#' composition row, and counts as 1. Nutrients per record are edible grams
-#' per day times the content per 100 g, divided by 100, in the unit of the
-#' registry (the columns keep the registry's names: `iron_mg` is mg per day
-#' for the household). A missing composition value leaves that nutrient
-#' missing for the record, never zero; fill gaps first with
-#' [fill_composition()].
+#' composition row, and counts as 1; the linked records concerned are
+#' counted in the audit log (`yield_factor_assumed_one`). Nutrients per
+#' record are edible grams per day times the content per 100 g, divided by
+#' 100, in the unit of the registry (the columns keep the registry's
+#' names: `iron_mg` is mg per day for the household). A missing
+#' composition value leaves that nutrient missing for the record, never
+#' zero; fill gaps first with [fill_composition()].
 #'
 #' @param grams Table returned by [convert_units()] (or [flag_outliers()]).
 #' @param crosswalk Crosswalk ([hces_schema()]`("crosswalk")`), validated or
@@ -34,7 +35,8 @@
 #'   `match_status`. The audit log continues the logs of `grams`,
 #'   `crosswalk` and `composition`. It counts each reason with the grams
 #'   per day as acquired (`qty_g` of the log); records with no grams and no
-#'   validated match also as `no_grams_and_no_match`; linked records; and,
+#'   validated match also as `no_grams_and_no_match`; linked records;
+#'   linked records whose yield factor was taken as 1; and,
 #'   per nutrient, linked records without a value
 #'   (`missing_nutrient_value`, `detail` = the column).
 #' @seealso [fill_composition()], [unmatched_foods()], [audit_log()].
@@ -74,7 +76,7 @@ link_composition <- function(grams, crosswalk, composition,
   }
   out$match_status <- first_reason(reasons[-1], none = "matched")
   out$composition_status <- status
-  log <- link_log(out, reasons, nutrients)
+  log <- link_log(out, reasons, nutrients, linked$yield_assumed)
   log <- dplyr::bind_rows(audit_get(g), audit_get(cw), audit_get(comp), log)
   new_hces_tbl(out, "hces_nutrient_content", log, "record_id", nutrients)
 }
@@ -117,7 +119,8 @@ join_composition <- function(out, cw, comp, nutrients) {
                         relationship = "many-to-one", unmatched = "drop",
                         na_matches = "never")
   x$in_crosswalk <- !is.na(x$in_crosswalk)
-  x$yield_factor[is.na(x$yield_factor)] <- 1
+  x$yield_assumed <- is.na(x$yield_factor)
+  x$yield_factor[x$yield_assumed] <- 1
   use <- !is.na(x$validated) & x$validated
   x$match_id <- x$composition_id
   x$match_id[!use] <- x$composition_id[NA_integer_]

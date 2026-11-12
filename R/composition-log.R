@@ -39,8 +39,9 @@ check_composition_ids <- function(g, cw, comp, call = rlang::caller_env()) {
 # Audit rows of link_composition(): records received, each reason without
 # nutrients, the overlap of no grams and no validated match, the records
 # linked, and per nutrient the linked records without a value. `qty_g` is
-# the grams per day as acquired of the records that have them.
-link_log <- function(out, reasons, nutrients) {
+# the grams per day as acquired of the records that have them. Linked
+# records whose yield factor was missing and taken as 1 are a note.
+link_log <- function(out, reasons, nutrients, yield_assumed) {
   step <- "link_composition"
   row <- function(kind, cause, f, detail = NA_character_) {
     if (!any(f)) return(NULL)
@@ -63,6 +64,7 @@ link_log <- function(out, reasons, nutrients) {
     lapply(names(reasons), function(r) row("flagged", r, reasons[[r]])),
     row("flagged", "no_grams_and_no_match", reasons$no_grams & no_match),
     row("note", "linked", linked),
+    row("note", "yield_factor_assumed_one", linked & yield_assumed),
     missing
   )
 }
