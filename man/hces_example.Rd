@@ -5,7 +5,7 @@
 \alias{hces_example}
 \title{Synthetic example survey}
 \format{
-A list of ten elements:
+A list of eleven elements:
 \describe{
 \item{households}{40 households in 2 strata and 8 primary sampling
 units, with a \code{region} domain.}
@@ -24,6 +24,8 @@ flour, for \code{\link[=unfortified_baseline]{unfortified_baseline()}}.}
 \item{vehicles}{Fraction of each food that is a fortification
 vehicle, by product class, with a vehicle group.}
 \item{scenarios}{Two invented fortification scenarios.}
+\item{food_groups}{An invented grouping of the survey foods, for
+\code{\link[=food_group_intake]{food_group_intake()}}; the egg has no group.}
 }
 }
 \source{
@@ -53,7 +55,8 @@ unvalidated food; a missing nutrient value
 and two enriched composition rows with the rules that remove what
 enrichment added; a food with two vehicles of different groups; a
 scenario that fortifies only some vehicles of a group; a scenario level
-given for a compound. The planted defects stay in a few records, so
+given for a compound; a grouping of foods that leaves the egg without a
+group. The planted defects stay in a few records, so
 that most included records reach the intake.
 
 Quantities were recalibrated (2026-11-12) so that results read like a

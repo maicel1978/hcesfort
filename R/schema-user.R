@@ -158,3 +158,19 @@ schema_enrichment <- function(nutrients = NULL) {
     ))
   )
 }
+
+# Schema of the grouping of survey foods for food_group_intake(). Design:
+# docs/design-food-group-shares.md, section 2.
+schema_food_groups <- function() {
+  new_schema(
+    "food_groups", "food_code",
+    schema_col("food_code", "id", "survey food code"),
+    schema_col("food_group", "text", paste(
+      "group name; not empty; `unclassified` is reserved for the foods",
+      "without a group"
+    )),
+    schema_col("source", "text", paste(
+      "classification and edition the groups come from"
+    ))
+  )
+}

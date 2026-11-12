@@ -87,6 +87,7 @@ schema_registry <- function() {
     composition_fills = schema_composition_fills,
     enrichment = schema_enrichment,
     vehicles = schema_vehicles,
+    food_groups = schema_food_groups,
     scenarios = schema_scenarios,
     energy_requirements = schema_energy_requirements,
     bmr_equations = schema_bmr_equations
@@ -113,8 +114,8 @@ schema_registry <- function() {
 #'
 #' @param table Name of the table: `"households"`, `"members"`,
 #'   `"acquisitions"`, `"unit_factors"`, `"crosswalk"`, `"composition"`,
-#'   `"composition_fills"`, `"enrichment"`, `"vehicles"`, `"scenarios"`,
-#'   `"energy_requirements"` or `"bmr_equations"`.
+#'   `"composition_fills"`, `"enrichment"`, `"vehicles"`, `"food_groups"`,
+#'   `"scenarios"`, `"energy_requirements"` or `"bmr_equations"`.
 #' @returns A tibble with columns `column`, `type`, `required`, `na`
 #'   (`TRUE` when a missing value is accepted), `key` (`TRUE` for the
 #'   columns of the key), `rule` and `description`.

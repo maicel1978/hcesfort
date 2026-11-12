@@ -9,8 +9,8 @@ hces_schema(table)
 \arguments{
 \item{table}{Name of the table: \code{"households"}, \code{"members"},
 \code{"acquisitions"}, \code{"unit_factors"}, \code{"crosswalk"}, \code{"composition"},
-\code{"composition_fills"}, \code{"enrichment"}, \code{"vehicles"}, \code{"scenarios"},
-\code{"energy_requirements"} or \code{"bmr_equations"}.}
+\code{"composition_fills"}, \code{"enrichment"}, \code{"vehicles"}, \code{"food_groups"},
+\code{"scenarios"}, \code{"energy_requirements"} or \code{"bmr_equations"}.}
 }
 \value{
 A tibble with columns \code{column}, \code{type}, \code{required}, \code{na}

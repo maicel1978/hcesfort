@@ -1,10 +1,11 @@
 # The synthetic dataset must pass every validator and contain the cases
 # it is documented to contain (data-raw/hces_example.R).
 
-test_that("hces_example has its ten tables", {
+test_that("hces_example has its eleven tables", {
   expect_named(hces_example, c(
     "households", "members", "acquisitions", "unit_factors", "crosswalk",
-    "nutrients", "composition", "enrichment", "vehicles", "scenarios"
+    "nutrients", "composition", "enrichment", "vehicles", "scenarios",
+    "food_groups"
   ))
   expect_identical(nrow(hces_example$households), 40L)
   expect_identical(length(unique(hces_example$households$psu)), 8L)
@@ -68,4 +69,12 @@ test_that("planted units: one record without factor, one without density", {
   expect_identical(g$food_code[g$grams_status == "no_density"], "milk")
   expect_identical(sum(g$grams_status == "no_factor"), 1L)
   expect_gt(mean(g$food_code[g$grams_status == "converted"] == "milk"), 0)
+})
+
+test_that("the example grouping passes and leaves only the egg out", {
+  e <- hces_example
+  g <- validate_food_groups(e$food_groups)
+  expect_identical(audit_log(g)$cause, "all")
+  expect_true(all(g$food_code %in% e$crosswalk$food_code))
+  expect_identical(setdiff(e$crosswalk$food_code, g$food_code), "egg")
 })

@@ -25,7 +25,8 @@
 # - a composition table with a missing nutrient value, an enriched pasta and
 #   an enriched flour, and the enrichment rules that remove what was added;
 # - a food with two vehicles of different groups; a scenario with a
-#   compound-based level.
+#   compound-based level;
+# - a grouping of foods that leaves one food (egg) without a group.
 
 set.seed(20261112)
 
@@ -213,11 +214,23 @@ scenarios <- rbind(
   )
 )
 
+# Food groups for food_group_intake(): an invented grouping, not a
+# published classification. The egg is left without a group on purpose,
+# so that the example has an `unclassified` share.
+food_groups <- data.frame(
+  food_code = c("rice", "wheat_flour", "bread", "pasta", "biscuit",
+                "beans", "oil", "sugar", "milk", "chicken", "banana",
+                "local_herb", "pumpkin"),
+  food_group = c(rep("cereals", 5), "pulses", "fats_and_oils", "sugars",
+                 "dairy", "meat", "fruits", "vegetables", "vegetables"),
+  source = "synthetic: invented"
+)
+
 hces_example <- list(
   households = households, members = members, acquisitions = acquisitions,
   unit_factors = unit_factors, crosswalk = crosswalk,
   nutrients = nutrients, composition = composition, enrichment = enrichment,
-  vehicles = vehicles, scenarios = scenarios
+  vehicles = vehicles, scenarios = scenarios, food_groups = food_groups
 )
 
 save(hces_example, file = "data/hces_example.rda", compress = "xz",
