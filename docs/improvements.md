@@ -522,7 +522,7 @@ implementation:
 |---|---|---|---|---|
 | P82 | medium | **Choices of task 11 taken in implementation.** (1) The groups of an estimate are the key columns of the result table other than `household_id`. (2) `by` takes domain columns of the households table only; a household with a missing `by` value forms its own cell (`NA`). (3) `n_missing` counts the households of the `by` cell outside the domain: value missing or `domain` not `TRUE`. (4) A probability (`p_inadequate`) is estimated as a proportion by `svyciprop()`; its logit interval comes from a quasi-binomial fit, valid for values between 0 and 1. (5) Errors raised by `survey` (a lonely PSU under `"fail"`) are passed on unclassed. | CLAUDE.md: no interpretation chosen silently. | 11 |
 | P83 | medium | **Speed of the estimators.** Each cell (group × domain) updates and subsets the design once; with ENGIH's 8,892 households, 3 scenarios, 7 nutrients, 2 bioavailabilities and 30 provinces this is about 1,000 subsets. If too slow in A3, compute all groups of one domain with one `svyby()` call. | Measured only with the microdata. | A3 |
-| P84 | low | **Classed error for a lonely PSU.** Catch the error of `survey` under `lonely_psu = "fail"` and re-raise it as `hcesfort_error_value` with the strata concerned. | Messages state what failed and how to fix it. | 12 |
+| P84 | closed (11b.6) | **Classed error for a lonely PSU.** Catch the error of `survey` under `lonely_psu = "fail"` and re-raise it as `hcesfort_error_value` with the strata concerned. | Messages state what failed and how to fix it. | 12 |
 
 ## Open items from the design of the v0.1 corrections (2026-11-12)
 

@@ -79,6 +79,8 @@ estimate_log <- function(step, design, x, value, statistic, ci_method, df,
     audit_row(step, "estimate", "note", cause, nrow(out), detail = detail)
   }
   empty <- sum(out$n == 0)
+  degenerate <- sum(out$n > 0 & !is.na(out$se) & out$se == 0 &
+                      is.na(out$ci_low))
   dplyr::bind_rows(
     audit_row(step, "estimate", "input", "all", nrow(out),
               nrow(design$variables), detail = value),
@@ -88,6 +90,10 @@ estimate_log <- function(step, design, x, value, statistic, ci_method, df,
     note("lonely_psu", attr(design, "hces_lonely_psu", exact = TRUE)),
     if (empty > 0) {
       audit_row(step, "estimate", "flagged", "empty_domain", empty)
+    },
+    if (degenerate > 0) {
+      audit_row(step, "estimate", "flagged", "degenerate_proportion",
+                degenerate)
     }
   )
 }

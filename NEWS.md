@@ -204,6 +204,14 @@
   before), and two households pass the folic acid UL. A golden test runs
   the whole chain and compares 17 figures with values computed without
   the package (`data-raw/golden_example.R`), at 1e-8.
+* Estimation (review of v0.1, M5, M6, P84): a proportion whose values are
+  all 0 or all 1 in the domain is returned exactly, with `se = 0`, no
+  interval and a log row `degenerate_proportion` (before: `7.65e-12` with
+  a logit interval, or `NaN` limits); a stratum with one PSU under
+  `lonely_psu = "fail"` is an `hcesfort_error_value`; `?as_hces_design`
+  shows how to apply the lonely-PSU choice to a direct `survey` call.
+  Tests: degrees of freedom of domain and design told apart, SE of means
+  and medians against `survey`, `flag_precision()` at its limits.
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is

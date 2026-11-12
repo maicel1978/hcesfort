@@ -15,6 +15,18 @@
 #' `"adjust"`, `"average"` or `"certainty"`. The choice is stored with the
 #' design and applied by [estimate_prevalence()] and
 #' [estimate_difference()], so the global option is never left changed.
+#' Under `"fail"`, a domain with such a stratum is an
+#' `hcesfort_error_value`.
+#'
+#' The design is a plain `survey` design otherwise, and a further estimate
+#' computed directly with `survey` or `srvyr` does **not** see the choice:
+#' it uses the global option. Apply it around such a call:
+#'
+#' ```
+#' old <- options(survey.lonely.psu = attr(design, "hces_lonely_psu"))
+#' survey::svymean(~x, design)
+#' options(old)
+#' ```
 #'
 #' @param households Households table ([hces_schema()]`("households")`),
 #'   validated or not. Its other columns (region, area, quintile) are kept

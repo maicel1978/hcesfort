@@ -36,6 +36,17 @@ survey package (see \code{?survey::svyCprod}): \code{"fail"}, \code{"remove"},
 \code{"adjust"}, \code{"average"} or \code{"certainty"}. The choice is stored with the
 design and applied by \code{\link[=estimate_prevalence]{estimate_prevalence()}} and
 \code{\link[=estimate_difference]{estimate_difference()}}, so the global option is never left changed.
+Under \code{"fail"}, a domain with such a stratum is an
+\code{hcesfort_error_value}.
+
+The design is a plain \code{survey} design otherwise, and a further estimate
+computed directly with \code{survey} or \code{srvyr} does \strong{not} see the choice:
+it uses the global option. Apply it around such a call:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{old <- options(survey.lonely.psu = attr(design, "hces_lonely_psu"))
+survey::svymean(~x, design)
+options(old)
+}\if{html}{\out{</div>}}
 }
 \examples{
 design <- as_hces_design(hces_example$households, lonely_psu = "adjust")

@@ -76,6 +76,13 @@ is the symmetric interval of the original analysis, E24).
 (Woodruff) method.
 }
 
+A proportion whose values in the domain are all 0 (or all 1) is
+returned as that exact value with \code{se = 0} and no interval (\code{ci_low},
+\code{ci_high} missing), and counted in the log (\code{degenerate_proportion}):
+the interval methods give either a spurious estimate (\code{"logit"}) or no
+limits (\code{"beta"}) there, and a sample of few households is not
+certainty.
+
 Degrees of freedom of the \emph{t} intervals: \code{"domain"} (by default) uses
 those of the domain, \code{survey::degf()} of the subset design, as the
 original analysis did and as \code{survey} does on a subset; \code{"design"} those

@@ -247,7 +247,96 @@ test_that("the example chain runs to estimates", {
   d <- as_hces_design(hces_example$households, lonely_psu = "adjust")
   e <- estimate_prevalence(d, use, "acquired", by = "region")
   expect_identical(nrow(e), 5L * 2L)
-  expect_true(all(e$ci_low <= e$estimate & e$estimate <= e$ci_high))
+  ci <- !is.na(e$ci_low)
+  expect_true(all(e$ci_low[ci] <= e$estimate[ci] &
+                    e$estimate[ci] <= e$ci_high[ci]))
+  expect_true(all(e$se[!ci] == 0 & e$estimate[!ci] %in% c(0, 1)))
+})
+
+# Degenerate proportions, lonely PSU, and the tests the mutation run of the
+# v0.1 review showed to be weak (M5, M6, P84, T1 to T4).
+test_that("a proportion of exactly 0 or 1 is exact, without interval", {
+  x <- es_result()
+  x$zero <- 0
+  x$one <- ifelse(x$household_id == 5, NA, TRUE)
+  for (m in c("logit", "beta", "mean")) {
+    e <- estimate_prevalence(es_design(), x, "zero", ci_method = m)
+    expect_identical(e$estimate, c(0, 0))
+    expect_identical(e$se, c(0, 0))
+    expect_true(all(is.na(e$ci_low) & is.na(e$ci_high)))
+  }
+  e <- estimate_prevalence(es_design(), x, "one")
+  expect_identical(e$estimate, c(1, 1))
+  expect_identical(e$n, c(7L, 7L))
+  log <- audit_log(e)
+  expect_identical(log$n_records[log$cause == "degenerate_proportion"], 2L)
+  m <- estimate_prevalence(es_design(), x, "zero", statistic = "mean")
+  expect_false("degenerate_proportion" %in% audit_log(m)$cause)
+})
+
+test_that("df: domain and design differ when a domain empties a PSU", {
+  x <- es_result()
+  x$ok <- !x$household_id %in% 1:2
+  y <- x$intake[x$scenario == "fort"]
+  sub <- ref_design(y, x$ok[x$scenario == "fort"])
+  r <- survey::svymean(~y, sub)
+  dfs <- c(domain = survey::degf(sub), design = survey::degf(es_design()))
+  expect_false(dfs[["domain"]] == dfs[["design"]])
+  for (k in names(dfs)) {
+    e <- pick_est(estimate_prevalence(es_design(), x, "intake",
+                                      statistic = "mean", domain = "ok",
+                                      df = k), "fort")
+    expect_identical(e$df, dfs[[k]])
+    expect_equal(c(e$ci_low, e$ci_high),
+                 unname(stats::confint(r, df = dfs[[k]])[1, ]),
+                 tolerance = 1e-8)
+  }
+})
+
+test_that("SE of the mean and of the median agree with survey", {
+  x <- es_result()
+  y <- x$intake[x$scenario == "fort"]
+  sub <- ref_design(y, rep(TRUE, 8))
+  e <- pick_est(estimate_prevalence(es_design(), x, "intake",
+                                    statistic = "mean"), "fort")
+  expect_equal(e$se, as.vector(survey::SE(survey::svymean(~y, sub))),
+               tolerance = 1e-8)
+  e <- pick_est(estimate_prevalence(es_design(), x, "intake",
+                                    statistic = "median"), "fort")
+  q <- survey::svyquantile(~y, sub, quantiles = 0.5, ci = TRUE,
+                           df = survey::degf(sub))
+  expect_equal(e$se, unname(survey::SE(q)), tolerance = 1e-8)
+})
+
+test_that("lonely PSU: classed error under fail, adjust as in survey", {
+  h <- es_households()
+  h$psu[h$stratum == 2] <- 1
+  x <- es_result()
+  d <- as_hces_design(h, lonely_psu = "fail")
+  err <- expect_error(estimate_prevalence(d, x, "p", statistic = "mean"),
+                      class = "hcesfort_error_value")
+  expect_match(conditionMessage(err), "Stratum")
+  expect_identical(err$columns, c("stratum", "psu"))
+  e <- pick_est(estimate_prevalence(as_hces_design(h, "adjust"), x, "p",
+                                    statistic = "mean"), "base")
+  y <- x$p[x$scenario == "base"]
+  h$y <- ifelse(is.na(y), 0, y)
+  ref <- survey::svydesign(ids = ~psu, strata = ~stratum, weights = ~weight,
+                           nest = TRUE, data = h)
+  r <- withr::with_options(list(survey.lonely.psu = "adjust"),
+                           survey::svymean(~y, ref[!is.na(y), ]))
+  expect_equal(e$se, as.vector(survey::SE(r)), tolerance = 1e-8)
+})
+
+test_that("flag_precision(): literal flags at the limits", {
+  e <- new_hces_tbl(
+    data.frame(group = c("a", "b", "c", "d", "e"), n = c(3L, 4L, 5L, 4L, 9L),
+               estimate = 0.5, ci_low = c(0, 0, 0, NA, 0.1),
+               ci_high = c(0.2, 0.8, 0.82, NA, 0.9)),
+    "hces_estimate", key = "group"
+  )
+  f <- flag_precision(e, min_n = 4, max_half_width = 0.4)
+  expect_identical(f$low_precision, c(TRUE, FALSE, TRUE, FALSE, FALSE))
 })
 
 # domain_from (correction 3): a household table carrying the flag. Flag:

@@ -15,6 +15,13 @@
 #' * `"median"`: [survey::svyquantile()] at 0.5, interval by its default
 #'   (Woodruff) method.
 #'
+#' A proportion whose values in the domain are all 0 (or all 1) is
+#' returned as that exact value with `se = 0` and no interval (`ci_low`,
+#' `ci_high` missing), and counted in the log (`degenerate_proportion`):
+#' the interval methods give either a spurious estimate (`"logit"`) or no
+#' limits (`"beta"`) there, and a sample of few households is not
+#' certainty.
+#'
 #' Degrees of freedom of the *t* intervals: `"domain"` (by default) uses
 #' those of the domain, `survey::degf()` of the subset design, as the
 #' original analysis did and as `survey` does on a subset; `"design"` those
@@ -107,6 +114,10 @@ estimate_cell <- function(design, y, mask, statistic, ci_method, level,
                           ci_high = NA_real_, conf_level = level, df = dfv,
                           n = n, n_missing = sum(mask & !inside))
   if (n == 0) return(na_row)
+  if (statistic == "proportion" && degenerate(y[inside])) {
+    na_row[c("estimate", "se")] <- list(y[inside][[1]], 0)
+    return(na_row)
+  }
   r <- switch(
     statistic,
     proportion = {
@@ -136,10 +147,29 @@ domain_input_log <- function(x, domain_from) {
   audit_union(audit_get(x), audit_get(domain_from))
 }
 
+# TRUE when every value is 0 or every value is 1: the proportion is exact
+# in the sample and no interval method gives a usable interval.
+degenerate <- function(y) {
+  all(y == 0) || all(y == 1)
+}
+
 # Evaluate `expr` with the option survey.lonely.psu set to the choice
-# stored on `design`, restoring the option afterwards.
-with_lonely_psu <- function(design, expr) {
+# stored on `design`, restoring the option afterwards. The error of survey
+# for a stratum with one PSU (under "fail") becomes hcesfort_error_value.
+with_lonely_psu <- function(design, expr, call = rlang::caller_env()) {
   old <- options(survey.lonely.psu = attr(design, "hces_lonely_psu"))
   on.exit(options(old), add = TRUE)
-  force(expr)
+  tryCatch(force(expr), error = function(e) {
+    msg <- conditionMessage(e)
+    if (!grepl("only one PSU", msg, fixed = TRUE)) stop(e)
+    abort_hcesfort("value", c(
+      "A stratum of the domain has a single primary sampling unit.",
+      "x" = cli_escape(msg),
+      "i" = paste(
+        "{.arg lonely_psu} of {.fn as_hces_design} is {.val fail}; choose",
+        "{.val adjust}, {.val average}, {.val remove} or {.val certainty}."
+      )
+    ), table = "households", columns = c("stratum", "psu"),
+    n = NA_integer_, call = call)
+  })
 }
