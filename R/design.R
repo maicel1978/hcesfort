@@ -13,7 +13,7 @@
 #' no default; its values are those of the option `survey.lonely.psu` of the
 #' survey package (see `?survey::svyCprod`): `"fail"`, `"remove"`,
 #' `"adjust"`, `"average"` or `"certainty"`. The choice is stored with the
-#' design and applied by [estimate_prevalence()] and
+#' design and applied by [estimate_households()] and
 #' [estimate_difference()], so the global option is never left changed.
 #' Under `"fail"`, a domain with such a stratum is an
 #' `hcesfort_error_value`.
@@ -36,7 +36,7 @@
 #' @returns A survey design of class `tbl_svy` (srvyr), usable with the
 #'   functions of `survey` and `srvyr`, with the attribute
 #'   `hces_lonely_psu`.
-#' @seealso [estimate_prevalence()], [estimate_difference()].
+#' @seealso [estimate_households()], [estimate_difference()].
 #' @examples
 #' design <- as_hces_design(hces_example$households, lonely_psu = "adjust")
 #' design

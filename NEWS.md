@@ -42,7 +42,7 @@
   caller) and the requirement of a reference person. Members without age or
   sex leave the household without AFE and are flagged, instead of counting
   zero as in the original analysis (E10; the original rule is
-  `missing = "zero"`). Infants get the requirement of their month of age
+  `missing_members = "zero"`). Infants get the requirement of their month of age
   when it is known (the original used the mean of the first year for all,
   `infants = "annual_mean"`).
 * `convert_units()`: acquired quantities to grams and grams per day with a
@@ -154,7 +154,7 @@
   sampling units nested in strata, weights) as a `srvyr` design. The choice
   for strata with a single PSU is a required argument and is applied per
   call, never left in the global options (E24).
-* `estimate_prevalence()`: proportions, means and medians of a result
+* `estimate_households()`: proportions, means and medians of a result
   table with standard errors and intervals, by group and domain, always as
   domains of the full design (the original took subsets before declaring
   the design, E5). Proportions use the logit interval of
@@ -182,7 +182,7 @@
   pp. 81 and 91) and `ear_bioavailability` (0.18 for iron), written in the
   log, rescaling nothing. Before, iron passed in `requirements` without a
   distribution was assessed by the cut-point without a word.
-* Household flags as domains (review of v0.1, H3): `estimate_prevalence()`
+* Household flags as domains (review of v0.1, H3): `estimate_households()`
   and `estimate_difference()` take `domain_from`, a household table of the
   package holding the logical column named by `domain` (one row per
   household of the design, checked). The energy-plausibility sensitivity
@@ -229,6 +229,14 @@
   the share of the records it received. New `audit_record()`: an adapter
   or a user states in the log what it did to a table between two
   functions of the package.
+* Renames before the first release (review of v0.1, L1, L2), without a
+  deprecation layer: `estimate_prevalence()` is `estimate_households()`
+  (it estimates means and medians too, and every figure is per
+  household); `flag_energy_plausibility(intake, column, min, max)` is
+  `flag_energy_plausibility(intake, energy, lower, upper)`, and its log
+  causes are `energy_below_lower` and `energy_above_upper`;
+  `adult_equivalents(missing = )` is `missing_members = `. The new names
+  no longer shadow `base::min()`, `base::max()` or `base::missing()`.
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is

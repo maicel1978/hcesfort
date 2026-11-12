@@ -84,8 +84,8 @@ test_that("infants = 'annual_mean' gives every infant the mean", {
   expect_identical(log$n_records[log$cause == "infant_annual_mean"], 2L)
 })
 
-test_that("missing = 'zero' reproduces the original rule and says so", {
-  out <- afe_fixture(missing = "zero")
+test_that("missing_members = 'zero' reproduces the original rule and says so", {
+  out <- afe_fixture(missing_members = "zero")
   expect_equal(out$afe, c(2.7, 2.1, 1))
   expect_equal(out$energy_kcal_d[3], 2000)
   log <- audit_log(out)
@@ -173,7 +173,7 @@ test_that("bad arguments are classed errors", {
                class = "hcesfort_error_argument")
   expect_error(adult_equivalents(m, 2000, w, 2, infants = "yearly"),
                class = "hcesfort_error_argument")
-  expect_error(adult_equivalents(m, 2000, w, 2, missing = c("na", "x")),
+  expect_error(adult_equivalents(m, 2000, w, 2, missing_members = c("na", "x")),
                class = "hcesfort_error_argument")
   m$sex[1] <- "woman"
   expect_error(adult_equivalents(m, 2000, w, 2),

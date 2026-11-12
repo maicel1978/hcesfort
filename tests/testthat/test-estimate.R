@@ -1,4 +1,4 @@
-# as_hces_design(), estimate_prevalence(), estimate_difference() and
+# as_hces_design(), estimate_households(), estimate_difference() and
 # flag_precision(). Fixture: an invented design of 8 households in 2 strata
 # of 2 PSUs each, and a result table with two scenarios. Every estimate is
 # compared with a direct computation by survey on the same design.
@@ -53,7 +53,7 @@ test_that("proportion agrees with survey::svyciprop() to 1e-8", {
   y <- x$p[x$scenario == "base"]
   sub <- ref_design(y, rep(TRUE, 8))
   for (m in c("logit", "mean", "beta")) {
-    e <- pick_est(estimate_prevalence(es_design(), x, "p", ci_method = m),
+    e <- pick_est(estimate_households(es_design(), x, "p", ci_method = m),
                   "base")
     r <- survey::svyciprop(~y, sub, method = m, df = survey::degf(sub))
     expect_equal(e$estimate, as.vector(stats::coef(r)), tolerance = 1e-8)
@@ -61,7 +61,7 @@ test_that("proportion agrees with survey::svyciprop() to 1e-8", {
     expect_equal(c(e$ci_low, e$ci_high), unname(attr(r, "ci")),
                  tolerance = 1e-8)
   }
-  e <- pick_est(estimate_prevalence(es_design(), x, "p"), "base")
+  e <- pick_est(estimate_households(es_design(), x, "p"), "base")
   expect_identical(e$n, 7L)
   expect_identical(e$n_missing, 1L)
   expect_identical(e$df, survey::degf(sub))
@@ -71,7 +71,7 @@ test_that("mean and median agree with svymean() and svyquantile()", {
   x <- es_result()
   y <- x$intake[x$scenario == "fort"]
   sub <- ref_design(y, rep(TRUE, 8))
-  e <- pick_est(estimate_prevalence(es_design(), x, "intake",
+  e <- pick_est(estimate_households(es_design(), x, "intake",
                                     statistic = "mean", df = "design"),
                 "fort")
   r <- survey::svymean(~y, sub)
@@ -79,7 +79,7 @@ test_that("mean and median agree with svymean() and svyquantile()", {
   expect_equal(e$estimate, as.vector(stats::coef(r)), tolerance = 1e-8)
   expect_equal(c(e$ci_low, e$ci_high),
                unname(stats::confint(r, df = df)[1, ]), tolerance = 1e-8)
-  e <- pick_est(estimate_prevalence(es_design(), x, "intake",
+  e <- pick_est(estimate_households(es_design(), x, "intake",
                                     statistic = "median", level = 0.9),
                 "fort")
   q <- survey::svyquantile(~y, sub, quantiles = 0.5, ci = TRUE,
@@ -94,7 +94,7 @@ test_that("by and domain are domains of the full design", {
   x <- es_result()
   y <- x$p[x$scenario == "base"]
   h <- es_households()
-  e <- estimate_prevalence(es_design(), x, "p", by = "region",
+  e <- estimate_households(es_design(), x, "p", by = "region",
                            statistic = "mean")
   e <- pick_est(e, "base")
   expect_identical(e$region, c("a", "b"))
@@ -106,11 +106,11 @@ test_that("by and domain are domains of the full design", {
                  tolerance = 1e-8)
   }
   # domain in the design (urban) and in x (ok).
-  e <- pick_est(estimate_prevalence(es_design(), x, "p", domain = "urban",
+  e <- pick_est(estimate_households(es_design(), x, "p", domain = "urban",
                                     statistic = "mean"), "base")
   r <- survey::svymean(~y, ref_design(y, h$urban))
   expect_equal(e$estimate, as.vector(stats::coef(r)), tolerance = 1e-8)
-  e <- pick_est(estimate_prevalence(es_design(), x, "p", domain = "ok",
+  e <- pick_est(estimate_households(es_design(), x, "p", domain = "ok",
                                     statistic = "mean"), "base")
   r <- survey::svymean(~y, ref_design(y, x$ok[x$scenario == "base"]))
   expect_equal(e$estimate, as.vector(stats::coef(r)), tolerance = 1e-8)
@@ -119,7 +119,7 @@ test_that("by and domain are domains of the full design", {
 test_that("an empty domain gives a missing estimate and is flagged", {
   x <- es_result()
   x$ok <- FALSE
-  e <- estimate_prevalence(es_design(), x, "p", domain = "ok")
+  e <- estimate_households(es_design(), x, "p", domain = "ok")
   expect_true(all(is.na(e$estimate)))
   expect_identical(e$n, c(0L, 0L))
   log <- audit_log(e)
@@ -132,10 +132,10 @@ test_that("lonely PSU: the choice is applied and the option restored", {
   x <- es_result()
   old <- getOption("survey.lonely.psu")
   d <- as_hces_design(h, lonely_psu = "fail")
-  expect_error(estimate_prevalence(d, x, "p", statistic = "mean"))
+  expect_error(estimate_households(d, x, "p", statistic = "mean"))
   expect_identical(getOption("survey.lonely.psu"), old)
   d <- as_hces_design(h, lonely_psu = "adjust")
-  e <- estimate_prevalence(d, x, "p", statistic = "mean")
+  e <- estimate_households(d, x, "p", statistic = "mean")
   expect_false(anyNA(e$se))
   log <- audit_log(e)
   expect_identical(log$detail[log$cause == "lonely_psu"], "adjust")
@@ -157,39 +157,39 @@ test_that("the paired difference agrees with svymean() of the difference", {
                tolerance = 1e-8)
   # Same domain in both scenarios: the mean difference is the difference
   # of the means.
-  m <- estimate_prevalence(es_design(), x, "p", statistic = "mean")
+  m <- estimate_households(es_design(), x, "p", statistic = "mean")
   expect_equal(e$estimate, m$estimate[2] - m$estimate[1], tolerance = 1e-12)
 })
 
 test_that("estimation errors are classed", {
   x <- es_result()
   d <- es_design()
-  expect_error(estimate_prevalence(es_households(), x, "p"),
+  expect_error(estimate_households(es_households(), x, "p"),
                class = "hcesfort_error_argument")
-  expect_error(estimate_prevalence(d, as.data.frame(x), "p"),
+  expect_error(estimate_households(d, as.data.frame(x), "p"),
                class = "hcesfort_error_audit")
-  expect_error(estimate_prevalence(d, x, "nope"),
+  expect_error(estimate_households(d, x, "nope"),
                class = "hcesfort_error_argument")
-  expect_error(estimate_prevalence(d, x, "p", statistic = "total"),
+  expect_error(estimate_households(d, x, "p", statistic = "total"),
                class = "hcesfort_error_argument")
-  expect_error(estimate_prevalence(d, x, "p", ci_method = "exact"),
+  expect_error(estimate_households(d, x, "p", ci_method = "exact"),
                class = "hcesfort_error_argument")
-  expect_error(estimate_prevalence(d, x, "p", level = 95),
+  expect_error(estimate_households(d, x, "p", level = 95),
                class = "hcesfort_error_argument")
-  expect_error(estimate_prevalence(d, x, "p", df = "full"),
+  expect_error(estimate_households(d, x, "p", df = "full"),
                class = "hcesfort_error_argument")
-  expect_error(estimate_prevalence(d, x, "p", by = "province"),
+  expect_error(estimate_households(d, x, "p", by = "province"),
                class = "hcesfort_error_argument")
-  expect_error(estimate_prevalence(d, x, "p", domain = "region"),
+  expect_error(estimate_households(d, x, "p", domain = "region"),
                class = "hcesfort_error_argument")
-  expect_error(estimate_prevalence(d, x, "p", domain = c("ok", "urban")),
+  expect_error(estimate_households(d, x, "p", domain = c("ok", "urban")),
                class = "hcesfort_error_argument")
   big <- new_hces_tbl(data.frame(household_id = 9, p = 1), "hces_intake",
                       key = "household_id")
-  expect_error(estimate_prevalence(d, big, "p"),
+  expect_error(estimate_households(d, big, "p"),
                class = "hcesfort_error_join")
   noh <- new_hces_tbl(data.frame(id = 1, p = 1), "hces_intake", key = "id")
-  expect_error(estimate_prevalence(d, noh, "p"),
+  expect_error(estimate_households(d, noh, "p"),
                class = "hcesfort_error_argument")
   expect_error(estimate_difference(d, x, "p", reference = "none"),
                class = "hcesfort_error_argument")
@@ -200,7 +200,7 @@ test_that("estimation errors are classed", {
 })
 
 test_that("flag_precision() by hand", {
-  e <- estimate_prevalence(es_design(), es_result(), "p", by = "region",
+  e <- estimate_households(es_design(), es_result(), "p", by = "region",
                            statistic = "mean")
   half <- (e$ci_high - e$ci_low) / 2
   f <- flag_precision(e, min_n = 4, max_half_width = 0.4)
@@ -215,20 +215,20 @@ test_that("flag_precision() by hand", {
 
 test_that("invariants: row order, scaling, households order", {
   x <- es_result()
-  e1 <- estimate_prevalence(es_design(), x, "intake", statistic = "mean")
+  e1 <- estimate_households(es_design(), x, "intake", statistic = "mean")
   x2 <- restore_audit(x[rev(seq_len(nrow(x))), ], from = x)
-  e2 <- estimate_prevalence(es_design(), x2, "intake", statistic = "mean")
+  e2 <- estimate_households(es_design(), x2, "intake", statistic = "mean")
   e2 <- e2[match(e1$scenario, e2$scenario), ]
   expect_equal(e2$estimate, e1$estimate, tolerance = 1e-12)
   x3 <- x
   x3$intake <- 3 * x3$intake
   for (st in c("mean", "median")) {
-    a <- estimate_prevalence(es_design(), x, "intake", statistic = st)
-    b <- estimate_prevalence(es_design(), x3, "intake", statistic = st)
+    a <- estimate_households(es_design(), x, "intake", statistic = st)
+    b <- estimate_households(es_design(), x3, "intake", statistic = st)
     expect_equal(b$estimate, 3 * a$estimate, tolerance = 1e-10)
   }
   h <- es_households()[8:1, ]
-  e3 <- estimate_prevalence(as_hces_design(h, "adjust"), x, "intake",
+  e3 <- estimate_households(as_hces_design(h, "adjust"), x, "intake",
                             statistic = "mean")
   expect_equal(e3$estimate, e1$estimate, tolerance = 1e-12)
   expect_equal(e3$se, e1$se, tolerance = 1e-12)
@@ -245,7 +245,7 @@ test_that("the example chain runs to estimates", {
   use <- vehicle_coverage(g, hces_example$vehicles, afe,
                           hces_example$households)
   d <- as_hces_design(hces_example$households, lonely_psu = "adjust")
-  e <- estimate_prevalence(d, use, "acquired", by = "region")
+  e <- estimate_households(d, use, "acquired", by = "region")
   expect_identical(nrow(e), 5L * 2L)
   ci <- !is.na(e$ci_low)
   expect_true(all(e$ci_low[ci] <= e$estimate[ci] &
@@ -260,17 +260,17 @@ test_that("a proportion of exactly 0 or 1 is exact, without interval", {
   x$zero <- 0
   x$one <- ifelse(x$household_id == 5, NA, TRUE)
   for (m in c("logit", "beta", "mean")) {
-    e <- estimate_prevalence(es_design(), x, "zero", ci_method = m)
+    e <- estimate_households(es_design(), x, "zero", ci_method = m)
     expect_identical(e$estimate, c(0, 0))
     expect_identical(e$se, c(0, 0))
     expect_true(all(is.na(e$ci_low) & is.na(e$ci_high)))
   }
-  e <- estimate_prevalence(es_design(), x, "one")
+  e <- estimate_households(es_design(), x, "one")
   expect_identical(e$estimate, c(1, 1))
   expect_identical(e$n, c(7L, 7L))
   log <- audit_log(e)
   expect_identical(log$n_records[log$cause == "degenerate_proportion"], 2L)
-  m <- estimate_prevalence(es_design(), x, "zero", statistic = "mean")
+  m <- estimate_households(es_design(), x, "zero", statistic = "mean")
   expect_false("degenerate_proportion" %in% audit_log(m)$cause)
 })
 
@@ -283,7 +283,7 @@ test_that("df: domain and design differ when a domain empties a PSU", {
   dfs <- c(domain = survey::degf(sub), design = survey::degf(es_design()))
   expect_false(dfs[["domain"]] == dfs[["design"]])
   for (k in names(dfs)) {
-    e <- pick_est(estimate_prevalence(es_design(), x, "intake",
+    e <- pick_est(estimate_households(es_design(), x, "intake",
                                       statistic = "mean", domain = "ok",
                                       df = k), "fort")
     expect_identical(e$df, dfs[[k]])
@@ -297,11 +297,11 @@ test_that("SE of the mean and of the median agree with survey", {
   x <- es_result()
   y <- x$intake[x$scenario == "fort"]
   sub <- ref_design(y, rep(TRUE, 8))
-  e <- pick_est(estimate_prevalence(es_design(), x, "intake",
+  e <- pick_est(estimate_households(es_design(), x, "intake",
                                     statistic = "mean"), "fort")
   expect_equal(e$se, as.vector(survey::SE(survey::svymean(~y, sub))),
                tolerance = 1e-8)
-  e <- pick_est(estimate_prevalence(es_design(), x, "intake",
+  e <- pick_est(estimate_households(es_design(), x, "intake",
                                     statistic = "median"), "fort")
   q <- survey::svyquantile(~y, sub, quantiles = 0.5, ci = TRUE,
                            df = survey::degf(sub))
@@ -313,11 +313,11 @@ test_that("lonely PSU: classed error under fail, adjust as in survey", {
   h$psu[h$stratum == 2] <- 1
   x <- es_result()
   d <- as_hces_design(h, lonely_psu = "fail")
-  err <- expect_error(estimate_prevalence(d, x, "p", statistic = "mean"),
+  err <- expect_error(estimate_households(d, x, "p", statistic = "mean"),
                       class = "hcesfort_error_value")
   expect_match(conditionMessage(err), "Stratum")
   expect_identical(err$columns, c("stratum", "psu"))
-  e <- pick_est(estimate_prevalence(as_hces_design(h, "adjust"), x, "p",
+  e <- pick_est(estimate_households(as_hces_design(h, "adjust"), x, "p",
                                     statistic = "mean"), "base")
   y <- x$p[x$scenario == "base"]
   h$y <- ifelse(is.na(y), 0, y)
@@ -351,7 +351,7 @@ es_flags <- function(flag = c(TRUE, TRUE, TRUE, FALSE, NA, TRUE, TRUE, NA)) {
 test_that("domain_from: the flag of another table is a domain", {
   x <- es_result()
   flag <- c(TRUE, TRUE, TRUE, FALSE, NA, TRUE, TRUE, NA)
-  e <- pick_est(estimate_prevalence(es_design(), x, "p", domain = "plausible",
+  e <- pick_est(estimate_households(es_design(), x, "p", domain = "plausible",
                                     domain_from = es_flags()), "base")
   y <- x$p[x$scenario == "base"]
   sub <- ref_design(y, flag %in% TRUE)
@@ -372,17 +372,17 @@ test_that("domain_from: log of the flag, missing flags counted once", {
   x <- es_result()
   x <- audit_add(x, "flag_energy_plausibility", "intake", "note", "range",
                  8L, detail = "1000 to 4000 kcal")
-  e <- estimate_prevalence(es_design(), x, "p", domain = "plausible",
+  e <- estimate_households(es_design(), x, "p", domain = "plausible",
                            domain_from = es_flags())
   log <- audit_log(e)
   expect_identical(sum(log$cause == "range"), 1L)
   expect_identical(log$detail[log$cause == "domain"],
                    "plausible (domain_from)")
   expect_identical(log$n_households[log$cause == "domain_flag_missing"], 2L)
-  e2 <- estimate_prevalence(es_design(), es_result(), "p",
+  e2 <- estimate_households(es_design(), es_result(), "p",
                             domain = "plausible", domain_from = es_flags())
   expect_identical(sum(audit_log(e2)$cause == "range"), 1L)
-  e3 <- estimate_prevalence(es_design(), es_result(), "p", domain = "ok")
+  e3 <- estimate_households(es_design(), es_result(), "p", domain = "ok")
   expect_identical(audit_log(e3)$detail[audit_log(e3)$cause == "domain"],
                    "ok (x)")
 })
@@ -393,31 +393,31 @@ test_that("domain_from: one row per household, same households", {
                                  plausible = TRUE, vehicle = c(rep("a", 8),
                                                                "b")),
                       "hces_vehicle_use", key = c("household_id", "vehicle"))
-  err <- expect_error(estimate_prevalence(es_design(), x, "p",
+  err <- expect_error(estimate_households(es_design(), x, "p",
                                           domain = "plausible",
                                           domain_from = two),
                       class = "hcesfort_error_key")
   expect_match(conditionMessage(err), "one vehicle")
   short <- dplyr::filter(es_flags(), household_id != 3)
-  err <- expect_error(estimate_prevalence(es_design(), x, "p",
+  err <- expect_error(estimate_households(es_design(), x, "p",
                                           domain = "plausible",
                                           domain_from = short),
                       class = "hcesfort_error_join")
   expect_identical(err$n, 1L)
-  expect_error(estimate_prevalence(es_design(), x, "p", domain = "nope",
+  expect_error(estimate_households(es_design(), x, "p", domain = "nope",
                                    domain_from = es_flags()),
                class = "hcesfort_error_argument")
-  expect_error(estimate_prevalence(es_design(), x, "p", domain = "plausible",
+  expect_error(estimate_households(es_design(), x, "p", domain = "plausible",
                                    domain_from = as.data.frame(es_flags())),
                class = "hcesfort_error_audit")
-  err <- expect_error(estimate_prevalence(es_design(), x, "p",
+  err <- expect_error(estimate_households(es_design(), x, "p",
                                           domain = "plausible"),
                       class = "hcesfort_error_argument")
   expect_match(conditionMessage(err), "domain_from")
 })
 
 test_that("flag_precision() names the argument that failed", {
-  e <- estimate_prevalence(es_design(), es_result(), "p")
+  e <- estimate_households(es_design(), es_result(), "p")
   err <- expect_error(flag_precision(e, 4, -1),
                       class = "hcesfort_error_argument")
   expect_identical(err$arg, "max_half_width")

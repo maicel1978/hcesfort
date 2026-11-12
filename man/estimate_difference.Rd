@@ -96,5 +96,5 @@ design <- as_hces_design(hces_example$households, lonely_psu = "adjust")
 estimate_difference(design, risk, "p_inadequate", reference = "baseline")
 }
 \seealso{
-\code{\link[=estimate_prevalence]{estimate_prevalence()}}.
+\code{\link[=estimate_households]{estimate_households()}}.
 }

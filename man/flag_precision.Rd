@@ -7,7 +7,7 @@
 flag_precision(estimates, min_n, max_half_width)
 }
 \arguments{
-\item{estimates}{Table returned by \code{\link[=estimate_prevalence]{estimate_prevalence()}} or
+\item{estimates}{Table returned by \code{\link[=estimate_households]{estimate_households()}} or
 \code{\link[=estimate_difference]{estimate_difference()}}.}
 
 \item{min_n}{Smallest number of households in the domain (\code{n}).}
@@ -39,9 +39,9 @@ afe <- adult_equivalents(
 use <- vehicle_coverage(grams, hces_example$vehicles, afe,
                         hces_example$households)
 design <- as_hces_design(hces_example$households, lonely_psu = "adjust")
-est <- estimate_prevalence(design, use, "acquired", by = "region")
+est <- estimate_households(design, use, "acquired", by = "region")
 flag_precision(est, min_n = 10, max_half_width = 0.10)
 }
 \seealso{
-\code{\link[=estimate_prevalence]{estimate_prevalence()}}.
+\code{\link[=estimate_households]{estimate_households()}}.
 }

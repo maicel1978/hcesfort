@@ -46,9 +46,9 @@ test_that("the full chain on hces_example reproduces the golden values", {
   pick <- function(e, sc) e[e$scenario == sc, ]
   folate <- r[r$nutrient == "folate", ]
   iron <- r[r$nutrient == "iron", ]
-  p_folate <- pick(estimate_prevalence(ch$design, folate, "p_inadequate"),
+  p_folate <- pick(estimate_households(ch$design, folate, "p_inadequate"),
                    "baseline")
-  p_iron <- pick(estimate_prevalence(ch$design, iron, "p_inadequate"),
+  p_iron <- pick(estimate_households(ch$design, iron, "p_inadequate"),
                  "baseline")
   d_folate <- pick(estimate_difference(ch$design, folate, "p_inadequate",
                                        reference = "baseline"), "flour")

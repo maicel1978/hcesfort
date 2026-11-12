@@ -68,9 +68,9 @@
 #' use <- vehicle_coverage(grams, hces_example$vehicles, afe,
 #'                         hces_example$households)
 #' design <- as_hces_design(hces_example$households, lonely_psu = "adjust")
-#' estimate_prevalence(design, use, "acquired", by = "region")
+#' estimate_households(design, use, "acquired", by = "region")
 #' @export
-estimate_prevalence <- function(design, x, value, statistic = "proportion",
+estimate_households <- function(design, x, value, statistic = "proportion",
                                 by = NULL, domain = NULL, domain_from = NULL,
                                 ci_method = "logit", level = 0.95,
                                 df = "domain") {
@@ -92,10 +92,10 @@ estimate_prevalence <- function(design, x, value, statistic = "proportion",
   })
   out <- dplyr::bind_rows(out)
   out$variable <- rep(value, nrow(out))
-  log <- estimate_log("estimate_prevalence", design, x, value, statistic,
+  log <- estimate_log("estimate_households", design, x, value, statistic,
                       ci_method, df, out)
   log <- dplyr::bind_rows(domain_input_log(x, domain_from), log,
-                          domain_log("estimate_prevalence", domain, d))
+                          domain_log("estimate_households", domain, d))
   new_hces_tbl(out, "hces_estimate", log, c(names(a$keys), by))
 }
 

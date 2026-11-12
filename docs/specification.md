@@ -98,7 +98,7 @@ not tied to the nutrients of the first case.
 | Upper level | `above_ul()` | intake + UL, its unit and the form it applies to → above the UL per household, scenario and nutrient: total intake, or the form (added part, diet part where the composition has it) |
 | Density | `nutrient_density()` | intake + energy → per 1,000 kcal |
 | Design | `as_hces_design()` | households + choice for single-PSU strata → `srvyr` design on the full sample |
-| Estimation | `estimate_prevalence()`, `estimate_difference()`, `flag_precision()` | design + result table → proportions, means and medians with intervals by group and domain; paired differences between scenarios; precision flag with limits given by the caller |
+| Estimation | `estimate_households()`, `estimate_difference()`, `flag_precision()` | design + result table → proportions, means and medians with intervals by group and domain; paired differences between scenarios; precision flag with limits given by the caller |
 
 Subsets are always estimated as domains of the full design.
 

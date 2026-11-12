@@ -4,16 +4,16 @@
 \alias{flag_energy_plausibility}
 \title{Flag households with implausible energy intake}
 \usage{
-flag_energy_plausibility(intake, column, min, max)
+flag_energy_plausibility(intake, energy, lower, upper)
 }
 \arguments{
 \item{intake}{Table returned by \code{\link[=apparent_intake]{apparent_intake()}} or
 \code{\link[=apply_scenario]{apply_scenario()}}.}
 
-\item{column}{Energy column of the registry, for example
+\item{energy}{Energy column of the registry, for example
 \code{"energy_kcal"}; required.}
 
-\item{min, max}{Limits of the plausible range, in the unit of \code{column}
+\item{lower, upper}{Limits of the plausible range, in the unit of \code{energy}
 per AFE per day; required. Values equal to a limit are plausible.}
 }
 \value{

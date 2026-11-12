@@ -148,7 +148,7 @@ test_that("flag_energy_plausibility() flags outside the range by hand", {
   expect_identical(f2$energy_plausible[1:2], c(TRUE, TRUE))
   log <- audit_log(flag_energy_plausibility(i, "energy_kcal", 310, 370))
   l <- log[log$step == "flag_energy_plausibility", ]
-  expect_equal(l$cause, c("all", "energy_below_min", "energy_above_max"))
+  expect_equal(l$cause, c("all", "energy_below_lower", "energy_above_upper"))
   expect_match(l$detail[1], "energy_kcal in \\[310, 370\\]")
   e <- "hcesfort_error_argument"
   expect_error(flag_energy_plausibility(i, "energy_kcal"), class = e)
@@ -271,8 +271,8 @@ test_that("flag_energy_plausibility() names the bound that failed", {
   i <- apparent_intake(ai_content(), ai_afe(), ai_households())
   err <- expect_error(flag_energy_plausibility(i, "energy_kcal", 300, NA),
                       class = "hcesfort_error_argument")
-  expect_identical(err$arg, "max")
+  expect_identical(err$arg, "upper")
   err <- expect_error(flag_energy_plausibility(i, "energy_kcal", 400, 300),
                       class = "hcesfort_error_argument")
-  expect_identical(err$arg, "max")
+  expect_identical(err$arg, "upper")
 })

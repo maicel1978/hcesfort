@@ -8,9 +8,9 @@
 #'
 #' @param intake Table returned by [apparent_intake()] or
 #'   [apply_scenario()].
-#' @param column Energy column of the registry, for example
+#' @param energy Energy column of the registry, for example
 #'   `"energy_kcal"`; required.
-#' @param min,max Limits of the plausible range, in the unit of `column`
+#' @param lower,upper Limits of the plausible range, in the unit of `energy`
 #'   per AFE per day; required. Values equal to a limit are plausible.
 #' @returns `intake` with the column `energy_plausible`: `TRUE` inside the
 #'   range, `FALSE` outside, `NA` when the household has no estimate. The
@@ -36,22 +36,22 @@
 #' flagged <- flag_energy_plausibility(intake, "energy_kcal", 500, 6000)
 #' table(flagged$energy_plausible, useNA = "ifany")
 #' @export
-flag_energy_plausibility <- function(intake, column, min, max) {
+flag_energy_plausibility <- function(intake, energy, lower, upper) {
   check_required()
   require_hces(intake, c("hces_intake", "hces_scenario_intake"))
   x <- audit_check_rows(intake, "flag_energy_plausibility")
-  column <- check_nutrient_column(column, x)
-  check_one_number(min, "min")
-  check_one_number(max, "max")
-  if (min > max) {
+  column <- check_nutrient_column(energy, x, arg = "energy")
+  check_one_number(lower, "lower")
+  check_one_number(upper, "upper")
+  if (lower > upper) {
     abort_hcesfort("argument", c(
-      "{.arg max} ({max}) is below {.arg min} ({min})."
-    ), arg = "max")
+      "{.arg upper} ({upper}) is below {.arg lower} ({lower})."
+    ), arg = "upper")
   }
   e <- x[[column]]
   out <- dplyr::as_tibble(x)
-  out$energy_plausible <- e >= min & e <= max
-  rule <- paste0(column, " in [", min, ", ", max, "]")
+  out$energy_plausible <- e >= lower & e <= upper
+  rule <- paste0(column, " in [", lower, ", ", upper, "]")
   step <- "flag_energy_plausibility"
   count <- function(cause, f) {
     if (!any(f)) return(NULL)
@@ -61,8 +61,8 @@ flag_energy_plausibility <- function(intake, column, min, max) {
   log <- dplyr::bind_rows(
     audit_row(step, "intake", "input", "all", nrow(x), nrow(x),
               detail = rule),
-    count("energy_below_min", !is.na(e) & e < min),
-    count("energy_above_max", !is.na(e) & e > max)
+    count("energy_below_lower", !is.na(e) & e < lower),
+    count("energy_above_upper", !is.na(e) & e > upper)
   )
   same_carrier(out, x, dplyr::bind_rows(audit_get(x), log))
 }

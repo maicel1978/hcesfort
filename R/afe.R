@@ -22,11 +22,12 @@
 #' Pregnancy and lactation add no energy; members flagged as pregnant or
 #' lactating are counted in the log (`pregnant_or_lactating_no_extra`).
 #'
-#' A member without age or sex has no requirement. With `missing = "na"`
-#' the AFE of the household is `NA`: the household is flagged
-#' (`missing_age_or_sex`), not dropped, and the decision to exclude it is
-#' left to the caller. `missing = "zero"` reproduces the original analysis
-#' (the member counts zero AFE), and the log records it.
+#' A member without age or sex has no requirement. With
+#' `missing_members = "na"` the AFE of the household is `NA`: the household
+#' is flagged (`missing_age_or_sex`), not dropped, and the decision to
+#' exclude it is left to the caller. `missing_members = "zero"` reproduces
+#' the original analysis (the member counts zero AFE), and the log records
+#' it.
 #'
 #' @param members Members table ([hces_schema()]`("members")`), validated
 #'   or not.
@@ -46,7 +47,7 @@
 #' @param bmr Equations for basal metabolic rate; default
 #'   [ref_bmr_equations]. Schema: `hces_schema("bmr_equations")`.
 #' @param infants `"monthly"` (default) or `"annual_mean"`; see Details.
-#' @param missing `"na"` (default) or `"zero"`; see Details.
+#' @param missing_members `"na"` (default) or `"zero"`; see Details.
 #' @returns A tibble of class `hces_afe` (and `hces_tbl`), one row per
 #'   household with members: `household_id`, `n_members`, `energy_kcal_d`
 #'   (sum of the members' requirements) and `afe`. Its audit log continues
@@ -69,10 +70,10 @@ adult_equivalents <- function(members, reference_kcal, weight_kg, pal,
                               energy = hcesfort::ref_energy_requirements,
                               bmr = hcesfort::ref_bmr_equations,
                               infants = c("monthly", "annual_mean"),
-                              missing = c("na", "zero")) {
+                              missing_members = c("na", "zero")) {
   check_required()
   infants <- check_choice(infants, c("monthly", "annual_mean"))
-  missing <- check_choice(missing, c("na", "zero"))
+  missing_members <- check_choice(missing_members, c("na", "zero"))
   check_afe_args(reference_kcal, weight_kg, pal)
   m <- validate_members(members)
   m <- audit_check_rows(m, "adult_equivalents")
@@ -85,12 +86,13 @@ adult_equivalents <- function(members, reference_kcal, weight_kg, pal,
   share <- if (meal_share) m[["meals_home_share"]] else rep(1, nrow(m))
   afe <- afe * share
   unknown <- is.na(m$age_years) | is.na(m$sex)
-  if (missing == "zero") {
+  if (missing_members == "zero") {
     afe[unknown] <- 0
     kcal[unknown] <- 0
   }
   out <- household_afe(m$household_id, kcal, afe)
-  log <- afe_log(m, attr(kcal, "infant_mean"), unknown, share, missing, out)
+  log <- afe_log(m, attr(kcal, "infant_mean"), unknown, share, missing_members,
+                 out)
   new_hces_tbl(out, "hces_afe", dplyr::bind_rows(audit_get(m), log),
                "household_id")
 }
@@ -112,7 +114,8 @@ household_afe <- function(household_id, kcal, afe) {
 # annual mean, pregnant or lactating members, members without age or sex
 # (flagged, or set to zero), members without meal share, and households
 # left without AFE.
-afe_log <- function(m, infant_mean, unknown, share, missing, out) {
+afe_log <- function(m, infant_mean, unknown, share, missing_members,
+                    out) {
   step <- "adult_equivalents"
   hh <- function(f) length(unique(m$household_id[f]))
   pregnant <- flag_or_false(m[["pregnant"]]) | flag_or_false(m[["lactating"]])
@@ -121,7 +124,7 @@ afe_log <- function(m, infant_mean, unknown, share, missing, out) {
     audit_row(step, "members", "input", "all", nrow(m), hh(TRUE)),
     afe_note(step, "note", "infant_annual_mean", infant_mean, hh),
     afe_note(step, "note", "pregnant_or_lactating_no_extra", pregnant, hh),
-    if (missing == "na") {
+    if (missing_members == "na") {
       afe_note(step, "flagged", "missing_age_or_sex", unknown, hh)
     } else {
       afe_note(step, "filled", "zero_afe_missing_age_or_sex", unknown, hh)

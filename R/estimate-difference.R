@@ -13,7 +13,7 @@
 #' `significant` column is returned: report the interval; multiplicity is
 #' the reader's decision.
 #'
-#' @inheritParams estimate_prevalence
+#' @inheritParams estimate_households
 #' @param x A table with the column `scenario`, returned by [inadequacy()],
 #'   [above_ul()] or [apply_scenario()].
 #' @param reference Name of the reference scenario (for example
@@ -23,7 +23,7 @@
 #'   (`"mean_difference"`), `variable`, `estimate` (scenario minus
 #'   reference), `se`, `ci_low`, `ci_high`, `conf_level`, `df`, `n` and
 #'   `n_missing`.
-#' @seealso [estimate_prevalence()].
+#' @seealso [estimate_households()].
 #' @examples
 #' nutrients <- nutrient_registry(hces_example$nutrients)
 #' baseline <- unfortified_baseline(hces_example$composition,
@@ -111,7 +111,7 @@ check_reference_scenario <- function(x, reference, call = rlang::caller_env()) {
 #' half-width of 10 percentage points (0.10 for a proportion), without a
 #' published source.
 #'
-#' @param estimates Table returned by [estimate_prevalence()] or
+#' @param estimates Table returned by [estimate_households()] or
 #'   [estimate_difference()].
 #' @param min_n Smallest number of households in the domain (`n`).
 #' @param max_half_width Largest half-width of the interval, in the unit of
@@ -119,7 +119,7 @@ check_reference_scenario <- function(x, reference, call = rlang::caller_env()) {
 #' @returns `estimates` with the column `low_precision`: `TRUE` when `n` is
 #'   below `min_n` or the half-width of the interval above
 #'   `max_half_width`. The audit log counts the flagged estimates.
-#' @seealso [estimate_prevalence()].
+#' @seealso [estimate_households()].
 #' @examples
 #' grams <- convert_units(hces_example$acquisitions,
 #'                        hces_example$unit_factors, priority = "food")
@@ -132,7 +132,7 @@ check_reference_scenario <- function(x, reference, call = rlang::caller_env()) {
 #' use <- vehicle_coverage(grams, hces_example$vehicles, afe,
 #'                         hces_example$households)
 #' design <- as_hces_design(hces_example$households, lonely_psu = "adjust")
-#' est <- estimate_prevalence(design, use, "acquired", by = "region")
+#' est <- estimate_households(design, use, "acquired", by = "region")
 #' flag_precision(est, min_n = 10, max_half_width = 0.10)
 #' @export
 flag_precision <- function(estimates, min_n, max_half_width) {

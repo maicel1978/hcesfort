@@ -34,7 +34,7 @@ own. What to do with it is a choice of the analyst, so \code{lonely_psu} has
 no default; its values are those of the option \code{survey.lonely.psu} of the
 survey package (see \code{?survey::svyCprod}): \code{"fail"}, \code{"remove"},
 \code{"adjust"}, \code{"average"} or \code{"certainty"}. The choice is stored with the
-design and applied by \code{\link[=estimate_prevalence]{estimate_prevalence()}} and
+design and applied by \code{\link[=estimate_households]{estimate_households()}} and
 \code{\link[=estimate_difference]{estimate_difference()}}, so the global option is never left changed.
 Under \code{"fail"}, a domain with such a stratum is an
 \code{hcesfort_error_value}.
@@ -53,5 +53,5 @@ design <- as_hces_design(hces_example$households, lonely_psu = "adjust")
 design
 }
 \seealso{
-\code{\link[=estimate_prevalence]{estimate_prevalence()}}, \code{\link[=estimate_difference]{estimate_difference()}}.
+\code{\link[=estimate_households]{estimate_households()}}, \code{\link[=estimate_difference]{estimate_difference()}}.
 }

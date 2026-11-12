@@ -13,7 +13,7 @@ adult_equivalents(
   energy = hcesfort::ref_energy_requirements,
   bmr = hcesfort::ref_bmr_equations,
   infants = c("monthly", "annual_mean"),
-  missing = c("na", "zero")
+  missing_members = c("na", "zero")
 )
 }
 \arguments{
@@ -43,7 +43,7 @@ flagged \code{missing_meal_share}); \code{FALSE} ignores the column. Must be
 
 \item{infants}{\code{"monthly"} (default) or \code{"annual_mean"}; see Details.}
 
-\item{missing}{\code{"na"} (default) or \code{"zero"}; see Details.}
+\item{missing_members}{\code{"na"} (default) or \code{"zero"}; see Details.}
 }
 \value{
 A tibble of class \code{hces_afe} (and \code{hces_tbl}), one row per
@@ -77,11 +77,12 @@ for their sex, times \code{pal}.
 Pregnancy and lactation add no energy; members flagged as pregnant or
 lactating are counted in the log (\code{pregnant_or_lactating_no_extra}).
 
-A member without age or sex has no requirement. With \code{missing = "na"}
-the AFE of the household is \code{NA}: the household is flagged
-(\code{missing_age_or_sex}), not dropped, and the decision to exclude it is
-left to the caller. \code{missing = "zero"} reproduces the original analysis
-(the member counts zero AFE), and the log records it.
+A member without age or sex has no requirement. With
+\code{missing_members = "na"} the AFE of the household is \code{NA}: the household
+is flagged (\code{missing_age_or_sex}), not dropped, and the decision to
+exclude it is left to the caller. \code{missing_members = "zero"} reproduces
+the original analysis (the member counts zero AFE), and the log records
+it.
 }
 \examples{
 # Reference: woman of 18-30 years, 55 kg, physical activity level 1.76.
