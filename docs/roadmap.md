@@ -26,8 +26,8 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
 - [ ] 10. `inadequacy()` and `above_ul()`. Design: `docs/design-task10.md`.
   - [x] 10.0 Design written (2026-11-12); approved as recommended 2026-11-12.
   - [x] 10.1 Reference tables: `ul_unit`, `ul_form`.
-  - [ ] 10.2 `inadequacy()`: cut-point and coverage rule.
-  - [ ] 10.3 Probability approach.
+  - [x] 10.2 `inadequacy()`: cut-point and coverage rule.
+  - [x] 10.3 Probability approach.
   - [ ] 10.4 `above_ul()`; `NEWS.md`, self-review.
 - [ ] 11. `as_hces_design()`, `estimate_prevalence()` and `estimate_difference()` on a complex design, subsets as domains.
 - [ ] 12. Vignettes in English and Spanish: from standard tables to risk by scenario (synthetic data); how to write an adapter; plotting results with `ggplot2`. The pkgdown site waits for v1.0.

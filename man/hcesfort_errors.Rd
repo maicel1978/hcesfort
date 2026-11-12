@@ -27,7 +27,11 @@ is not understood, or two tables disagree on a unit. Fields: \code{table},
 another, key types differ, or a join breaks its declared cardinality.
 Fields: \code{table}, \code{other}, \code{columns}, \code{n}.
 \item \code{hcesfort_error_audit}: a table that should carry an audit log does
-not. Fields: \code{arg}, \code{expected}.
+not, or its log lacks a step the function requires. Fields: \code{arg},
+\code{expected}.
+\item \code{hcesfort_error_coverage}: the share of grams with a composition value
+for a nutrient is below the minimum the caller set. Fields:
+\code{nutrients}, \code{coverage}, \code{min_coverage}.
 }
 
 The fields are elements of the condition object (\code{e$table}, \code{e$rows}).

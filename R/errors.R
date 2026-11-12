@@ -21,7 +21,11 @@
 #'   another, key types differ, or a join breaks its declared cardinality.
 #'   Fields: `table`, `other`, `columns`, `n`.
 #' * `hcesfort_error_audit`: a table that should carry an audit log does
-#'   not. Fields: `arg`, `expected`.
+#'   not, or its log lacks a step the function requires. Fields: `arg`,
+#'   `expected`.
+#' * `hcesfort_error_coverage`: the share of grams with a composition value
+#'   for a nutrient is below the minimum the caller set. Fields:
+#'   `nutrients`, `coverage`, `min_coverage`.
 #'
 #' The fields are elements of the condition object (`e$table`, `e$rows`).
 #' Messages state what failed and in which table, list the offending columns
@@ -33,7 +37,8 @@ NULL
 
 # Types of error the package raises; `hcesfort_error_<type>` is the class.
 error_types <- c(
-  "argument", "schema", "key", "value", "units", "join", "audit"
+  "argument", "schema", "key", "value", "units", "join", "audit",
+  "coverage"
 )
 
 # Raise a classed error.
