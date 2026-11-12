@@ -71,7 +71,10 @@ with `save()` or check with the maintainer).
    that the error names the orphan rows.
 
    ```r
-   devtools::load_all()
+   # From the package folder: install, then attach (example() needs the
+   # installed help).
+   devtools::install()
+   library(hcesfort)
    example(validate_survey)
    audit_log(survey$acquisitions)
    try(validate_survey(households[-2, ], members, acquisitions))
