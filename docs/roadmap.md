@@ -35,6 +35,18 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
   - [x] 11.2 `estimate_prevalence()` (proportion, mean, median), tested against `survey` to 1e-8.
   - [x] 11.3 `estimate_difference()` (paired, within household); `flag_precision()`.
   - [x] 11.4 `NEWS.md` (E5 domains, E24), specification, self-review.
+- [ ] 11b. Corrections of the v0.1 review (`docs/review-v0.1.md`, section 10), before task 12.
+  - [x] 11b.0 Design note `docs/design-review-v0.1.md` (corrections 1, 2, 3, 8, 10; 4 accepted). The decisions of its section 8 wait for the maintainer.
+  - [ ] 11b.1 Record loss: columns and `min_records_used` (H1).
+  - [ ] 11b.2 `cutpoint_valid`, `ear_bioavailability` (H2, L9).
+  - [ ] 11b.3 `domain_from` (H3).
+  - [ ] 11b.4 `apply_scenario()` checks AFE and outlier decision (H4, P76).
+  - [ ] 11b.5 Recalibrate `hces_example`; full-chain golden test (H6, M11).
+  - [ ] 11b.6 Degenerate proportions, lonely PSU, surviving mutations (M5, M6, P84, T1–T4).
+  - [ ] 11b.7 Classed errors for missing arguments; unclear messages (M9, L3).
+  - [ ] 11b.8 Audit log: merge without repeats, `audit_summary()`, `audit_record()` (M7, P50).
+  - [ ] 11b.9 Renames (L1, L2).
+  - [ ] 11b.10 `reference_energy()`, `qty_vehicle_g_d_pc`, `who2009_levels()` (M10, M8, P71).
 - [ ] 12. Vignettes in English and Spanish: from standard tables to risk by scenario (synthetic data); how to write an adapter; plotting results with `ggplot2`. The pkgdown site waits for v1.0.
 
 ## v0.1, companion repository `hcesfort.engih2018`: ENGIH 2018 adapter (needs the microdata)

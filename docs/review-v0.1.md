@@ -517,11 +517,26 @@ reference used above:
 
 | Reference | Used for | Status |
 |---|---|---|
-| Tang K, Adams KP, Ferguson EL, et al. (2022). Systematic review of metrics used to characterise dietary nutrient supply from household consumption and expenditure surveys. *Public Health Nutrition* 25(5). doi:10.1017/S1368980022000118 | H7.1: three household metrics (apparent intake per adult male equivalent, per capita, nutrient density); HCES estimates generally overestimate intake against individual-level methods | **Abstract checked** through a web search on 2026-11-12 (PubMed 35022103). The full text could not be opened: `pmc.ncbi.nlm.nih.gov` is outside the session's allowed network. Read the full text before citing more than this |
-| MIMI project papers (Tang et al. 2021, *Ann NY Acad Sci*, doi:10.1111/nyas.14697, Malawi; later country papers) | M1 (treatment of outliers), M2 (infants in the AFE), H7 (assumptions: no guests, waste, stocks) | **Not opened** (same network limit). The search result confirms only the general approach: nutrients shared in proportion to energy requirements, results per AFE, purchased food assumed eaten by the household. Everything attributed to MIMI in M1 and M2 is marked "to verify" |
-| IOM 2000, *Dietary Reference Intakes: Applications in Dietary Assessment* | H2 (conditions of the EAR cut-point; iron), H7.1 (usual intake) | **Not opened in this session.** `# SOURCE PENDING`: the statement that the cut-point is not valid for iron in menstruating women is already in the package's own help (`R/inadequacy.R:16-17`) and in `docs/design-task10.md:88`; the page must be added to `data-raw/SOURCES.md` |
+| Tang K, Adams KP, Ferguson EL, et al. (2022). Systematic review of metrics used to characterise dietary nutrient supply from household consumption and expenditure surveys. *Public Health Nutrition* 25(5). doi:10.1017/S1368980022000118 | H7.1: three household metrics; HCES estimates generally overestimate intake against individual-level methods | **Abstract only** (web search of 2026-11-12, PubMed 35022103). Still not opened: the article supplied by the maintainer is the Malawi paper of the next row, not this review. Cite no more than the abstract |
+| Tang K, Adams KP, Ferguson EL, et al. (2021). Modeling food fortification contributions to micronutrient requirements in Malawi using Household Consumption and Expenditure Surveys. *Ann NY Acad Sci* 1508:105–122. doi:10.1111/nyas.14697 (open access, CC BY) | H2, L9, M1, M2, H7 | **Full text opened** on 2026-11-12, second session (PDF from the history of `analisis_ENGIH2018`, commit `2dad5b1`, md5 `4eec227b1dd276d1ee847035c2551ca6`; not copied into this repository). The supplementary material (Tables S1–S5) was not available. Findings in section 9.1 |
+| IOM 2000, *Dietary Reference Intakes: Applications in Dietary Assessment* | H2 (conditions of the EAR cut-point; iron), H7.1 (usual intake) | **Not opened in this session.** `# SOURCE PENDING` as the primary source of the conditions of the cut-point; the iron statement itself is now backed by Tang et al. 2021 (section 9.1) |
 | IOM 1998, 2001; FAO/WHO/UNU 2004; WHO 2009 | Reference tables | Taken from the package's tables and `data-raw/SOURCES.md` as they stand; not re-verified here (handoff review point 1 is still open for the maintainer) |
 | Allen et al. 2020 (H-AR) | L9 | Named in the specification as v0.2; not opened |
+
+### 9.1 What the Malawi paper (Tang et al. 2021) says, and what it does not
+
+| Finding | In the paper | Status |
+|---|---|---|
+| H2: iron and the cut-point | "Iron inadequacy cannot be defined using the critical nutrient density cut-point method due to the nonnormal distribution of iron requirements" (notes of Figures 1 and 2, pp. 112–113). The paper gives no iron inadequacy figure | **Verified.** Supports the refusal; the primary source (IOM 2000) stays pending |
+| L9: zinc | "Zinc inadequacy thresholds assume low bioavailability because of a diet high in unrefined grains" (same notes). Thresholds are harmonised average requirements (H-AR), listed in Table S3 | **Verified** as practice: a different requirement table, not a rescaled cut-point. Values not seen (supplement) |
+| M1: outliers | "The outlying values of consumption quantity for each food item (likely due to foods acquired in bulk or recall error) were identified and replaced with the food item's median consumption quantity from the entire population" (p. 107) | **Verified:** replacement by the food's median, not exclusion and not capping at a fence (P86). The rule that identifies an outlier is not in the main text |
+| M2: infants, pregnancy, lactation in the AFE | Reference person: a nonpregnant, nonlactating woman of 18–29 years; food shared in proportion to energy requirements (p. 109). "The data and assumptions necessary to calculate the AFE factors are presented in Table S1" | **Not verifiable** from the main text. M2 stays "to verify" |
+| Inadequacy by apparent intake | Apparent intake per AFE below the H-AR of an adult woman (p. 109); vitamin A also against a harmonised upper limit (p. 117, Table S5) | **Verified.** Same construction as `inadequacy()` and `above_ul()`, with H-AR in place of the IOM EAR |
+| Vehicle coverage and quantity | Coverage: share of households "apparently consuming any quantity" of the vehicle; quantity in grams per day per AFE, median among consumers (p. 109, Table 3) | **Verified.** Matches `vehicle_coverage()`; the paper has no per-capita quantity (M8 rests on WHO 2009 only) |
+| H7.3: average content | "our status quo scenario assumed that all oil, sugar, and wheat flour consumed by households is equally fortified", although some market samples "were not fortified at all" (p. 119) | **Verified** as a stated limitation of the average-content model |
+| H7.2 and H7.5: households, food away from home | Intrahousehold distribution unknown, individual estimates rest on the energy-proportional assumption (p. 118); "recall error, micronutrient loss during cooking, foods consumed away from home, fixed-food item lists" (p. 119); composition assumed constant across households (pp. 118–119) | **Verified.** Citable in the "Limits of the method" section |
+| H7.1: a short window is not usual intake | The survey is a 7-day recall of consumption (p. 107); the paper does not discuss usual intake and does not say that HCES overestimate intake | **Not in this paper.** H7.1 rests on the abstract of the systematic review and on IOM 2000, both unopened |
+| H7.5: guests, waste, stocks | Bulk acquisition is named only as a cause of outliers (p. 107) | **Not in this paper** as assumptions; "no guests, waste, stocks" must not be attributed to it |
 
 ## 10. The ten most important corrections, in order
 
@@ -564,3 +579,16 @@ written, because the vignettes freeze them.
    Recommended: yes, before task 12.
 5. **Network.** To check the MIMI methods and Tang et al. in full, allow
    `pmc.ncbi.nlm.nih.gov` in the environment, or send the PDFs.
+
+### Answers (maintainer, 2026-11-12)
+
+1. Both shares returned; the threshold is on records.
+2. The original reported iron only by the probability approach (10% and
+   18%), never by cut-point: `inadequacy()` refuses, no legacy argument.
+3. Renames approved, before the vignettes.
+4. `hces_example` is recalibrated before task 12.
+5. Tang et al. supplied from the history of `analisis_ENGIH2018`: it is the
+   2021 Malawi paper (section 9.1). The 2022 systematic review and IOM 2000
+   remain unopened.
+
+The design that follows from these answers is `docs/design-review-v0.1.md`.

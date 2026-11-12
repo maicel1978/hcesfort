@@ -504,6 +504,13 @@ implementation:
 | P83 | medium | **Speed of the estimators.** Each cell (group × domain) updates and subsets the design once; with ENGIH's 8,892 households, 3 scenarios, 7 nutrients, 2 bioavailabilities and 30 provinces this is about 1,000 subsets. If too slow in A3, compute all groups of one domain with one `svyby()` call. | Measured only with the microdata. | A3 |
 | P84 | low | **Classed error for a lonely PSU.** Catch the error of `survey` under `lonely_psu = "fail"` and re-raise it as `hcesfort_error_value` with the strata concerned. | Messages state what failed and how to fix it. | 12 |
 
+## Open items from the design of the v0.1 corrections (2026-11-12)
+
+| Id | Priority | Proposal | Why | Task |
+|---|---|---|---|---|
+| P85 | medium | **Gate on vehicle records without grams.** `vehicle_coverage()` counts them (`n_records_no_grams`) and the scenario adds nothing for them; `apply_scenario()` writes a log note (correction 1), but no threshold acts on it. A required `min_records_used` on the vehicle side would mirror the intake gate. | The added amount is understated where the vehicle is bought in units without a conversion. | after A3 |
+| P86 | medium | **Replacing a flagged quantity by the food's median.** Tang et al. 2021 (p. 107) replace outlying quantities with the median of the food item over the whole population. A third choice for `apparent_intake(outliers = )` next to P68 (capping at the fence), with the grams changed in the log. The paper does not give the rule that identifies an outlier. | M1 of the review: exclusion sets the food to zero. | before A4 |
+
 ## Questions for the maintainer
 
 Answered on 2026-11-12: see "Decisions (2026-11-12)" above. Kept for the
