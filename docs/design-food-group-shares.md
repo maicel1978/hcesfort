@@ -1,6 +1,6 @@
 # Design: food-group shares on the unfortified baseline
 
-Status: **design, waiting for approval** (section 10). Written 2026-11-12.
+Status: **approved as recommended 2026-11-12** (section 10). Written 2026-11-12.
 No package code is written by this note. Implementation: Opus.
 
 Inputs read: E1 and row 32 of `docs/analysis-map.md`; decisions D4 and D7

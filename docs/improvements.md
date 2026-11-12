@@ -374,10 +374,27 @@ of `docs/design-report-template.md`:
 Gaps G1 to G7 of that design are its open items; G2 becomes roadmap
 task 11c and G1 and G6 task 12b.
 
+## Decisions (2026-11-12, food-group shares)
+
+The maintainer approved as recommended the nine decisions of section 10
+of `docs/design-food-group-shares.md`:
+
+| # | Decision |
+|---|---|
+| 1 | The grouping is a new user table `food_groups`, keyed by `food_code`. |
+| 2 | Two exported functions: `food_group_intake()` (household by group) and `food_group_shares()` (design-based). |
+| 3 | Basis of the share: amounts per AFE and day; household totals are P97. Refines D7 of the report design. |
+| 4 | Interval on the logit scale by the delta method. |
+| 5 | The ratio helper stays internal in v0.1; `estimate_ratio()` is P91/P98. |
+| 6 | Foods without a group form `unclassified`, shown and logged, with no threshold. |
+| 7 | Missing nutrient values follow the rule of `apparent_intake()`, logged by group and nutrient; no gate in v0.1 (P96). |
+| 8 | No legacy mode on the enriched table: the baseline step is always required. |
+| 9 | No classification is shipped: the table is the adapter's. |
+
 ## Open items from the design of the food-group shares (2026-11-12)
 
-Waiting for the approval of the nine decisions of section 10 of
-`docs/design-food-group-shares.md`.
+The nine decisions of section 10 of `docs/design-food-group-shares.md`
+were approved as recommended (see above).
 
 | Id | Priority | Proposal | Why | Task |
 |---|---|---|---|---|
