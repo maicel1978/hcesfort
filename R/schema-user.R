@@ -78,6 +78,24 @@ schema_composition <- function(nutrients = NULL) {
   )
 }
 
+# Schema of the values that fill gaps of a composition table; without a
+# registry, `nutrient` has no vocabulary.
+schema_composition_fills <- function(nutrients = NULL) {
+  new_schema(
+    "composition_fills", c("composition_id", "nutrient"),
+    schema_col("composition_id", "id", "composition food to fill"),
+    schema_col("nutrient", "text", "nutrient of the registry",
+               values = nutrients$nutrient),
+    schema_col("value", "number", paste(
+      "content per 100 g edible portion, in the unit of the registry"
+    ), bounds = "[0, Inf)"),
+    schema_col("source", "text", paste(
+      "where the value comes from (a borrowed food, a rule such as",
+      "\"zero in unprocessed plant foods\")"
+    ))
+  )
+}
+
 # Scenarios schema for a registry; without one, `nutrient` has no
 # vocabulary.
 schema_scenarios <- function(nutrients = NULL) {

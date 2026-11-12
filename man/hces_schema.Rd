@@ -9,6 +9,7 @@ hces_schema(table)
 \arguments{
 \item{table}{Name of the table: \code{"households"}, \code{"members"},
 \code{"acquisitions"}, \code{"unit_factors"}, \code{"crosswalk"}, \code{"composition"},
+\code{"composition_fills"},
 \code{"vehicles"}, \code{"scenarios"}, \code{"energy_requirements"} or
 \code{"bmr_equations"}.}
 }
@@ -32,7 +33,7 @@ in the schema are kept untouched by the validators.
 The schemas of \code{composition} and \code{scenarios} depend on the nutrient
 registry: \code{hces_schema("composition")} shows one placeholder row,
 \verb{<nutrient>_<unit>}, for the nutrient columns, and \code{nutrient} in
-\code{scenarios} must be a nutrient of the registry.
+\code{scenarios} and \code{composition_fills} must be a nutrient of the registry.
 }
 \examples{
 hces_schema("acquisitions")

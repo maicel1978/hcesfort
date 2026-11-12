@@ -71,6 +71,14 @@
   dropped, and causes are not hierarchical (E3). A missing composition
   value leaves the nutrient missing, never zero (E21). A validated match to
   a composition id absent from the table is an error, not a silent loss.
+* `fill_composition()`: fills missing composition values from a table of
+  values with their source (`hces_schema("composition_fills")`); existing
+  values are never overwritten and every filled cell is counted. The
+  original's two rules (borrowed values; zero B12 and vitamin D in
+  unprocessed plant foods) become rows of that table.
+* `unmatched_foods()`: the foods with records not linked to the
+  composition, what blocks them, and their weight in records and in grams
+  (the original's list was empty by construction, E3).
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is

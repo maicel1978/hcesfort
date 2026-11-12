@@ -374,7 +374,22 @@ infinite value. The rest:
 | P60 | medium | **Reproducing the original outlier rule (task A3).** The original grouped by composition id (records without one formed one group), on edible grams per day, and counted every record of the group, with or without grams, towards the minimum of 20. With the package: add `composition_id` to the grams table before the call and group by it; the edible portion is a constant per food, so it changes the flags only where one composition id has foods with different portions; the count towards `min_group` differs where a group has records without grams. If step 1 does not reproduce the counts, a `min_group_count = "all"` option is the smallest change. | Acceptance step 1 needs the original choices as options. | A3 |
 | P61 | medium | **Weighted quantiles in `flag_outliers()`.** Quantiles are unweighted, as in the original (E9). A weighted option (household weights) makes the fences describe the population rather than the sample. Needs `households` as an argument. | Methodological; not needed to reproduce the original. | 11 or v0.2 (Fable) |
 | P62 | low | **Calling `flag_outliers()` twice overwrites `outlier`.** Both runs are in the log, with their rules; a second rule (for example per AFE after per household) needs its own column name. An argument `name = "outlier"` would allow several flags side by side. | Sensitivity analyses compare rules. | 8 |
-| P45 | medium, in part | `food_code` and `unit` types are now checked between `acquisitions` and `unit_factors`; the crosswalk and vehicles remain. | | 7, 9 |
+| P45 | medium, in part | `food_code` and `unit` types are now checked between `acquisitions` and `unit_factors` (task 6) and between grams and the crosswalk, and `composition_id` between crosswalk, composition and fills (task 7); vehicles remain. | | 9 |
+
+## Open items from task 7 (2026-11-12)
+
+Self-review of `link_composition()`, `fill_composition()` and
+`unmatched_foods()`, as an rOpenSci reviewer would. Fixed in the task: the
+first draft lost the difference between an unmatched and a not-validated
+food (the composition id was blanked before the reasons were computed);
+empty tables kept their column types.
+
+| ID | Priority | Item | Rationale | Roadmap task |
+|---|---|---|---|---|
+| P63 | medium | **Choices of task 7 taken under delegation, to be confirmed.** (1) A missing or absent `yield_factor` counts as 1 (no change of state). (2) Nutrient columns of `hces_nutrient_content` keep the registry names (`iron_mg`) and mean amount per day for the household; the time basis is a property of the table, as in `qty_g_d` it is in the name. (3) A validated crosswalk match whose composition id is absent from the composition table is an `hcesfort_error_join`, not a record left unlinked. (4) New user table `composition_fills` (key `composition_id` + `nutrient`; `value`, `source`); a fill for a cell that has a value is not used and is counted (`fill_not_needed`). (5) `missing_nutrient_value` in `link_composition()` is `flagged` (a record carries a missing nutrient), while the validator counts it as a `note` (a cell of the table). | CLAUDE.md: no interpretation chosen silently. | 7 |
+| P64 | low | **Filled cells are traced in the log, not per row.** The share of a household's intake that rests on filled values needs to know which cells were filled; a logical column per nutrient (`iron_mg_filled`) or a long table of filled cells returned as an attribute would allow it. | E21: the weight of gaps in vitamins D and E. | 8 or v0.2 |
+| P65 | low | **`share_grams` of `unmatched_foods()` is `NaN` when no record has grams.** Harmless (nothing to rank by grams), but a classed warning or `NA` would be clearer. | Edge case. | 12 |
+
 
 ## Questions for the maintainer
 

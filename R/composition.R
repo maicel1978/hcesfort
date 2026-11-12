@@ -27,10 +27,11 @@
 #'   `hces_tbl`), one row per record, with the columns added:
 #'   `composition_id`, `edible_portion`, `yield_factor` (as used),
 #'   `qty_edible_g_d`, `fortified` (when the composition has it), one
-#'   column per nutrient and `composition_status`: `"linked"` or the first
-#'   reason the record has no nutrients, in this order: `no_grams`,
-#'   `not_in_crosswalk`, `unmatched_food`, `not_validated`,
-#'   `missing_edible_portion`. The audit log continues the logs of `grams`,
+#'   column per nutrient, `match_status` (the food's crosswalk:
+#'   `"matched"`, `not_in_crosswalk`, `unmatched_food`, `not_validated` or
+#'   `missing_edible_portion`) and `composition_status`: `"linked"` or the
+#'   first reason the record has no nutrients, `no_grams` or the
+#'   `match_status`. The audit log continues the logs of `grams`,
 #'   `crosswalk` and `composition`. It counts each reason with the grams
 #'   per day as acquired (`qty_g` of the log); records with no grams and no
 #'   validated match also as `no_grams_and_no_match`; linked records; and,
@@ -71,6 +72,7 @@ link_composition <- function(grams, crosswalk, composition,
   for (col in nutrients$column) {
     out[[col]] <- edible * linked[[col]] / 100
   }
+  out$match_status <- first_reason(reasons[-1], none = "matched")
   out$composition_status <- status
   log <- link_log(out, reasons, nutrients)
   log <- dplyr::bind_rows(audit_get(g), audit_get(cw), audit_get(comp), log)

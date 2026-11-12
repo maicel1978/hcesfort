@@ -23,10 +23,11 @@ not.}
 \code{hces_tbl}), one row per record, with the columns added:
 \code{composition_id}, \code{edible_portion}, \code{yield_factor} (as used),
 \code{qty_edible_g_d}, \code{fortified} (when the composition has it), one
-column per nutrient and \code{composition_status}: \code{"linked"} or the first
-reason the record has no nutrients, in this order: \code{no_grams},
-\code{not_in_crosswalk}, \code{unmatched_food}, \code{not_validated},
-\code{missing_edible_portion}. The audit log continues the logs of \code{grams},
+column per nutrient, \code{match_status} (the food's crosswalk:
+\code{"matched"}, \code{not_in_crosswalk}, \code{unmatched_food}, \code{not_validated} or
+\code{missing_edible_portion}) and \code{composition_status}: \code{"linked"} or the
+first reason the record has no nutrients, \code{no_grams} or the
+\code{match_status}. The audit log continues the logs of \code{grams},
 \code{crosswalk} and \code{composition}. It counts each reason with the grams
 per day as acquired (\code{qty_g} of the log); records with no grams and no
 validated match also as \code{no_grams_and_no_match}; linked records; and,

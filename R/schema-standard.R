@@ -84,6 +84,7 @@ schema_registry <- function() {
     unit_factors = schema_unit_factors,
     crosswalk = schema_crosswalk,
     composition = schema_composition,
+    composition_fills = schema_composition_fills,
     vehicles = schema_vehicles,
     scenarios = schema_scenarios,
     energy_requirements = schema_energy_requirements,
@@ -106,10 +107,11 @@ schema_registry <- function() {
 #' The schemas of `composition` and `scenarios` depend on the nutrient
 #' registry: `hces_schema("composition")` shows one placeholder row,
 #' `<nutrient>_<unit>`, for the nutrient columns, and `nutrient` in
-#' `scenarios` must be a nutrient of the registry.
+#' `scenarios` and `composition_fills` must be a nutrient of the registry.
 #'
 #' @param table Name of the table: `"households"`, `"members"`,
 #'   `"acquisitions"`, `"unit_factors"`, `"crosswalk"`, `"composition"`,
+#'   `"composition_fills"`,
 #'   `"vehicles"`, `"scenarios"`, `"energy_requirements"` or
 #'   `"bmr_equations"`.
 #' @returns A tibble with columns `column`, `type`, `required`, `na`
