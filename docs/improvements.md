@@ -253,6 +253,24 @@ v0.1, candidates and review in v0.2).
 | P40 | medium | **Dependencies enter `DESCRIPTION` when first used.** `Imports` is empty in the skeleton: listing a package that no code imports produces a check note. | Keeps `check()` at 0 notes; the list agreed in `CLAUDE.md` is the ceiling, not the starting point. | 2 onwards |
 | P41 | low | **Codecov or an equivalent badge.** Coverage is computed in CI and the job fails below 90%; nothing is uploaded to an external service. | An external service needs the maintainer's account and token. | any |
 
+## Open items from task 2 (2026-11-12)
+
+Self-review of task 2, done as an rOpenSci reviewer would. Items in scope
+were fixed in the task (an all-`NA` logical column was rejected by type;
+the key check did not allow the generic `food_code = NA` of
+`unit_factors`). The rest:
+
+| ID | Priority | Item | Rationale | Roadmap task |
+|---|---|---|---|---|
+| P43 | high | **Class name `hces_nutrients` is used twice in the design.** Section 6 gives it to the registry (implemented); section 4 lists it among the products of later tasks (`hces_grams`, `hces_nutrients`, `hces_intake`). The product needs another name, for example `hces_nutrient_content`. **Question for the maintainer.** | Two meanings of one class would make `require_hces()` accept the wrong table. | 7 or 8, before the product is written |
+| P44 | medium | **Validated crosswalk row without `composition_id`.** The design rejects a validated row without `match_type` but says nothing of a validated row without a match; it is accepted and counted as `unmatched_food`. Option: reject it as `hcesfort_error_value`. **Question for the maintainer.** | A row saying "validated: no match" may be a legitimate decision or an error; the design does not say which. | 2 (small change) or 7 |
+| P45 | medium | **Food-code types across user tables.** `food_code` must have a compatible type in `acquisitions`, `unit_factors`, `crosswalk` and `vehicles`; checked where the tables meet, as `validate_survey()` does for `household_id`. | An integer code against a character code makes every later join fail. | 6, 7, 9 |
+| P46 | medium | **Carrier regression test without tidyr and srvyr verbs.** The experiment of the design also covered `pivot_*`, `nest`, `drop_na`, `replace_na` and `as_survey_design()`; they are added to `test-audit-carrier.R` when tidyr and srvyr enter `Imports`. | Keeps the record of section 4 of the design complete. | 6 (tidyr), 11 (srvyr) |
+| P47 | low | **Content hash of a carrier.** A `mutate()` that changes values without changing the number of rows is not detected (documented limit, design section 4). A hash per call would detect it at a cost that grows with the data. | Recorded as the design asked. | after v0.1 |
+| P48 | low | **`validate_survey()` on validated tables does not refresh its notes.** It writes its notes once; after a user filter the counts of households without members or acquisitions are stale (the filter itself is recorded as `external_change`). | Rare; the step that uses the status (task 8) recomputes it. | 8 |
+| P49 | low | **Error messages name the table, not the argument.** `validate_composition(x, ...)` says "`composition` has...", while the argument is `x`. Consistent across validators and clearer for the user, but differs from the tidyverse habit of naming the argument. | Style. | 12 |
+| P50 | low | **No `print()` method for `hces_survey` and `hces_tbl`.** Printing a validated table shows a plain tibble; the log is reached with `audit_log()` (design section 4). | Discoverability. | 12 |
+
 ## Part A. From the review of the original analysis
 
 | ID | Priority | Proposal | Rationale | Roadmap task |
