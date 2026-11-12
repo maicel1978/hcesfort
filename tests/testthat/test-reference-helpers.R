@@ -102,3 +102,23 @@ test_that("who2009_levels() checks its arguments", {
   expect_error(who2009_levels(100, "low", table = ref_who2009_flour[, 1:3]),
                class = "hcesfort_error_schema")
 })
+
+test_that("the per person availability of the help is the ratio of totals", {
+  # Hand-built design: 4 households, 2 strata of 2 PSUs; household 4 has no
+  # estimate. Ratio by hand over 1-3:
+  # (1*100 + 2*300 + 3*40) / (1*2 + 2*4 + 3*1) = 820 / 13.
+  h <- data.frame(household_id = 1:4, weight = c(1, 2, 3, 4),
+                  stratum = c(1, 1, 2, 2), psu = 1:4,
+                  flour_g_d = c(100, 300, 40, NA),
+                  n_members = c(2, 4, 1, 5),
+                  use_status = c(rep("estimated", 3), "no_afe"))
+  design <- as_hces_design(h, lonely_psu = "adjust")
+  r <- survey::svyratio(~flour_g_d, ~n_members,
+                        subset(design, use_status == "estimated"))
+  expect_equal(unname(coef(r)), 820 / 13, tolerance = 1e-8)
+  # The household-weighted mean of grams per member differs.
+  pc <- h$flour_g_d[1:3] / h$n_members[1:3]
+  expect_false(isTRUE(all.equal(sum(h$weight[1:3] * pc) / 6, 820 / 13)))
+  expect_identical(unique(who2009_levels(coef(r), "low")$availability_g_d),
+                   "<75")
+})

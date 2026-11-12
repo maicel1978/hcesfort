@@ -215,6 +215,13 @@ as a string; no new vehicle-side note beyond `added_understated`.
 
 Implemented as roadmap items 11b.1 to 11b.10.
 
+On 2026-11-12 the maintainer approved as recommended the five choices of
+P89 (implementation of 11b.8 to 11b.10), and decided P90: the average per
+capita availability read against the WHO 2009 bands is the ratio of the
+weighted totals of vehicle grams and household members
+(`survey::svyratio()`), that is, weighted by persons, because that is what
+WHO calls per capita. No review by Fable needed.
+
 ## Proposal P42: food-matching support module (2026-11-12)
 
 Proposed by the maintainer; assessed here, not implemented. Status:
@@ -549,8 +556,8 @@ implementation:
 
 | Id | Priority | Proposal | Why | Task |
 |---|---|---|---|---|
-| P89 | medium | **Choices taken in implementation, to confirm.** (1) `audit_summary()` gives one row per log row (a step run twice gives two rows, never a sum); the share is taken from the closest earlier `input` row of the same step and table. (2) `audit_record()` refuses a `step` equal to any object of the hcesfort namespace, with or without the `hcesfort::` prefix; `n_households`, `qty_g` and `detail` accept `NA` of any type. (3) The log causes of `flag_energy_plausibility()` were renamed with the arguments (`energy_below_lower`, `energy_above_upper`). (4) `who2009_levels()` boundary rule: the band with the highest lower bound reached, a `>` bound exclusive, so 75 and 149.5 are `75-149` and 300 is `150-300`. WHO 2009 prints `75-149` in Table 1 and "75-150 g/day" in the text; the rule follows the symbols `<` and `>`. (5) `reference_energy()` uses the BMR equation for every age, children included, while `adult_equivalents()` uses the energy table below 18 years; it is meant for an adult reference person. | CLAUDE.md: no interpretation chosen silently. | 12 |
-| P90 | medium | **Per capita availability: households or persons.** WHO 2009 bands are an "estimated average per capita wheat flour availability", proposed from FAO Food Balance Sheets and household surveys. The design-based mean of `qty_vehicle_g_d_pc` weights households; a per-person average is the ratio of the weighted totals of grams and members (`survey::svyratio`). The two differ when household size and flour use are related. *Recommended:* document both in the vignette and offer the ratio as the default figure for `who2009_levels()`; a methodological choice for Fable. | The band chosen, hence the level, may change. | 12 |
+| P89 | closed (approved 2026-11-12) | **Choices taken in implementation, to confirm.** (1) `audit_summary()` gives one row per log row (a step run twice gives two rows, never a sum); the share is taken from the closest earlier `input` row of the same step and table. (2) `audit_record()` refuses a `step` equal to any object of the hcesfort namespace, with or without the `hcesfort::` prefix; `n_households`, `qty_g` and `detail` accept `NA` of any type. (3) The log causes of `flag_energy_plausibility()` were renamed with the arguments (`energy_below_lower`, `energy_above_upper`). (4) `who2009_levels()` boundary rule: the band with the highest lower bound reached, a `>` bound exclusive, so 75 and 149.5 are `75-149` and 300 is `150-300`. WHO 2009 prints `75-149` in Table 1 and "75-150 g/day" in the text; the rule follows the symbols `<` and `>`. (5) `reference_energy()` uses the BMR equation for every age, children included, while `adult_equivalents()` uses the energy table below 18 years; it is meant for an adult reference person. | CLAUDE.md: no interpretation chosen silently. | 12 |
+| P90 | closed (decided 2026-11-12, see Decisions) | **Per capita availability: households or persons.** WHO 2009 bands are an "estimated average per capita wheat flour availability", proposed from FAO Food Balance Sheets and household surveys. The design-based mean of `qty_vehicle_g_d_pc` weights households; a per-person average is the ratio of the weighted totals of grams and members (`survey::svyratio`). The two differ when household size and flour use are related. *Recommended:* document both in the vignette and offer the ratio as the default figure for `who2009_levels()`; a methodological choice for Fable. | The band chosen, hence the level, may change. | 12 |
 
 ## Questions for the maintainer
 

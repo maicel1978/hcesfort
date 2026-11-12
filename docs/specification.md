@@ -87,12 +87,13 @@ not tied to the nutrients of the first case.
 | Contracts | `validate_*()` and constructors | any standard table → validated table or classed error |
 | Units | `convert_units()` | acquisitions + unit factors → grams |
 | Outliers | `flag_outliers()` | grams → flag; scale, grouping and thresholds are arguments |
-| Adult equivalents | `adult_equivalents()` | members + energy requirements + reference person → equivalents per household |
+| Adult equivalents | `adult_equivalents()`, `reference_energy()` | members + energy requirements + reference person → equivalents per household; the reference person's requirement from the BMR equations |
 | Composition | `link_composition()`, `fill_composition()` | grams + crosswalk + composition → nutrients per record, with coverage over all records |
 | Apparent intake | `apparent_intake()` | nutrients + equivalents → intake per equivalent per day, one row per household of `households`, with a status |
-| Plausibility | energy-plausibility flag | intake → flag |
+| Plausibility | `flag_energy_plausibility()` | intake + energy column + `lower`, `upper` → flag |
 | Baseline | `unfortified_baseline()` | composition + enrichment → baseline composition (removes enrichment only) |
-| Vehicles | `vehicle_coverage()` | grams + vehicles + equivalents → vehicle use per household (acquired, grams per AFE), by vehicle, group and combination |
+| Vehicles | `vehicle_coverage()` | grams + vehicles + equivalents → vehicle use per household (acquired, grams per AFE and per member), by vehicle, group and combination |
+| Flour levels | `who2009_levels()` | per capita flour availability (ratio of weighted totals of grams and members) + extraction → rows of the WHO 2009 table |
 | Scenarios | `apply_scenario()` | baseline intake + vehicle use + scenarios → total and added intake per household and scenario, baseline included |
 | Risk | `inadequacy()` | intake + requirements (+ requirement distributions) → probability below the requirement per household, scenario and nutrient: EAR cut-point, or the probability approach for the nutrients given a distribution (bioavailability as a required argument); minimum coverage required |
 | Upper level | `above_ul()` | intake + UL, its unit and the form it applies to → above the UL per household, scenario and nutrient: total intake, or the form (added part, diet part where the composition has it) |
@@ -101,6 +102,13 @@ not tied to the nutrients of the first case.
 | Estimation | `estimate_households()`, `estimate_difference()`, `flag_precision()` | design + result table → proportions, means and medians with intervals by group and domain; paired differences between scenarios; precision flag with limits given by the caller |
 
 Subsets are always estimated as domains of the full design.
+
+Audit log, across the core: every table carries its log; the logs of
+several inputs are merged without repeating a shared branch.
+`audit_log()` returns it, `audit_summary()` summarises what each step
+excluded, flagged or filled with the share of its input, `audit_record()`
+lets an adapter record its own steps, and `restore_audit()` re-attaches the
+log after a verb that drops it.
 
 ### 3. Reference data shipped with the package, each with its source
 Small, generic, replaceable by argument:

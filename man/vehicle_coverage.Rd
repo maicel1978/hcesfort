@@ -88,8 +88,10 @@ estimated average per capita wheat flour availability (g/day)", and
 the text says the ranges were proposed "based on available data from
 the Food Balance Sheets of FAO and World Bank-supported Household
 Income and Expenditure Surveys". The grams here are those acquired by
-households, not the flour milled or imported, and the design-based mean
-of this column weights households, not persons.
+households, not the flour milled or imported. The availability per
+person is the ratio of the weighted totals of \code{qty_vehicle_g_d_pc * n_members} and \code{n_members} (\code{survey::svyratio()}, example in
+\code{\link[=who2009_levels]{who2009_levels()}}); the plain mean of this column weights households,
+not persons.
 }
 \examples{
 grams <- convert_units(

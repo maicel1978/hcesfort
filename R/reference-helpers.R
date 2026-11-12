@@ -65,9 +65,12 @@ reference_energy <- function(sex, age_years, weight_kg, pal,
 #' 150 to 300 inclusive is `150-300`; above 300 is `>300`. The printed
 #' upper bounds are not used.
 #'
-#' The availability is per person. From a survey, it is the mean of
-#' `qty_vehicle_g_d_pc` of [vehicle_coverage()] for the flour vehicle; see
-#' there for how it differs from the figure WHO used.
+#' The availability is per person: the ratio of the weighted totals of
+#' flour grams and household members over the households with an estimate
+#' (`survey::svyratio()`), not the mean of the households' grams per
+#' member, which weights households. The example computes it from
+#' [vehicle_coverage()]; see there for how household acquisitions differ
+#' from the figure WHO used.
 #'
 #' @param availability_g_d Estimated average per capita wheat flour
 #'   availability, g per day: one number >= 0.
@@ -80,6 +83,26 @@ reference_energy <- function(sex, age_years, weight_kg, pal,
 #' @seealso [ref_who2009_flour], [vehicle_coverage()], [apply_scenario()].
 #' @examples
 #' who2009_levels(120, extraction = "low")
+#'
+#' # Availability per person from a survey: ratio of weighted totals.
+#' ex <- hces_example
+#' grams <- convert_units(ex$acquisitions, ex$unit_factors, priority = "food")
+#' afe <- adult_equivalents(
+#'   ex$members, reference_kcal = reference_energy("female", 25, 55, 1.76),
+#'   weight_kg = c(female = 55, male = 65), pal = 1.76
+#' )
+#' use <- vehicle_coverage(grams, ex$vehicles, afe, ex$households)
+#' flour <- use[use$vehicle == "flour", ]
+#' flour$flour_g_d <- flour$qty_vehicle_g_d_pc * flour$n_members
+#' h <- merge(ex$households,
+#'            flour[c("household_id", "use_status", "flour_g_d", "n_members")],
+#'            by = "household_id", all.x = TRUE)
+#' design <- as_hces_design(h, lonely_psu = "adjust")
+#' old <- options(survey.lonely.psu = "adjust")
+#' r <- survey::svyratio(~flour_g_d, ~n_members,
+#'                       subset(design, use_status == "estimated"))
+#' options(old)
+#' who2009_levels(coef(r), extraction = "low")
 #' @export
 who2009_levels <- function(availability_g_d, extraction,
                            table = hcesfort::ref_who2009_flour) {

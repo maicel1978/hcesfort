@@ -41,8 +41,11 @@
 #' the text says the ranges were proposed "based on available data from
 #' the Food Balance Sheets of FAO and World Bank-supported Household
 #' Income and Expenditure Surveys". The grams here are those acquired by
-#' households, not the flour milled or imported, and the design-based mean
-#' of this column weights households, not persons.
+#' households, not the flour milled or imported. The availability per
+#' person is the ratio of the weighted totals of `qty_vehicle_g_d_pc *
+#' n_members` and `n_members` (`survey::svyratio()`, example in
+#' [who2009_levels()]); the plain mean of this column weights households,
+#' not persons.
 #'
 #' @param grams Table returned by [convert_units()], [flag_outliers()] or
 #'   [link_composition()].
