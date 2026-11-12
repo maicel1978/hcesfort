@@ -8,83 +8,101 @@
 
 | Commit | Content |
 |---|---|
-| `8bd804f` | Task 6, part 1: `convert_units()` (typed factors, required `priority`, caller's density or piece weight counted as `filled`, every record kept with `grams_status`). |
-| `f491a81` | Task 6, part 2: `flag_outliers()` (rule as required arguments, scale and level, not-assessed causes); self-review items P59–P62 in `docs/improvements.md`. |
+| `8bd804f`, `f491a81` | Task 6: `convert_units()`, `flag_outliers()`. Decisions P59 accepted by the maintainer (step 1 of acceptance uses `priority = "generic"`, step 2 `"food"`). |
+| `9fd03b2`, `aabdc73` | Task 7: `link_composition()`, `fill_composition()` (new contract `composition_fills`), `unmatched_foods()`. |
+| `4e3be0e` | Task 7b: `check_crosswalk()`. |
+| `ae2955d` | Task 8: `apparent_intake()`, `flag_energy_plausibility()`, `nutrient_density()`. |
 
 On the last commit: `devtools::check()` 0/0/0; `lintr::lint_package()`
-clean; 610 tests; coverage 100%.
+clean; 764 tests; coverage 100%.
 
-Environment notes: as in the previous handoff (`LANG=C.UTF-8
-LC_ALL=C.UTF-8 _R_CHECK_SYSTEM_CLOCK_=0` for check; `R CMD INSTALL .`
-before `lintr`). The original analysis was cloned read-only at
-`/home/user/maicel1978/analisis_engih2018` (clone again in a new session:
-`GIT_LFS_SKIP_SMUDGE=1 git clone --depth 1
-https://github.com/maicel1978/analisis_engih2018`).
+The pipeline now runs end to end on `hces_example` up to intake per AFE
+(see the example of `?apparent_intake`).
 
-Why the session stopped: context estimated near 50% (same-model rule);
-task 7 is large and should start in a fresh session.
+Environment notes: `LANG=C.UTF-8 LC_ALL=C.UTF-8 _R_CHECK_SYSTEM_CLOCK_=0`
+for check; `R CMD INSTALL .` before `lintr`. The original analysis: clone
+read-only with `GIT_LFS_SKIP_SMUDGE=1 git clone --depth 1
+https://github.com/maicel1978/analisis_engih2018`.
+
+Why the session stopped: task 9 needs a design by Fable
+(`docs/model-routing.md`: level basis and enrichment subtraction).
 
 ## Exact next step
 
-Task 7: `link_composition()` and `fill_composition()`, with coverage over
-all records (records and grams per day from `hces_grams`, before anything
-is dropped, E3), and `unmatched_foods()` (P42 part a: rank by grams when
-grams exist, by records otherwise, with the blocking cause: no factor, no
-match, not validated, no edible portion). Product class
-`hces_nutrient_content` (P43). Apply the edible portion and `yield_factor`
-of the crosswalk there (P59, item 3). Check `food_code` types between
-grams and crosswalk (P45). Read `docs/analysis-map.md` rows 6–9 and 12–13
-and the original `scripts/05_ingesta_micronutrientes.R` first.
+Task 9, design (Fable): `unfortified_baseline()`, `apply_scenario()` and
+`vehicle_coverage()`. Inputs to read: P6 (baseline as a composition
+table; subtract what enrichment added, floored at zero), P52 (WHO 2009
+rows vs registry nutrients, `level_basis`, `compound`,
+`ref_conversions`), E1, E6, E8, E12, E23 in `docs/analysis-map.md`, the
+schemas `vehicles` and `scenarios` (`R/schema-user.R`), and the original
+`scripts/06_escenarios_fortificacion.R`. The product of task 8 is
+`hces_intake` (one row per household, registry columns per AFE per day);
+the composition carries `fortified`; `hces_nutrient_content` carries
+`fortified` per record. Implementation then goes back to Opus.
 
 ## Open questions
 
-P59 lists five choices of task 6 taken under delegation; each is one line
-to change. Nothing blocks task 7.
+Choices taken under delegation in tasks 7, 7b and 8, each one line to
+change (`docs/improvements.md`):
+
+1. **P63 (task 7).** Missing `yield_factor` = 1; nutrient columns keep
+   registry names (amount per day); a validated match absent from the
+   composition table is an error; new contract `composition_fills`.
+   *Recommended: accept.*
+2. **P66 (task 7b).** Validated rows only; flags as `flag_` columns; state
+   control from the composition's `food_state` without a yield factor;
+   ranges given by the user. *Recommended: accept.*
+3. **P67 (task 8).** A missing nutrient value adds nothing and each
+   nutrient gets a `_coverage` column (instead of `NA` for the whole
+   household); status order; outliers not assessed are kept; no
+   winsorising in v0.1. *Recommended: accept; the coverage column lets
+   task 10 require a minimum coverage chosen by the caller (P11).*
 
 ## Recommended model for the next session
 
-**Opus 5.5**: task 7.
+**Fable**: design of task 9.
 
 ## Maintainer review points
 
-1. **A dozen is never grams, and a liquid without density is not
-   converted unless you say so.**
+1. **Coverage is measured over all records, before anything is dropped
+   (E3).**
 
    ```r
    library(hcesfort)
-   g <- convert_units(hces_example$acquisitions, hces_example$unit_factors,
-                      priority = "food")
-   table(g$grams_status)
-   g2 <- convert_units(hces_example$acquisitions, hces_example$unit_factors,
-                       priority = "food", density_g_ml = 1.03)
-   subset(audit_log(g2), step == "convert_units")
+   n <- nutrient_registry(hces_example$nutrients)
+   g <- convert_units(hces_example$acquisitions, hces_example$unit_factors, "food")
+   x <- link_composition(g, hces_example$crosswalk, hces_example$composition, n)
+   subset(audit_log(x), step == "link_composition")
+   unmatched_foods(x)
    ```
 
-2. **The priority between food and generic factor changes the grams.**
-
-   ```r
-   gf <- convert_units(hces_example$acquisitions, hces_example$unit_factors, "food")
-   gg <- convert_units(hces_example$acquisitions, hces_example$unit_factors, "generic")
-   d <- gf$qty_g_d != gg$qty_g_d | is.na(gf$qty_g_d) != is.na(gg$qty_g_d)
-   cbind(gf[which(d), c("food_code", "unit", "factor_from", "qty_g_d")],
-         generic = gg$qty_g_d[which(d)])
-   ```
-
-3. **The rule is explicit, and per AFE changes the flags (E9).** The
-   original rule (`c(0.005, 0.995)`, 5, 20) assesses nothing in the small
-   example (groups under 20 records: all `NA`, counted in the log); a
-   looser rule shows the difference.
+2. **Every household of the frame is in the intake table, with a status
+   (E5).**
 
    ```r
    eq <- subset(ref_bmr_equations, sex == "female" & age_from == 18)
-   ref <- (eq$slope_kcal_kg * 55 + eq$intercept_kcal) * 1.76
-   afe <- adult_equivalents(hces_example$members, ref, c(female = 55, male = 65), 1.76)
-   orig <- flag_outliers(gf, "food_code", "household", "record",
-                         c(0.005, 0.995), 5, 20)
-   table(orig$outlier, useNA = "ifany")
-   hh <- flag_outliers(gf, "food_code", "household", "record", c(0.1, 0.9), 1.5, 5)
-   per_afe <- flag_outliers(gf, "food_code", "per_afe", "record",
-                            c(0.1, 0.9), 1.5, 5, afe = afe)
-   table(household = hh$outlier, per_afe = per_afe$outlier, useNA = "ifany")
-   subset(audit_log(per_afe), step == "flag_outliers")
+   afe <- adult_equivalents(hces_example$members,
+                            (eq$slope_kcal_kg * 55 + eq$intercept_kcal) * 1.76,
+                            c(female = 55, male = 65), 1.76)
+   i <- apparent_intake(x, afe, hces_example$households)
+   c(nrow(i), nrow(hces_example$households))
+   table(i$intake_status)
+   subset(audit_log(i), step == "apparent_intake")
+   ```
+
+3. **A missing composition value is never a silent zero (E21).** Fill the
+   biscuit's folate and see coverage and intake change.
+
+   ```r
+   fills <- data.frame(composition_id = "C12", nutrient = "folate",
+                       value = 30, source = "invented")
+   comp2 <- fill_composition(hces_example$composition, fills, n)
+   cw <- hces_example$crosswalk
+   cw$validated[cw$food_code == "biscuit"] <- TRUE
+   cw$match_type[cw$food_code == "biscuit"] <- "similar"
+   before <- apparent_intake(link_composition(g, cw, hces_example$composition, n),
+                             afe, hces_example$households)
+   after <- apparent_intake(link_composition(g, cw, comp2, n),
+                            afe, hces_example$households)
+   summary(before$folate_ug_dfe_coverage); summary(after$folate_ug_dfe_coverage)
    ```
