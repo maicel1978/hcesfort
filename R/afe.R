@@ -70,6 +70,7 @@ adult_equivalents <- function(members, reference_kcal, weight_kg, pal,
                               bmr = hcesfort::ref_bmr_equations,
                               infants = c("monthly", "annual_mean"),
                               missing = c("na", "zero")) {
+  check_required()
   infants <- check_choice(infants, c("monthly", "annual_mean"))
   missing <- check_choice(missing, c("na", "zero"))
   check_afe_args(reference_kcal, weight_kg, pal)

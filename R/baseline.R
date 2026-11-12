@@ -69,6 +69,7 @@
 unfortified_baseline <- function(composition, enrichment, nutrients = NULL,
                                  method = "subtract",
                                  conversions = hcesfort::ref_conversions) {
+  check_required()
   nutrients <- composition_registry(composition, nutrients)
   comp <- validate_composition(composition, nutrients)
   comp <- audit_check_rows(comp, "unfortified_baseline")

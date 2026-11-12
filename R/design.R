@@ -42,6 +42,7 @@
 #' design
 #' @export
 as_hces_design <- function(households, lonely_psu) {
+  check_required()
   h <- validate_households(households)
   choices <- c("fail", "remove", "adjust", "average", "certainty")
   if (missing(lonely_psu) || !rlang::is_string(lonely_psu) ||

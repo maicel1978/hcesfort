@@ -33,6 +33,7 @@
 #' audit_log(validate_composition(composition, nutrients))
 #' @export
 validate_composition <- function(x, nutrients) {
+  check_required()
   require_registry(nutrients)
   if (is.data.frame(x)) check_nutrient_units(x, nutrients)
   validate_table(
@@ -101,6 +102,7 @@ check_nutrient_units <- function(x, nutrients, call = rlang::caller_env()) {
 #' audit_log(validate_scenarios(scenarios, nutrients))
 #' @export
 validate_scenarios <- function(x, nutrients) {
+  check_required()
   require_registry(nutrients)
   added <- is.data.frame(x) && is.null(x$compliance)
   if (added) x$compliance <- rep(1, nrow(x))
@@ -151,6 +153,7 @@ validate_scenarios <- function(x, nutrients) {
 #' audit_log(validate_enrichment(enrichment, nutrients))
 #' @export
 validate_enrichment <- function(x, nutrients) {
+  check_required()
   require_registry(nutrients)
   if (is.data.frame(x)) {
     for (col in setdiff(enrichment_ways, names(x))) {

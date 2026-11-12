@@ -63,6 +63,7 @@
 #' @export
 convert_units <- function(acquisitions, unit_factors, priority,
                           density_g_ml = NULL, piece_weight_g = NULL) {
+  check_required()
   priority <- check_priority(priority)
   check_optional_positive(density_g_ml)
   check_optional_positive(piece_weight_g)

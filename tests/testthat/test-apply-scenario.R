@@ -253,3 +253,14 @@ test_that("apply_scenario() refuses another outlier decision", {
   expect_identical(err$columns, "outlier")
   expect_match(conditionMessage(err), "exclude; by=food_code")
 })
+
+test_that("different households: counts on each side and the usual cause", {
+  p <- as_pipeline()
+  intake <- dplyr::filter(p$intake, household_id != 3)
+  err <- expect_error(apply_scenario(intake, p$use, as_scenarios(),
+                                     compliance_model = "average_content"),
+                      class = "hcesfort_error_join")
+  expect_identical(err$n, 1L)
+  expect_match(conditionMessage(err), "only in `use`: 1", fixed = TRUE)
+  expect_match(conditionMessage(err), "filter")
+})

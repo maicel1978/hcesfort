@@ -54,6 +54,7 @@
 check_crosswalk <- function(crosswalk, composition, nutrients = NULL,
                             grams = NULL, review_types = NULL,
                             ranges = NULL, group = NULL) {
+  check_required()
   nutrients <- composition_registry(composition, nutrients)
   cw <- validate_crosswalk(crosswalk)
   cw <- audit_check_rows(cw, "check_crosswalk")

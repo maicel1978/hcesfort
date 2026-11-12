@@ -32,6 +32,7 @@ unit_pattern <- paste0("^(", paste(unit_bases, collapse = "|"),
 #' nutrient_registry(c(energy = "kcal", iron = "mg", folate = "ug_dfe"))
 #' @export
 nutrient_registry <- function(units) {
+  check_required()
   check_registry_names(units)
   bad <- names(units)[!grepl(unit_pattern, units)]
   if (length(bad) > 0) {

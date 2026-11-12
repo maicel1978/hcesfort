@@ -54,6 +54,7 @@
 #' @export
 link_composition <- function(grams, crosswalk, composition,
                              nutrients = NULL) {
+  check_required()
   require_hces(grams, "hces_grams")
   g <- audit_check_rows(grams, "link_composition")
   nutrients <- composition_registry(composition, nutrients)

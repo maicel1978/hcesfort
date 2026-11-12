@@ -38,6 +38,7 @@
 #' audit_log(survey$households)
 #' @export
 validate_survey <- function(households, members, acquisitions) {
+  check_required()
   households <- validate_households(households)
   members <- validate_members(members)
   acquisitions <- validate_acquisitions(acquisitions)

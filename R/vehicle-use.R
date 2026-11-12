@@ -72,6 +72,7 @@
 #' @export
 vehicle_coverage <- function(grams, vehicles, afe, households,
                              outliers = NULL, combine = NULL) {
+  check_required()
   require_hces(grams, c("hces_grams", "hces_nutrient_content"))
   require_hces(afe, "hces_afe")
   x <- audit_check_rows(grams, "vehicle_coverage")

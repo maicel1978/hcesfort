@@ -212,6 +212,14 @@
   shows how to apply the lonely-PSU choice to a direct `survey` call.
   Tests: degrees of freedom of domain and design told apart, SE of means
   and medians against `survey`, `flag_precision()` at its limits.
+* Errors (review of v0.1, M9, L3): every exported function reports all
+  its missing required arguments at once as an `hcesfort_error_argument`
+  (field `args`), never base R's unclassed error; `apply_scenario()` says
+  how many households are only in `intake` or only in `use` and that a
+  filter between the calls is the usual cause; an unusable requirement
+  distribution names the rules it breaks (field `failed`);
+  `flag_energy_plausibility()` and `flag_precision()` name the argument
+  that failed.
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is

@@ -66,3 +66,41 @@ abort_hcesfort <- function(type, message, ..., call = rlang::caller_env(),
     .envir = .envir
   )
 }
+
+# Abort with hcesfort_error_argument, naming every required argument (one
+# without a default) of the calling function that was not given. Called
+# first by every exported function, so a missing argument never reaches
+# base R's unclassed error and all of them are reported at once.
+check_required <- function(env = parent.frame()) {
+  fn <- sys.function(-1)
+  fm <- formals(fn)
+  req <- names(fm)[vapply(fm, function(x) identical(x, quote(expr = )),
+                          logical(1))]
+  req <- setdiff(req, "...")
+  absent <- req[vapply(req, function(a) {
+    eval(call("missing", as.name(a)), env)
+  }, logical(1))]
+  if (length(absent) == 0) {
+    return(invisible(TRUE))
+  }
+  name <- as.character(sys.call(-1)[[1]])
+  name <- name[length(name)]
+  abort_hcesfort("argument", c(
+    "{.arg {absent}} {?is/are} required and {?has/have} no default.",
+    "i" = "See {.code ?{name}}."
+  ), arg = absent[[1]], args = absent, call = env)
+}
+
+# Abort with hcesfort_error_argument unless `value` is one number, not
+# missing, at least `lower`; the message names `arg`.
+check_one_number <- function(value, arg, lower = -Inf,
+                             call = rlang::caller_env()) {
+  if (is.numeric(value) && length(value) == 1 && !is.na(value) &&
+        value >= lower) {
+    return(invisible(value))
+  }
+  abort_hcesfort("argument", c(
+    "{.arg {arg}} must be one number{if (lower > -Inf) paste0(' >= ', lower)}.",
+    "i" = "It has no default."
+  ), arg = arg, call = call)
+}

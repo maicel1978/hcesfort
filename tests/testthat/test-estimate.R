@@ -415,3 +415,13 @@ test_that("domain_from: one row per household, same households", {
                       class = "hcesfort_error_argument")
   expect_match(conditionMessage(err), "domain_from")
 })
+
+test_that("flag_precision() names the argument that failed", {
+  e <- estimate_prevalence(es_design(), es_result(), "p")
+  err <- expect_error(flag_precision(e, 4, -1),
+                      class = "hcesfort_error_argument")
+  expect_identical(err$arg, "max_half_width")
+  err <- expect_error(flag_precision(e, max_half_width = 0.1),
+                      class = "hcesfort_error_argument")
+  expect_identical(err$arg, "min_n")
+})

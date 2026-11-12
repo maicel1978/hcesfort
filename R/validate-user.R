@@ -41,6 +41,7 @@
 #' audit_log(validate_crosswalk(crosswalk))
 #' @export
 validate_unit_factors <- function(x) {
+  check_required()
   validate_table(x, schema_unit_factors(), "validate_unit_factors",
                  function(x) list())
 }
@@ -48,6 +49,7 @@ validate_unit_factors <- function(x) {
 #' @rdname validate_unit_factors
 #' @export
 validate_crosswalk <- function(x) {
+  check_required()
   validate_table(
     x, schema_crosswalk(), "validate_crosswalk",
     function(x) {
@@ -69,6 +71,7 @@ validate_crosswalk <- function(x) {
 #' @rdname validate_unit_factors
 #' @export
 validate_vehicles <- function(x) {
+  check_required()
   validate_table(
     x, schema_vehicles(), "validate_vehicles",
     function(x) list(source_pending = is_source_pending(x$source)),

@@ -113,6 +113,7 @@ audit_get <- function(x) {
 #' @seealso [restore_audit()], [hcesfort_errors].
 #' @export
 audit_log <- function(x) {
+  check_required()
   log <- attr(x, "audit", exact = TRUE)
   if (!inherits(x, "hces_tbl") || is.null(log)) {
     abort_hcesfort("audit", c(

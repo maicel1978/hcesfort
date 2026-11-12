@@ -72,6 +72,7 @@
 #' @export
 above_ul <- function(x, requirements, conversions = hcesfort::ref_conversions,
                      min_coverage, min_records_used) {
+  check_required()
   require_hces(x, c("hces_intake", "hces_scenario_intake"))
   x <- audit_check_rows(x, "above_ul")
   nutrients <- attr(x, "nutrients", exact = TRUE)

@@ -1,80 +1,85 @@
 # Handoff
 
 - **Date:** 2026-11-12
-- **Session:** design note of the corrections of the v0.1 review; no
-  package code written. Model: see the trailer of the commit.
-- **Branch:** `main`
+- **Session:** implementation of roadmap items 11b.1 to 11b.7 (corrections
+  of the v0.1 review). Model: Opus 5.5 (see the commit trailers).
+- **Branch:** `main`. Stopped at the maintainer's request (context size).
 
 ## What was done
 
 | Commit | Content |
 |---|---|
-| this commit | `docs/design-review-v0.1.md`: design of corrections 1, 2, 3, 8 and 10, correction 4 accepted, renames, ten decisions to approve (section 8). `docs/review-v0.1.md`: section 9 completed with the full text of Tang et al. 2021 (section 9.1), maintainer's answers recorded in section 11. `docs/improvements.md`: P85, P86. `docs/roadmap.md`: task 11b |
+| `538b168` | 11b.1 Record loss: `n_records_included`, `share_records_used`, `share_grams_used`; required `min_records_used` gate. Ten decisions of `docs/design-review-v0.1.md` recorded as approved (`docs/improvements.md`); IOM 2000 opened |
+| `ff7bc44` | 11b.2 `cutpoint_valid`, `ear_bioavailability`; `ref_requirements`, `SOURCES.md` (IOM 2000b, pp. 81 and 91), md5 |
+| `913a68a` | 11b.3 `domain_from` in `estimate_prevalence()` / `estimate_difference()`; internal `audit_union()` |
+| `80fdfd0` | 11b.4 `vehicle_coverage()` returns `afe`, `n_members`; attribute `outlier_decision`; `apply_scenario()` checks both (P76 closed) |
+| `8567660` | 11b.5 `hces_example` recalibrated; `data-raw/golden_example.R` (no package code) and `test-golden-example.R`: 17 figures at 1e-8 |
+| `8db1500` | 11b.6 Degenerate proportions; classed lonely-PSU error (P84 closed); tests T1–T4; both surviving mutations now killed |
+| this commit | 11b.7 `check_required()` in every exported function; clearer messages in `apply_scenario()`, the distribution check, `flag_energy_plausibility()`, `flag_precision()`; P87, P88; this handoff |
 
-State: documentation only; `R/`, `tests/` and `data-raw/` are untouched since
-`4260d5f`, where `devtools::check()` was 0/0/0. The check was not run again
-in this session.
+State: `devtools::check()` 0 errors, 0 warnings, 0 notes;
+`lintr::lint_package()` clean; all tests pass.
 
 ## Exact next step
 
-1. The maintainer approves or amends the ten decisions of section 8 of
-   `docs/design-review-v0.1.md`.
-2. **Opus** implements roadmap items 11b.1 to 11b.10 in order, one commit
-   each (at most 300 lines of code), following the design note. Correction
-   2 (11b.2) enters the new columns in `data-raw/requirements.csv` with the
-   statuses of the note's section 2, and updates `SOURCES.md` and the md5.
-3. **Sonnet** does correction 9 (limits of the method, README) with task 12,
-   citing only what section 9.1 of the review marks as verified.
+**Opus** continues with roadmap items, one commit each, following
+`docs/design-review-v0.1.md`:
+
+1. **11b.8** Audit log: route every merge of two logs through
+   `audit_union()` (already in `R/audit.R`, tested) — at least
+   `R/intake.R` (`apparent_intake`), `R/vehicle-use.R`, `R/scenario.R`,
+   `R/above-ul.R`, `R/inadequacy.R`; then export `audit_summary()` and
+   `audit_record()` (section 5 of the design note).
+2. **11b.9** Renames: `estimate_prevalence()` → `estimate_households()`;
+   `flag_energy_plausibility(intake, column, min, max)` →
+   `(intake, energy, lower, upper)`; `adult_equivalents(missing =)` →
+   `missing_members =`. No deprecation layer. Update tests, examples,
+   NEWS, specification.
+3. **11b.10** `reference_energy()`, `qty_vehicle_g_d_pc` in
+   `vehicle_coverage()` (the WHO 2009 basis quoted with the document
+   open), `who2009_levels()`. Then use `reference_energy()` in examples
+   and in the "reference woman is 1 AFE" test; regenerate nothing in the
+   golden test unless a figure changes (it should not).
+4. Close task 11b: specification, self-review, `docs/handoff.md`.
 
 ## Open questions
 
-- Section 8 of `docs/design-review-v0.1.md` (ten decisions, each with the
-  recommended option).
-- Sources still unopened: IOM 2000 (*Applications in Dietary Assessment*),
-  the 2022 systematic review of Tang et al. (abstract only), the supplement
-  of Tang et al. 2021 (Tables S1–S5: AFE parameters, outlier rule, H-AR
-  values). The article supplied was the 2021 Malawi paper, not the review.
+- P87 (choices taken in implementation, six items) for the maintainer to
+  confirm.
+- Zinc `ear_bioavailability` stays `# SOURCE PENDING` (IOM 2001,
+  chapter 12, not read).
 
 ## Recommended model for the next session
 
-**Opus 5.5**: implementation of an approved design. Back to Fable only if a
-decision of section 8 is changed in a way that alters a contract not covered
-by the note.
+**Opus 5.5** (implementation of the approved design).
 
 ## Maintainer review points
 
-1. **The quotations taken from Tang et al. 2021.** Section 9.1 of the review
-   gives each with its page; the design relies on two of them (iron and the
-   cut-point, zinc thresholds).
+1. **The IOM 2000 quotations behind `cutpoint_valid`.**
 
    ```r
-   # In a clone of analisis_ENGIH2018 with full history:
-   system("git show 2dad5b1:referencias/tang-2021-modeling-food-fortification.pdf > tang.pdf")
-   tools::md5sum("tang.pdf")  # 4eec227b1dd276d1ee847035c2551ca6
-   # Notes of Figures 1 and 2 (pp. 112-113); outliers p. 107;
-   # limitations pp. 118-119.
+   # Open https://nap.nationalacademies.org/read/9956/chapter/10
+   # p. 81: "the method does not work ... with iron requirements in
+   # menstruating women"; p. 91: symmetry assumed by default.
+   hcesfort::ref_requirements[, c("nutrient", "cutpoint_valid",
+                                  "ear_bioavailability")]
    ```
 
-2. **Iron was never reported by cut-point in the original.** The design
-   drops the legacy argument on this answer.
+2. **The recalibrated example reads plausibly.**
 
    ```r
-   # In analisis_ENGIH2018:
-   r <- read.csv2("data/auditoria/cifras_control/riesgo_inadecuacion.csv")
-   table(r$metodo[r$nutriente == "hierro_mg"])
-   # Seen in this session: 100 rows at 10% and 100 at 18%, both
-   # "Probabilidad"; no "Punto de corte" row for iron.
+   devtools::load_all()
+   source("tests/testthat/test-golden-example.R", local = TRUE)  # defines golden_chain()
+   ch <- golden_chain()
+   summary(ch$intake[ch$intake$intake_status == "estimated",
+                     c("energy_kcal", "iron_mg", "folate_ug_dfe",
+                       "vitamin_a_ug_rae", "share_records_used")])
    ```
 
-3. **What the new gate would say on the example today** (records used over
-   records included, the figure `min_records_used` will be compared with).
+3. **The golden values are independent of the package.**
 
    ```r
-   library(hcesfort)
-   ex <- hces_example
-   g <- convert_units(ex$acquisitions, ex$unit_factors, priority = "food")
-   n <- nutrient_registry(ex$nutrients)
-   b <- unfortified_baseline(ex$composition, ex$enrichment, n)
-   l <- link_composition(g, ex$crosswalk, b)
-   sum(l$include & l$composition_status == "linked") / sum(l$include)
+   # data-raw/golden_example.R must not call any hcesfort function:
+   grep("hcesfort::|library\\(hcesfort", readLines("data-raw/golden_example.R"))
+   source("data-raw/golden_example.R")  # rewrites the fixture; git diff should be empty
    ```

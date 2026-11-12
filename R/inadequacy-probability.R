@@ -72,20 +72,32 @@ distribution_table <- function(d, n, unit, call) {
   p <- d$percentile
   r <- d[[req_col]]
   b0 <- unique(d$bioavailability)
-  ok <- nrow(d) >= 2 && !anyNA(c(p, r)) && all(diff(p) > 0) &&
-    all(diff(r) >= 0) && all(p > 0 & p < 100) && length(b0) == 1 &&
-    !is.na(b0) && b0 > 0 && b0 <= 1
-  if (!ok) {
+  failed <- distribution_failures(p, r, b0)
+  if (length(failed) > 0) {
     abort_hcesfort("value", c(
       "The distribution of {.val {n}} is not usable.",
-      "i" = paste(
-        "Percentiles strictly increasing in (0, 100), requirements",
-        "non-decreasing, one bioavailability in (0, 1]."
-      )
+      rlang::set_names(cli_escape(failed), rep("x", length(failed)))
     ), table = "distribution", columns = needed, rows = integer(0),
-    n = NA_integer_, call = call)
+    n = NA_integer_, failed = failed, call = call)
   }
   dplyr::tibble(percentile = p, requirement = r, b0 = b0)
+}
+
+# The rules a requirement distribution breaks, one message each (none:
+# character(0)).
+distribution_failures <- function(p, r, b0) {
+  b_ok <- length(b0) == 1 && !is.na(b0) && b0 > 0 && b0 <= 1
+  rules <- c(
+    "it needs at least two percentiles" = length(p) >= 2,
+    "percentiles or requirements are missing" = !anyNA(c(p, r)),
+    "percentiles must be inside (0, 100)" = all(p > 0 & p < 100,
+                                                na.rm = TRUE),
+    "percentiles must be strictly increasing" =
+      all(diff(p) > 0, na.rm = TRUE),
+    "requirements must not decrease" = all(diff(r) >= 0, na.rm = TRUE),
+    "it needs one bioavailability in (0, 1]" = b_ok
+  )
+  names(rules)[!rules]
 }
 
 # Probability rows of nutrient `n`, one block per value of `b`.

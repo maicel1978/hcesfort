@@ -266,3 +266,13 @@ test_that("the outlier decision travels with the intake", {
   expect_identical(attr(dplyr::filter(i, TRUE), "outlier_decision"),
                    attr(i, "outlier_decision"))
 })
+
+test_that("flag_energy_plausibility() names the bound that failed", {
+  i <- apparent_intake(ai_content(), ai_afe(), ai_households())
+  err <- expect_error(flag_energy_plausibility(i, "energy_kcal", 300, NA),
+                      class = "hcesfort_error_argument")
+  expect_identical(err$arg, "max")
+  err <- expect_error(flag_energy_plausibility(i, "energy_kcal", 400, 300),
+                      class = "hcesfort_error_argument")
+  expect_identical(err$arg, "max")
+})

@@ -36,6 +36,7 @@
 #' unmatched_foods(content, order = "records")
 #' @export
 unmatched_foods <- function(x, order = c("grams", "records")) {
+  check_required()
   require_hces(x, "hces_nutrient_content")
   order <- check_choice(order, c("grams", "records"))
   d <- dplyr::as_tibble(x)

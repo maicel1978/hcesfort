@@ -125,6 +125,7 @@ schema_registry <- function() {
 #' hces_schema("acquisitions")
 #' @export
 hces_schema <- function(table) {
+  check_required()
   known <- names(schema_registry())
   if (!rlang::is_string(table) || !table %in% known) {
     abort_hcesfort("argument", c(

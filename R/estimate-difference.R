@@ -53,6 +53,7 @@
 estimate_difference <- function(design, x, value, reference, by = NULL,
                                 domain = NULL, domain_from = NULL,
                                 level = 0.95, df = "domain") {
+  check_required()
   require_design(design)
   require_hces(x, "hces_tbl")
   check_reference_scenario(x, reference)
@@ -135,16 +136,11 @@ check_reference_scenario <- function(x, reference, call = rlang::caller_env()) {
 #' flag_precision(est, min_n = 10, max_half_width = 0.10)
 #' @export
 flag_precision <- function(estimates, min_n, max_half_width) {
+  check_required()
   require_hces(estimates, "hces_estimate")
   x <- audit_check_rows(estimates, "flag_precision")
-  ok <- function(v) is.numeric(v) && length(v) == 1 && !is.na(v) && v >= 0
-  if (missing(min_n) || missing(max_half_width) || !ok(min_n) ||
-        !ok(max_half_width)) {
-    abort_hcesfort("argument", c(
-      "{.arg min_n} and {.arg max_half_width} must be two numbers >= 0.",
-      "i" = "They have no default."
-    ), arg = "min_n")
-  }
+  check_one_number(min_n, "min_n", lower = 0)
+  check_one_number(max_half_width, "max_half_width", lower = 0)
   half <- (x$ci_high - x$ci_low) / 2
   out <- dplyr::as_tibble(x)
   out$low_precision <- x$n < min_n | (!is.na(half) & half > max_half_width)

@@ -67,12 +67,24 @@ check_scenario_use <- function(x, use, s, call = rlang::caller_env()) {
     ), table = "scenarios", other = "use", columns = "vehicle", n = n,
     call = call)
   }
-  check_scenario_basis(x, use, call)
   ids <- unique(use$household_id)
+  only_intake <- sum(!unique(x$household_id) %in% ids)
+  only_use <- sum(!ids %in% x$household_id)
+  if (only_intake + only_use > 0) {
+    abort_hcesfort("join", c(
+      "{.arg intake} and {.arg use} must describe the same households.",
+      "x" = "Only in {.arg intake}: {only_intake}; only in {.arg use}:
+      {only_use}.",
+      "i" = "A filter of one table between the two calls is the usual
+      cause: filter the result of {.fn apply_scenario} instead."
+    ), table = "intake", other = "use", columns = "household_id",
+    n = only_intake + only_use, call = call)
+  }
+  check_scenario_basis(x, use, call)
   est <- unique(use$household_id[use$use_status == "estimated"])
   missing <- x$household_id[x$intake_status == "estimated" &
                               !x$household_id %in% est]
-  if (!setequal(ids, x$household_id) || length(missing) > 0) {
+  if (length(missing) > 0) {
     abort_hcesfort("join", c(
       "{.arg intake} and {.arg use} must describe the same households.",
       "x" = "Households estimated in {.arg intake} without use estimated:

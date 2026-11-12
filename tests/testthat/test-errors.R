@@ -54,3 +54,33 @@ test_that("tryCatch() on hcesfort_error catches every type", {
   )
   expect_identical(caught, "caught")
 })
+
+# Missing required arguments and unclear messages (review of v0.1, M9, L3).
+test_that("every missing required argument is one classed error", {
+  err <- expect_error(adult_equivalents(hces_example$members),
+                      class = "hcesfort_error_argument")
+  expect_identical(err$args, c("reference_kcal", "weight_kg", "pal"))
+  expect_identical(err$arg, "reference_kcal")
+  expect_match(conditionMessage(err), "?adult_equivalents", fixed = TRUE)
+  err <- expect_error(flag_outliers(), class = "hcesfort_error_argument")
+  expect_identical(err$args, c("grams", "by", "scale", "level", "probs",
+                               "multiplier", "min_group"))
+  expect_error(check_crosswalk(hces_example$crosswalk),
+               class = "hcesfort_error_argument")
+  expect_error(inadequacy(), class = "hcesfort_error_argument")
+  expect_error(hces_schema(), class = "hcesfort_error_argument")
+})
+
+test_that("every exported function with required arguments checks them", {
+  ns <- asNamespace("hcesfort")
+  for (f in getNamespaceExports("hcesfort")) {
+    fn <- get(f, envir = ns)
+    if (!is.function(fn)) next
+    fm <- formals(fn)
+    req <- setdiff(names(fm)[vapply(fm, function(x) {
+      identical(x, quote(expr = ))
+    }, logical(1))], "...")
+    if (length(req) == 0) next
+    expect_error(fn(), class = "hcesfort_error_argument", label = f)
+  }
+})

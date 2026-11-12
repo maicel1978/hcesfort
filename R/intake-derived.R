@@ -37,16 +37,16 @@
 #' table(flagged$energy_plausible, useNA = "ifany")
 #' @export
 flag_energy_plausibility <- function(intake, column, min, max) {
+  check_required()
   require_hces(intake, c("hces_intake", "hces_scenario_intake"))
   x <- audit_check_rows(intake, "flag_energy_plausibility")
   column <- check_nutrient_column(column, x)
-  if (missing(min) || missing(max) || !is.numeric(min) || !is.numeric(max) ||
-        length(min) != 1 || length(max) != 1 || is.na(min) || is.na(max) ||
-        min > max) {
+  check_one_number(min, "min")
+  check_one_number(max, "max")
+  if (min > max) {
     abort_hcesfort("argument", c(
-      "{.arg min} and {.arg max} must be two numbers, {.arg min} first.",
-      "i" = "They have no default."
-    ), arg = "min")
+      "{.arg max} ({max}) is below {.arg min} ({min})."
+    ), arg = "max")
   }
   e <- x[[column]]
   out <- dplyr::as_tibble(x)
@@ -105,6 +105,7 @@ flag_energy_plausibility <- function(intake, column, min, max) {
 #' summary(d$iron_mg_per_1000kcal)
 #' @export
 nutrient_density <- function(intake, energy, per = 1000) {
+  check_required()
   require_hces(intake, c("hces_intake", "hces_scenario_intake"))
   x <- audit_check_rows(intake, "nutrient_density")
   energy <- check_nutrient_column(energy, x, "energy")

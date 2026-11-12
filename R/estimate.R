@@ -74,6 +74,7 @@ estimate_prevalence <- function(design, x, value, statistic = "proportion",
                                 by = NULL, domain = NULL, domain_from = NULL,
                                 ci_method = "logit", level = 0.95,
                                 df = "domain") {
+  check_required()
   require_design(design)
   require_hces(x, "hces_tbl")
   check_estimate_args(design, x, statistic, by, ci_method, level, df)

@@ -84,6 +84,7 @@ audit_check_rows <- function(x, step) {
 #' @seealso [audit_log()], [hcesfort_errors].
 #' @export
 restore_audit <- function(x, from) {
+  check_required()
   require_hces(from, "hces_tbl")
   if (!is.data.frame(x)) {
     abort_hcesfort("argument", c(

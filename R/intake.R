@@ -75,6 +75,7 @@
 #' subset(audit_log(intake), step == "apparent_intake")
 #' @export
 apparent_intake <- function(content, afe, households, outliers = NULL) {
+  check_required()
   require_hces(content, "hces_nutrient_content")
   require_hces(afe, "hces_afe")
   x <- audit_check_rows(content, "apparent_intake")

@@ -75,6 +75,7 @@ apply_scenario <- function(intake, use, scenarios,
                            conversions = hcesfort::ref_conversions,
                            compliance_model = NULL,
                            baseline_label = "baseline") {
+  check_required()
   require_hces(intake, "hces_intake")
   require_hces(use, "hces_vehicle_use")
   x <- audit_check_rows(intake, "apply_scenario")

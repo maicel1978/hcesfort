@@ -531,6 +531,13 @@ implementation:
 | P85 | medium | **Gate on vehicle records without grams.** `vehicle_coverage()` counts them (`n_records_no_grams`) and the scenario adds nothing for them; `apply_scenario()` writes a log note (correction 1), but no threshold acts on it. A required `min_records_used` on the vehicle side would mirror the intake gate. | The added amount is understated where the vehicle is bought in units without a conversion. | after A3 |
 | P86 | medium | **Replacing a flagged quantity by the food's median.** Tang et al. 2021 (p. 107) replace outlying quantities with the median of the food item over the whole population. A third choice for `apparent_intake(outliers = )` next to P68 (capping at the fence), with the grams changed in the log. The paper does not give the rule that identifies an outlier. | M1 of the review: exclusion sets the food to zero. | before A4 |
 
+## Open items from the implementation of 11b.1 to 11b.7 (2026-11-12)
+
+| Id | Priority | Proposal | Why | Task |
+|---|---|---|---|---|
+| P87 | medium | **Choices taken in implementation, to confirm.** (1) `ear_bioavailability` is an optional column of `requirements` (absent = not stated); only `cutpoint_valid` is required. (2) The grams share reported by the record-loss gate is read from the `apparent_intake` rows of the log (all minus not included, and used), because `hces_intake` keeps only per-household shares. (3) `vehicle_coverage()` requires `n_members` in `afe` (`hcesfort_error_schema`). (4) A degenerate proportion is handled the same way for every `ci_method`, `"beta"` included. (5) The outlier decision compared by `apply_scenario()` is a string: the `outliers` choice and the rule of the last `flag_outliers()` in the log. (6) The vehicle-side note of correction 1 already existed as `added_understated` (households); no new row was added. | CLAUDE.md: no interpretation chosen silently. | 12 |
+| P88 | low | **`check_required()` reads the caller's formals.** It uses `sys.function(-1)`; a wrapper that forwards arguments would be checked against its own formals. A test checks every exported function. | Robustness. | v0.2 |
+
 ## Questions for the maintainer
 
 Answered on 2026-11-12: see "Decisions (2026-11-12)" above. Kept for the

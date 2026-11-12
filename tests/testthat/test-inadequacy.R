@@ -286,3 +286,23 @@ test_that("ref_requirements: iron is not a cut-point nutrient", {
   expect_equal(r$ear_bioavailability[r$nutrient == "iron"], 0.18)
   expect_true(all(r$cutpoint_valid[r$nutrient != "iron"]))
 })
+
+test_that("an unusable distribution names the rule it breaks", {
+  d <- in_dist()
+  d$requirement_mg_d <- c(2, 8, 4)
+  err <- expect_error(inadequacy(as_run(), in_req(),
+                                 distribution = list(iron = d),
+                                 bioavailability = list(iron = 0.2),
+                                 min_coverage = 0, min_records_used = 0),
+                      class = "hcesfort_error_value")
+  expect_identical(err$failed, "requirements must not decrease")
+  d <- in_dist()
+  d$percentile <- c(0, 50, 50)
+  err <- expect_error(inadequacy(as_run(), in_req(),
+                                 distribution = list(iron = d),
+                                 bioavailability = list(iron = 0.2),
+                                 min_coverage = 0, min_records_used = 0),
+                      class = "hcesfort_error_value")
+  expect_identical(err$failed, c("percentiles must be inside (0, 100)",
+                                 "percentiles must be strictly increasing"))
+})

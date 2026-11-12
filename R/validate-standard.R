@@ -44,6 +44,7 @@
 #' validate_households(households)
 #' @export
 validate_households <- function(x) {
+  check_required()
   validate_table(x, schema_households(), "validate_households", function(x) {
     list(food_module_nonresponse = if (!is.null(x$food_module_response)) {
       !x$food_module_response
@@ -54,6 +55,7 @@ validate_households <- function(x) {
 #' @rdname validate_households
 #' @export
 validate_members <- function(x) {
+  check_required()
   validate_table(x, schema_members(), "validate_members", function(x) {
     list(missing_age = is.na(x$age_years), missing_sex = is.na(x$sex))
   })
@@ -62,6 +64,7 @@ validate_members <- function(x) {
 #' @rdname validate_households
 #' @export
 validate_acquisitions <- function(x) {
+  check_required()
   flags <- function(x) {
     list(
       missing_quantity = is.na(x$quantity),

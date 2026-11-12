@@ -56,6 +56,7 @@
 #' @export
 flag_outliers <- function(grams, by, scale, level, probs, multiplier,
                           min_group, afe = NULL, type = 7) {
+  check_required()
   require_hces(grams, "hces_grams")
   g <- audit_check_rows(grams, "flag_outliers")
   scale <- check_required_choice(scale,

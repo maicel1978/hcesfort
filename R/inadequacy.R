@@ -106,6 +106,7 @@
 inadequacy <- function(x, requirements, distribution = NULL,
                        bioavailability = NULL, min_coverage,
                        min_records_used) {
+  check_required()
   require_hces(x, c("hces_intake", "hces_scenario_intake"))
   x <- audit_check_rows(x, "inadequacy")
   nutrients <- attr(x, "nutrients", exact = TRUE)
