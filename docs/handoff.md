@@ -1,88 +1,90 @@
 # Handoff
 
 - **Date:** 2026-11-12
-- **Model that worked:** Opus 5.5
+- **Session:** critical review of v0.1 (tasks 2 to 11); no package code
+  written. Model: see the trailer of the commit.
 - **Branch:** `main`
 
 ## What was done
 
 | Commit | Content |
 |---|---|
-| `9c09600` | `as_hces_design()`, `estimate_prevalence()`, `estimate_difference()`, `flag_precision()`; `survey` and `srvyr` in Imports; drafts removed from `docs/` (tasks 11.1–11.3) |
-| this commit | `NEWS.md`, specification, roadmap, self-review P82–P84, decisions of task 11 recorded (11.4) |
+| this commit | `docs/review-v0.1.md`: end-to-end run on `hces_example` with its frictions, findings by priority (file, line, proposal), mutation check of the tests, gaps for v0.1 and for the ENGIH acceptance, integration with six packages, the ten corrections in order with the model for each |
 
-Earlier in the same session: tasks 9 and 10 (see `git log`, commits
-`2b2ea2f` to `b0b29f8`).
+State: `devtools::test()` passes, `devtools::check()` 0/0/0,
+`lintr::lint_package()` clean with the package installed (536 false
+`object_usage_linter` lints without it: review, section 8).
 
-State: `devtools::check()` 0/0/0, `lintr::lint_package()` clean, all tests
-pass, coverage 100% of `R/` by `covr` (the last uncovered line was
-tested before this commit). Every estimator agrees with `survey` on a
-hand-built design to 1e-8.
-
-Why the session stops: task 11 is closed; task 12 (vignettes) is assigned to
-Sonnet in `docs/model-routing.md`.
+Task 11 stays closed. Task 12 (vignettes) is **not** the next step any more:
+the review found four high-priority defects (H1 to H4) and an example
+dataset that cannot carry a vignette (H6).
 
 ## Exact next step
 
-Task 12: vignettes in English (the Spanish version of the main vignette is
-added in this task too, CLAUDE.md): from the standard tables to risk by
-scenario on `hces_example`, the full chain being
-`convert_units()` → `unfortified_baseline()` → `link_composition()` →
-`adult_equivalents()` → `apparent_intake()` → `vehicle_coverage()` →
-`apply_scenario()` → `inadequacy()` / `above_ul()` → `as_hces_design()` →
-`estimate_prevalence()` / `estimate_difference()`; how to write an adapter;
-plotting with the user's `ggplot2` code. The examples of each help page
-already run that chain and can be the starting point. P71 (mapping
-`ref_who2009_flour` rows to scenarios, five lines, vitamin A form as the
-user's reading) belongs in the main vignette. `knitr`, `rmarkdown` and
-`ggplot2` go to Suggests.
+1. The maintainer answers the five questions of section 11 of
+   `docs/review-v0.1.md`.
+2. One **Fable** session writes a single short design note for corrections
+   1, 2, 3, 8 and 10 of section 10 (record-loss threshold, `cutpoint_valid`,
+   household flags as domains, audit API for adapters, `reference_energy()`
+   and per-capita vehicle grams, P60), and accepts correction 4.
+3. **Opus** implements corrections 1 to 8 and 10 in that order, one commit
+   each, then recalibrates `hces_example` (correction 5).
+4. **Sonnet** does correction 9 (limits of the method, README) with task 12.
 
 ## Open questions
 
-None blocking. P75, P79 and P82 list the choices taken in implementation
-of tasks 9–11, for the maintainer to confirm or change.
+Section 11 of `docs/review-v0.1.md` (five questions, each with the
+recommended option). None was decided in this session.
+
+Sources not opened in this session (network limit): the full text of Tang
+et al. 2022, the MIMI papers and IOM 2000 (*Applications in Dietary
+Assessment*). Section 9 of the review marks what was checked.
 
 ## Recommended model for the next session
 
-**Sonnet 5.5**: task 12 (vignettes).
+**Fable**: the design note of step 2 (contracts and exported interfaces).
 
 ## Maintainer review points
 
-1. **The upper-level units read for task 10.1** (IOM 1998, pp. 280 and 282;
-   IOM 2001, pp. 127 and 143–145), read through the online reader of the
-   National Academies Press.
+1. **The coverage gate does not see lost records (H1).** A third of the
+   included records never reach the intake and every coverage is 1.
 
    ```r
    library(hcesfort)
-   ref_requirements[, c("nutrient", "unit", "ul", "ul_unit", "ul_applies_to")]
-   ref_conversions[, c("from_form", "ul_form", "ul_form_location")]
-   ```
-
-2. **An estimate against survey, on the example.**
-
-   ```r
-   g <- convert_units(hces_example$acquisitions, hces_example$unit_factors,
-                      priority = "food")
-   afe <- adult_equivalents(hces_example$members, reference_kcal = 2290.8,
+   ex <- hces_example
+   g <- convert_units(ex$acquisitions, ex$unit_factors, priority = "food")
+   afe <- adult_equivalents(ex$members, reference_kcal = 2290.8,
                             weight_kg = c(female = 55, male = 65), pal = 1.76)
-   use <- vehicle_coverage(g, hces_example$vehicles, afe,
-                           hces_example$households)
-   d <- as_hces_design(hces_example$households, lonely_psu = "adjust")
-   estimate_prevalence(d, use, "acquired", by = "region")
+   n <- nutrient_registry(ex$nutrients)
+   b <- unfortified_baseline(ex$composition, ex$enrichment, n)
+   l <- link_composition(g, ex$crosswalk, b)
+   i <- apparent_intake(l, afe, ex$households)
+   table(l$food_code[l$include], l$composition_status[l$include])
+   ok <- i$intake_status == "estimated"
+   summary((i$n_records_used / i$n_records)[ok])
+   range(i$iron_mg_coverage[ok])
    ```
 
-3. **A paired difference between scenarios** (the mean of the
-   within-household difference equals the difference of the means when both
-   scenarios have the same households).
+2. **Iron by cut-point without warning (H2), and the domain that cannot be
+   used (H3).**
 
    ```r
-   n <- nutrient_registry(hces_example$nutrients)
-   b <- unfortified_baseline(hces_example$composition,
-                             hces_example$enrichment, n)
-   i <- apparent_intake(link_composition(g, hces_example$crosswalk, b), afe,
-                        hces_example$households)
-   s <- apply_scenario(i, use, hces_example$scenarios,
+   use <- vehicle_coverage(g, ex$vehicles, afe, ex$households)
+   s <- apply_scenario(i, use, ex$scenarios,
                        compliance_model = "average_content")
    r <- inadequacy(s, ref_requirements, min_coverage = 0.8)
-   estimate_difference(d, r, "p_inadequate", reference = "baseline")
+   unique(r[c("nutrient", "method", "ear")])
+   d <- as_hces_design(ex$households, lonely_psu = "adjust")
+   fe <- flag_energy_plausibility(s, "energy_kcal", 500, 6000)
+   r2 <- inadequacy(fe, ref_requirements, min_coverage = 0.8)
+   try(estimate_prevalence(d, r2, "p_inadequate",
+                           domain = "energy_plausible"))
+   ```
+
+3. **A proportion of zero, and the realism of the example (M5, H6).**
+
+   ```r
+   u <- above_ul(s, ref_requirements, min_coverage = 0.8)
+   estimate_prevalence(d, u[u$nutrient == "folate", ], "above_ul_added")
+   quantile(i$energy_kcal, c(0.1, 0.5, 0.9), na.rm = TRUE)
    ```
