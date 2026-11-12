@@ -3,12 +3,13 @@
 # three explicit factors (docs/design-task9.md, section 5):
 #   level_mg_kg x nutrient_fraction x (mg -> unit) / 10 x equivalent factor.
 
-# Grams per unit of each mass unit.
-mass_units <- c(g = 1, mg = 1e-3, ug = 1e-6)
+# Units of each mass unit in one mg (written so that the factors are exact
+# in floating point: 1000 ug, not 1e-3 / 1e-6).
+mass_units <- c(g = 1e-3, mg = 1, ug = 1000)
 
-# Units of a mass of `n` mg per kg, expressed per 100 g: mg/kg -> unit/100 g.
+# Factor from mg per kg to `unit` per 100 g.
 mg_kg_to_per_100g <- function(unit) {
-  unname(mass_units[["mg"]] / mass_units[unit] / 10)
+  unname(mass_units[unit] / 10)
 }
 
 # One row per amount a scenario row adds: to the column of its nutrient

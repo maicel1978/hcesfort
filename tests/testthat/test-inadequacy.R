@@ -201,3 +201,14 @@ test_that("invariant: row order of requirements", {
   k <- function(r) paste(r$scenario, r$household_id, r$nutrient)
   expect_identical(r2$p_inadequate[match(k(r1), k(r2))], r1$p_inadequate)
 })
+
+test_that("no nutrient with an EAR gives no rows; missing intakes stay NA", {
+  req <- in_req()
+  req$ear <- NA_real_
+  r <- inadequacy(as_run(), req, min_coverage = 0)
+  expect_identical(nrow(r), 0L)
+  expect_s3_class(r, "hces_inadequacy")
+  t <- distribution_table(in_dist(), "iron", "mg", NULL)
+  expect_identical(p_inadequate_probability(c(NA, NA), 0.2, t),
+                   c(NA_real_, NA_real_))
+})

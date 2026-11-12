@@ -131,6 +131,25 @@
   optional column `form`, and `nutrient_fraction` must be missing when the
   basis is `nutrient`. `nutrient_density()` and `flag_energy_plausibility()`
   accept the scenario table.
+* `inadequacy()`: per household, scenario and nutrient, the probability of
+  an intake below the requirement: the EAR cut-point, or the probability
+  approach for a nutrient whose requirement distribution the caller gives
+  (iron), with the bioavailability as a required argument (the original's
+  10% has no source). A nutrient whose share of grams with a composition
+  value is below `min_coverage` is an error (`hcesfort_error_coverage`):
+  the original reported a share below the EAR for vitamin D with much of
+  the grams missing, summed as zero (E21).
+* `above_ul()`: per household, scenario and nutrient, whether the intake the
+  UL applies to is above it: the total intake for iron and zinc; for folic
+  acid and preformed vitamin A the form only, added by the scenarios and,
+  when the composition has it, already in the diet (E7). The original
+  compared the added amount only and called it an upper bound; it is a
+  lower bound, now named so (`ul_scope = "form_added_only"`). One row per
+  nutrient and one table of ULs remove E13 and E14.
+* Reference tables: `ref_requirements$ul_unit` states the unit of each UL
+  (the folate UL is in µg of folic acid, not DFE; the vitamin A UL in µg of
+  preformed vitamin A); `ref_conversions$ul_form` links a form to the upper
+  level it counts towards. New error class `hcesfort_error_coverage`.
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is

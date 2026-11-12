@@ -55,7 +55,7 @@
 #'   `method` (`"ear_cutpoint"` or `"probability"`), `ear`,
 #'   `bioavailability` and `p_inadequate` (missing when the household is not
 #'   `estimated`).
-#' @seealso `above_ul()`, [apply_scenario()].
+#' @seealso [above_ul()], [apply_scenario()].
 #' @examples
 #' nutrients <- nutrient_registry(hces_example$nutrients)
 #' baseline <- unfortified_baseline(hces_example$composition,

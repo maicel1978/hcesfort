@@ -94,8 +94,8 @@ not tied to the nutrients of the first case.
 | Baseline | `unfortified_baseline()` | composition + enrichment → baseline composition (removes enrichment only) |
 | Vehicles | `vehicle_coverage()` | grams + vehicles + equivalents → vehicle use per household (acquired, grams per AFE), by vehicle, group and combination |
 | Scenarios | `apply_scenario()` | baseline intake + vehicle use + scenarios → total and added intake per household and scenario, baseline included |
-| Risk | `inadequacy()` | intake + requirements; method `"ear_cutpoint"` or `"iron_probability"` (bioavailability as an argument) |
-| Upper level | `above_ul()` | intake + UL and the form it applies to |
+| Risk | `inadequacy()` | intake + requirements (+ requirement distributions) → probability below the requirement per household, scenario and nutrient: EAR cut-point, or the probability approach for the nutrients given a distribution (bioavailability as a required argument); minimum coverage required |
+| Upper level | `above_ul()` | intake + UL, its unit and the form it applies to → above the UL per household, scenario and nutrient: total intake, or the form (added part, diet part where the composition has it) |
 | Density | `nutrient_density()` | intake + energy → per 1,000 kcal |
 | Design | `as_hces_design()` | households + result → `srvyr` design on the full sample |
 | Estimation | `estimate_prevalence()`, `estimate_difference()` | design → proportions, means and medians with intervals by domain; paired differences between scenarios |

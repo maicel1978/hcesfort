@@ -101,5 +101,5 @@ aggregate(p_inadequate ~ nutrient + bioavailability, risk, mean,
           na.action = na.pass)
 }
 \seealso{
-\code{above_ul()}, \code{\link[=apply_scenario]{apply_scenario()}}.
+\code{\link[=above_ul]{above_ul()}}, \code{\link[=apply_scenario]{apply_scenario()}}.
 }

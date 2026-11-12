@@ -458,6 +458,22 @@ the approved design:
 | P77 | low | **A `form` given for a nutrient in a plain mass unit is not used.** For iron (`mg`), `form = "ferrous_fumarate"` is accepted and ignored: the factor is 1 and no form column is returned. A note in the log would make that visible. | Nothing silent. | 10 or 12 |
 | P78 | low | **`hces_example` has no md5 entry.** `data-raw/MD5` registers the reference CSVs; the example is rebuilt deterministically by its script. Register `data/hces_example.rda` if the build is to be checked like the reference tables. | Reproducibility rule of CLAUDE.md. | 12 |
 
+## Open items from task 10 (2026-11-12)
+
+Self-review of `inadequacy()` and `above_ul()`, as an rOpenSci reviewer
+would. Fixed in the task: the factor from mg per kg to µg per 100 g was
+computed as `1e-3 / 1e-6 / 10`, which is not exact in floating point and
+made an amount equal to the UL compare as above it (now `1000 / 10`); a
+requirements table without any EAR or UL failed on column types (it now
+returns no rows). Choices taken in implementation, within the approved
+design:
+
+| ID | Priority | Item | Rationale | Roadmap task |
+|---|---|---|---|---|
+| P79 | medium | **Choices of task 10 taken in implementation.** (1) A nutrient named in `distribution` needs no row in `requirements`. (2) The overall coverage is computed on the rows of the first scenario (the coverage columns are those of the baseline in every scenario); when no estimated household has grams it is `NA`, not an error, and the log says so. (3) With several forms of one UL category in the registry, the coverage of the diet part is the smallest of their coverages. (4) A form category with a diet part but no scenario adding the form is `form_diet_and_added` with nothing added. (5) For `not_assessable` rows both comparisons and `amount_added` are missing. (6) `tails_fixed` counts rows (household × scenario), not households. (7) The UL tables were read through the online reader of the National Academies Press on 2026-11-12; the places are in `data-raw/SOURCES.md` and are a review point of the handoff. | CLAUDE.md: no interpretation chosen silently. | 10 |
+| P80 | low | **The probability approach ignores a requirement whose percentiles tie.** `stats::approx()` collapses tied requirements by their mean percentile; the shipped tables have none. A tie could instead be an error. | Edge case. | v0.2 |
+| P81 | low | **`above_ul()` cannot compare a UL given in IU.** `retinol_iu` belongs to `preformed_vitamin_a`, but no scenario adds IU (levels are in mg per kg), so it never appears; a composition column in IU would have to be converted by the adapter. | Units explicit. | v0.2 |
+
 ## Questions for the maintainer
 
 Answered on 2026-11-12: see "Decisions (2026-11-12)" above. Kept for the
