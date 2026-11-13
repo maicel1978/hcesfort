@@ -305,6 +305,12 @@
 * `flag_precision()` adds the column `precision_status`: the first rule
   that applies of `small_cell` (`n < min_n`), `exact` (`se == 0`),
   `wide_interval` and `ok` (R7). `low_precision` keeps its meaning.
+* Label table (`hces_schema("labels")`): `read_labels(file, needed)`
+  reads and checks the labels of every code a report prints, listing every
+  missing code in one error with the lines to add; `label_codes()` turns
+  codes into a factor of labels in table order, with no fallback to the
+  code (R2). `read_decisions(file)` reads the decisions taken with the data
+  (`hces_schema("decisions")`, DR7).
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is

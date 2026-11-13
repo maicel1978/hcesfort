@@ -10,7 +10,8 @@ hces_schema(table)
 \item{table}{Name of the table: \code{"households"}, \code{"members"},
 \code{"acquisitions"}, \code{"unit_factors"}, \code{"crosswalk"}, \code{"composition"},
 \code{"composition_fills"}, \code{"enrichment"}, \code{"vehicles"}, \code{"food_groups"},
-\code{"scenarios"}, \code{"energy_requirements"} or \code{"bmr_equations"}.}
+\code{"scenarios"}, \code{"energy_requirements"}, \code{"bmr_equations"}, \code{"labels"}
+or \code{"decisions"}.}
 }
 \value{
 A tibble with columns \code{column}, \code{type}, \code{required}, \code{na}
