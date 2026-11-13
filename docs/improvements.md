@@ -477,6 +477,18 @@ Resolved by the design: P106 (labels instead of codes: section 4). Moved:
 P102 (Quarto in CI) to step 12c.13. P103 loses its points on headlines,
 which no longer exist (R4).
 
+## Open items from the implementation of 12c.1 to 12c.8 (2026-11-13)
+
+Self-review of steps 12c.1 to 12c.8 (Opus). Coverage of the new files:
+100% except `R/estimate-unlinked-helpers.R` (98.5%).
+
+| Id | Priority | Proposal | Why | Task |
+|---|---|---|---|---|
+| P112 | medium | **A record with a missing `expenditure_lcu` counts in neither the numerator nor the denominator of the expenditure shares** (`linkage_ladder()`, `unmatched_foods()`, `estimate_unlinked()`); it is documented but not counted anywhere. The ladder could add `n_no_expenditure`, or the readiness report could print the count in the table note. | Nothing silent. | 12c.9 |
+| P113 | low | **`precision_status` is `NA` for a missing estimate with `n >= min_n`** (a zero total, for instance). The design lists four statuses and does not cover it; `NA` was chosen so that no missing estimate reads as `ok`. | Maintainer to confirm, or add a fifth status (`missing`). | 12c.9 |
+| P114 | low | **`linkage_ladder()`, `unmatched_foods()` and the readiness functions return plain tibbles**: a change in the number of rows of `x` made outside the package is not recorded, as it is by the estimators (`audit_check_rows()`). | Consistency of the audit log. | v0.2 |
+| P115 | low | **`readiness_verdict()` treats a domain absent from the inventory as absent from `households`** (`missing_input`). The template passes the same `domains` to both functions, so this only matters for direct use. | Clearer error for direct use. | v0.2 |
+
 ## Open items from task 2 (2026-11-12)
 
 Self-review of task 2, done as an rOpenSci reviewer would. Items in scope
