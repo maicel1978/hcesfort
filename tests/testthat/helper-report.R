@@ -12,26 +12,6 @@ template_calls <- function(file) {
   unique(data$text[data$token == "SYMBOL_FUNCTION_CALL"])
 }
 
-# Knit the template of `lang` in a temporary folder with the params of its
-# YAML header; returns the Markdown as one string.
-knit_template <- function(lang) {
-  dir <- withr::local_tempdir(.local_envir = parent.frame())
-  use_report_template(dir, lang)
-  withr::local_dir(dir)
-  env <- new.env(parent = globalenv())
-  env$params <- rmarkdown::yaml_front_matter("report.qmd")$params
-  knitr::knit("report.qmd", "report.md", quiet = TRUE, envir = env)
-  paste(readLines("report.md", encoding = "UTF-8"), collapse = "\n")
-}
-
-# The headline functions of the template, in an environment.
-template_headlines <- function() {
-  env <- new.env(parent = globalenv())
-  sys.source(system.file("report", "_headlines.R", package = "hcesfort"),
-             envir = env)
-  env
-}
-
 # Knit `report` ("readiness" or "results") of `lang` on hces_example in a
 # temporary folder, as Quarto would (no echo, errors stop the knit), after
 # appending `append` (lines of R) to _inputs.R and removing the files

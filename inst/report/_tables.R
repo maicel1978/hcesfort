@@ -67,3 +67,47 @@ print_table <- function(d, caption = NULL, headers = NULL) {
   shown <- gsub("{level}", 100 * choices$level, shown, fixed = TRUE)
   knitr::kable(d, col.names = shown, caption = caption, row.names = FALSE)
 }
+
+# Estimates for display (R7), from a table of flag_precision(): `keys`
+# are the label columns kept, `value` the name of the estimate column.
+# Values are scaled by `scale` (percent by default). A cell with fewer
+# households than `min_n` keeps its row with no value ("—"); an exact
+# estimate (the same value in every household) leaves the table, unless
+# `drop_exact` is FALSE, and is given in the sentence of exact_sentence().
+display <- function(e, keys, value, scale = pct, unit = "%",
+                    drop_exact = TRUE) {
+  e <- as.data.frame(e)
+  small <- e$precision_status %in% "small_cell"
+  exact <- drop_exact & e$precision_status %in% "exact"
+  out <- e[keys]
+  out$n <- e$n
+  out[[value]] <- ifelse(small, NA, scale(e$estimate))
+  out$ci_low <- ifelse(small, NA, scale(e$ci_low))
+  out$ci_high <- ifelse(small, NA, scale(e$ci_high))
+  out$precision_status <- term(e$precision_status, "precision_status")
+  cells <- vapply(seq_len(nrow(out)), function(i) {
+    paste(vapply(out[i, keys, drop = FALSE], as.character, ""),
+          collapse = ", ")
+  }, character(1))
+  sentence <- if (any(exact)) {
+    paste0(term("exact", "sentence"), ": ",
+           paste0(cells[exact], " = ", scale(e$estimate[exact]), unit,
+                  collapse = "; "), ".")
+  }
+  rownames(out) <- NULL
+  structure(out[!exact, , drop = FALSE], exact = sentence)
+}
+
+# The sentence of the exact estimates of a table of display(), or "".
+exact_sentence <- function(d) {
+  s <- attr(d, "exact")
+  if (is.null(s)) "" else s
+}
+
+# Text of each row of a verdict: "enabled", or the reason and its detail.
+verdict_text <- function(v) {
+  detail <- ifelse(v$reason %in% "threshold_not_met",
+                   term_list(v$detail, "check"), v$detail)
+  ifelse(v$enabled, term(rep("enabled", nrow(v)), "verdict"),
+         paste0(term(v$reason, "verdict_reason"), " (", detail, ")"))
+}

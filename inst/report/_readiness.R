@@ -113,10 +113,7 @@ energy_table <- function(flagged, column, by = NULL) {
 
 # Section 8. Sections by rows, national and each domain by columns.
 verdict_table <- function(v) {
-  detail <- ifelse(v$reason %in% "threshold_not_met",
-                   term_list(v$detail, "check"), v$detail)
-  cell <- ifelse(v$enabled, term(rep("enabled", nrow(v)), "verdict"),
-                 paste0(term(v$reason, "verdict_reason"), " (", detail, ")"))
+  cell <- verdict_text(v)
   where <- ifelse(is.na(v$domain), "national", v$domain)
   out <- data.frame(section = term(unique(v$section), "section"))
   for (w in unique(where)) out[[w]] <- cell[where == w]

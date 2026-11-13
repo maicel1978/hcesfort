@@ -16,28 +16,34 @@ exist; files already there are never overwritten.}
 The paths of the copied files, invisibly.
 }
 \description{
-Copy the Quarto template of the results report to a folder. The report
-is laid out by the questions a decision-maker asks (which nutrients are
-at risk, for whom, from which foods, how far each vehicle reaches, who
-is left out, what each scenario would change, and what the figures
-cannot answer), each answered by a headline with its confidence
-interval, one exhibit and the hcesfort function behind it. The method
-goes to annexes, mapped to the STROBE-nut checklist.
+Copy the Quarto templates of the two country reports to a folder:
 }
 \details{
-The template renders as shipped on \link{hces_example}. To use it with a
-survey, replace the block marked \code{ADAPTER} of \verb{_results.R} with the
-standard tables and choices of the survey, set the \code{params} of the YAML
-header of \code{report.qmd} (none has a default in the package), and edit
-\code{actions.csv} (each action: scenario from, scenario to) and
-\code{decisions.csv} (decisions that condition the interpretation).
+\itemize{
+\item \code{readiness.qmd}, the \strong{data readiness report}: can the survey
+support the analysis, and what is left to do before it can? Variable
+inventory, quality thresholds, linkage ladder, work queue of foods not
+linked, unlinked share by domain, plausibility of the apparent energy,
+decisions taken with the data and the readiness verdict.
+\item \code{results.qmd}, the \strong{results report}: coverage of the vehicles,
+quantity among the households that acquire them, risk of inadequate
+intake without fortification, fortification scenarios and the
+contribution of each food group. Each section, nationally and by
+domain, is rendered only when the readiness verdict enables it;
+otherwise one sentence says why.
+}
 
-Headlines are built by \verb{_headlines.R}: each picks the wording the
-estimates support (two overlapping intervals are not ranked) and stops
-the render with a message when an assumption fails, so a report that
-renders is one whose headlines hold. Figures are plain \code{ggplot2} code in
-\verb{_figures.R}. Rendering needs Quarto and the suggested packages
-\code{ggplot2} and \code{knitr}; copying needs neither.
+Both reports read the same inputs: \verb{_inputs.R} holds the standard
+tables of the survey, the steps that take choices and one list
+\code{choices} (thresholds, nutrients, domains, comparators). None has a
+default in the package; the values shipped are those of \link{hces_example}.
+The analyst also edits \code{labels.csv} (the label of every code printed,
+in the language of the report: nothing is printed as a code) and
+\code{decisions.csv} (the decisions taken with the data and their evidence).
+\code{terms.csv} labels the package vocabulary. Tables and figures are plain
+code in \verb{_tables.R} and \verb{_figures.R} (\code{ggplot2}), meant to be edited.
+Rendering needs Quarto and the suggested packages \code{ggplot2} and
+\code{knitr}; copying needs neither.
 }
 \examples{
 dir <- file.path(tempdir(), "report")
@@ -46,6 +52,6 @@ basename(files)
 unlink(dir, recursive = TRUE)
 }
 \seealso{
-\code{\link[=food_group_shares]{food_group_shares()}}, \code{\link[=estimate_households]{estimate_households()}},
-\code{\link[=estimate_difference]{estimate_difference()}}, \code{\link[=audit_summary]{audit_summary()}}.
+\code{\link[=readiness_verdict]{readiness_verdict()}}, \code{\link[=linkage_ladder]{linkage_ladder()}},
+\code{\link[=estimate_households]{estimate_households()}}, \code{\link[=estimate_difference]{estimate_difference()}}.
 }

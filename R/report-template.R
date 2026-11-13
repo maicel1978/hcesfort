@@ -1,33 +1,37 @@
 #' Copy the country report template
 #'
-#' Copy the Quarto template of the results report to a folder. The report
-#' is laid out by the questions a decision-maker asks (which nutrients are
-#' at risk, for whom, from which foods, how far each vehicle reaches, who
-#' is left out, what each scenario would change, and what the figures
-#' cannot answer), each answered by a headline with its confidence
-#' interval, one exhibit and the hcesfort function behind it. The method
-#' goes to annexes, mapped to the STROBE-nut checklist.
+#' Copy the Quarto templates of the two country reports to a folder:
 #'
-#' The template renders as shipped on [hces_example]. To use it with a
-#' survey, replace the block marked `ADAPTER` of `_results.R` with the
-#' standard tables and choices of the survey, set the `params` of the YAML
-#' header of `report.qmd` (none has a default in the package), and edit
-#' `actions.csv` (each action: scenario from, scenario to) and
-#' `decisions.csv` (decisions that condition the interpretation).
+#' * `readiness.qmd`, the **data readiness report**: can the survey
+#'   support the analysis, and what is left to do before it can? Variable
+#'   inventory, quality thresholds, linkage ladder, work queue of foods not
+#'   linked, unlinked share by domain, plausibility of the apparent energy,
+#'   decisions taken with the data and the readiness verdict.
+#' * `results.qmd`, the **results report**: coverage of the vehicles,
+#'   quantity among the households that acquire them, risk of inadequate
+#'   intake without fortification, fortification scenarios and the
+#'   contribution of each food group. Each section, nationally and by
+#'   domain, is rendered only when the readiness verdict enables it;
+#'   otherwise one sentence says why.
 #'
-#' Headlines are built by `_headlines.R`: each picks the wording the
-#' estimates support (two overlapping intervals are not ranked) and stops
-#' the render with a message when an assumption fails, so a report that
-#' renders is one whose headlines hold. Figures are plain `ggplot2` code in
-#' `_figures.R`. Rendering needs Quarto and the suggested packages
-#' `ggplot2` and `knitr`; copying needs neither.
+#' Both reports read the same inputs: `_inputs.R` holds the standard
+#' tables of the survey, the steps that take choices and one list
+#' `choices` (thresholds, nutrients, domains, comparators). None has a
+#' default in the package; the values shipped are those of [hces_example].
+#' The analyst also edits `labels.csv` (the label of every code printed,
+#' in the language of the report: nothing is printed as a code) and
+#' `decisions.csv` (the decisions taken with the data and their evidence).
+#' `terms.csv` labels the package vocabulary. Tables and figures are plain
+#' code in `_tables.R` and `_figures.R` (`ggplot2`), meant to be edited.
+#' Rendering needs Quarto and the suggested packages `ggplot2` and
+#' `knitr`; copying needs neither.
 #'
 #' @param path Folder to copy the template to. Created if it does not
 #'   exist; files already there are never overwritten.
 #' @param lang `"en"` (English) or `"es"` (Spanish).
 #' @returns The paths of the copied files, invisibly.
-#' @seealso [food_group_shares()], [estimate_households()],
-#'   [estimate_difference()], [audit_summary()].
+#' @seealso [readiness_verdict()], [linkage_ladder()],
+#'   [estimate_households()], [estimate_difference()].
 #' @examples
 #' dir <- file.path(tempdir(), "report")
 #' files <- use_report_template(dir, lang = "en")
