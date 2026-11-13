@@ -121,6 +121,18 @@ test_that("impossible values are value errors, all reported at once", {
   expect_identical(err$rows, c(1L, 3L, 4L))
 })
 
+test_that("expenditure_lcu is optional, may be missing, not negative", {
+  a <- fixture_acquisitions()
+  a$expenditure_lcu <- c(10, NA, 0, 2.5)
+  expect_s3_class(validate_acquisitions(a), "hces_acquisitions")
+  a$expenditure_lcu[[1]] <- -1
+  err <- expect_error(validate_acquisitions(a), class = "hcesfort_error_value")
+  expect_identical(err$columns, "expenditure_lcu")
+  expect_identical(err$rows, 1L)
+  a$expenditure_lcu <- as.character(a$expenditure_lcu)
+  expect_error(validate_acquisitions(a), class = "hcesfort_error_schema")
+})
+
 test_that("infinite numbers are value errors", {
   a <- fixture_acquisitions()
   a$quantity[1] <- Inf

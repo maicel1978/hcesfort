@@ -13,7 +13,9 @@ units, with two domains: \code{region} and an invented
 each).}
 \item{members}{Members of the households, with age, sex and pregnancy
 and lactation flags.}
-\item{acquisitions}{Food acquisitions in survey units.}
+\item{acquisitions}{Food acquisitions in survey units, with an
+invented expenditure (\code{expenditure_lcu}) for every record, also
+those without quantity or unit factor.}
 \item{unit_factors}{Factors from survey units to grams, millilitres
 or pieces.}
 \item{crosswalk}{Survey foods matched to the composition table.}

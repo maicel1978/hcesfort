@@ -71,7 +71,11 @@ schema_acquisitions <- function() {
                required = FALSE, na = TRUE),
     schema_col("household_share", "number", paste(
       "share of the acquisition destined to the household"
-    ), required = FALSE, na = TRUE, bounds = "[0, 1]")
+    ), required = FALSE, na = TRUE, bounds = "[0, 1]"),
+    schema_col("expenditure_lcu", "number", paste(
+      "amount paid for the record, or its imputed value, in local currency",
+      "units, for the period of `period_days`"
+    ), required = FALSE, na = TRUE, bounds = "[0, Inf)")
   )
 }
 

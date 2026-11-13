@@ -279,6 +279,11 @@
   which gains an invented socioeconomic domain, `expenditure_group`.
   `ggplot2`, `knitr` and `rmarkdown` join Suggests (used by the template
   and its tests only).
+* `acquisitions` gains the optional column `expenditure_lcu`: the amount
+  paid for the record, or its imputed value, in local currency units for
+  the period of `period_days`. It is the only measure known for records
+  without grams, and feeds the expenditure shares of the data readiness
+  report. `hces_example` gains an invented one.
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is

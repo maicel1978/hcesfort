@@ -27,7 +27,8 @@
 # - a food with two vehicles of different groups; a scenario with a
 #   compound-based level;
 # - a grouping of foods that leaves one food (egg) without a group;
-# - an invented socioeconomic domain, `expenditure_group`, Q1 to Q5.
+# - an invented socioeconomic domain, `expenditure_group`, Q1 to Q5;
+# - an invented expenditure for every acquisition, `expenditure_lcu`.
 
 set.seed(20261112)
 
@@ -123,6 +124,21 @@ acquisitions$quantity[[milk[[1]]]] <- 8
 pieces <- acquisitions$unit %in% c("piece", "bunch")
 acquisitions$quantity[pieces] <- pmax(1, round(acquisitions$quantity[pieces]))
 rownames(acquisitions) <- NULL
+# Expenditure in invented local currency units: an invented price per unit
+# of each food times the quantity, without the random generator so that the
+# other tables do not change. The milk record in cups has a price per cup;
+# the record without quantity has an amount paid (expenditure is the only
+# measure known for every record). Added 2026-11-13 (design reports v2,
+# section 3.1).
+price <- c(rice = 25, wheat_flour = 20, bread = 5, pasta = 0.1, beans = 45,
+           oil = 150, sugar = 25, milk = 60, egg = 7, chicken = 70,
+           banana = 5, biscuit = 0.15, local_herb = 15, pumpkin = 20)
+acquisitions$expenditure_lcu <- round(
+  price[acquisitions$food_code] * acquisitions$quantity, 2
+)
+acquisitions$expenditure_lcu[[milk[[1]]]] <- 8 * 15
+acquisitions$expenditure_lcu[[2]] <- 50
+acquisitions$expenditure_lcu <- unname(acquisitions$expenditure_lcu)
 
 unit_factors <- data.frame(
   unit = c("lb", "g", "l", "l", "l", "cup", "piece", "piece", "piece",

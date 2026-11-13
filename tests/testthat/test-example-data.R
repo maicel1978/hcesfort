@@ -27,6 +27,10 @@ test_that("the survey tables pass and their notes are the planted cases", {
   expect_identical(log$n_records[-1], c(1L, 1L, 1L))
   expect_true("sack" %in% e$acquisitions$unit)
   expect_setequal(unique(e$acquisitions$period_days), c(7, 30))
+  # Expenditure is known for every record, also those without grams.
+  expect_false(anyNA(e$acquisitions$expenditure_lcu))
+  expect_true(all(e$acquisitions$expenditure_lcu > 0))
+  expect_identical(e$acquisitions$expenditure_lcu[[2]], 50)
 })
 
 test_that("the user tables pass with the planted notes", {
