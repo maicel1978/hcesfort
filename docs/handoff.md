@@ -12,7 +12,7 @@
 | Commit | Step |
 |---|---|
 | `e7122c9` | 12c.9 (1/2): `_inputs.R` (one list `choices`), `_chain.R`, `_tables.R`, new figures in `_figures.R`, `en/labels.csv`, `en/terms.csv`; maintainer answers on P99, P103, P112, P113 recorded in `docs/improvements.md` |
-| see `git log` | 12c.9 (2/2): `_readiness.R`, `en/readiness.qmd`, new `en/decisions.csv` (`decision`, `choice`, `evidence`), tests U10, K1, K3, K5 (figures of this report), K10–K13 in `tests/testthat/test-report-readiness.R` |
+| `2333d33` | 12c.9 (2/2): `_readiness.R`, `en/readiness.qmd`, new `en/decisions.csv` (`decision`, `choice`, `evidence`), tests U10, K1, K3, K5 (figures of this report), K10–K13 in `tests/testthat/test-report-readiness.R` |
 
 `devtools::test()`: 1985 passed, 0 failed (1 skip: Quarto not
 installed). `devtools::check()`: 0 errors, 0 warnings, 0 notes.
