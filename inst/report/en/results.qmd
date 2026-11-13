@@ -1,0 +1,259 @@
+---
+title: "Fortification of staple foods: results"
+format:
+  html:
+    toc: true
+    embed-resources: true
+execute:
+  echo: false
+  warning: false
+params:
+  lang: "en"
+---
+
+<!--
+Results report of hcesfort (use_report_template()). Render the data
+readiness report first: this report shows only the sections its verdict
+enables. Inputs and choices live in _inputs.R, shared with readiness.qmd;
+do not set them here. Edit the title above and write your own text between
+the exhibits; guidance for the analyst stays in comments like this one and
+never reaches the output. The report states results: interpreting them is
+the analyst's work.
+Design: docs/design-reports-v2.md of the package, section 7.
+-->
+
+```{r setup}
+writeLines(utils::capture.output(utils::sessionInfo()),
+           "results-sessionInfo.txt")
+source("_inputs.R", local = TRUE)
+source("_chain.R", local = TRUE)
+source("_tables.R", local = TRUE)
+source("_figures.R", local = TRUE)
+source("_results.R", local = TRUE)
+lev <- 100 * choices$level
+small_note <- paste0(
+  "A dash marks a cell with fewer than ", choices$min_n, " households. ",
+  "Precision: a wide interval has a half-width above ",
+  pct(choices$max_half_width, 0), " points; its point is drawn hollow."
+)
+```
+
+```{r stop-if-not-ready, results = "asis"}
+if (!ready) {
+  cat("An essential input is absent: see the data readiness report.\n")
+  knitr::knit_exit()
+}
+```
+
+## Which households acquire each vehicle?
+
+```{r coverage, results = "asis"}
+if (!enabled("coverage")) {
+  cat(disabled_sentence("coverage"), "\n")
+} else {
+  tables$coverage_vehicle <- coverage_table("vehicle")
+  show_exhibit("coverage_vehicle", paste0(
+    "Households that acquired each vehicle in the reference period, % of ",
+    "households, with its ", lev, "% interval. ", small_note
+  ), fig_interval(tables$coverage_vehicle, "acquired", "vehicle",
+                  xlab = "Households acquiring (%)", ylab = "Vehicle"))
+  tables$coverage_group <- coverage_table(c("group", "combined"))
+  show_exhibit("coverage_group", paste0(
+    "Households that acquired at least one vehicle of each group, % of ",
+    "households, with its ", lev, "% interval. Groups: ", group_note()
+  ), fig_interval(tables$coverage_group, "acquired", "vehicle_group",
+                  xlab = "Households acquiring (%)", ylab = "Vehicle group"))
+}
+```
+
+```{r quantity, results = "asis"}
+if (!enabled("quantity")) {
+  cat(disabled_sentence("quantity"), "\n")
+} else {
+  tables$quantity <- quantity_table()
+  show_exhibit("quantity", paste0(
+    "Quantity acquired among the households that acquire each vehicle: ",
+    "median grams per adult female equivalent (AFE) per day, with its ",
+    lev, "% interval."
+  ), fig_interval(tables$quantity, "median_g", "vehicle",
+                  xlab = "Median g per AFE per day", ylab = "Vehicle"))
+}
+```
+
+```{r no-vehicle, results = "asis"}
+if (enabled("coverage")) {
+  tables$no_vehicle <- no_vehicle_table()
+  show_exhibit("no_vehicle", paste0(
+    "Households that acquired no vehicle, % of households, with its ",
+    lev, "% interval."
+  ), fig_interval(tables$no_vehicle, "none", "population",
+                  xlab = "Households acquiring no vehicle (%)",
+                  ylab = "Population"))
+  for (d in choices$domains) {
+    if (!enabled("coverage", d)) {
+      cat(disabled_sentence("coverage", d), "\n\n")
+      next
+    }
+    id <- paste0("no_vehicle_", d)
+    tables[[id]] <- no_vehicle_table(d)
+    show_exhibit(id, paste0(
+      "Households that acquired no vehicle by ", tolower(lab(d, "domain")),
+      ", % of households, with its ", lev, "% interval. ", small_note
+    ), fig_interval(tables[[id]], "none", "domain_value",
+                    xlab = "Households acquiring no vehicle (%)",
+                    ylab = as.character(lab(d, "domain"))),
+    headers = value_header(d))
+  }
+}
+```
+
+## Which nutrients are at risk without fortification?
+
+```{r risk, results = "asis"}
+if (!enabled("risk")) {
+  cat(disabled_sentence("risk"), "\n")
+} else {
+  tables$risk <- risk_table()
+  show_exhibit("risk", paste0(
+    "Households whose apparent intake per AFE is below the requirement, ",
+    "without fortification, % of households, with its ", lev,
+    "% interval. Method: ", method_note(), " ", small_note
+  ), fig_interval(tables$risk, "inadequate", "nutrient",
+                  xlab = "Inadequate intake (%)", ylab = "Nutrient"))
+  for (d in choices$domains) {
+    if (!enabled("risk", d)) {
+      cat(disabled_sentence("risk", d), "\n\n")
+      next
+    }
+    id <- paste0("risk_", d)
+    tables[[id]] <- risk_table(d)
+    show_exhibit(id, paste0(
+      "Inadequate intake without fortification by ",
+      tolower(lab(d, "domain")), ", % of households, with its ", lev,
+      "% interval. ", small_note
+    ), fig_interval(tables[[id]], "inadequate", "domain_value",
+                    xlab = "Inadequate intake (%)",
+                    ylab = as.character(lab(d, "domain")),
+                    facet = "nutrient"),
+    headers = value_header(d))
+  }
+}
+```
+
+## What would each fortification scenario change?
+
+```{r scenarios, results = "asis"}
+if (!enabled("scenarios")) {
+  cat(disabled_sentence("scenarios"), "\n")
+} else {
+  tables$scenarios <- scenario_table()
+  show_exhibit("scenarios", paste(
+    "Fortification scenarios: vehicle, nutrient, level in mg of nutrient",
+    "per kg of vehicle (compounds converted), form, share of the vehicle",
+    "fortified (compliance) and source."
+  ))
+  eff <- effects_table()
+  for (n in choices$nutrients) {
+    id <- paste0("effects_", n)
+    tables[[id]] <- eff[eff$nutrient %in% as.character(lab(n, "nutrient")), ]
+    if (nrow(tables[[id]]) == 0) next
+    show_exhibit(id, paste0(
+      as.character(lab(n, "nutrient")), ": inadequate intake under each ",
+      "scenario and under the scenario it is compared with, % of ",
+      "households, and their paired difference in percentage points with ",
+      "its ", lev, "% interval. ", small_note
+    ), fig_dumbbell(tables[[id]], "from", "to", "scenario",
+                    xlab = "Inadequate intake (%)", ylab = "Scenario"))
+    cat("In the figure, the hollow point is the scenario compared with and",
+        "the filled point the scenario; the interval of the difference is",
+        "in the table above.\n\n")
+  }
+}
+```
+
+```{r above-ul, results = "asis"}
+if (enabled("scenarios")) {
+  ul <- above_ul_estimates()
+  tables$ul_scope <- ul_scope_table(ul)
+  show_exhibit("ul_scope", paste(
+    "Intake compared with the tolerable upper intake level (UL) of each",
+    "nutrient, and the direction of the bias of that comparison."
+  ))
+  tables$above_ul <- above_ul_table(ul)
+  show_exhibit("above_ul", paste0(
+    "Households above the UL under each scenario, % of households, with ",
+    "its ", lev, "% interval. The UL of adults is applied to the intake ",
+    "per AFE. ", small_note
+  ))
+}
+```
+
+```{r equity, results = "asis"}
+if (enabled("scenarios")) {
+  for (d in choices$equity_domains) {
+    if (!enabled("scenarios", d)) {
+      cat(disabled_sentence("scenarios", d), "\n\n")
+      next
+    }
+    eff <- effects_table(d)
+    for (n in choices$nutrients) {
+      id <- paste0("equity_", n, "_", d)
+      tables[[id]] <- eff[eff$nutrient %in% as.character(lab(n, "nutrient")), ]
+      if (nrow(tables[[id]]) == 0) next
+      show_exhibit(id, paste0(
+        as.character(lab(n, "nutrient")), " by ", tolower(lab(d, "domain")),
+        ": inadequate intake under each scenario and under the scenario ",
+        "it is compared with, % of households, and their paired ",
+        "difference in percentage points with its ", lev, "% interval. ",
+        small_note
+      ), fig_dumbbell(tables[[id]], "from", "to", "domain_value",
+                      xlab = "Inadequate intake (%)",
+                      ylab = as.character(lab(d, "domain")),
+                      facet = "scenario"),
+      headers = value_header(d))
+    }
+  }
+}
+```
+
+## Where does each nutrient come from?
+
+```{r food-groups, results = "asis"}
+if (!enabled("food_groups")) {
+  cat(disabled_sentence("food_groups"), "\n")
+} else {
+  tables$food_groups <- food_group_table()
+  fg <- tables$food_groups
+  unclassified <- as.character(lab("unclassified", "food_group"))
+  none <- fg[fg$food_group %in% unclassified, ]
+  show_exhibit("food_groups", paste0(
+    "Share of the apparent intake of each nutrient supplied by each food ",
+    "group, without fortification, %, with its ", lev, "% interval. A ",
+    "share of 0 has no interval. Foods with no group assigned: ",
+    paste0(none$nutrient, " ", none$share, "%", collapse = "; "), "."
+  ), fig_interval(fg, "share", "food_group", xlab = "Share of intake (%)",
+                  ylab = "Food group", facet = "nutrient"))
+}
+```
+
+## Technical note
+
+```{r reference, results = "asis"}
+tables$reference <- reference_table()
+show_exhibit("reference", paste(
+  "Estimated average requirement (EAR) and tolerable upper intake level",
+  "(UL) used, with their source."
+))
+if (enabled("risk") && "iron" %in% choices$nutrients) {
+  tables$iron_sensitivity <- iron_sensitivity_table()
+  show_exhibit("iron_sensitivity", paste0(
+    "Inadequate intake of iron without fortification under each iron ",
+    "bioavailability, % of households, with its ", lev, "% interval. The ",
+    "results above use ", pct(choices$iron_bioavailability, 0), "%."
+  ))
+}
+```
+
+The data readiness report ([readiness.html](readiness.html)) gives the
+variables used, the records linked to the composition table, the
+plausibility of the apparent energy and the decisions taken with the data.

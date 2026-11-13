@@ -322,11 +322,16 @@
   of the results report and each domain, whether the data support it and,
   if not, why (`missing_input` or `threshold_not_met`) (DR8). Both reports
   compute it from the same inputs.
-* `use_report_template()` copies, besides the results report, a data
-  readiness report (`readiness.qmd`) in English and in Spanish, with the
-  shared inputs (`_inputs.R`), the labels of the analyst's codes
+* `use_report_template()` copies two reports that share their inputs
+  (`_inputs.R`, one list `choices`), the labels of the analyst's codes
   (`labels.csv`), the package vocabulary (`terms.csv`) and the decisions
-  taken with the data (`decisions.csv`).
+  taken with the data (`decisions.csv`): a data readiness report
+  (`readiness.qmd`, English and Spanish) and a results report
+  (`results.qmd`, English) whose sections are rendered only where the
+  readiness verdict enables them. No headline is generated; cells with
+  fewer households than `choices$min_n` print a dash; a scenario may be
+  compared with another scenario (`choices$comparator`). The previous
+  `report.qmd`, `_headlines.R` and `actions.csv` are removed.
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is

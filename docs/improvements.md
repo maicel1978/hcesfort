@@ -506,6 +506,12 @@ report (Opus).
 |---|---|---|---|---|
 | P119 | medium | **Translation choices of the Spanish readiness report, to confirm.** (1) Adult female equivalent is "equivalente de mujer adulta (EMA)", as in the Spanish results report. (2) Units: `ug_dfe` is "µg EFD"; `ug_rae` stays "µg RAE", since "EAR" would clash with the estimated average requirement. (3) Numbers keep the decimal point and intervals "[low, high]", as in English. (4) `precision_status` `ok` is "correcto". (5) The YAML header sets `lang: es`, so Quarto prints its own labels (table of contents) in Spanish. | CLAUDE.md: no interpretation chosen silently. | 12c.12 |
 
+## Open items from step 12c.11 (2026-11-13)
+
+| Id | Priority | Proposal | Why | Task |
+|---|---|---|---|---|
+| P120 | medium | **Choices taken in implementation of the results report, to confirm.** (1) The effects (3.2) are one table per nutrient, each followed by its dumbbell (3.3), so that every figure has its table (K5). (2) Exhibit 1.3 (quantity) is gated by the verdict section `quantity` and shows vehicles, not groups. (3) By-domain exhibits exist only where section 7 of the design lists them: households without any vehicle (1.4), risk (2.2) and equity (3.5); none for quantity or food groups. (4) The upper level (3.4) is two tables: one row per nutrient with the intake compared and the direction of its bias (wording taken from the documentation of `above_ul()`), then the share above the UL for every scenario, the baseline included. (5) Exact estimates leave the table for one sentence, "Same value in every household, without interval: <cells> = <value>", also in the iron sensitivity table; food-group shares keep their exact zeros in the table (R11). (6) A wide interval is named in a "Precision" column and drawn hollow; a small cell keeps its row with "—" and leaves the figure. (7) The EAR and UL table prints the `source` of the requirements table as it is, a citation, not through `labels.csv`. (8) A domain disabled by the verdict prints its sentence once in each section. (9) If an essential input is absent, the results report prints one sentence pointing to the readiness report. | CLAUDE.md: no interpretation chosen silently. | 12c.12 |
+
 ## Open items from task 2 (2026-11-12)
 
 Self-review of task 2, done as an rOpenSci reviewer would. Items in scope
