@@ -49,6 +49,19 @@ specification, self-review).
    one sentence when an essential input is absent). Recommended: accept;
    each follows the design or a requirement (K5, R7, R11).
 
+## Answers of the maintainer (2026-11-13, after 12c.11)
+
+1. **P119:** accepted, with one change: in Spanish, `precision_status`
+   `ok` is "adecuada" (precisión adecuada), not "correcto". The decimal
+   point stays: it is the usage of the Dominican Republic.
+2. **P120:** accepted, points 1 to 9, with one change of wording in point
+   5: the sentence says why there is no interval, not only that the value
+   repeats. English: "No variation in the sample, so no interval:
+   <cells> = <value>". Spanish: "Sin variación en la muestra, por lo que
+   no hay intervalo: <celdas> = <valor>".
+
+Record these in `docs/improvements.md` with the first commit of 12c.12.
+
 ## Recommended model for the next session
 
 **Opus 5.5** (12c.12 and 12c.13).
