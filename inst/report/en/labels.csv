@@ -5,6 +5,7 @@ nutrient,,folate,Folate
 nutrient,,vitamin_a,Vitamin A
 unit,,kcal,kcal
 unit,,mg,mg
+unit,,ug,µg
 unit,,ug_dfe,µg DFE
 unit,,ug_rae,µg RAE
 vehicle,,flour,Wheat flour

@@ -40,6 +40,33 @@ header,,national,Nacional
 header,,decision,Decisión
 header,,choice,Opción
 header,,evidence,Evidencia
+header,,population,Población
+header,,nutrient,Nutriente
+header,,vehicle,Vehículo
+header,,vehicle_group,Grupo de vehículos
+header,,acquired,Hogares que adquieren (%)
+header,,median_g,Mediana de g por EMA y día
+header,,none,Hogares que no adquieren ningún vehículo (%)
+header,,inadequate,Ingesta inadecuada (%)
+header,,scenario,Escenario
+header,,comparator,Comparado con
+header,,from,Comparación (%)
+header,,to,Escenario (%)
+header,,level_mg_kg,Nivel (mg de nutriente por kg)
+header,,form,Forma
+header,,compliance,Cumplimiento (%)
+header,,source,Fuente
+header,,above_ul,Por encima del nivel máximo (%)
+header,,ul_compared,Ingesta comparada
+header,,ul_bias,Dirección del sesgo
+header,,food_group,Grupo de alimentos
+header,,share,Proporción de la ingesta (%)
+header,,ear,EAR
+header,,unit,Unidad
+header,,ul,UL
+header,,ul_unit,Unidad del UL
+header,,bioavailability_pct,Biodisponibilidad del hierro
+header,,precision_status,Precisión
 flag,,TRUE,sí
 flag,,FALSE,no
 role,,essential,esencial
@@ -88,3 +115,14 @@ precision_status,,small_cell,menos hogares que el mínimo
 precision_status,,exact,mismo valor en todos los hogares
 precision_status,,wide_interval,intervalo amplio
 precision_status,,ok,correcto
+method,,ear_cutpoint,punto de corte del EAR
+method,,probability,método probabilístico
+ul_scope,,total_intake,Ingesta total
+ul_scope,,form_added_only,"Solo la forma añadida, sin la dieta"
+ul_scope,,form_diet_and_added,Forma de la dieta y añadida
+ul_scope,,not_assessable,No evaluable
+ul_bias,,total_intake,Puede estar subestimado (composición o registros incompletos)
+ul_bias,,form_added_only,Cota inferior: no cuenta la forma ya presente en la dieta
+ul_bias,,form_diet_and_added,"Puede estar subestimado (composición de la forma o registros incompletos)"
+ul_bias,,not_assessable,No evaluable
+sentence,,exact,"Mismo valor en todos los hogares, sin intervalo"

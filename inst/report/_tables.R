@@ -74,13 +74,15 @@ print_table <- function(d, caption = NULL, headers = NULL) {
 # households than `min_n` keeps its row with no value ("—"); an exact
 # estimate (the same value in every household) leaves the table, unless
 # `drop_exact` is FALSE, and is given in the sentence of exact_sentence().
+# Columns in `extra` are copied after `n`, as they are.
 display <- function(e, keys, value, scale = pct, unit = "%",
-                    drop_exact = TRUE) {
+                    drop_exact = TRUE, extra = NULL) {
   e <- as.data.frame(e)
   small <- e$precision_status %in% "small_cell"
   exact <- drop_exact & e$precision_status %in% "exact"
   out <- e[keys]
-  out$n <- e$n
+  out$n <- e[["n"]]
+  out[extra] <- e[extra]
   out[[value]] <- ifelse(small, NA, scale(e$estimate))
   out$ci_low <- ifelse(small, NA, scale(e$ci_low))
   out$ci_high <- ifelse(small, NA, scale(e$ci_high))
@@ -110,4 +112,21 @@ verdict_text <- function(v) {
                    term_list(v$detail, "check"), v$detail)
   ifelse(v$enabled, term(rep("enabled", nrow(v)), "verdict"),
          paste0(term(v$reason, "verdict_reason"), " (", detail, ")"))
+}
+
+# Print the table `id` of `tables` (if it has rows), the sentence of its
+# exact estimates and, when `figure` has data, the figure, stored in
+# `figures` under the same id (R5: table first, then its figure).
+show_exhibit <- function(id, caption, figure = NULL, headers = NULL) {
+  d <- tables[[id]]
+  if (nrow(d) > 0) {
+    print(print_table(d, caption = caption, headers = headers))
+  }
+  cat("\n\n", exact_sentence(d), "\n\n", sep = "")
+  if (!is.null(figure) && nrow(figure$data) > 0) {
+    figures[[id]] <<- figure
+    print(figure)
+    cat("\n\n")
+  }
+  invisible(NULL)
 }

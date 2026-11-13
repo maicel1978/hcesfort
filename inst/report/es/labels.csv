@@ -5,6 +5,7 @@ nutrient,,folate,Folato
 nutrient,,vitamin_a,Vitamina A
 unit,,kcal,kcal
 unit,,mg,mg
+unit,,ug,µg
 unit,,ug_dfe,µg EFD
 unit,,ug_rae,µg RAE
 vehicle,,flour,Harina de trigo

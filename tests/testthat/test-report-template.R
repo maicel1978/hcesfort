@@ -2,7 +2,7 @@
 
 template_files <- function(lang) {
   shared <- c("_chain.R", "_figures.R", "_inputs.R", "_readiness.R",
-              "_tables.R")
+              "_results.R", "_tables.R")
   own <- c("decisions.csv", "labels.csv", "terms.csv", "readiness.qmd")
   c(shared, own)
 }
@@ -42,7 +42,8 @@ test_that("every hcesfort function the template calls is exported", {
   expect_identical(intersect(calls, internal), character(0))
   used <- intersect(calls, getNamespaceExports("hcesfort"))
   expect_true(all(c("readiness_inventory", "readiness_verdict",
-                    "linkage_ladder") %in% used))
+                    "linkage_ladder", "food_group_shares",
+                    "estimate_difference", "above_ul") %in% used))
 })
 
 test_that("the template renders with Quarto when it is installed", {
@@ -51,9 +52,17 @@ test_that("the template renders with Quarto when it is installed", {
   skip_if_not_installed("ggplot2")
   dir <- withr::local_tempdir()
   use_report_template(dir, "en")
-  status <- withr::with_dir(dir, system2("quarto",
-                                         c("render", "readiness.qmd"),
-                                         stdout = FALSE, stderr = FALSE))
-  expect_identical(status, 0L)
-  expect_true(file.exists(file.path(dir, "readiness.html")))
+  for (report in c("readiness", "results")) {
+    status <- withr::with_dir(dir, system2(
+      "quarto", c("render", paste0(report, ".qmd")),
+      stdout = FALSE, stderr = FALSE
+    ))
+    expect_identical(status, 0L)
+    html <- file.path(dir, paste0(report, ".html"))
+    expect_true(file.exists(html))
+    # K15: no code in the results report.
+    if (report == "results") {
+      expect_false(any(grepl("<code>", readLines(html, warn = FALSE))))
+    }
+  }
 })

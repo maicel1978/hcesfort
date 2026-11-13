@@ -40,6 +40,33 @@ header,,national,National
 header,,decision,Decision
 header,,choice,Choice
 header,,evidence,Evidence
+header,,population,Population
+header,,nutrient,Nutrient
+header,,vehicle,Vehicle
+header,,vehicle_group,Vehicle group
+header,,acquired,Households acquiring (%)
+header,,median_g,Median g per AFE per day
+header,,none,Households acquiring no vehicle (%)
+header,,inadequate,Inadequate intake (%)
+header,,scenario,Scenario
+header,,comparator,Compared with
+header,,from,Compared with (%)
+header,,to,Scenario (%)
+header,,level_mg_kg,Level (mg of nutrient per kg)
+header,,form,Form
+header,,compliance,Compliance (%)
+header,,source,Source
+header,,above_ul,Above the upper level (%)
+header,,ul_compared,Intake compared
+header,,ul_bias,Direction of the bias
+header,,food_group,Food group
+header,,share,Share of intake (%)
+header,,ear,EAR
+header,,unit,Unit
+header,,ul,UL
+header,,ul_unit,Unit of the UL
+header,,bioavailability_pct,Iron bioavailability
+header,,precision_status,Precision
 flag,,TRUE,yes
 flag,,FALSE,no
 role,,essential,essential
@@ -88,3 +115,14 @@ precision_status,,small_cell,fewer households than the minimum
 precision_status,,exact,same value in every household
 precision_status,,wide_interval,wide interval
 precision_status,,ok,ok
+method,,ear_cutpoint,EAR cut-point
+method,,probability,probability approach
+ul_scope,,total_intake,Total intake
+ul_scope,,form_added_only,"Added form only, without the diet"
+ul_scope,,form_diet_and_added,Form in the diet and added
+ul_scope,,not_assessable,Not assessable
+ul_bias,,total_intake,May be understated (incomplete composition or records)
+ul_bias,,form_added_only,Lower bound: the form already in the diet is not counted
+ul_bias,,form_diet_and_added,"May be understated (incomplete composition of the form, or records)"
+ul_bias,,not_assessable,Not assessable
+sentence,,exact,"Same value in every household, without interval"

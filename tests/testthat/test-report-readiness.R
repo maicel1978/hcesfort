@@ -57,8 +57,13 @@ test_that("terms.csv labels the whole vocabulary the reports print (U10)", {
     role = c("essential", "optional"), needed_by = c("all", "none"),
     flag = c("TRUE", "FALSE"),
     measure = c("records", "grams", "expenditure"),
-    precision_status = c("small_cell", "exact", "wide_interval", "ok")
+    precision_status = c("small_cell", "exact", "wide_interval", "ok"),
+    method = c("ear_cutpoint", "probability"),
+    ul_scope = c("total_intake", "form_added_only", "form_diet_and_added",
+                 "not_assessable"),
+    sentence = "exact"
   )
+  vocabulary$ul_bias <- vocabulary$ul_scope
   for (lang in report_langs) {
     file <- system.file("report", lang, "terms.csv", package = "hcesfort")
     expect_s3_class(read_labels(file, needed = vocabulary), "tbl_df")
