@@ -16,9 +16,16 @@ flag_precision(estimates, min_n, max_half_width)
 the estimate.}
 }
 \value{
-\code{estimates} with the column \code{low_precision}: \code{TRUE} when \code{n} is
-below \code{min_n} or the half-width of the interval above
-\code{max_half_width}. The audit log counts the flagged estimates.
+\code{estimates} with two columns. \code{low_precision}: \code{TRUE} when \code{n}
+is below \code{min_n} or the half-width of the interval above
+\code{max_half_width}. \code{precision_status}: the first rule that applies, in
+this order: \code{"small_cell"} (\code{n < min_n}), \code{"exact"} (\code{se == 0}: every
+household of the cell has the same value, so there is no interval),
+\code{"wide_interval"} (half-width above \code{max_half_width}) or \code{"ok"}; \code{NA}
+for a missing estimate with \code{n} at least \code{min_n}. Detection only: a
+report decides what each status does (suppress, a sentence, a mark).
+The audit log counts the flagged estimates and each status other than
+\code{"ok"}.
 }
 \description{
 Flag the estimates computed on few households or with a wide interval.

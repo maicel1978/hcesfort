@@ -302,6 +302,9 @@
   or expenditure, as a ratio of weighted totals with a logit interval;
   by domain it adds the difference from the rest of the population with a
   delta-method interval and the flag `differs` (DR5).
+* `flag_precision()` adds the column `precision_status`: the first rule
+  that applies of `small_cell` (`n < min_n`), `exact` (`se == 0`),
+  `wide_interval` and `ok` (R7). `low_precision` keeps its meaning.
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is

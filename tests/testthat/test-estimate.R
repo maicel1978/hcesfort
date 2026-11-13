@@ -339,6 +339,37 @@ test_that("flag_precision(): literal flags at the limits", {
   expect_identical(f$low_precision, c(TRUE, FALSE, TRUE, FALSE, FALSE))
 })
 
+test_that("precision_status: each rule by hand, the first one wins", {
+  # a: small; b: exact; c: wide; d: ok; e: small and exact; f: exact and
+  # wide cannot co-occur (no interval), so f is small and wide; g: missing.
+  e <- new_hces_tbl(
+    data.frame(group = letters[1:7], n = c(3L, 6L, 6L, 6L, 2L, 3L, 6L),
+               estimate = c(0.5, 0, 0.5, 0.5, 1, 0.5, NA),
+               se = c(0.1, 0, 0.3, 0.1, 0, 0.3, NA),
+               ci_low = c(0.3, NA, 0, 0.3, NA, 0, NA),
+               ci_high = c(0.7, NA, 0.9, 0.7, NA, 0.9, NA)),
+    "hces_estimate", key = "group"
+  )
+  f <- flag_precision(e, min_n = 4, max_half_width = 0.4)
+  expect_identical(f$precision_status,
+                   c("small_cell", "exact", "wide_interval", "ok",
+                     "small_cell", "small_cell", NA))
+  expect_identical(f$low_precision,
+                   c(TRUE, FALSE, TRUE, FALSE, TRUE, TRUE, FALSE))
+  log <- audit_log(f)
+  got <- log$n_records[match(c("small_cell", "exact", "wide_interval"),
+                              log$cause)]
+  expect_identical(got, c(3L, 1L, 1L))
+})
+
+test_that("precision_status on an estimator: exact cells are se == 0", {
+  e <- estimate_households(es_design(), es_result(), "p", by = "region",
+                           statistic = "mean")
+  f <- flag_precision(e, min_n = 0, max_half_width = Inf)
+  expect_identical(f$precision_status == "exact", !is.na(e$se) & e$se == 0)
+  expect_false(anyNA(f$precision_status[!is.na(e$estimate)]))
+})
+
 # domain_from (correction 3): a household table carrying the flag. Flag:
 # TRUE for households 1, 2, 3, 6, 7; FALSE for 4; NA for 5 and 8.
 es_flags <- function(flag = c(TRUE, TRUE, TRUE, FALSE, NA, TRUE, TRUE, NA)) {

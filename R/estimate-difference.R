@@ -115,9 +115,16 @@ check_reference_scenario <- function(x, reference, call = rlang::caller_env()) {
 #' @param min_n Smallest number of households in the domain (`n`).
 #' @param max_half_width Largest half-width of the interval, in the unit of
 #'   the estimate.
-#' @returns `estimates` with the column `low_precision`: `TRUE` when `n` is
-#'   below `min_n` or the half-width of the interval above
-#'   `max_half_width`. The audit log counts the flagged estimates.
+#' @returns `estimates` with two columns. `low_precision`: `TRUE` when `n`
+#'   is below `min_n` or the half-width of the interval above
+#'   `max_half_width`. `precision_status`: the first rule that applies, in
+#'   this order: `"small_cell"` (`n < min_n`), `"exact"` (`se == 0`: every
+#'   household of the cell has the same value, so there is no interval),
+#'   `"wide_interval"` (half-width above `max_half_width`) or `"ok"`; `NA`
+#'   for a missing estimate with `n` at least `min_n`. Detection only: a
+#'   report decides what each status does (suppress, a sentence, a mark).
+#'   The audit log counts the flagged estimates and each status other than
+#'   `"ok"`.
 #' @seealso [estimate_households()].
 #' @examples
 #' grams <- convert_units(hces_example$acquisitions,
@@ -142,8 +149,32 @@ flag_precision <- function(estimates, min_n, max_half_width) {
   half <- (x$ci_high - x$ci_low) / 2
   out <- dplyr::as_tibble(x)
   out$low_precision <- x$n < min_n | (!is.na(half) & half > max_half_width)
+  out$precision_status <- precision_status(x, half, min_n, max_half_width)
   rule <- paste0("n < ", min_n, " or half-width > ", max_half_width)
-  log <- audit_row("flag_precision", "estimate", "flagged", "low_precision",
-                   sum(out$low_precision), detail = rule)
+  log <- dplyr::bind_rows(
+    audit_row("flag_precision", "estimate", "flagged", "low_precision",
+              sum(out$low_precision), detail = rule),
+    precision_log(out$precision_status)
+  )
   same_carrier(out, x, dplyr::bind_rows(audit_get(x), log))
+}
+
+# The precision status of each estimate: the first rule that applies.
+precision_status <- function(x, half, min_n, max_half_width) {
+  se <- if (is.null(x[["se"]])) rep(NA_real_, nrow(x)) else x$se
+  status <- ifelse(is.na(x$estimate), NA_character_, "ok")
+  status[!is.na(half) & half > max_half_width] <- "wide_interval"
+  status[!is.na(se) & se == 0] <- "exact"
+  status[x$n < min_n] <- "small_cell"
+  status
+}
+
+# Audit rows: one per precision status other than "ok" that occurs.
+precision_log <- function(status) {
+  causes <- c("small_cell", "exact", "wide_interval")
+  dplyr::bind_rows(lapply(causes, function(cause) {
+    n <- sum(status %in% cause)
+    if (n == 0) return(NULL)
+    audit_row("flag_precision", "estimate", "flagged", cause, n)
+  }))
 }

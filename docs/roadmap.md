@@ -65,7 +65,7 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
   - [x] 12c.2 `linkage_ladder()` (DR3).
   - [x] 12c.3 `unmatched_foods()` as the work queue (DR4).
   - [x] 12c.4 `estimate_unlinked()` (DR5).
-  - [ ] 12c.5 `precision_status` in `flag_precision()` (R7).
+  - [x] 12c.5 `precision_status` in `flag_precision()` (R7).
   - [ ] 12c.6 Label table and decisions table: schemas, `read_labels()`, `label_codes()`, `read_decisions()` (R2, DR7).
   - [ ] 12c.7 `readiness_inventory()`, `readiness_checks()` (DR1, DR2).
   - [ ] 12c.8 `readiness_verdict()` (DR8).
