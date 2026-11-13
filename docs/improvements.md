@@ -436,6 +436,29 @@ design remain).
 | P105 | low | **Annex G asks for the md5 of the input files in prose**; `_results.R` could compute it when the ADAPTER block names files. | Reproducibility. | v0.2 |
 | P106 | low | **Labels are codes** (`vitamin_a`, `wheat_flour`, domain names) in headlines and figures; a small label table in the ADAPTER block would print names. | Readability for decision-makers. | 12 |
 
+## Decisions (2026-11-13, reports v2)
+
+The maintainer approved section 11 of `docs/design-reports-v2.md` on
+2026-11-13: decisions 1–6 and 8–12 as recommended; decision 7 amended.
+
+| # | Decision |
+|---|---|
+| R-D1 | Both reports compute the verdict with `readiness_verdict()` from the same `_inputs.R`; no file passes between them. |
+| R-D2 | One list `choices` in `_inputs.R`; the YAML keeps `title` and `lang`. |
+| R-D3 | Optional column `expenditure_lcu` in `acquisitions` (contract change). |
+| R-D4 | `unmatched_foods()` is extended into the work queue and takes `households`. |
+| R-D5 | A domain is flagged when the 95% interval of the difference between its unlinked share and that of the rest of the population excludes zero; not adjusted for multiple comparisons, and the note says so. |
+| R-D6 | A threshold not met disables the sections that depend on it; no "render anyway" switch. |
+| R-D7 | Amended: `actions.csv` is removed, but a scenario may be compared with another scenario through `choices$comparator` (default `"baseline"`); no package contract changes; test K16. |
+| R-D8 | The readiness report prints variable, food and unit codes as codes; R2 applies in full to the results report, R3 to both. |
+| R-D9 | Methods, bias directions and the STROBE-nut mapping go to a methods vignette in task 12. |
+| R-D10 | Names as proposed: `linkage_ladder()`, `estimate_unlinked()`, `readiness_inventory()`, `readiness_checks()`, `readiness_verdict()`, `read_labels()`, `label_codes()`, `read_decisions()`; columns `precision_status`, `expenditure_lcu`. |
+| R-D11 | `min_n = 8` in the example, said so in `_inputs.R`. |
+| R-D12 | Equity exhibits only for the domains of `equity_domains`. |
+
+P107 is resolved by these decisions. P109 is resolved by R-D7 (the
+comparison between two scenarios stays, as a template choice).
+
 ## Open items from the design of the reports v2 (2026-11-13)
 
 Design `docs/design-reports-v2.md` (task 12c.0), from the approved
@@ -444,9 +467,9 @@ the maintainer; they are recorded here once answered.
 
 | Id | Priority | Proposal | Why | Task |
 |---|---|---|---|---|
-| P107 | high | **Approve the twelve decisions of section 11 of the design**, among them three that change a contract or an exported interface: the optional column `expenditure_lcu` (decision 3), `unmatched_foods()` taking `households` (decision 4) and eight new exported functions (decision 10). | Implementation cannot start without them. | 12c |
+| P107 | resolved | **Approve the twelve decisions of section 11 of the design**, among them three that change a contract or an exported interface: the optional column `expenditure_lcu` (decision 3), `unmatched_foods()` taking `households` (decision 4) and eight new exported functions (decision 10). | Implementation cannot start without them. | 12c |
 | P108 | medium | **The contrast of `estimate_unlinked()` (a domain against the rest of the population) is internal.** The public contrast between two domains with its interval (G3: coverage ratio, gap between quintiles) can be built on it. | G3 of `docs/design-report-template.md` stays open. | v0.2 |
-| P109 | low | **Comparisons between two scenarios are removed from the report** (every scenario is compared with the unfortified baseline; `actions.csv` goes). A country may need "proposed against current". | Decision 7 of the design; R9 and R10f. | v0.2 |
+| P109 | resolved (R-D7) | **Comparisons between two scenarios are removed from the report** (every scenario is compared with the unfortified baseline; `actions.csv` goes). A country may need "proposed against current". | Decision 7 of the design; R9 and R10f. | v0.2 |
 | P110 | medium | **Methods vignette**: methods, the direction of each bias and the STROBE-nut mapping of the old annex H, which leave the results report (R12). | Decision 9 of the design. | 12 |
 | P111 | low | **Each report runs the whole chain.** A cache shared by the two reports would halve the time on a national survey. | Performance. | v0.2 |
 
