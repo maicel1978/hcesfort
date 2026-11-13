@@ -1,7 +1,8 @@
 # Design: reports v2 (data readiness report and results report)
 
-- **Date:** 2026-11-13. **Status:** written, awaiting the maintainer's
-  approval of the decisions of section 11. No package code is written in
+- **Date:** 2026-11-13. **Status:** approved by the maintainer on
+  2026-11-13: decisions 1–6 and 8–12 as recommended; decision 7 amended
+  (section 11). No package code is written in
   this task (12c.0).
 - **Input.** `docs/report-requirements-v1.md` (approved 2026-11-13):
   principles P1–P5, requirements DR1–DR8 and R1–R14, acceptance (section
@@ -57,7 +58,10 @@ one list, `choices`, and the YAML header of each report keeps only `title`
 default in the package.
 
 `choices`: `nutrients`, `energy` (registry name of energy, or `NULL`),
-`domains`, `equity_domains` (a subset of `domains`), `min_n`,
+`domains`, `equity_domains` (a subset of `domains`), `comparator`
+(decision 7: a named character vector, scenario code → the code of the
+scenario it is compared with, or `"baseline"`; `NULL` means every scenario
+against `"baseline"`), `min_n`,
 `max_half_width`, `min_coverage`, `min_records_used`, `min_linked_share`
 (the X of DR5; 0.90 by O1), `iron_bioavailability`,
 `iron_bioavailability_sensitivity`, `energy_lower`, `energy_upper`,
@@ -306,8 +310,21 @@ rendered only when the verdict enables it; otherwise one sentence.
 | 4 | Contribution of each food group (R11) | 4.1 shares on the baseline without fortification; the unclassified share in the note; a share of 0 as "0" |
 | — | Technical note (R14) | EAR and UL used with source; iron bioavailability and its sensitivity table; link to the readiness report |
 
-- Every scenario is compared with the unfortified baseline; a scenario has
-  one label, from `labels.csv`, used everywhere (R10b, decision 7).
+- Each scenario is compared with its comparator from `choices$comparator`
+  (decision 7): the unfortified baseline by default, or another scenario,
+  such as the current standard, to answer "what does this action add to
+  the current standard". Exhibits 3.2, 3.3 and 3.5 use the comparator in
+  place of the baseline: the dumbbell joins the comparator point to the
+  scenario point, and the effects table shows comparator %, scenario %
+  and their paired difference. A scenario has one label, from
+  `labels.csv`, used everywhere (R10b).
+- `_results.R` checks `choices$comparator` before any estimate: every name
+  and value is a scenario code of `scenarios` or `"baseline"`, no scenario
+  is its own comparator, and every chain of comparators ends at
+  `"baseline"` (no cycles). A failure is `hcesfort_error_argument` naming
+  the offending entries. The differences come from the existing
+  `estimate_difference(reference = )`, called once per distinct
+  comparator; no package function changes.
 - Where fortification already exists, section 2 is a counterfactual; its
   table title says "without fortification", as R9 requires.
 - Session information goes to `results-sessionInfo.txt` and
@@ -387,6 +404,7 @@ the Markdown with `tables` and `figures`.
 | K13 | DR8, P5 | With `food_groups <- NULL` the results report knits and section 4 is one sentence; with an essential column removed the readiness report knits up to the inventory |
 | K14 | — | Every hcesfort function the template calls is exported (existing test) |
 | K15 | R2, R13 | Where Quarto is installed: both render to HTML and the results HTML has no `<code>` element |
+| K16 | R10 | Decision 7 as amended: a comparator other than the baseline is used in 3.2, 3.3 and 3.5; a cycle or an unknown code fails with `hcesfort_error_argument` |
 
 CI installs Quarto on one runner so that K15 runs (P102).
 
@@ -407,7 +425,7 @@ green and lint clean; `NEWS.md` updated with each exported change.
 | 12c.8 | `readiness_verdict()` (U7) |
 | 12c.9 | Shared template files, `labels.csv`, `terms.csv`, `decisions.csv`; readiness report in English (K1, K3, K10–K13, U10) |
 | 12c.10 | Readiness report in Spanish |
-| 12c.11 | Results report in English; old `report.qmd`, `_headlines.R` and `actions.csv` removed; `use_report_template()` documentation (K2, K4–K9, K14) |
+| 12c.11 | Results report in English, with `choices$comparator`; old `report.qmd`, `_headlines.R` and `actions.csv` removed; `use_report_template()` documentation (K2, K4–K9, K14, K16) |
 | 12c.12 | Results report in Spanish |
 | 12c.13 | Quarto in CI (K15); specification, `NEWS.md`, self-review, handoff with the maintainer's render of both reports on ENGIH 2018 (acceptance C2) |
 
@@ -449,6 +467,16 @@ Recommended option first.
    baseline (R9, R10f); `actions.csv` and the comparisons between two
    scenarios are removed. They can return in v0.2 if a country needs
    "proposed against current".
+   **Amended by the maintainer (2026-11-13):** `actions.csv` is removed,
+   but the comparison against another scenario stays, through
+   `choices$comparator` (sections 2.2 and 7), with `"baseline"` as the
+   default. Reason: where a standard already exists (wheat flour in the
+   Dominican Republic), the policy question is what each additional
+   action adds to the current standard, not only to no fortification.
+   No contract of the package changes. Test K16 (added): with
+   `comparator = c(<scenario> = <other scenario>)` appended to
+   `_inputs.R`, table 3.2 shows that pair and no baseline row for that
+   scenario; a cycle fails with `hcesfort_error_argument`.
 8. **Codes in the readiness report.** *Recommended:* variable names, food
    codes and unit codes are printed as codes there; R2 applies in full to
    the results report, R3 to both.

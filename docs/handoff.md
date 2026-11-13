@@ -2,9 +2,7 @@
 
 - **Date:** 2026-11-13
 - **Model:** Fable (design session, task 12c.0).
-- **Branch:** `claude/funny-ptolemy-bl43m3`, one commit ahead of `main`
-  (docs only). Merge it into `main` before the next session, or start the
-  next session from this branch.
+- **Branch:** `main` (the design branch was fast-forwarded into `main`).
 
 ## What was done
 
@@ -30,13 +28,18 @@ run: nothing it checks changed.
 
 ## Exact next step
 
-**The maintainer** answers the twelve decisions of section 11 of
-`docs/design-reports-v2.md`. "All as recommended" is a valid answer.
+The maintainer approved the design on 2026-11-13: decisions 1–6 and 8–12
+as recommended; decision 7 amended (comparator kept as the template
+choice `choices$comparator`, no package contract change, test K16). See
+section 11 of `docs/design-reports-v2.md`.
 
-Then **Opus** records the answers in `docs/improvements.md` (section
-"Decisions"), ticks 12c.0 in the roadmap, and starts 12c.1. Opus stops
-and returns to Fable if a contract of sections 3 to 5 of the design has
-to change.
+**Opus** records these answers in `docs/improvements.md` (section
+"Decisions") and starts 12c.1, then continues through the commit plan
+(section 10) on `main`, one step per commit, `devtools::test()` green and
+lint clean at each commit, `devtools::check()` before each push. Stop and
+hand off (docs/model-routing.md) when the session quota passes 85%, after
+12c.8 at the latest, or if a contract of sections 3 to 5 has to change
+(then return to Fable).
 
 ## Open questions for the maintainer
 
@@ -47,7 +50,7 @@ to change.
 
 ## Recommended model for the next session
 
-**Opus 5.5** (12c.1 onwards), once the decisions are answered.
+**Opus 5.5** (12c.1 to 12c.8).
 
 ## Maintainer review points
 
