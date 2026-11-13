@@ -13,7 +13,10 @@
 #'   is the symmetric interval of the original analysis, E24).
 #' * `"mean"`: [survey::svymean()] and a *t* interval.
 #' * `"median"`: [survey::svyquantile()] at 0.5, interval by its default
-#'   (Woodruff) method.
+#'   (Woodruff) method. Where that interval is undefined (in a small
+#'   domain, `survey` returns `NaN` for a limit or the standard error), the
+#'   median is kept with `se`, `ci_low` and `ci_high` missing, and the cell
+#'   is counted in the log (`undefined_quantile_interval`).
 #'
 #' A proportion whose values in the domain are all 0 (or all 1) is
 #' returned as that exact value with `se = 0` and no interval (`ci_low`,
@@ -133,11 +136,20 @@ estimate_cell <- function(design, y, mask, statistic, ci_method, level,
     median = {
       e <- survey::svyquantile(~.y, sub, quantiles = 0.5, ci = TRUE,
                                alpha = 1 - level, df = dfv)
-      c(stats::coef(e), survey::SE(e), stats::confint(e))
+      undefined_interval(c(stats::coef(e), survey::SE(e),
+                           stats::confint(e)))
     }
   )
   na_row[c("estimate", "se", "ci_low", "ci_high")] <- as.list(unname(r))
   na_row
+}
+
+# A quantile whose interval is undefined (a limit or the SE not finite,
+# as survey returns NaN in a small domain) keeps its estimate, with no SE
+# and no interval: counted by estimate_log() (undefined_quantile_interval).
+undefined_interval <- function(r) {
+  if (any(!is.finite(r[2:4]))) r[2:4] <- NA_real_
+  r
 }
 
 # The log of `x` followed by the rows of the log of `domain_from` it does

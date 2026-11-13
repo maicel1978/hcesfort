@@ -81,6 +81,8 @@ estimate_log <- function(step, design, x, value, statistic, ci_method, df,
   empty <- sum(out$n == 0)
   degenerate <- sum(out$n > 0 & !is.na(out$se) & out$se == 0 &
                       is.na(out$ci_low))
+  undefined <- sum(out$statistic %in% "median" & !is.na(out$estimate) &
+                     is.na(out$ci_low))
   dplyr::bind_rows(
     audit_row(step, "estimate", "input", "all", nrow(out),
               nrow(design$variables), detail = value),
@@ -94,6 +96,10 @@ estimate_log <- function(step, design, x, value, statistic, ci_method, df,
     if (degenerate > 0) {
       audit_row(step, "estimate", "flagged", "degenerate_proportion",
                 degenerate)
+    },
+    if (undefined > 0) {
+      audit_row(step, "estimate", "flagged", "undefined_quantile_interval",
+                undefined)
     }
   )
 }

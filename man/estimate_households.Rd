@@ -73,7 +73,10 @@ the design.
 is the symmetric interval of the original analysis, E24).
 \item \code{"mean"}: \code{\link[survey:svymean]{survey::svymean()}} and a \emph{t} interval.
 \item \code{"median"}: \code{\link[survey:svyquantile]{survey::svyquantile()}} at 0.5, interval by its default
-(Woodruff) method.
+(Woodruff) method. Where that interval is undefined (in a small
+domain, \code{survey} returns \code{NaN} for a limit or the standard error), the
+median is kept with \code{se}, \code{ci_low} and \code{ci_high} missing, and the cell
+is counted in the log (\code{undefined_quantile_interval}).
 }
 
 A proportion whose values in the domain are all 0 (or all 1) is

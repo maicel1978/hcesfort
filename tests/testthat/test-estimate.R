@@ -80,14 +80,16 @@ test_that("mean and median agree with svymean() and svyquantile()", {
   expect_equal(c(e$ci_low, e$ci_high),
                unname(stats::confint(r, df = df)[1, ]), tolerance = 1e-8)
   e <- pick_est(estimate_households(es_design(), x, "intake",
-                                    statistic = "median", level = 0.9),
+                                    statistic = "median", level = 0.5),
                 "fort")
+  # 8 households: the interval of the median is defined only at a low level.
   q <- survey::svyquantile(~y, sub, quantiles = 0.5, ci = TRUE,
-                           alpha = 0.1, df = survey::degf(sub))
+                           alpha = 0.5, df = survey::degf(sub))
   expect_equal(e$estimate, unname(stats::coef(q)), tolerance = 1e-8)
+  expect_true(all(is.finite(c(e$ci_low, e$ci_high))))
   expect_equal(c(e$ci_low, e$ci_high), unname(stats::confint(q)[1, ]),
                tolerance = 1e-8)
-  expect_identical(e$conf_level, 0.9)
+  expect_identical(e$conf_level, 0.5)
 })
 
 test_that("by and domain are domains of the full design", {
@@ -302,10 +304,35 @@ test_that("SE of the mean and of the median agree with survey", {
   expect_equal(e$se, as.vector(survey::SE(survey::svymean(~y, sub))),
                tolerance = 1e-8)
   e <- pick_est(estimate_households(es_design(), x, "intake",
-                                    statistic = "median"), "fort")
+                                    statistic = "median", level = 0.5),
+                "fort")
+  q <- survey::svyquantile(~y, sub, quantiles = 0.5, ci = TRUE,
+                           alpha = 0.5, df = survey::degf(sub))
+  expect_true(is.finite(e$se))
+  expect_equal(e$se, unname(survey::SE(q)), tolerance = 1e-8)
+})
+
+test_that("an undefined median interval is NA and counted (P116)", {
+  x <- es_result()
+  x$small <- x$household_id %in% 1:3
+  y <- x$intake[x$scenario == "base"]
+  sub <- ref_design(y, x$small[x$scenario == "base"])
   q <- survey::svyquantile(~y, sub, quantiles = 0.5, ci = TRUE,
                            df = survey::degf(sub))
-  expect_equal(e$se, unname(survey::SE(q)), tolerance = 1e-8)
+  expect_true(is.nan(survey::SE(q)))
+  e <- estimate_households(es_design(), x, "intake", statistic = "median",
+                           domain = "small")
+  expect_equal(e$estimate, c(3, 4))
+  expect_true(all(is.na(c(e$se, e$ci_low, e$ci_high))))
+  expect_false(any(is.nan(c(e$se, e$ci_low, e$ci_high))))
+  log <- audit_log(e)
+  expect_identical(
+    log$n_records[log$cause == "undefined_quantile_interval"], 2L
+  )
+  m <- estimate_households(es_design(), x, "intake", statistic = "median",
+                           level = 0.5)
+  expect_true(all(is.finite(m$ci_high)))
+  expect_false("undefined_quantile_interval" %in% audit_log(m)$cause)
 })
 
 test_that("lonely PSU: classed error under fail, adjust as in survey", {

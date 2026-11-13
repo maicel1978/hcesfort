@@ -322,6 +322,10 @@
   of the results report and each domain, whether the data support it and,
   if not, why (`missing_input` or `threshold_not_met`) (DR8). Both reports
   compute it from the same inputs.
+* `estimate_households(statistic = "median")`: where the interval of the
+  median is undefined (`survey` returns `NaN` in a small domain), `se`,
+  `ci_low` and `ci_high` are `NA` and the cell is counted in the audit log
+  (`undefined_quantile_interval`) (P116).
 * `use_report_template()` copies two reports that share their inputs
   (`_inputs.R`, one list `choices`), the labels of the analyst's codes
   (`labels.csv`), the package vocabulary (`terms.csv`) and the decisions
