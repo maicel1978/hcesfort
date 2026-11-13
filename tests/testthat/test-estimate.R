@@ -358,7 +358,7 @@ test_that("precision_status: each rule by hand, the first one wins", {
                    c(TRUE, FALSE, TRUE, FALSE, TRUE, TRUE, FALSE))
   log <- audit_log(f)
   got <- log$n_records[match(c("small_cell", "exact", "wide_interval"),
-                              log$cause)]
+                             log$cause)]
   expect_identical(got, c(3L, 1L, 1L))
 })
 
