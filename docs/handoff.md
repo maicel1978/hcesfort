@@ -1,79 +1,35 @@
 # Handoff
 
-- **Date:** 2026-11-12
-- **Session:** tasks 11c (food-group shares) and 12b (report template).
-  Model: Opus 5.5 (see the commit trailers).
+- **Date:** 2026-11-13
+- **Session:** maintainer review of the rendered report template (task 12b), outside the coding sessions.
 - **Branch:** `main`.
 
 ## What was done
 
-| Commit | Content |
-|---|---|
-| `a6b8cfc` | Nine decisions of `docs/design-food-group-shares.md` recorded as approved |
-| `38d3d3a` | 11c.1 Contract `food_groups`, `validate_food_groups()`, example grouping |
-| `09e7c52` | 11c.2 `food_group_intake()` with its log |
-| `4b4a398` | 11c.3 `food_group_shares()` and the internal `ratio_cell()` |
-| `0dd67e0` | 11c.4 Golden chain with shares, E1 in `NEWS.md`, specification, P99–P101 |
-| `dda5e95` | 12b.1 `expenditure_group` in `hces_example` |
-| `c11373d` | Fix: `estimate_households()` on a table keyed by household only |
-| `d460898`, `1eccf0d`, `9b53962` | 12b.2 `use_report_template()`, template in English and Spanish, tests, P102–P106 |
+The maintainer rendered the Spanish template on `hces_example` with Quarto, printed it (17 pages) and reviewed it. That answers open question 2 of the previous handoff (P102): the template renders. The review found defects of meaning and of design, which are recorded as approved requirements in `docs/report-requirements-v1.md`. The roadmap gains task 12c, which comes before task 12.
 
-State: `devtools::check()` 0 errors, 0 warnings, 0 notes;
-`lintr::lint_package()` clean; about 1,680 tests pass; coverage 99.6%
-before 12b (not re-measured after).
-
-E1 on `hces_example`: the cereal share falls from 37.2% to 27.3% for
-folate and from 50.0% to 47.7% for iron on the baseline.
+The state of the package code is unchanged since `dca4617`.
 
 ## Exact next step
 
-**Sonnet** starts task 12 (vignettes), now with the template: the main
-vignette should show `food_group_shares()` and point to
-`use_report_template()`. See the previous handoff's list (use
-`reference_energy()`, the per person flour availability as in
-`?who2009_levels`, `audit_summary()` at the end).
+**Fable** writes `docs/design-reports-v2.md` (task 12c.0) from `docs/report-requirements-v1.md`:
+
+- the structure of the data readiness report and of the results report;
+- the contract of the label table (R2);
+- any new exported functions for DR4, DR5 and DR8, with their contracts;
+- the automated checks of section C, as test specifications;
+- the commit plan for 12c.1 onwards.
+
+Then the session stops for the maintainer's approval. Do not write package code in 12c.0.
 
 ## Open questions for the maintainer
 
-1. P99 and P103 of `docs/improvements.md`: choices taken in
-   implementation, to confirm (recommended: confirm as written).
-2. P102: the template was knitted, not rendered with Quarto (Quarto is
-   not installed here and installing it was refused). Recommended: render
-   it once by hand (point 1 below) and add Quarto to CI.
+Previous handoff, point 1 (P99 and P103): still pending confirmation.
 
 ## Recommended model for the next session
 
-**Sonnet 5.5** (task 12).
+**Fable** (12c.0). Then Opus (12c.1 onwards).
 
 ## Maintainer review points
 
-1. **The report renders with Quarto, in both languages.**
-
-   ```r
-   d <- file.path(tempdir(), "rep"); hcesfort::use_report_template(d, "es")
-   quarto::quarto_render(file.path(d, "report.qmd"))  # or: quarto render
-   browseURL(file.path(d, "report.html"))
-   ```
-
-2. **The E1 effect and the shares against `svyratio()` typed by hand.**
-
-   ```r
-   devtools::load_all()
-   source("tests/testthat/test-golden-example.R", local = TRUE)
-   ch <- golden_chain()
-   subset(ch$shares, food_group == "cereals")
-   g <- ch$groups; h <- hces_example$households
-   est <- g$intake_status == "estimated"
-   num <- tapply(ifelse(g$food_group == "cereals", g$iron_mg, 0)[est],
-                 g$household_id[est], sum)
-   den <- tapply(g$iron_mg[est], g$household_id[est], sum)
-   w <- h$weight[match(names(num), h$household_id)]
-   sum(w * num) / sum(w * den)   # equals the cereals iron_mg estimate
-   ```
-
-3. **The `unclassified` share and the log of missing values.**
-
-   ```r
-   subset(ch$shares, food_group == "unclassified")
-   subset(audit_log(ch$groups), step == "food_group_intake")
-   ```
+1. Read `docs/design-reports-v2.md` against `docs/report-requirements-v1.md`: every requirement (DR1–DR8, R1–R14) must have a place in the design.

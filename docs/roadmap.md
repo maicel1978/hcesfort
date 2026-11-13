@@ -47,7 +47,7 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
   - [x] 11b.8 Audit log: merge without repeats, `audit_summary()`, `audit_record()` (M7, P50).
   - [x] 11b.9 Renames (L1, L2).
   - [x] 11b.10 `reference_energy()`, `qty_vehicle_g_d_pc`, `who2009_levels()` (M10, M8, P71).
-- [ ] 12. Vignettes in English and Spanish: from standard tables to risk by scenario (synthetic data); how to write an adapter; plotting results with `ggplot2`. The pkgdown site waits for v1.0.
+- [ ] 12. Vignettes in English and Spanish: from standard tables to risk by scenario (synthetic data); how to write an adapter; plotting results with `ggplot2`. The pkgdown site waits for v1.0. Waits for 12c (maintainer decision 2026-11-13): do 12c first.
 - [x] 11c. `food_group_intake()` and `food_group_shares()` on the unfortified baseline (E1), brought forward from v0.2. Design: `docs/design-food-group-shares.md`.
   - [x] 11c.0 Design written (2026-11-12); its nine decisions approved as recommended 2026-11-12.
   - [x] 11c.1 Contract `food_groups`, validator, example data.
@@ -58,6 +58,9 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
   - [x] 12b.0 Design written (2026-11-12); its eleven decisions approved as recommended 2026-11-12 (D10 amended).
   - [x] 12b.1 Invented `expenditure_group` in `hces_example` (G6).
   - [x] 12b.2 `use_report_template()`, template files in English and Spanish, tests (knit on `hces_example`, headline guards, exported functions); fix of `estimate_households()` on a table keyed by household only.
+- [ ] 12c. Redesign of the reports after the maintainer's review of the rendered template: a data readiness report and a restructured results report. Requirements: `docs/report-requirements-v1.md` (approved 2026-11-13). Comes before task 12 (vignettes), which will show the new reports.
+  - [ ] 12c.0 Design (`docs/design-reports-v2.md`): structure of both reports, label table contract, any new exported functions (DR4, DR5, DR8), and the automated checks. Model: Fable.
+  - [ ] 12c.1+ Implementation in commits of at most 300 lines. Model: Opus.
 
 ## v0.1, companion repository `hcesfort.engih2018`: ENGIH 2018 adapter (needs the microdata)
 - [ ] A1. Stage-level control figures exported from the original pipeline (record counts by section and drop cause, grams by section, AFE distribution, median intake per nutrient), md5 of the microdata, and the three checks left open on E4 (energy of Sec 3A alone by days with a record, upper tail by days, the eighth day) plus the number of records in dozens (E2). Run by the maintainer when the microdata are at hand.
