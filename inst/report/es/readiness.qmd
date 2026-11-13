@@ -1,0 +1,218 @@
+---
+title: "Informe de preparación de los datos"
+lang: es
+format:
+  html:
+    toc: true
+    embed-resources: true
+execute:
+  echo: false
+  warning: false
+params:
+  lang: "es"
+---
+
+<!--
+Informe de preparación de los datos de hcesfort (use_report_template()).
+Responde: ¿puede esta encuesta sostener el análisis y qué falta por hacer
+antes de que pueda? Los insumos y las opciones viven en _inputs.R,
+compartido con results.qmd; no los fije aquí. Edite el título de arriba y
+el texto libre de abajo; las indicaciones para el analista quedan en
+comentarios como este y nunca llegan al informe.
+Diseño: docs/design-reports-v2.md del paquete, sección 6.
+-->
+
+```{r setup}
+writeLines(utils::capture.output(utils::sessionInfo()),
+           "readiness-sessionInfo.txt")
+source("_inputs.R", local = TRUE)
+source("_chain.R", local = TRUE)
+source("_tables.R", local = TRUE)
+source("_figures.R", local = TRUE)
+source("_readiness.R", local = TRUE)
+lev <- 100 * choices$level
+```
+
+## ¿Qué variables necesita el análisis?
+
+```{r inventory}
+tables$inventory <- inventory_table(inventory)
+print_table(tables$inventory, caption = paste(
+  "Variables y tablas del contrato estándar: si cada una es esencial,",
+  "si está presente (existe y no falta en su totalidad), su proporción",
+  "de valores faltantes y las secciones del informe de resultados que",
+  "dependen de ella."
+))
+absent <- inventory[inventory$role == "essential" & !inventory$present, ]
+absent <- ifelse(is.na(absent$variable), absent$table,
+                 paste0(absent$table, "$", absent$variable))
+```
+
+```{r stop-if-not-ready, results = "asis"}
+if (!ready) {
+  cat("Falta un insumo esencial (", paste(absent, collapse = ", "),
+      "): no se puede calcular nada más hasta que se aporte.\n", sep = "")
+  knitr::knit_exit()
+}
+```
+
+## ¿Hay suficientes registros utilizables?
+
+```{r checks}
+tables$checks <- checks_table(checks)
+print_table(tables$checks, caption = paste(
+  "Hogares por estado, registros perdidos antes de los gramos y cada",
+  "umbral del que depende el análisis, con su valor y si se cumple.",
+  "Proporciones de hogares, de registros incluidos o de gramos ponderados."
+))
+```
+
+## ¿Cuántos registros llegan a la tabla de composición?
+
+```{r ladder}
+tables$ladder <- ladder_table(ladder)
+print_table(tables$ladder, caption = paste(
+  "Escalera de vinculación: registros incluidos en cada paso, cada paso",
+  "un subconjunto del anterior. Registros sin ponderar; gramos y gasto",
+  "ponderados por el peso del hogar. Los gramos se desconocen antes de",
+  "la conversión."
+))
+not_included <- sum(!acquisitions$include)
+no_expenditure <- if (has_expenditure) {
+  sum(is.na(acquisitions$expenditure_lcu[acquisitions$include]))
+}
+```
+
+Registros excluidos por la regla de inclusión del adaptador: `r not_included`.
+`r if (has_expenditure) paste0("Registros incluidos sin gasto, excluidos de las proporciones de gasto: ", no_expenditure, ".") else "La tabla de adquisiciones no tiene gasto: no se informan proporciones de gasto."`
+
+## ¿Qué queda por vincular?
+
+```{r queue}
+tables$queue <- queue_table(queue)
+if (nrow(queue) > 0) {
+  print_table(tables$queue, caption = paste(
+    "Cola de trabajo: alimentos con registros incluidos sin vincular,",
+    "ordenados por los gramos ponderados sin vincular, con los motivos, la",
+    "proporción de todos los gramos y del gasto incluidos que representan",
+    "y la proporción vinculada una vez resueltos este alimento y todos los",
+    "anteriores."
+  ))
+}
+```
+
+`r if (nrow(queue) == 0) "Todos los registros incluidos están vinculados: no queda ningún alimento pendiente."`
+
+```{r queue-figure, eval = nrow(queue) > 0}
+measures <- c(grams = term("grams", "measure"))
+if (has_expenditure) {
+  measures <- c(measures, expenditure = term("expenditure", "measure"))
+}
+figures$queue <- fig_coverage_curve(
+  tables$queue, measures, threshold = 100 * choices$min_linked_share,
+  xlab = "Alimentos resueltos, en orden", ylab = "Proporción vinculada (%)",
+  colour_lab = "Medida"
+)
+figures$queue
+```
+
+## ¿Cuándo se puede dejar de vincular y a qué costo?
+
+```{r rule}
+rule <- checks[checks$check %in% c("linked_grams", "linked_expenditure"), ]
+rule_met <- all(rule$met %in% TRUE | is.na(rule$value))
+```
+
+Regla: vincular al menos el `r 100 * choices$min_linked_share`% de los
+gramos incluidos`r if (has_expenditure) " y del gasto incluido"`. La regla
+`r if (rule_met) "se cumple" else "no se cumple"`.
+
+```{r unlinked}
+tables$unlinked <- unlinked_table()
+print_table(tables$unlinked, caption = paste(
+  "Proporción de los gramos y del gasto incluidos no vinculada a la tabla",
+  "de composición, ponderada, con su intervalo del", paste0(lev, "%.")
+))
+```
+
+```{r unlinked-domains, results = "asis"}
+for (d in domains) {
+  id <- paste0("unlinked_", d)
+  tables[[id]] <- unlinked_table(d)
+  print(print_table(
+    tables[[id]], headers = c(domain_value = as.character(lab(d, "domain"))),
+    caption = paste0(
+      "Proporción no vinculada por ", tolower(lab(d, "domain")), ", la ",
+      "misma proporción en el resto de la población y su diferencia en ",
+      "puntos. Un dominio difiere cuando el intervalo del ", lev, "% de la ",
+      "diferencia excluye el cero; las marcas no se ajustan por el número ",
+      "de comparaciones."
+    )
+  ))
+  cat("\n\n")
+}
+for (d in setdiff(choices$domains, domains)) {
+  cat(as.character(lab(d, "domain")),
+      ": la variable no está en la tabla de hogares.\n\n", sep = "")
+}
+```
+
+## ¿Es plausible la energía aparente?
+
+```{r energy, results = "asis"}
+if (is.null(energy_column)) {
+  cat("La energía no se evalúa: `choices$energy` está vacío.\n")
+} else {
+  tables$energy <- energy_table(flagged, energy_column)
+  print(print_table(tables$energy, caption = paste0(
+    "Ingesta aparente de energía, kcal por equivalente de mujer adulta ",
+    "(EMA) y día: mediana con su intervalo del ", lev, "%, la mediana como ",
+    "proporción de la energía de la persona de referencia (",
+    round(reference_kcal), " kcal) y la proporción de hogares fuera de ",
+    choices$energy_lower, "–", choices$energy_upper, " kcal."
+  )))
+}
+```
+
+```{r energy-domains, results = "asis", eval = !is.null(energy_column)}
+for (d in domains) {
+  id <- paste0("energy_", d)
+  dl <- as.character(lab(d, "domain"))
+  tables[[id]] <- energy_table(flagged, energy_column, by = d)
+  print(print_table(tables[[id]], headers = c(domain_value = dl),
+                    caption = paste0("Ingesta aparente de energía por ",
+                                     tolower(dl), ", como en la tabla ",
+                                     "anterior.")))
+  cat("\n\n")
+  figures[[id]] <- fig_interval(
+    tables[[id]], "median", "domain_value",
+    xlab = "Mediana de la energía aparente (kcal por EMA y día)", ylab = dl,
+    ref = reference_kcal
+  )
+  print(figures[[id]])
+  cat("\n\nLa línea discontinua es la energía de la persona de referencia.\n\n")
+}
+```
+
+## ¿Qué decisiones se tomaron con los datos?
+
+```{r decisions}
+tables$decisions <- as.data.frame(decisions)
+print_table(tables$decisions, caption = paste(
+  "Decisiones tomadas con los datos y la evidencia de cada una",
+  "(decisions.csv)."
+))
+```
+
+## ¿Qué resultados se pueden informar?
+
+```{r verdict}
+tables$verdict <- verdict_table(verdict)
+print_table(tables$verdict, headers = domain_headers(choices$domains),
+            caption = paste(
+              "Veredicto de preparación: cada sección del informe de",
+              "resultados, a nivel nacional y por dominio, habilitada o",
+              "deshabilitada con el motivo. El informe de resultados solo",
+              "muestra las habilitadas."
+            ))
+```

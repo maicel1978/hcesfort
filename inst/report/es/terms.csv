@@ -1,0 +1,90 @@
+type,parent,code,label
+header,,table,Tabla
+header,,variable,Variable
+header,,role,Papel
+header,,present,Presente
+header,,share_missing,Faltantes (%)
+header,,needed_by,Necesaria para
+header,,check,Comprobación
+header,,detail,Detalle
+header,,n,n
+header,,value,Valor (%)
+header,,threshold,Umbral (%)
+header,,met,Cumplido
+header,,step,Paso
+header,,n_records,Registros
+header,,n_households,Hogares
+header,,share_records,Registros (%)
+header,,share_grams,Gramos (%)
+header,,share_expenditure,Gasto (%)
+header,,rank,Orden
+header,,food_code,Código del alimento
+header,,reasons,Por qué no se vincula
+header,,units_no_grams,Unidades sin gramos
+header,,n_not_linked,Registros no vinculados
+header,,cum_share_grams,Gramos vinculados al resolverlo (%)
+header,,cum_share_expenditure,Gasto vinculado al resolverlo (%)
+header,,measure,Medida
+header,,unlinked,No vinculado (%)
+header,,ci,IC {level}%
+header,,rest,Resto de la población (%)
+header,,difference,Diferencia (puntos)
+header,,difference_ci,IC {level}% de la diferencia
+header,,differs,Difiere del resto
+header,,median,Mediana por EMA y día
+header,,pct_reference,Mediana como % de la energía de referencia
+header,,outside,Fuera del intervalo plausible (%)
+header,,outside_ci,IC {level}% de la proporción fuera
+header,,section,Sección del informe de resultados
+header,,national,Nacional
+header,,decision,Decisión
+header,,choice,Opción
+header,,evidence,Evidencia
+flag,,TRUE,sí
+flag,,FALSE,no
+role,,essential,esencial
+role,,optional,opcional
+needed_by,,all,todas las secciones
+needed_by,,none,ninguna
+section,,coverage,Cobertura de los vehículos
+section,,quantity,Cantidad entre quienes adquieren
+section,,risk,Riesgo de ingesta inadecuada
+section,,scenarios,Escenarios de fortificación
+section,,food_groups,Aporte de cada grupo de alimentos
+verdict,,enabled,habilitada
+verdict_reason,,missing_input,deshabilitada: falta el insumo
+verdict_reason,,threshold_not_met,deshabilitada: umbral no cumplido
+check,,household_status,Hogares por estado
+check,,records_without_quantity,Registros sin cantidad o unidad
+check,,records_without_grams,Registros sin gramos
+check,,records_used,Registros incluidos utilizados
+check,,composition_value,Gramos comestibles con valor de composición
+check,,linked_grams,Gramos vinculados a la composición
+check,,linked_expenditure,Gasto vinculado a la composición
+household_status,,food_module_nonresponse,No respuesta al módulo de alimentos
+household_status,,no_food_records,Sin registros de alimentos
+household_status,,all_records_lost,Todos los registros perdidos
+household_status,,no_afe,Sin equivalentes de mujer adulta
+household_status,,estimated,Con estimación
+step,,records,Registros incluidos
+step,,with_quantity,Con cantidad y unidad
+step,,with_grams,Convertidos a gramos
+step,,matched,Emparejados con la composición
+step,,validated,"Vinculados (emparejamiento validado, porción comestible)"
+reason,,missing_quantity,falta la cantidad
+reason,,missing_unit,falta la unidad
+reason,,no_factor,sin factor de unidad
+reason,,no_density,sin densidad
+reason,,no_piece_weight,sin peso por pieza
+reason,,missing_household_share,falta la proporción del hogar
+reason,,not_in_crosswalk,no está en la tabla de correspondencia
+reason,,unmatched_food,sin emparejamiento en la composición
+reason,,not_validated,emparejamiento no validado
+reason,,missing_edible_portion,falta la porción comestible
+measure,,records,Registros
+measure,,grams,Gramos
+measure,,expenditure,Gasto
+precision_status,,small_cell,menos hogares que el mínimo
+precision_status,,exact,mismo valor en todos los hogares
+precision_status,,wide_interval,intervalo amplio
+precision_status,,ok,correcto

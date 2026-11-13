@@ -1,6 +1,6 @@
-decision,situation,effect_if_unresolved,evidence_available
-Referencia de requerimientos,EAR y UL de la tabla de referencia incluida,Los niveles de riesgo cambian con otra referencia,Anexo F
-Biodisponibilidad del hierro,Un solo valor para toda la población,El riesgo de hierro depende mucho de ella,Anexo D
-Cumplimiento de los alimentos fortificados,Declarado en los escenarios; no medido,Las ganancias son potenciales,Tabla de escenarios (P6)
-Decisión sobre valores extremos,Sin regla de valores extremos en este ejemplo,Las adquisiciones extremas elevan la ingesta,Anexo B
-Pérdida de registros,Se excluyen los registros sin gramos o sin composición,La ingesta se subestima donde se pierden registros,Anexo B
+decision,choice,evidence
+Fuente de los factores de conversión de unidades,"Factores de unidad de hces_example, inventados para el ejemplo","Escalera de vinculación: registros convertidos a gramos"
+Tabla de composición,"Composición de hces_example, inventada; se restan los nutrientes añadidos de los alimentos enriquecidos para obtener la línea de base sin fortificar","Escalera de vinculación y cola de trabajo"
+Regla de valores extremos,No se aplica ninguna regla en este ejemplo,Ninguna adquisición se marcó ni se excluyó
+Divisor de días,"period_days de cada registro, el período de referencia de su módulo",Inventario de variables: period_days presente
+Imputación,Ninguna,"Los registros sin cantidad, unidad o gramos quedan fuera y se cuentan en la escalera de vinculación"
