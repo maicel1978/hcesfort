@@ -44,6 +44,16 @@ string of its language). Then 12c.11 to 12c.13 as in section 10 of
 - **P116**: the median of energy for `north` has `ci_high = NaN`; the
   report prints "—". Fix in the estimator proposed for 12c.13.
 
+## Answers of the maintainer (2026-11-13, after 12c.9)
+
+1. **P117:** accepted, points 1 to 6. On point 3: the readiness report is
+   a diagnostic, and the flag of DR5 already rests on the interval of the
+   difference, so showing `n` without suppression is right.
+2. **P116:** accepted: in 12c.13 the estimator returns `NA` for an
+   undefined quantile interval and counts the cell in the audit log.
+
+Record these in `docs/improvements.md` with the first commit of 12c.10.
+
 ## Recommended model for the next session
 
 **Opus 5.5** (12c.10 to 12c.13).
