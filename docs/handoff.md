@@ -37,15 +37,20 @@ K10–K13, U10). Then 12c.10 to 12c.13 as in section 10 of
 `docs/design-reports-v2.md`. `inst/report/` is still the old template;
 nothing in it calls the new functions yet.
 
-## Open questions for the maintainer
+## Answers of the maintainer (2026-11-13)
 
-1. **P112.** Records without `expenditure_lcu` are left out of the
-   expenditure shares and not counted. Recommended: print their count in
-   the note of the ladder table in 12c.9 (no contract change).
-2. **P113.** A missing estimate with enough households has
-   `precision_status = NA`. Recommended: keep `NA` (the report prints
-   "—" for it, as for a suppressed cell).
-3. Still pending from earlier handoffs: P99 and P103.
+1. **P112:** accepted as recommended: the note of the ladder table gives
+   the number of records without `expenditure_lcu`.
+2. **P113:** accepted as recommended: `precision_status` stays `NA` and
+   the report prints "—".
+3. **P99:** confirmed as written, points 1 to 5.
+4. **P103:** points 1, 2 and 4 are void (headlines and `equity_domain`
+   removed by reports v2). Points 3 and 5 confirmed. Point 6 amended:
+   `actions.csv` no longer exists; the column names of `decisions.csv`
+   stay in English in the file, but the readiness report prints its
+   headers through `terms.csv`, in the language of the report.
+
+Record these in `docs/improvements.md` with the first commit of 12c.9.
 
 ## Recommended model for the next session
 
