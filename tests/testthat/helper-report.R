@@ -31,3 +31,36 @@ template_headlines <- function() {
              envir = env)
   env
 }
+
+# Knit `report` ("readiness" or "results") of `lang` on hces_example in a
+# temporary folder, as Quarto would (no echo, errors stop the knit), after
+# appending `append` (lines of R) to _inputs.R and removing the files
+# named in `remove`. Returns the Markdown as one string, the exhibit
+# registry (`tables`, `figures`) and the folder.
+knit_report <- function(lang, report, append = NULL, remove = NULL,
+                        envir = parent.frame()) {
+  dir <- withr::local_tempdir(.local_envir = envir)
+  use_report_template(dir, lang)
+  if (!is.null(append)) {
+    cat(append, file = file.path(dir, "_inputs.R"), sep = "\n", append = TRUE)
+  }
+  unlink(file.path(dir, remove))
+  withr::local_dir(dir)
+  withr::local_options(knitr.kable.NA = NULL)
+  old <- knitr::opts_chunk$get()
+  withr::defer(knitr::opts_chunk$restore(old))
+  knitr::opts_chunk$set(echo = FALSE, error = FALSE, warning = FALSE,
+                        fig.path = file.path(dir, "figure", ""))
+  env <- new.env(parent = globalenv())
+  qmd <- paste0(report, ".qmd")
+  env$params <- rmarkdown::yaml_front_matter(qmd)$params
+  md <- paste0(report, ".md")
+  knitr::knit(qmd, md, quiet = TRUE, envir = env)
+  list(md = paste(readLines(md, encoding = "UTF-8"), collapse = "\n"),
+       tables = env$tables, figures = env$figures, dir = dir)
+}
+
+# Text of a Markdown string without its HTML comments.
+strip_comments <- function(md) {
+  gsub("<!--.*?-->", "", md)
+}

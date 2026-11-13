@@ -32,3 +32,48 @@ fig_dot <- function(d, y, xlab, colour = NULL, facet = NULL,
   }
   g
 }
+
+# Dot and interval of a table of `tables`: `x` is the column of the
+# estimate, `ci_low` and `ci_high` its limits, `y` the column of the
+# categories (drawn top to bottom in their order). `ref` adds a dashed
+# vertical line at a reference value. Both axes have titles (R5).
+fig_interval <- function(d, x, y, xlab, ylab, ref = NULL) {
+  d <- as.data.frame(d)
+  d[[y]] <- factor(d[[y]], levels = rev(unique(as.character(d[[y]]))))
+  g <- ggplot(d, aes(x = .data[[x]], y = .data[[y]])) +
+    geom_linerange(aes(xmin = .data$ci_low, xmax = .data$ci_high),
+                   na.rm = TRUE) +
+    geom_point(size = 2.5) +
+    labs(x = xlab, y = ylab) +
+    theme_minimal(base_size = 11)
+  if (!is.null(ref)) {
+    g <- g + geom_vline(xintercept = ref, linetype = 2)
+  }
+  g
+}
+
+# Coverage curve of the work queue (DR4), from `tables$queue`: the share
+# linked (%) against the number of foods resolved in rank order, one line
+# per measure. `measures` names the measures to draw (code = label); the
+# point at 0 foods is the coverage reached today. `threshold` (%) is drawn
+# as a dashed horizontal line.
+fig_coverage_curve <- function(d, measures, threshold, xlab, ylab,
+                               colour_lab) {
+  long <- do.call(rbind, lapply(names(measures), function(m) {
+    cum <- d[[paste0("cum_share_", m)]]
+    own <- d[[paste0("share_", m)]]
+    start <- cum[1] - ifelse(is.na(own[1]), 0, own[1])
+    data.frame(resolved = c(0, d$rank), coverage = c(start, cum),
+               measure = measures[[m]])
+  }))
+  long$measure <- factor(long$measure, levels = unname(measures))
+  ggplot(long, aes(x = .data$resolved, y = .data$coverage,
+                   colour = .data$measure)) +
+    geom_hline(yintercept = threshold, linetype = 2) +
+    geom_line() +
+    geom_point(size = 2) +
+    scale_x_continuous(breaks = unique(long$resolved)) +
+    labs(x = xlab, y = ylab, colour = colour_lab) +
+    theme_minimal(base_size = 11) +
+    theme(legend.position = "bottom")
+}

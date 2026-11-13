@@ -1,8 +1,12 @@
 # use_report_template() and the template it copies (inst/report).
 
 template_files <- function(lang) {
-  c("_figures.R", "_headlines.R", "_results.R", "actions.csv",
-    "decisions.csv", "report.qmd")
+  shared <- c("_chain.R", "_figures.R", "_headlines.R", "_inputs.R",
+              "_results.R", "_tables.R")
+  own <- c("actions.csv", "decisions.csv", "report.qmd")
+  # The Spanish readiness report is step 12c.10.
+  if (lang == "en") own <- c(own, "labels.csv", "terms.csv")
+  c(shared, own)
 }
 
 test_that("the template is copied, in each language, never overwritten", {

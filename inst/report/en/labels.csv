@@ -1,0 +1,39 @@
+type,parent,code,label
+nutrient,,energy,Energy
+nutrient,,iron,Iron
+nutrient,,folate,Folate
+nutrient,,vitamin_a,Vitamin A
+unit,,kcal,kcal
+unit,,mg,mg
+unit,,ug_dfe,µg DFE
+unit,,ug_rae,µg RAE
+vehicle,,flour,Wheat flour
+vehicle,,bread,Bread
+vehicle,,pasta,Pasta
+vehicle,,sugar,Sugar
+vehicle_group,,wheat_flour,"Wheat flour (any form)"
+vehicle_group,,any_vehicle,Any vehicle
+scenario,,baseline,Without fortification
+scenario,,flour,Flour fortification
+scenario,,flour_and_sugar,Flour and sugar fortification
+domain,,region,Region
+domain,,expenditure_group,Expenditure quintile
+domain_value,region,north,North
+domain_value,region,south,South
+domain_value,expenditure_group,Q1,Q1 (lowest expenditure)
+domain_value,expenditure_group,Q2,Q2
+domain_value,expenditure_group,Q3,Q3
+domain_value,expenditure_group,Q4,Q4
+domain_value,expenditure_group,Q5,Q5 (highest expenditure)
+food_group,,cereals,Cereals
+food_group,,pulses,Pulses
+food_group,,fats_and_oils,Fats and oils
+food_group,,sugars,Sugars
+food_group,,dairy,Dairy
+food_group,,meat,Meat
+food_group,,fruits,Fruits
+food_group,,vegetables,Vegetables
+food_group,,unclassified,No group assigned
+form,,folic_acid,folic acid
+form,,retinol,retinol
+source,,synthetic: invented,Invented for the example

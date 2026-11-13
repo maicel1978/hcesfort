@@ -1,0 +1,90 @@
+type,parent,code,label
+header,,table,Table
+header,,variable,Variable
+header,,role,Role
+header,,present,Present
+header,,share_missing,Missing (%)
+header,,needed_by,Needed by
+header,,check,Check
+header,,detail,Detail
+header,,n,n
+header,,value,Value (%)
+header,,threshold,Threshold (%)
+header,,met,Met
+header,,step,Step
+header,,n_records,Records
+header,,n_households,Households
+header,,share_records,Records (%)
+header,,share_grams,Grams (%)
+header,,share_expenditure,Expenditure (%)
+header,,rank,Rank
+header,,food_code,Food code
+header,,reasons,Why not linked
+header,,units_no_grams,Units without grams
+header,,n_not_linked,Records not linked
+header,,cum_share_grams,Grams linked once resolved (%)
+header,,cum_share_expenditure,Expenditure linked once resolved (%)
+header,,measure,Measure
+header,,unlinked,Not linked (%)
+header,,ci,{level}% CI
+header,,rest,Rest of the population (%)
+header,,difference,Difference (points)
+header,,difference_ci,{level}% CI of the difference
+header,,differs,Differs from the rest
+header,,median,Median per AFE per day
+header,,pct_reference,Median as % of the reference energy
+header,,outside,Outside the plausible range (%)
+header,,outside_ci,{level}% CI of the share outside
+header,,section,Section of the results report
+header,,national,National
+header,,decision,Decision
+header,,choice,Choice
+header,,evidence,Evidence
+flag,,TRUE,yes
+flag,,FALSE,no
+role,,essential,essential
+role,,optional,optional
+needed_by,,all,all sections
+needed_by,,none,none
+section,,coverage,Coverage of the vehicles
+section,,quantity,Quantity among acquirers
+section,,risk,Risk of inadequate intake
+section,,scenarios,Fortification scenarios
+section,,food_groups,Contribution of each food group
+verdict,,enabled,enabled
+verdict_reason,,missing_input,disabled: input absent
+verdict_reason,,threshold_not_met,disabled: threshold not met
+check,,household_status,Households by status
+check,,records_without_quantity,Records without quantity or unit
+check,,records_without_grams,Records without grams
+check,,records_used,Included records used
+check,,composition_value,Edible grams with a composition value
+check,,linked_grams,Grams linked to composition
+check,,linked_expenditure,Expenditure linked to composition
+household_status,,food_module_nonresponse,Food module non-response
+household_status,,no_food_records,No food records
+household_status,,all_records_lost,All records lost
+household_status,,no_afe,No adult female equivalents
+household_status,,estimated,With an estimate
+step,,records,Included records
+step,,with_quantity,With quantity and unit
+step,,with_grams,Converted to grams
+step,,matched,Matched to composition
+step,,validated,"Linked (validated match, edible portion)"
+reason,,missing_quantity,quantity missing
+reason,,missing_unit,unit missing
+reason,,no_factor,no unit factor
+reason,,no_density,no density
+reason,,no_piece_weight,no piece weight
+reason,,missing_household_share,household share missing
+reason,,not_in_crosswalk,not in the crosswalk
+reason,,unmatched_food,no composition match
+reason,,not_validated,match not validated
+reason,,missing_edible_portion,edible portion missing
+measure,,records,Records
+measure,,grams,Grams
+measure,,expenditure,Expenditure
+precision_status,,small_cell,fewer households than the minimum
+precision_status,,exact,same value in every household
+precision_status,,wide_interval,wide interval
+precision_status,,ok,ok
