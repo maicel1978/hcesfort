@@ -59,8 +59,21 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
   - [x] 12b.1 Invented `expenditure_group` in `hces_example` (G6).
   - [x] 12b.2 `use_report_template()`, template files in English and Spanish, tests (knit on `hces_example`, headline guards, exported functions); fix of `estimate_households()` on a table keyed by household only.
 - [ ] 12c. Redesign of the reports after the maintainer's review of the rendered template: a data readiness report and a restructured results report. Requirements: `docs/report-requirements-v1.md` (approved 2026-11-13). Comes before task 12 (vignettes), which will show the new reports.
-  - [ ] 12c.0 Design (`docs/design-reports-v2.md`): structure of both reports, label table contract, any new exported functions (DR4, DR5, DR8), and the automated checks. Model: Fable.
-  - [ ] 12c.1+ Implementation in commits of at most 300 lines. Model: Opus.
+  - [ ] 12c.0 Design (`docs/design-reports-v2.md`): structure of both reports, label table contract, new exported functions, contract changes and the automated checks. Written 2026-11-13 (Fable); **awaiting the maintainer's approval of its twelve decisions (section 11)**.
+  - Implementation (Opus), after approval; each step at most 300 lines of code, split if larger. Detail in section 10 of the design.
+  - [ ] 12c.1 Optional column `expenditure_lcu` in `acquisitions`; invented column in `hces_example`.
+  - [ ] 12c.2 `linkage_ladder()` (DR3).
+  - [ ] 12c.3 `unmatched_foods()` as the work queue (DR4).
+  - [ ] 12c.4 `estimate_unlinked()` (DR5).
+  - [ ] 12c.5 `precision_status` in `flag_precision()` (R7).
+  - [ ] 12c.6 Label table and decisions table: schemas, `read_labels()`, `label_codes()`, `read_decisions()` (R2, DR7).
+  - [ ] 12c.7 `readiness_inventory()`, `readiness_checks()` (DR1, DR2).
+  - [ ] 12c.8 `readiness_verdict()` (DR8).
+  - [ ] 12c.9 Shared template files; readiness report in English.
+  - [ ] 12c.10 Readiness report in Spanish.
+  - [ ] 12c.11 Results report in English; old template files removed.
+  - [ ] 12c.12 Results report in Spanish.
+  - [ ] 12c.13 Quarto in CI; specification, `NEWS.md`, self-review; handoff for the maintainer's render on ENGIH 2018 (acceptance C2).
 
 ## v0.1, companion repository `hcesfort.engih2018`: ENGIH 2018 adapter (needs the microdata)
 - [ ] A1. Stage-level control figures exported from the original pipeline (record counts by section and drop cause, grams by section, AFE distribution, median intake per nutrient), md5 of the microdata, and the three checks left open on E4 (energy of Sec 3A alone by days with a record, upper tail by days, the eighth day) plus the number of records in dozens (E2). Run by the maintainer when the microdata are at hand.

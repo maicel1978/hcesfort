@@ -436,6 +436,24 @@ design remain).
 | P105 | low | **Annex G asks for the md5 of the input files in prose**; `_results.R` could compute it when the ADAPTER block names files. | Reproducibility. | v0.2 |
 | P106 | low | **Labels are codes** (`vitamin_a`, `wheat_flour`, domain names) in headlines and figures; a small label table in the ADAPTER block would print names. | Readability for decision-makers. | 12 |
 
+## Open items from the design of the reports v2 (2026-11-13)
+
+Design `docs/design-reports-v2.md` (task 12c.0), from the approved
+`docs/report-requirements-v1.md`. Its twelve decisions (section 11) await
+the maintainer; they are recorded here once answered.
+
+| Id | Priority | Proposal | Why | Task |
+|---|---|---|---|---|
+| P107 | high | **Approve the twelve decisions of section 11 of the design**, among them three that change a contract or an exported interface: the optional column `expenditure_lcu` (decision 3), `unmatched_foods()` taking `households` (decision 4) and eight new exported functions (decision 10). | Implementation cannot start without them. | 12c |
+| P108 | medium | **The contrast of `estimate_unlinked()` (a domain against the rest of the population) is internal.** The public contrast between two domains with its interval (G3: coverage ratio, gap between quintiles) can be built on it. | G3 of `docs/design-report-template.md` stays open. | v0.2 |
+| P109 | low | **Comparisons between two scenarios are removed from the report** (every scenario is compared with the unfortified baseline; `actions.csv` goes). A country may need "proposed against current". | Decision 7 of the design; R9 and R10f. | v0.2 |
+| P110 | medium | **Methods vignette**: methods, the direction of each bias and the STROBE-nut mapping of the old annex H, which leave the results report (R12). | Decision 9 of the design. | 12 |
+| P111 | low | **Each report runs the whole chain.** A cache shared by the two reports would halve the time on a national survey. | Performance. | v0.2 |
+
+Resolved by the design: P106 (labels instead of codes: section 4). Moved:
+P102 (Quarto in CI) to step 12c.13. P103 loses its points on headlines,
+which no longer exist (R4).
+
 ## Open items from task 2 (2026-11-12)
 
 Self-review of task 2, done as an rOpenSci reviewer would. Items in scope
