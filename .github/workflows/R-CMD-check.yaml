@@ -32,6 +32,10 @@ jobs:
           r-version: ${{ matrix.config.r }}
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
+      # Quarto on one runner, so that the render test of the report
+      # template (K15) runs; it skips where Quarto is absent.
+      - uses: quarto-dev/quarto-actions/setup@v2
+        if: matrix.config.os == 'ubuntu-latest' && matrix.config.r == 'release'
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: any::rcmdcheck
