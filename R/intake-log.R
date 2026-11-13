@@ -43,23 +43,30 @@ outlier_decision <- function(x, outliers) {
 # `arg` in messages) or `afe` have households absent from `households`.
 check_intake_ids <- function(x, afe, h, arg = "content",
                              call = rlang::caller_env()) {
-  for (other in list(list(arg, x), list("afe", afe))) {
-    ids <- other[[2]]$household_id
+  tables <- stats::setNames(list(x, afe), c(arg, "afe"))
+  check_household_ids(tables, h, call = call)
+}
+
+# Abort with `hcesfort_error_join` unless every household of each table of
+# `tables` (a named list) is in `h`, with an id of the same type.
+check_household_ids <- function(tables, h, call = rlang::caller_env()) {
+  for (name in names(tables)) {
+    ids <- tables[[name]]$household_id
     if (length(ids) > 0 && !same_id_type(ids, h$household_id)) {
       abort_hcesfort("join", c(
-        "{.field household_id} differs in type between {.arg {other[[1]]}}
+        "{.field household_id} differs in type between {.arg {name}}
         and {.arg households}."
-      ), table = other[[1]], other = "households", columns = "household_id",
+      ), table = name, other = "households", columns = "household_id",
       n = NA_integer_, call = call)
     }
     absent <- unique(ids[!ids %in% h$household_id])
     if (length(absent) > 0) {
       n <- length(absent)
       abort_hcesfort("join", c(
-        "{n} household{?s} of {.arg {other[[1]]}} {?is/are} not in
+        "{n} household{?s} of {.arg {name}} {?is/are} not in
         {.arg households}.",
         "x" = "Id{?s}: {.val {utils::head(absent, 5)}}."
-      ), table = other[[1]], other = "households", columns = "household_id",
+      ), table = name, other = "households", columns = "household_id",
       n = n, call = call)
     }
   }

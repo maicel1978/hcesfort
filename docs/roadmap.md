@@ -62,7 +62,7 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
   - [x] 12c.0 Design (`docs/design-reports-v2.md`): structure of both reports, label table contract, new exported functions, contract changes and the automated checks. Written 2026-11-13 (Fable); approved 2026-11-13, decision 7 amended (comparator kept as a template choice).
   - Implementation (Opus), after approval; each step at most 300 lines of code, split if larger. Detail in section 10 of the design.
   - [x] 12c.1 Optional column `expenditure_lcu` in `acquisitions`; invented column in `hces_example`.
-  - [ ] 12c.2 `linkage_ladder()` (DR3).
+  - [x] 12c.2 `linkage_ladder()` (DR3).
   - [ ] 12c.3 `unmatched_foods()` as the work queue (DR4).
   - [ ] 12c.4 `estimate_unlinked()` (DR5).
   - [ ] 12c.5 `precision_status` in `flag_precision()` (R7).

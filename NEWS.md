@@ -284,6 +284,10 @@
   the period of `period_days`. It is the only measure known for records
   without grams, and feeds the expenditure shares of the data readiness
   report. `hces_example` gains an invented one.
+* `linkage_ladder(x, households)` follows the included records through
+  the steps towards a nutrient value (with quantity, with grams, matched,
+  validated) and gives the share kept at each step by records, weighted
+  grams and weighted expenditure (data readiness report, DR3).
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is
