@@ -123,3 +123,14 @@ example_tables <- function() {
   e <- hcesfort::hces_example
   e[names(e) != "nutrients"]
 }
+
+# Inventory and checks of the example for readiness_verdict().
+verdict_fixture <- function(tables = example_tables(), domains = "region",
+                            min_used = 0.8) {
+  ch <- example_chain()
+  list(
+    inventory = readiness_inventory(tables, domains = domains),
+    checks = readiness_checks(ch$intake, ch$ladder, c("iron", "folate"),
+                              min_used, 0.9, 0.9)
+  )
+}

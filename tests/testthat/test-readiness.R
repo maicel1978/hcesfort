@@ -171,3 +171,93 @@ test_that("readiness_checks() checks its arguments", {
                                 0.5),
                class = "hcesfort_error_audit")
 })
+
+# readiness_verdict() (U7). Fixture verdict_fixture() in helper-linkage.R.
+
+test_that("every section is enabled on the example", {
+  f <- verdict_fixture()
+  v <- readiness_verdict(f$inventory, f$checks, domains = "region")
+  expect_identical(names(v), c("section", "domain", "enabled", "reason",
+                               "detail"))
+  expect_identical(v$section, rep(c("coverage", "quantity", "risk",
+                                    "scenarios", "food_groups"), 2))
+  expect_identical(v$domain, rep(c(NA, "region"), each = 5))
+  expect_true(all(v$enabled))
+  expect_true(all(is.na(v$reason) & is.na(v$detail)))
+})
+
+test_that("an absent domain disables only its rows", {
+  t <- example_tables()
+  t$households$region <- NULL
+  domains <- c("region", "expenditure_group")
+  f <- verdict_fixture(t, domains = domains)
+  v <- readiness_verdict(f$inventory, f$checks, domains = domains)
+  off <- !v$enabled
+  expect_identical(unique(v$domain[off]), "region")
+  expect_identical(sum(off), 5L)
+  expect_true(all(v$reason[off] == "missing_input" & v$detail[off] ==
+                    "region"))
+})
+
+test_that("an absent optional table disables exactly its sections", {
+  expected <- list(food_groups = "food_groups",
+                   vehicles = c("coverage", "quantity", "scenarios"),
+                   scenarios = "scenarios")
+  for (tab in names(expected)) {
+    t <- example_tables()
+    t[[tab]] <- NULL
+    f <- verdict_fixture(t)
+    v <- readiness_verdict(f$inventory, f$checks)
+    expect_identical(v$section[!v$enabled], expected[[tab]], info = tab)
+    expect_true(all(v$reason[!v$enabled] == "missing_input"))
+    expect_true(all(grepl(tab, v$detail[!v$enabled], fixed = TRUE)))
+  }
+})
+
+test_that("a threshold not met disables the gated sections", {
+  f <- verdict_fixture(min_used = 0.95)
+  v <- readiness_verdict(f$inventory, f$checks, domains = "region")
+  off <- v[!v$enabled, ]
+  expect_identical(off$section, rep(c("risk", "scenarios", "food_groups"),
+                                    2))
+  expect_true(all(off$reason == "threshold_not_met"))
+  expect_true(all(off$detail == "records_used"))
+  # composition_value disables only when no nutrient meets it.
+  ch <- f$checks
+  ch$met[ch$check == "composition_value"] <- c(FALSE, TRUE)
+  expect_true(all(readiness_verdict(f$inventory, ch)$enabled[c(1, 2)]))
+  expect_true(all(readiness_verdict(f$inventory, ch)$section[
+    !readiness_verdict(f$inventory, ch)$enabled
+  ] %in% c("risk", "scenarios", "food_groups")))
+  ch$met[ch$check == "records_used"] <- TRUE
+  expect_true(all(readiness_verdict(f$inventory, ch)$enabled))
+  ch$met[ch$check == "composition_value"] <- FALSE
+  ch$met[ch$check == "linked_expenditure"] <- NA
+  v <- readiness_verdict(f$inventory, ch)
+  expect_identical(unique(v$detail[!v$enabled]), "composition_value")
+})
+
+test_that("an absent essential input disables everything", {
+  t <- example_tables()
+  t$crosswalk <- NULL
+  t$acquisitions$unit <- NULL
+  inv <- readiness_inventory(t, domains = "region")
+  v <- readiness_verdict(inv, NULL, domains = "region")
+  expect_false(any(v$enabled))
+  expect_true(all(v$reason == "missing_input"))
+  expect_true(all(v$detail == "unit, crosswalk"))
+})
+
+test_that("readiness_verdict() checks its arguments", {
+  f <- verdict_fixture()
+  expect_error(readiness_verdict(f$inventory), class =
+                 "hcesfort_error_argument")
+  expect_error(readiness_verdict(f$inventory, NULL),
+               class = "hcesfort_error_argument")
+  expect_error(readiness_verdict(f$inventory[, 1:2], f$checks),
+               class = "hcesfort_error_schema")
+  expect_error(readiness_verdict(f$inventory, f$checks[, 1:2]),
+               class = "hcesfort_error_schema")
+  expect_error(readiness_verdict(f$inventory, f$checks, domains = 1),
+               class = "hcesfort_error_argument")
+})

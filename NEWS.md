@@ -318,6 +318,10 @@
   the records lost before grams and each threshold (`min_records_used`,
   `min_coverage`, `min_linked_share`) with its value and whether it is
   met, computed as `inadequacy()` computes them (DR2).
+* `readiness_verdict(inventory, checks, domains)` says, for each section
+  of the results report and each domain, whether the data support it and,
+  if not, why (`missing_input` or `threshold_not_met`) (DR8). Both reports
+  compute it from the same inputs.
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is
