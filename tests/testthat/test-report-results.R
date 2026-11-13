@@ -9,15 +9,19 @@ skip_if_no_knit <- function() {
   testthat::skip_if_not_installed("ggplot2")
 }
 
-# The Spanish results report is step 12c.12.
-results_langs <- "en"
+results_langs <- c("en", "es")
 
 # Sentences the tests match, in the language of each report.
 say_results <- list(
   en = list(
-    exact = "Same value in every household",
+    exact = "No variation in the sample, so no interval",
     region_disabled = "Region: disabled: input absent",
     food_groups_disabled = "Contribution of each food group: disabled"
+  ),
+  es = list(
+    exact = "Sin variación en la muestra, por lo que no hay intervalo",
+    region_disabled = "Región: deshabilitada: falta el insumo",
+    food_groups_disabled = "Aporte de cada grupo de alimentos: deshabilitada"
   )
 )
 

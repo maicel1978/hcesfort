@@ -3,9 +3,8 @@
 template_files <- function(lang) {
   shared <- c("_chain.R", "_figures.R", "_inputs.R", "_readiness.R",
               "_results.R", "_tables.R")
-  own <- c("decisions.csv", "labels.csv", "terms.csv", "readiness.qmd")
-  # The Spanish results report is step 12c.12.
-  if (lang == "en") own <- c(own, "results.qmd")
+  own <- c("decisions.csv", "labels.csv", "terms.csv", "readiness.qmd",
+           "results.qmd")
   c(shared, own)
 }
 

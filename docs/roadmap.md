@@ -72,7 +72,7 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
   - [x] 12c.9 Shared template files; readiness report in English.
   - [x] 12c.10 Readiness report in Spanish.
   - [x] 12c.11 Results report in English, with `choices$comparator`; old template files removed.
-  - [ ] 12c.12 Results report in Spanish.
+  - [x] 12c.12 Results report in Spanish.
   - [ ] 12c.13 Quarto in CI; specification, `NEWS.md`, self-review; handoff for the maintainer's render on ENGIH 2018 (acceptance C2).
 
 ## v0.1, companion repository `hcesfort.engih2018`: ENGIH 2018 adapter (needs the microdata)

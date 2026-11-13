@@ -325,11 +325,12 @@
 * `use_report_template()` copies two reports that share their inputs
   (`_inputs.R`, one list `choices`), the labels of the analyst's codes
   (`labels.csv`), the package vocabulary (`terms.csv`) and the decisions
-  taken with the data (`decisions.csv`): a data readiness report
-  (`readiness.qmd`, English and Spanish) and a results report
-  (`results.qmd`, English) whose sections are rendered only where the
+  taken with the data (`decisions.csv`), in English or Spanish: a data
+  readiness report (`readiness.qmd`) and a results report (`results.qmd`)
+  whose sections are rendered only where the
   readiness verdict enables them. No headline is generated; cells with
-  fewer households than `choices$min_n` print a dash; a scenario may be
+  fewer households than `choices$min_n` print a dash; an estimate with no
+  variation in the sample leaves its table for one sentence; a scenario may be
   compared with another scenario (`choices$comparator`). The previous
   `report.qmd`, `_headlines.R` and `actions.csv` are removed.
 * Corrections to the original ENGIH 2018 analysis will be recorded in this

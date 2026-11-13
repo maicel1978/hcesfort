@@ -1,0 +1,269 @@
+---
+title: "Fortificación de alimentos básicos: resultados"
+lang: es
+format:
+  html:
+    toc: true
+    embed-resources: true
+execute:
+  echo: false
+  warning: false
+params:
+  lang: "es"
+---
+
+<!--
+Informe de resultados de hcesfort (use_report_template()). Genere antes
+el informe de preparación de los datos: este informe muestra solo las
+secciones que habilita su veredicto. Los insumos y las opciones viven en
+_inputs.R, compartido con readiness.qmd; no los fije aquí. Edite el título
+de arriba y escriba su propio texto entre las tablas y figuras; las
+indicaciones para el analista quedan en comentarios como este y nunca
+llegan al informe. El informe presenta resultados: interpretarlos es
+trabajo del analista.
+Diseño: docs/design-reports-v2.md del paquete, sección 7.
+-->
+
+```{r setup}
+writeLines(utils::capture.output(utils::sessionInfo()),
+           "results-sessionInfo.txt")
+source("_inputs.R", local = TRUE)
+source("_chain.R", local = TRUE)
+source("_tables.R", local = TRUE)
+source("_figures.R", local = TRUE)
+source("_results.R", local = TRUE)
+lev <- 100 * choices$level
+small_note <- paste0(
+  "Un guion marca una celda con menos de ", choices$min_n, " hogares. ",
+  "Precisión: un intervalo amplio tiene una semiamplitud mayor de ",
+  pct(choices$max_half_width, 0), " puntos; su punto se dibuja hueco."
+)
+```
+
+```{r stop-if-not-ready, results = "asis"}
+if (!ready) {
+  cat("Falta un insumo esencial: véase el informe de preparación de los",
+      "datos.\n")
+  knitr::knit_exit()
+}
+```
+
+## ¿Qué hogares adquieren cada vehículo?
+
+```{r coverage, results = "asis"}
+if (!enabled("coverage")) {
+  cat(disabled_sentence("coverage"), "\n")
+} else {
+  tables$coverage_vehicle <- coverage_table("vehicle")
+  show_exhibit("coverage_vehicle", paste0(
+    "Hogares que adquirieron cada vehículo en el período de referencia, % ",
+    "de hogares, con su intervalo del ", lev, "%. ", small_note
+  ), fig_interval(tables$coverage_vehicle, "acquired", "vehicle",
+                  xlab = "Hogares que adquieren (%)", ylab = "Vehículo"))
+  tables$coverage_group <- coverage_table(c("group", "combined"))
+  show_exhibit("coverage_group", paste0(
+    "Hogares que adquirieron al menos un vehículo de cada grupo, % de ",
+    "hogares, con su intervalo del ", lev, "%. Grupos: ", group_note()
+  ), fig_interval(tables$coverage_group, "acquired", "vehicle_group",
+                  xlab = "Hogares que adquieren (%)",
+                  ylab = "Grupo de vehículos"))
+}
+```
+
+```{r quantity, results = "asis"}
+if (!enabled("quantity")) {
+  cat(disabled_sentence("quantity"), "\n")
+} else {
+  tables$quantity <- quantity_table()
+  show_exhibit("quantity", paste0(
+    "Cantidad adquirida entre los hogares que adquieren cada vehículo: ",
+    "mediana de gramos por equivalente de mujer adulta (EMA) y día, con ",
+    "su intervalo del ", lev, "%."
+  ), fig_interval(tables$quantity, "median_g", "vehicle",
+                  xlab = "Mediana de g por EMA y día",
+                  ylab = "Vehículo"))
+}
+```
+
+```{r no-vehicle, results = "asis"}
+if (enabled("coverage")) {
+  tables$no_vehicle <- no_vehicle_table()
+  show_exhibit("no_vehicle", paste0(
+    "Hogares que no adquirieron ningún vehículo, % de hogares, con su ",
+    "intervalo del ", lev, "%."
+  ), fig_interval(tables$no_vehicle, "none", "population",
+                  xlab = "Hogares que no adquieren ningún vehículo (%)",
+                  ylab = "Población"))
+  for (d in choices$domains) {
+    if (!enabled("coverage", d)) {
+      cat(disabled_sentence("coverage", d), "\n\n")
+      next
+    }
+    id <- paste0("no_vehicle_", d)
+    tables[[id]] <- no_vehicle_table(d)
+    show_exhibit(id, paste0(
+      "Hogares que no adquirieron ningún vehículo por ",
+      tolower(lab(d, "domain")), ", % de hogares, con su intervalo del ",
+      lev, "%. ", small_note
+    ), fig_interval(tables[[id]], "none", "domain_value",
+                    xlab = "Hogares que no adquieren ningún vehículo (%)",
+                    ylab = as.character(lab(d, "domain"))),
+    headers = value_header(d))
+  }
+}
+```
+
+## ¿Qué nutrientes están en riesgo sin fortificación?
+
+```{r risk, results = "asis"}
+if (!enabled("risk")) {
+  cat(disabled_sentence("risk"), "\n")
+} else {
+  tables$risk <- risk_table()
+  show_exhibit("risk", paste0(
+    "Hogares cuya ingesta aparente por EMA está por debajo del ",
+    "requerimiento, sin fortificación, % de hogares, con su intervalo del ",
+    lev, "%. Método: ", method_note(), " ", small_note
+  ), fig_interval(tables$risk, "inadequate", "nutrient",
+                  xlab = "Ingesta inadecuada (%)", ylab = "Nutriente"))
+  for (d in choices$domains) {
+    if (!enabled("risk", d)) {
+      cat(disabled_sentence("risk", d), "\n\n")
+      next
+    }
+    id <- paste0("risk_", d)
+    tables[[id]] <- risk_table(d)
+    show_exhibit(id, paste0(
+      "Ingesta inadecuada sin fortificación por ",
+      tolower(lab(d, "domain")), ", % de hogares, con su intervalo del ",
+      lev, "%. ", small_note
+    ), fig_interval(tables[[id]], "inadequate", "domain_value",
+                    xlab = "Ingesta inadecuada (%)",
+                    ylab = as.character(lab(d, "domain")),
+                    facet = "nutrient"),
+    headers = value_header(d))
+  }
+}
+```
+
+## ¿Qué cambiaría cada escenario de fortificación?
+
+```{r scenarios, results = "asis"}
+if (!enabled("scenarios")) {
+  cat(disabled_sentence("scenarios"), "\n")
+} else {
+  tables$scenarios <- scenario_table()
+  show_exhibit("scenarios", paste(
+    "Escenarios de fortificación: vehículo, nutriente, nivel en mg de",
+    "nutriente por kg de vehículo (compuestos convertidos), forma,",
+    "proporción del vehículo fortificada (cumplimiento) y fuente."
+  ))
+  eff <- effects_table()
+  for (n in choices$nutrients) {
+    id <- paste0("effects_", n)
+    tables[[id]] <- eff[eff$nutrient %in% as.character(lab(n, "nutrient")), ]
+    if (nrow(tables[[id]]) == 0) next
+    show_exhibit(id, paste0(
+      as.character(lab(n, "nutrient")), ": ingesta inadecuada con cada ",
+      "escenario y con el escenario con que se compara, % de hogares, y ",
+      "su diferencia pareada en puntos porcentuales con su intervalo del ",
+      lev, "%. ", small_note
+    ), fig_dumbbell(tables[[id]], "from", "to", "scenario",
+                    xlab = "Ingesta inadecuada (%)", ylab = "Escenario"))
+    cat("En la figura, el punto hueco es el escenario con que se compara y",
+        "el punto relleno, el escenario; el intervalo de la diferencia está",
+        "en la tabla anterior.\n\n")
+  }
+}
+```
+
+```{r above-ul, results = "asis"}
+if (enabled("scenarios")) {
+  ul <- above_ul_estimates()
+  tables$ul_scope <- ul_scope_table(ul)
+  show_exhibit("ul_scope", paste(
+    "Ingesta comparada con el nivel máximo de ingesta tolerable (UL) de",
+    "cada nutriente y dirección del sesgo de esa comparación."
+  ))
+  tables$above_ul <- above_ul_table(ul)
+  show_exhibit("above_ul", paste0(
+    "Hogares por encima del UL con cada escenario, % de hogares, con su ",
+    "intervalo del ", lev, "%. El UL de los adultos se aplica a la ",
+    "ingesta por EMA. ", small_note
+  ))
+}
+```
+
+```{r equity, results = "asis"}
+if (enabled("scenarios")) {
+  for (d in choices$equity_domains) {
+    if (!enabled("scenarios", d)) {
+      cat(disabled_sentence("scenarios", d), "\n\n")
+      next
+    }
+    eff <- effects_table(d)
+    for (n in choices$nutrients) {
+      id <- paste0("equity_", n, "_", d)
+      tables[[id]] <- eff[eff$nutrient %in% as.character(lab(n, "nutrient")), ]
+      if (nrow(tables[[id]]) == 0) next
+      show_exhibit(id, paste0(
+        as.character(lab(n, "nutrient")), " por ",
+        tolower(lab(d, "domain")), ": ingesta inadecuada con cada ",
+        "escenario y con el escenario con que se compara, % de hogares, y ",
+        "su diferencia pareada en puntos porcentuales con su intervalo del ",
+        lev, "%. ", small_note
+      ), fig_dumbbell(tables[[id]], "from", "to", "domain_value",
+                      xlab = "Ingesta inadecuada (%)",
+                      ylab = as.character(lab(d, "domain")),
+                      facet = "scenario"),
+      headers = value_header(d))
+    }
+  }
+}
+```
+
+## ¿De dónde viene cada nutriente?
+
+```{r food-groups, results = "asis"}
+if (!enabled("food_groups")) {
+  cat(disabled_sentence("food_groups"), "\n")
+} else {
+  tables$food_groups <- food_group_table()
+  fg <- tables$food_groups
+  unclassified <- as.character(lab("unclassified", "food_group"))
+  none <- fg[fg$food_group %in% unclassified, ]
+  show_exhibit("food_groups", paste0(
+    "Proporción de la ingesta aparente de cada nutriente que aporta cada ",
+    "grupo de alimentos, sin fortificación, %, con su intervalo del ", lev,
+    "%. Una proporción de 0 no tiene intervalo. Alimentos sin grupo ",
+    "asignado: ",
+    paste0(none$nutrient, " ", none$share, "%", collapse = "; "), "."
+  ), fig_interval(fg, "share", "food_group",
+                  xlab = "Proporción de la ingesta (%)",
+                  ylab = "Grupo de alimentos", facet = "nutrient"))
+}
+```
+
+## Nota técnica
+
+```{r reference, results = "asis"}
+tables$reference <- reference_table()
+show_exhibit("reference", paste(
+  "Requerimiento promedio estimado (EAR) y nivel máximo de ingesta",
+  "tolerable (UL) utilizados, con su fuente."
+))
+if (enabled("risk") && "iron" %in% choices$nutrients) {
+  tables$iron_sensitivity <- iron_sensitivity_table()
+  show_exhibit("iron_sensitivity", paste0(
+    "Ingesta inadecuada de hierro sin fortificación con cada ",
+    "biodisponibilidad del hierro, % de hogares, con su intervalo del ",
+    lev, "%. Los resultados anteriores usan ",
+    pct(choices$iron_bioavailability, 0), "%."
+  ))
+}
+```
+
+El informe de preparación de los datos ([readiness.html](readiness.html))
+presenta las variables utilizadas, los registros vinculados a la tabla de
+composición, la plausibilidad de la energía aparente y las decisiones
+tomadas con los datos.

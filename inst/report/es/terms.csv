@@ -114,7 +114,7 @@ measure,,expenditure,Gasto
 precision_status,,small_cell,menos hogares que el mínimo
 precision_status,,exact,mismo valor en todos los hogares
 precision_status,,wide_interval,intervalo amplio
-precision_status,,ok,correcto
+precision_status,,ok,adecuada
 method,,ear_cutpoint,punto de corte del EAR
 method,,probability,método probabilístico
 ul_scope,,total_intake,Ingesta total
@@ -125,4 +125,4 @@ ul_bias,,total_intake,Puede estar subestimado (composición o registros incomple
 ul_bias,,form_added_only,Cota inferior: no cuenta la forma ya presente en la dieta
 ul_bias,,form_diet_and_added,"Puede estar subestimado (composición de la forma o registros incompletos)"
 ul_bias,,not_assessable,No evaluable
-sentence,,exact,"Mismo valor en todos los hogares, sin intervalo"
+sentence,,exact,"Sin variación en la muestra, por lo que no hay intervalo"

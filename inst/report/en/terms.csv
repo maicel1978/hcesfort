@@ -125,4 +125,4 @@ ul_bias,,total_intake,May be understated (incomplete composition or records)
 ul_bias,,form_added_only,Lower bound: the form already in the diet is not counted
 ul_bias,,form_diet_and_added,"May be understated (incomplete composition of the form, or records)"
 ul_bias,,not_assessable,Not assessable
-sentence,,exact,"Same value in every household, without interval"
+sentence,,exact,"No variation in the sample, so no interval"
