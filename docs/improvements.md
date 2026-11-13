@@ -512,7 +512,7 @@ report (Opus).
 |---|---|---|---|---|
 | P121 | low | **The code of `readiness.qmd` and `results.qmd` is written twice, once per language.** A test now compares the tokens of the chunks of both languages (strings other than codes, comments and commas left out), so a change made in one language only fails. Inline expressions (`` `r ...` ``) of `readiness.qmd` are not compared. Alternative: one report per kind, with every sentence in `terms.csv`; heavier for the analyst who edits the text. | Duplication; the test makes it safe for now. | v0.2 |
 | P122 | low | **The 8-household fixture of `test-estimate.R` gives an undefined median interval at levels 0.9 and 0.95**; the median tests against `survey` run at level 0.5. A fixture with more PSUs would test the median at the usual level. | Tests at the level users choose. | 11 (revisit) |
-| P123 | medium | **K15 (Quarto render of both reports in both languages) has not run yet**: Quarto could not be installed in the session's container. The first run of the R-CMD-check workflow on the ubuntu release runner is its verification. | Never claim it works without running it. | 12c.13 (CI) |
+| P123 | medium | **K15 (Quarto render of both reports in both languages) has not run yet**: Quarto could not be installed in the session's container. The first run of the R-CMD-check workflow on the ubuntu release runner (on `main` or a pull request) is its verification. | Never claim it works without running it. | 12c.13 (CI) |
 
 ## Open items from step 12c.11 (2026-11-13)
 

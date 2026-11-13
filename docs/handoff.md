@@ -22,7 +22,9 @@ installed). `devtools::check()`: 0 errors, 0 warnings, 0 notes.
 
 ## Exact next step
 
-1. **Maintainer:** check the first CI run of the branch: the job
+1. **Maintainer:** merge the branch into `main` (or open a pull request:
+   the workflow runs on `main` and on pull requests, not on this branch's
+   pushes) and check that CI run: the job
    `ubuntu-latest (release)` must run, not skip, the test "the template
    renders with Quarto when it is installed" (P123). If it fails, return
    to Opus with the log.
