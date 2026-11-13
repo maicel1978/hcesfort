@@ -297,6 +297,11 @@
   `expenditure_lcu_d_not_linked`, `share_expenditure`, `rank` and the
   coverage curve `cum_share_records`, `cum_share_grams`,
   `cum_share_expenditure`. `order` gains `"expenditure"`.
+* `estimate_unlinked(design, x, by, measure)` estimates the share of the
+  included records not linked to the composition table, by grams, records
+  or expenditure, as a ratio of weighted totals with a logit interval;
+  by domain it adds the difference from the rest of the population with a
+  delta-method interval and the flag `differs` (DR5).
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is

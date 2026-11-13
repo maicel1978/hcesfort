@@ -63,3 +63,36 @@ example_content <- function() {
   link_composition(g, e$crosswalk, e$composition,
                    nutrient_registry(e$nutrients))
 }
+
+# Eight households, each with a linked food (rice) and an unlinked one
+# (herb, `herb_g` grams), in two strata, one PSU per household, two
+# regions; `num` and `den` are the household totals of the unlinked and of
+# all grams.
+ul_case <- function(herb_g, rice_g = rep(100, 8)) {
+  a <- data.frame(
+    record_id = 1:16, household_id = rep(1:8, each = 2),
+    food_code = rep(c("rice", "herb"), 8),
+    quantity = as.vector(rbind(rice_g, herb_g)), unit = "g",
+    section = "diary", period_days = 1, include = TRUE
+  )
+  h <- data.frame(household_id = 1:8,
+                  weight = c(10, 20, 15, 30, 25, 10, 20, 15),
+                  stratum = rep(c("a", "b"), each = 4), psu = 1:8,
+                  region = rep(c("north", "south"), 4))
+  list(content = lk_content(a), households = h,
+       design = as_hces_design(h, lonely_psu = "fail"),
+       num = herb_g, den = herb_g + rice_g)
+}
+
+reference_design <- function(case) {
+  h <- case$households
+  h$num <- case$num
+  h$den <- case$den
+  north <- h$region == "north"
+  h$n1 <- h$num * north
+  h$d1 <- h$den * north
+  h$n0 <- h$num * !north
+  h$d0 <- h$den * !north
+  survey::svydesign(ids = ~psu, strata = ~stratum, weights = ~weight,
+                    data = h, nest = TRUE)
+}

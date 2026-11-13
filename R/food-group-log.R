@@ -70,9 +70,8 @@ check_group_ids <- function(x, ids, call = rlang::caller_env()) {
   n = length(absent), call = call)
 }
 
-# Audit rows of food_group_shares().
-shares_log <- function(design, df, out) {
-  step <- "food_group_shares"
+# Audit rows of food_group_shares() (and of estimate_unlinked(), `step`).
+shares_log <- function(design, df, out, step = "food_group_shares") {
   note <- function(cause, detail) {
     audit_row(step, "estimate", "note", cause, nrow(out), detail = detail)
   }
