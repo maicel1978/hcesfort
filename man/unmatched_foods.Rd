@@ -2,38 +2,57 @@
 % Please edit documentation in R/unmatched.R
 \name{unmatched_foods}
 \alias{unmatched_foods}
-\title{Foods whose records are not linked to the composition table}
+\title{Work queue: foods whose records are not linked to the composition table}
 \usage{
-unmatched_foods(x, order = c("grams", "records"))
+unmatched_foods(x, households, order = c("grams", "records", "expenditure"))
 }
 \arguments{
-\item{x}{Table returned by \code{\link[=link_composition]{link_composition()}}.}
+\item{x}{Table returned by \code{\link[=link_composition]{link_composition()}} (or \code{\link[=fill_composition]{fill_composition()}}).}
 
-\item{order}{\code{"grams"} (default: grams per day of the records not
-linked, then records) or \code{"records"} (records not linked, then grams).
-Ties are ordered by \code{food_code}.}
+\item{households}{Households table (\code{\link[=hces_schema]{hces_schema()}}\code{("households")}); it
+must contain every household of \code{x}.}
+
+\item{order}{\code{"grams"} (default: weighted grams per day of the records
+not linked, then records), \code{"records"} (records not linked, then
+grams) or \code{"expenditure"} (weighted expenditure of the records not
+linked, then records; needs the column \code{expenditure_lcu}). Ties are
+ordered by \code{food_code}; missing amounts rank last.}
 }
 \value{
-A tibble, one row per food with a record not linked:
-\code{food_code}; \code{match_status} (the food's crosswalk, as in
+A tibble, one row per food with an included record not linked,
+in rank order: \code{food_code}; \code{match_status} (the food's crosswalk, as in
 \code{\link[=link_composition]{link_composition()}}: \code{matched} means the crosswalk is fine and the
-records lack grams); \code{n_records} (all records of the food);
-\code{n_not_linked}; \code{n_no_grams} (records without grams, see
-\code{grams_status} of \code{\link[=convert_units]{convert_units()}}); \code{n_households} (with a record not
-linked); \code{qty_g_d_not_linked} (grams per day as acquired of the
-records not linked that have grams; \code{NA} when none has); and
-\code{share_records} and \code{share_grams} of the not-linked records over all
-records and all grams of \code{x}.
+records lack grams); \code{reasons} (the distinct reasons of its records not
+linked, separated by \code{"; "}: the \code{grams_status} of \code{\link[=convert_units]{convert_units()}}
+of those without grams, then the \code{match_status} when it is not
+\code{matched}); \code{units_no_grams} (the distinct units of its records without
+grams, sorted, \code{NA} when none); \code{n_records} (its included records);
+\code{n_not_linked}; \code{n_no_grams}; \code{n_households} (with a record not
+linked); \code{qty_g_d_not_linked} (weighted grams per day as acquired of
+the records not linked that have grams; \code{NA} when none has);
+\code{expenditure_lcu_d_not_linked} (weighted expenditure per day of those
+with an expenditure; \code{NA} when none has or without the column);
+\code{share_records}, \code{share_grams} and \code{share_expenditure} (of the
+included records, of their weighted grams, of their weighted
+expenditure, as in \code{\link[=linkage_ladder]{linkage_ladder()}}); \code{rank}; and
+\code{cum_share_records}, \code{cum_share_grams} and \code{cum_share_expenditure}:
+the share linked once this food and all those ranked before it are
+resolved. Each cumulative share ends at 1.
 }
 \description{
-List the survey foods with at least one record that
+List the survey foods with at least one included record that
 \code{\link[=link_composition]{link_composition()}} could not link, with what blocks them, ranked so
-that the foods worth fixing first come first. It is the coverage of the
-audit log seen by food.
+that the foods worth fixing first come first, and the coverage reached
+once each food and those ranked before it are resolved. It is the fourth
+section of the data readiness report: the coverage curve against foods
+resolved.
 }
 \details{
-A food without a unit factor has no grams, so ranking only by grams
-would hide it: both counts are returned, and \code{order} says which ranks.
+Only records with \code{include = TRUE} count, as in \code{\link[=apparent_intake]{apparent_intake()}}.
+Grams and expenditure are weighted by the household weight. A food
+without a unit factor has no grams, so ranking only by grams would hide
+it: records, grams and expenditure are all returned, and \code{order} says
+which ranks.
 }
 \examples{
 grams <- convert_units(
@@ -44,9 +63,9 @@ content <- link_composition(
   grams, hces_example$crosswalk, hces_example$composition,
   nutrients = nutrient_registry(hces_example$nutrients)
 )
-unmatched_foods(content)
-unmatched_foods(content, order = "records")
+unmatched_foods(content, hces_example$households)
+unmatched_foods(content, hces_example$households, order = "records")
 }
 \seealso{
-\code{\link[=link_composition]{link_composition()}}, \code{\link[=audit_log]{audit_log()}}.
+\code{\link[=linkage_ladder]{linkage_ladder()}}, \code{\link[=link_composition]{link_composition()}}, \code{\link[=audit_log]{audit_log()}}.
 }

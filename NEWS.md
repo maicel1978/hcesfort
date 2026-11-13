@@ -288,6 +288,15 @@
   the steps towards a nutrient value (with quantity, with grams, matched,
   validated) and gives the share kept at each step by records, weighted
   grams and weighted expenditure (data readiness report, DR3).
+* `unmatched_foods()` becomes the work queue of the data readiness report
+  (DR4), and its interface changes: it takes `households` (second
+  argument) and counts only included records; grams are weighted by the
+  household weight, so `qty_g_d_not_linked` and `share_grams` are now
+  population figures over the included records (they were unweighted,
+  over every record). New columns: `reasons`, `units_no_grams`,
+  `expenditure_lcu_d_not_linked`, `share_expenditure`, `rank` and the
+  coverage curve `cum_share_records`, `cum_share_grams`,
+  `cum_share_expenditure`. `order` gains `"expenditure"`.
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is
