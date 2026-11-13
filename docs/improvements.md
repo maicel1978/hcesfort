@@ -506,6 +506,14 @@ report (Opus).
 |---|---|---|---|---|
 | P119 | resolved (2026-11-13: points 1, 2, 3 and 5 accepted; on point 4, `ok` is "adecuada", read as "precisión adecuada"; the decimal point is the usage of the Dominican Republic) | **Translation choices of the Spanish readiness report, to confirm.** (1) Adult female equivalent is "equivalente de mujer adulta (EMA)", as in the Spanish results report. (2) Units: `ug_dfe` is "µg EFD"; `ug_rae` stays "µg RAE", since "EAR" would clash with the estimated average requirement. (3) Numbers keep the decimal point and intervals "[low, high]", as in English. (4) `precision_status` `ok` is "correcto". (5) The YAML header sets `lang: es`, so Quarto prints its own labels (table of contents) in Spanish. | CLAUDE.md: no interpretation chosen silently. | 12c.12 |
 
+## Open items from the self-review of task 12c (2026-11-13)
+
+| Id | Priority | Proposal | Why | Task |
+|---|---|---|---|---|
+| P121 | low | **The code of `readiness.qmd` and `results.qmd` is written twice, once per language.** A test now compares the tokens of the chunks of both languages (strings other than codes, comments and commas left out), so a change made in one language only fails. Inline expressions (`` `r ...` ``) of `readiness.qmd` are not compared. Alternative: one report per kind, with every sentence in `terms.csv`; heavier for the analyst who edits the text. | Duplication; the test makes it safe for now. | v0.2 |
+| P122 | low | **The 8-household fixture of `test-estimate.R` gives an undefined median interval at levels 0.9 and 0.95**; the median tests against `survey` run at level 0.5. A fixture with more PSUs would test the median at the usual level. | Tests at the level users choose. | 11 (revisit) |
+| P123 | medium | **K15 (Quarto render of both reports in both languages) has not run yet**: Quarto could not be installed in the session's container. The first run of the R-CMD-check workflow on the ubuntu release runner is its verification. | Never claim it works without running it. | 12c.13 (CI) |
+
 ## Open items from step 12c.11 (2026-11-13)
 
 | Id | Priority | Proposal | Why | Task |

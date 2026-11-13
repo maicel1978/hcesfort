@@ -70,3 +70,27 @@ test_that("the template renders with Quarto when it is installed", {
     }
   }
 })
+
+# The R code of the chunks of a report, as its tokens without comments,
+# commas and strings other than codes such as "vehicle" (the text differs
+# by language, and so does how it is split into strings; the code and the
+# codes must not).
+chunk_tokens <- function(file) {
+  lines <- readLines(file, encoding = "UTF-8", warn = FALSE)
+  fence <- grepl("^```", lines)
+  inside <- (cumsum(fence) %% 2 == 1) & !fence
+  code <- lines[inside]
+  p <- utils::getParseData(parse(text = code, keep.source = TRUE))
+  text <- p$token == "STR_CONST" & !grepl("^[\"'][a-z_]+[\"']$", p$text)
+  p <- p[p$terminal & !text & !p$token %in% c("COMMENT", "','"), ]
+  p$text
+}
+
+test_that("the reports run the same code in every language", {
+  for (report in c("readiness.qmd", "results.qmd")) {
+    files <- system.file("report", c("en", "es"), report,
+                         package = "hcesfort")
+    expect_identical(chunk_tokens(files[2]), chunk_tokens(files[1]),
+                     info = report)
+  }
+})

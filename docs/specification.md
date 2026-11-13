@@ -115,24 +115,21 @@ excluded, flagged or filled with the share of its input, `audit_record()`
 lets an adapter record its own steps, and `restore_audit()` re-attaches the
 log after a verb that drops it.
 
-Planned in task 12c (design `docs/design-reports-v2.md`, awaiting
-approval; nothing below exists yet):
+Data readiness and reports (task 12c, design `docs/design-reports-v2.md`):
 
-- Two reports instead of one: a data readiness report and a results
-  report, both copied by `use_report_template()`.
-- `acquisitions` gains the optional column `expenditure_lcu`.
-- `linkage_ladder()`: records, grams and expenditure kept at each step
-  from the record to the validated composition link.
-- `unmatched_foods()` becomes the work queue: weighted, with the reasons
-  each food is pending and the coverage reached as foods are resolved.
-- `estimate_unlinked()`: share not linked, nationally and by domain, with
-  the difference between each domain and the rest of the population.
-- `readiness_inventory()`, `readiness_checks()`, `readiness_verdict()`:
-  variables present, thresholds met, and the results sections enabled.
-- `read_labels()`, `label_codes()`, `read_decisions()`: the label table
-  (no code is printed in a report) and the analyst's decisions table.
-- `flag_precision()` gains `precision_status` (small cell, exact, wide
-  interval, ok).
+| Step | Function | Input → output |
+|---|---|---|
+| Linkage | `linkage_ladder()` | composition link + households → records, grams and expenditure (`expenditure_lcu`, optional in `acquisitions`) kept at each step from the record to the validated composition link |
+| Work queue | `unmatched_foods()` | composition link + households → foods pending, weighted, with the reasons and the coverage reached as foods are resolved |
+| Unlinked share | `estimate_unlinked()` | design + composition link → share of grams and expenditure not linked, nationally and by domain, with the difference between each domain and the rest of the population |
+| Readiness | `readiness_inventory()`, `readiness_checks()`, `readiness_verdict()` | standard tables, baseline intake, linkage ladder + thresholds → variables present, thresholds met, and the sections of the results report enabled, nationally and by domain |
+| Labels | `read_labels()`, `label_codes()`, `read_decisions()` | analyst's CSV files → label table (no code is printed in a report) and decisions table |
+| Precision | `flag_precision()` | estimates + `min_n`, `max_half_width` → `precision_status` (small cell, exact, wide interval, ok) |
+
+`use_report_template()` copies two Quarto reports, in English or Spanish,
+that share their inputs (`_inputs.R`): a data readiness report
+(`readiness.qmd`) and a results report (`results.qmd`) whose sections are
+rendered only where the readiness verdict enables them.
 
 ### 3. Reference data shipped with the package, each with its source
 Small, generic, replaceable by argument:
