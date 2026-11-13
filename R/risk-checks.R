@@ -33,11 +33,7 @@ check_min_records_used <- function(min_records_used,
 # "records_used") below `min_records_used`. Returns both shares.
 check_records_used <- function(x, min_records_used,
                                call = rlang::caller_env()) {
-  one <- if (is.null(x[["scenario"]])) x else x[x$scenario == x$scenario[1], ]
-  n_inc <- sum(one$n_records_included)
-  shares <- c(records = if (n_inc > 0) sum(one$n_records_used) / n_inc else
-                NA_real_,
-              grams = grams_used_share(x))
+  shares <- overall_records_used(x)
   if (is.na(shares[["records"]]) || shares[["records"]] >= min_records_used) {
     return(shares)
   }
@@ -54,6 +50,15 @@ check_records_used <- function(x, min_records_used,
   ), measure = "records_used", nutrients = character(0),
   coverage = shares[["records"]], shares = shares,
   min_coverage = min_records_used, call = call)
+}
+
+# The shares of check_records_used(): records used over included records
+# (unweighted) and the same by purchased grams. Used by readiness_checks().
+overall_records_used <- function(x) {
+  one <- if (is.null(x[["scenario"]])) x else x[x$scenario == x$scenario[1], ]
+  n_inc <- sum(one$n_records_included)
+  c(records = if (n_inc > 0) sum(one$n_records_used) / n_inc else NA_real_,
+    grams = grams_used_share(x))
 }
 
 # Overall share of the purchased grams of the included records that were
@@ -112,14 +117,7 @@ check_requirements <- function(requirements, nutrients, value_col,
 # baseline. Abort with hcesfort_error_coverage below `min_coverage`.
 check_coverage <- function(x, nutrients, assessed, min_coverage,
                            call = rlang::caller_env()) {
-  one <- if (is.null(x[["scenario"]])) x else x[x$scenario == x$scenario[1], ]
-  est <- one$intake_status == "estimated"
-  w <- one$qty_edible_g_d[est] * one$afe[est]
-  cov <- vapply(assessed, function(n) {
-    col <- nutrients$column[nutrients$nutrient == n]
-    v <- one[[paste0(col, "_coverage")]][est]
-    if (sum(w) > 0) sum((v * w)[w > 0]) / sum(w) else NA_real_
-  }, numeric(1))
+  cov <- nutrient_coverage(x, nutrients, assessed)
   low <- !is.na(cov) & cov < min_coverage
   if (!any(low)) {
     return(cov)
@@ -191,4 +189,17 @@ check_cutpoint_valid <- function(req, dist, call = rlang::caller_env()) {
     )
   ), table = "requirements", columns = "cutpoint_valid", n = length(bad),
   call = call)
+}
+
+# The coverage of check_coverage(), named by nutrient of `assessed`. Used
+# by readiness_checks().
+nutrient_coverage <- function(x, nutrients, assessed) {
+  one <- if (is.null(x[["scenario"]])) x else x[x$scenario == x$scenario[1], ]
+  est <- one$intake_status == "estimated"
+  w <- one$qty_edible_g_d[est] * one$afe[est]
+  vapply(assessed, function(n) {
+    col <- nutrients$column[nutrients$nutrient == n]
+    v <- one[[paste0(col, "_coverage")]][est]
+    if (sum(w) > 0) sum((v * w)[w > 0]) / sum(w) else NA_real_
+  }, numeric(1))
 }

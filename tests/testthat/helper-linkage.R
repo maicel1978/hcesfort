@@ -56,12 +56,18 @@ lk_content <- function(a = lk_acquisitions()) {
   link_composition(g, cw, comp, nutrient_registry(c(iron = "mg")))
 }
 
-# The example survey linked to its composition table.
-example_content <- function() {
+# The example survey linked to its composition table. With `biscuit =
+# TRUE` the biscuit match is validated, so its missing folate value enters
+# the intake and the coverage of folate falls below 1.
+example_content <- function(biscuit = FALSE) {
   e <- hcesfort::hces_example
+  cw <- e$crosswalk
+  if (biscuit) {
+    cw$validated[cw$food_code == "biscuit"] <- TRUE
+    cw$match_type[cw$food_code == "biscuit"] <- "similar"
+  }
   g <- convert_units(e$acquisitions, e$unit_factors, priority = "food")
-  link_composition(g, e$crosswalk, e$composition,
-                   nutrient_registry(e$nutrients))
+  link_composition(g, cw, e$composition, nutrient_registry(e$nutrients))
 }
 
 # Eight households, each with a linked food (rice) and an unlinked one
@@ -95,4 +101,25 @@ reference_design <- function(case) {
   h$d0 <- h$den * !north
   survey::svydesign(ids = ~psu, strata = ~stratum, weights = ~weight,
                     data = h, nest = TRUE)
+}
+
+# The example survey up to the apparent intake, with its content and
+# ladder.
+example_chain <- function(biscuit = FALSE) {
+  e <- hcesfort::hces_example
+  content <- example_content(biscuit)
+  afe <- adult_equivalents(
+    e$members,
+    reference_kcal = reference_energy("female", 25, 55, pal = 1.76),
+    weight_kg = c(female = 55, male = 65), pal = 1.76
+  )
+  list(content = content,
+       intake = apparent_intake(content, afe, e$households),
+       ladder = linkage_ladder(content, e$households))
+}
+
+# The example tables as supplied to readiness_inventory().
+example_tables <- function() {
+  e <- hcesfort::hces_example
+  e[names(e) != "nutrients"]
 }

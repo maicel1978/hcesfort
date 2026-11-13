@@ -311,6 +311,13 @@
   codes into a factor of labels in table order, with no fallback to the
   code (R2). `read_decisions(file)` reads the decisions taken with the data
   (`hces_schema("decisions")`, DR7).
+* `readiness_inventory(tables, domains)` lists the variables and tables a
+  survey supplies, essential or optional, with their missing share and
+  the results sections that depend on them; it runs on tables that fail
+  their contract (DR1). `readiness_checks()` gives the household statuses,
+  the records lost before grams and each threshold (`min_records_used`,
+  `min_coverage`, `min_linked_share`) with its value and whether it is
+  met, computed as `inadequacy()` computes them (DR2).
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is
