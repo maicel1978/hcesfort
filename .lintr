@@ -4,5 +4,6 @@ exclusions: list(
     "data-raw",
     "inst/report/en/report.qmd" = list(line_length_linter = Inf),
     "inst/report/es/report.qmd" = list(line_length_linter = Inf),
-    "inst/report/_tables.R" = list(object_usage_linter = Inf)
+    "inst/report/_tables.R" = list(object_usage_linter = Inf),
+    "inst/report/_readiness.R" = list(object_usage_linter = Inf)
   )

@@ -489,6 +489,17 @@ Self-review of steps 12c.1 to 12c.8 (Opus). Coverage of the new files:
 | P114 | low | **`linkage_ladder()`, `unmatched_foods()` and the readiness functions return plain tibbles**: a change in the number of rows of `x` made outside the package is not recorded, as it is by the estimators (`audit_check_rows()`). | Consistency of the audit log. | v0.2 |
 | P115 | low | **`readiness_verdict()` treats a domain absent from the inventory as absent from `households`** (`missing_input`). The template passes the same `domains` to both functions, so this only matters for direct use. | Clearer error for direct use. | v0.2 |
 
+## Open items from step 12c.9 (2026-11-13)
+
+Self-review of the shared template files and the English readiness
+report (Opus).
+
+| Id | Priority | Proposal | Why | Task |
+|---|---|---|---|---|
+| P116 | medium | **`estimate_households(statistic = "median")` returns `se = NaN` and `ci_high = NaN` for a cell where the quantile interval is undefined** (region `north` of `hces_example`, energy per AFE), without a log row. The report prints "—" for that interval. The estimator could return `NA` and count the cell in the audit log. | Nothing silent. | 12c.13 |
+| P117 | medium | **Choices taken in implementation of 12c.9, to confirm.** (1) The reference person and the unit conversion are functions in `_inputs.R` (`make_afe()`, `make_grams()`), called by `_chain.R` only when every essential input is present, so a survey that fails its contract still gets its inventory. (2) `choices$energy` must name a registry nutrient in kcal, since it is compared with the energy of the reference person; otherwise the render stops with `hcesfort_error_argument`. (3) The unlinked share by domain (DR5) is shown with its `n`, without suppressing small cells: R7 is a rule of the results report. (4) The coverage curve of the work queue draws grams and expenditure (the measures of the stopping rule), not records. (5) An absent essential input prints the inventory and one sentence, without the verdict. (6) Intervals are printed as "[low, high]" in one column; the registry `tables` keeps the two limits as numbers. | CLAUDE.md: no interpretation chosen silently. | 12c.10 |
+| P118 | low | **`object_usage_linter` is off for `inst/report/_tables.R` and `_readiness.R`**: they are scripts sourced into the environment of a report and use objects of the other scripts. | Lint clean without false positives. | — |
+
 ## Open items from task 2 (2026-11-12)
 
 Self-review of task 2, done as an rOpenSci reviewer would. Items in scope

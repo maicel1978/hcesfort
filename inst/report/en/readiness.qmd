@@ -1,0 +1,212 @@
+---
+title: "Data readiness report"
+format:
+  html:
+    toc: true
+    embed-resources: true
+execute:
+  echo: false
+  warning: false
+params:
+  lang: "en"
+---
+
+<!--
+Data readiness report of hcesfort (use_report_template()). It answers:
+can this survey support the analysis, and what is left to do before it
+can? Inputs and choices live in _inputs.R, shared with results.qmd; do not
+set them here. Edit the title above and the free text below; guidance for
+the analyst stays in comments like this one and never reaches the output.
+Design: docs/design-reports-v2.md of the package, section 6.
+-->
+
+```{r setup}
+writeLines(utils::capture.output(utils::sessionInfo()),
+           "readiness-sessionInfo.txt")
+source("_inputs.R", local = TRUE)
+source("_chain.R", local = TRUE)
+source("_tables.R", local = TRUE)
+source("_figures.R", local = TRUE)
+source("_readiness.R", local = TRUE)
+lev <- 100 * choices$level
+```
+
+## Which variables does the analysis need?
+
+```{r inventory}
+tables$inventory <- inventory_table(inventory)
+print_table(tables$inventory, caption = paste(
+  "Variables and tables of the standard contract: whether each is",
+  "essential, whether it is present (exists and is not all missing),",
+  "its share of missing values and the sections of the results report",
+  "that depend on it."
+))
+absent <- inventory[inventory$role == "essential" & !inventory$present, ]
+absent <- ifelse(is.na(absent$variable), absent$table,
+                 paste0(absent$table, "$", absent$variable))
+```
+
+```{r stop-if-not-ready, results = "asis"}
+if (!ready) {
+  cat("An essential input is absent (", paste(absent, collapse = ", "),
+      "): nothing else can be computed until it is supplied.\n", sep = "")
+  knitr::knit_exit()
+}
+```
+
+## Are there enough usable records?
+
+```{r checks}
+tables$checks <- checks_table(checks)
+print_table(tables$checks, caption = paste(
+  "Households by status, records lost before grams, and each threshold",
+  "the analysis depends on, with its value and whether it is met.",
+  "Shares of households, of included records or of weighted grams."
+))
+```
+
+## How many records reach the composition table?
+
+```{r ladder}
+tables$ladder <- ladder_table(ladder)
+print_table(tables$ladder, caption = paste(
+  "Linkage ladder: included records at each step, each step a subset of",
+  "the one before. Records unweighted; grams and expenditure weighted by",
+  "the household weight. Grams are unknown before conversion."
+))
+not_included <- sum(!acquisitions$include)
+no_expenditure <- if (has_expenditure) {
+  sum(is.na(acquisitions$expenditure_lcu[acquisitions$include]))
+}
+```
+
+Records left out by the inclusion rule of the adapter: `r not_included`.
+`r if (has_expenditure) paste0("Included records without expenditure, left out of the expenditure shares: ", no_expenditure, ".") else "The acquisitions table has no expenditure: shares of expenditure are not reported."`
+
+## What is left to link?
+
+```{r queue}
+tables$queue <- queue_table(queue)
+if (nrow(queue) > 0) {
+  print_table(tables$queue, caption = paste(
+    "Work queue: foods with included records not linked, ranked by the",
+    "weighted grams not linked, with the reasons and the share of all",
+    "included grams and expenditure they hold, and the share linked once",
+    "this food and all those before it are resolved."
+  ))
+}
+```
+
+`r if (nrow(queue) == 0) "Every included record is linked: no food is pending."`
+
+```{r queue-figure, eval = nrow(queue) > 0}
+measures <- c(grams = term("grams", "measure"))
+if (has_expenditure) {
+  measures <- c(measures, expenditure = term("expenditure", "measure"))
+}
+figures$queue <- fig_coverage_curve(
+  tables$queue, measures, threshold = 100 * choices$min_linked_share,
+  xlab = "Foods resolved, in rank order", ylab = "Share linked (%)",
+  colour_lab = "Measure"
+)
+figures$queue
+```
+
+## When can linking stop, and at what cost?
+
+```{r rule}
+rule <- checks[checks$check %in% c("linked_grams", "linked_expenditure"), ]
+rule_met <- all(rule$met %in% TRUE | is.na(rule$value))
+```
+
+Rule: link at least `r 100 * choices$min_linked_share`% of the included
+grams`r if (has_expenditure) " and of the included expenditure"`. The rule
+is `r if (rule_met) "met" else "not met"`.
+
+```{r unlinked}
+tables$unlinked <- unlinked_table()
+print_table(tables$unlinked, caption = paste(
+  "Share of the included grams and expenditure not linked to the",
+  "composition table, weighted, with its", paste0(lev, "%"), "interval."
+))
+```
+
+```{r unlinked-domains, results = "asis"}
+for (d in domains) {
+  id <- paste0("unlinked_", d)
+  tables[[id]] <- unlinked_table(d)
+  print(print_table(
+    tables[[id]], headers = c(domain_value = as.character(lab(d, "domain"))),
+    caption = paste0(
+      "Share not linked by ", tolower(lab(d, "domain")), ", the same share ",
+      "in the rest of the population, and their difference in points. A ",
+      "domain differs when the ", lev, "% interval of the difference ",
+      "excludes zero; the flags are not adjusted for the number of ",
+      "comparisons."
+    )
+  ))
+  cat("\n\n")
+}
+for (d in setdiff(choices$domains, domains)) {
+  cat(as.character(lab(d, "domain")),
+      ": the variable is absent from the households table.\n\n", sep = "")
+}
+```
+
+## Is the apparent energy plausible?
+
+```{r energy, results = "asis"}
+if (is.null(energy_column)) {
+  cat("Energy is not assessed: `choices$energy` is empty.\n")
+} else {
+  tables$energy <- energy_table(flagged, energy_column)
+  print(print_table(tables$energy, caption = paste0(
+    "Apparent energy intake, kcal per adult female equivalent per day: ",
+    "median with its ", lev, "% interval, the median as a share of the ",
+    "energy of the reference person (", round(reference_kcal), " kcal), ",
+    "and the share of households outside ", choices$energy_lower, "–",
+    choices$energy_upper, " kcal."
+  )))
+}
+```
+
+```{r energy-domains, results = "asis", eval = !is.null(energy_column)}
+for (d in domains) {
+  id <- paste0("energy_", d)
+  dl <- as.character(lab(d, "domain"))
+  tables[[id]] <- energy_table(flagged, energy_column, by = d)
+  print(print_table(tables[[id]], headers = c(domain_value = dl),
+                    caption = paste0("Apparent energy intake by ",
+                                     tolower(dl), ", as in the table above.")))
+  cat("\n\n")
+  figures[[id]] <- fig_interval(
+    tables[[id]], "median", "domain_value",
+    xlab = "Median apparent energy (kcal per AFE per day)", ylab = dl,
+    ref = reference_kcal
+  )
+  print(figures[[id]])
+  cat("\n\nThe dashed line is the energy of the reference person.\n\n")
+}
+```
+
+## Which decisions were taken with the data?
+
+```{r decisions}
+tables$decisions <- as.data.frame(decisions)
+print_table(tables$decisions, caption = paste(
+  "Decisions taken with the data and the evidence for each",
+  "(decisions.csv)."
+))
+```
+
+## Which results can be reported?
+
+```{r verdict}
+tables$verdict <- verdict_table(verdict)
+print_table(tables$verdict, headers = domain_headers(choices$domains),
+            caption = paste(
+              "Readiness verdict: each section of the results report,",
+              "nationally and by domain, enabled or disabled with the",
+              "reason. The results report renders only the enabled ones."
+            ))
+```

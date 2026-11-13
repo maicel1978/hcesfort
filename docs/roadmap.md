@@ -69,7 +69,7 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
   - [x] 12c.6 Label table and decisions table: schemas, `read_labels()`, `label_codes()`, `read_decisions()` (R2, DR7).
   - [x] 12c.7 `readiness_inventory()`, `readiness_checks()` (DR1, DR2).
   - [x] 12c.8 `readiness_verdict()` (DR8).
-  - [ ] 12c.9 Shared template files; readiness report in English.
+  - [x] 12c.9 Shared template files; readiness report in English.
   - [ ] 12c.10 Readiness report in Spanish.
   - [ ] 12c.11 Results report in English, with `choices$comparator`; old template files removed.
   - [ ] 12c.12 Results report in Spanish.

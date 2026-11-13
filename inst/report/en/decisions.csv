@@ -1,6 +1,6 @@
-decision,situation,effect_if_unresolved,evidence_available
-Requirement reference,EAR and UL of the shipped reference table,Risk levels shift with another reference,Annex F
-Iron bioavailability,One value for the whole population,Iron risk depends strongly on it,Annex D
-Compliance of fortified foods,Stated in the scenarios; not measured,Gains are potential,Scenario table (Q6)
-Outlier decision,No outlier rule in this example,Extreme acquisitions raise intakes,Annex B
-Record loss,Records without grams or composition are left out,Intake is understated where records are lost,Annex B
+decision,choice,evidence
+Source of the unit conversion factors,"Unit factors of hces_example, invented for the example","Linkage ladder: records converted to grams"
+Composition table,"Composition of hces_example, invented; added nutrients of enriched foods removed to obtain the unfortified baseline","Linkage ladder and work queue"
+Outlier rule,No rule applied in this example,No acquisition was flagged or excluded
+Day divisor,"period_days of each record, the reference period of its module",Variable inventory: period_days present
+Imputation,None,"Records without quantity, unit or grams are left out and counted in the linkage ladder"

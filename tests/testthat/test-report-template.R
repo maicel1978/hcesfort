@@ -2,10 +2,10 @@
 
 template_files <- function(lang) {
   shared <- c("_chain.R", "_figures.R", "_headlines.R", "_inputs.R",
-              "_results.R", "_tables.R")
+              "_readiness.R", "_results.R", "_tables.R")
   own <- c("actions.csv", "decisions.csv", "report.qmd")
   # The Spanish readiness report is step 12c.10.
-  if (lang == "en") own <- c(own, "labels.csv", "terms.csv")
+  if (lang == "en") own <- c(own, "labels.csv", "terms.csv", "readiness.qmd")
   c(shared, own)
 }
 
