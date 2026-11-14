@@ -135,6 +135,34 @@ ul_bias,,form_diet_and_added,"Puede estar subestimado (composición de la forma 
 ul_bias,,not_assessable,No evaluable
 sentence,,exact,"En la muestra, el mismo valor en todos los hogares"
 sentence,,limit,límite del intervalo
+sentence,,supported,Los datos permiten estas secciones del informe de resultados: {sections}.
+sentence,,supported_none,Los datos no permiten ninguna sección del informe de resultados.
+sentence,,supported_domains,Cada una puede informarse también por {domains}.
+sentence,,unsupported,No se permite: {items}.
+sentence,,unsupported_none,Todas las secciones se permiten a nivel nacional y en todos los dominios.
+sentence,,left,Falta por hacer: {items}.
+sentence,,left_inputs,Falta por hacer: aportar los insumos esenciales {inputs}.
+sentence,,left_foods,"vincular {n} alimentos, que representan el {grams}% de los gramos incluidos"
+sentence,,left_expenditure,y el {expenditure}% del gasto incluido
+sentence,,left_checks,cumplir los umbrales de {checks}
+sentence,,left_none,No falta nada por hacer: todos los registros incluidos están vinculados y se cumplen todos los umbrales.
+sentence,,not_ready,Falta un insumo esencial ({inputs}): no se puede calcular nada más hasta que se aporte.
+sentence,,not_included,Registros excluidos por la regla de inclusión del adaptador: {n}.
+sentence,,no_expenditure_records,"Registros incluidos sin gasto, excluidos de las proporciones de gasto: {n}."
+sentence,,no_expenditure,La tabla de adquisiciones no tiene gasto: no se informan proporciones de gasto.
+sentence,,queue_empty,Todos los registros incluidos están vinculados: no queda ningún alimento pendiente.
+sentence,,rule,Regla: vincular al menos el {threshold}% de los gramos incluidos{expenditure}. La regla {status}.
+sentence,,rule_expenditure,y del gasto incluido
+sentence,,met,se cumple
+sentence,,not_met,no se cumple
+sentence,,no_domain_differs,"En la proporción no vinculada, ningún valor de estas variables de dominio difiere del resto de la población: {domains}."
+sentence,,domain_absent,{domain}: la variable no está en la tabla de hogares.
+sentence,,energy,"Mediana de la ingesta aparente de energía: {median} kcal por equivalente de mujer adulta por día (IC {level}% {low} a {high}), el {pct}% de la energía de la persona de referencia ({reference} kcal). Hogares fuera de {lower} a {upper} kcal: {outside}% (IC {level}% {outside_low} a {outside_high})."
+sentence,,no_energy,La energía no se evalúa: `choices$energy` está vacío.
+axis,,queue_x,"Alimentos resueltos, en orden de prioridad"
+axis,,queue_y,Proporción vinculada (%)
+axis,,energy_x,"Ingesta aparente de energía, kcal por equivalente de mujer adulta por día"
+axis,,energy_y,% de hogares
 kind,,figure,Figura
 kind,,table,Cuadro
 title,,D1,Veredicto: secciones y dominios que los datos permiten
@@ -167,4 +195,8 @@ note,,n,n = {n} hogares
 note,,suppressed,— Suprimida según la norma de presentación
 note,,review,† Señalada para revisión estadística
 note,,complement,‡ El complemento de la estimación puede no ser fiable.
+note,,inventory,Las variables opcionales presentes y completas solo aparecen en la Tabla DA1.
+note,,queue,Línea discontinua: la proporción de la regla de parada.
+note,,differs,Un valor difiere cuando el IC {level}% de la diferencia excluye el cero; las señales no se ajustan por el número de comparaciones.
+note,,energy_lines,Líneas discontinuas: el rango plausible; línea continua: la energía de la persona de referencia.
 format,,big_mark,","

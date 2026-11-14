@@ -128,7 +128,7 @@ fig_coverage_curve <- function(d, measures, threshold, xlab, ylab,
     geom_hline(yintercept = threshold, linetype = 2) +
     geom_line() +
     geom_point(size = 2) +
-    scale_x_continuous(breaks = unique(long$resolved)) +
+    scale_x_continuous(breaks = function(x) unique(round(pretty(x)))) +
     labs(x = xlab, y = ylab, colour = colour_lab) +
     theme_minimal(base_size = 11) +
     theme(legend.position = "bottom")

@@ -5,6 +5,7 @@ exclusions: list(
     "inst/report/_tables.R" = list(object_usage_linter = Inf),
     "inst/report/_exhibits.R" = list(object_usage_linter = Inf),
     "inst/report/_readiness.R" = list(object_usage_linter = Inf),
+    "inst/report/_verdict.R" = list(object_usage_linter = Inf),
     "inst/report/_figures.R" = list(object_usage_linter = Inf),
     "inst/report/_results.R" = list(object_usage_linter = Inf)
   )

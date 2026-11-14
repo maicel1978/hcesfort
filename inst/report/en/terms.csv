@@ -135,6 +135,34 @@ ul_bias,,form_diet_and_added,"May be understated (incomplete composition of the 
 ul_bias,,not_assessable,Not assessable
 sentence,,exact,"In the sample, the same value in every household"
 sentence,,limit,interval limit
+sentence,,supported,The data support these sections of the results report: {sections}.
+sentence,,supported_none,The data support no section of the results report.
+sentence,,supported_domains,Each of them can also be reported by {domains}.
+sentence,,unsupported,Not supported: {items}.
+sentence,,unsupported_none,Every section is supported nationally and by every domain.
+sentence,,left,Left to do: {items}.
+sentence,,left_inputs,Left to do: supply the essential inputs {inputs}.
+sentence,,left_foods,"link {n} foods, which hold {grams}% of the included grams"
+sentence,,left_expenditure,and {expenditure}% of the included expenditure
+sentence,,left_checks,meet the thresholds of {checks}
+sentence,,left_none,Nothing is left to do: every included record is linked and every threshold is met.
+sentence,,not_ready,An essential input is absent ({inputs}): nothing else can be computed until it is supplied.
+sentence,,not_included,Records left out by the inclusion rule of the adapter: {n}.
+sentence,,no_expenditure_records,"Included records without expenditure, left out of the expenditure shares: {n}."
+sentence,,no_expenditure,The acquisitions table has no expenditure: shares of expenditure are not reported.
+sentence,,queue_empty,Every included record is linked: no food is pending.
+sentence,,rule,Rule: link at least {threshold}% of the included grams{expenditure}. The rule is {status}.
+sentence,,rule_expenditure,and of the included expenditure
+sentence,,met,met
+sentence,,not_met,not met
+sentence,,no_domain_differs,"In the unlinked share, no value of these domain variables differs from the rest of the population: {domains}."
+sentence,,domain_absent,{domain}: the variable is absent from the households table.
+sentence,,energy,"Median apparent energy intake: {median} kcal per adult female equivalent per day ({level}% CI {low} to {high}), {pct}% of the energy of the reference person ({reference} kcal). Households outside {lower} to {upper} kcal: {outside}% ({level}% CI {outside_low} to {outside_high})."
+sentence,,no_energy,Energy is not assessed: `choices$energy` is empty.
+axis,,queue_x,"Foods resolved, in rank order"
+axis,,queue_y,Share linked (%)
+axis,,energy_x,"Apparent energy intake, kcal per adult female equivalent per day"
+axis,,energy_y,% of households
 kind,,figure,Figure
 kind,,table,Table
 title,,D1,Verdict: sections and domains the data support
@@ -167,4 +195,8 @@ note,,n,n = {n} households
 note,,suppressed,— Suppressed under the presentation standard
 note,,review,† Flagged for statistical review
 note,,complement,‡ The complement of the estimate may be unreliable.
+note,,inventory,Optional variables present and complete are listed only in Table DA1.
+note,,queue,Dashed line: the share of the stopping rule.
+note,,differs,A value differs when the {level}% CI of the difference excludes zero; the flags are not adjusted for the number of comparisons.
+note,,energy_lines,Dashed lines: the plausible range; solid line: the energy of the reference person.
 format,,big_mark,","

@@ -9,7 +9,10 @@
 # domain, a nutrient, or a nutrient and a domain, as `repeats` says) and
 # returns a list with `table` (a table of display(), or any data frame),
 # and optionally `figure` (a ggplot), `rows` (the number of rows of the
-# figure, for its height) and `note` (lines specific to the exhibit).
+# figure, for its height), `note` (lines specific to the exhibit),
+# `headers` (column headers, code = label, for codes that are not terms),
+# `lead` (sentences printed before the figure or table) and `after`
+# (sentences printed after the note).
 
 exhibits <- utils::read.csv("exhibits.csv", stringsAsFactors = FALSE,
                             na.strings = "")
@@ -82,6 +85,16 @@ format_n <- function(n) {
          scientific = FALSE)
 }
 
+# A sentence pattern of terms.csv with each `{name}` replaced by the
+# argument of that name.
+fill <- function(pattern, ...) {
+  values <- list(...)
+  for (k in names(values)) {
+    pattern <- gsub(paste0("{", k, "}"), values[[k]], pattern, fixed = TRUE)
+  }
+  pattern
+}
+
 # Notes of a table of display() (R17), in this order and only when they
 # occur: `n` when it is the same in every row (else the table has a
 # column); "—" suppressed, with the reasons; "†" flagged for review, with
@@ -117,7 +130,8 @@ save_figure <- function(g, key, title, rows) {
 
 # Show one exhibit: ask the verdict, call the builder, store the table and
 # the figure under `id` (and the instance), print the title, the
-# zero-event sentences (R19), the figure or the table, and the notes. A
+# zero-event sentences (R19), the lead sentences, the figure or the table,
+# the notes and the sentences after them. A
 # disabled exhibit prints the verdict sentence instead. Returns whether it
 # was shown, invisibly.
 show_exhibit <- function(id, instance = NULL) {
@@ -136,17 +150,26 @@ show_exhibit <- function(id, instance = NULL) {
   home$shown[[key]] <- list(id = id, instance = instance)
   title <- exhibit_title(id, instance)
   cat("**", title, "**\n\n", exact_sentence(out$table), "\n\n", sep = "")
+  print_sentences(out$lead)
   if (x$body == "figure" && !is.null(out$figure) &&
         nrow(out$figure$data) > 0) {
     home$figures[[key]] <- out$figure
     save_figure(out$figure, key, title,
                 if (is.null(out$rows)) nrow(out$figure$data) else out$rows)
   } else if (x$body == "table" && nrow(out$table) > 0) {
-    print(print_table(out$table))
+    print(print_table(out$table, headers = out$headers))
+    cat("\n\n")
   }
-  note <- exhibit_note(out$table, out$note)
-  if (length(note) > 0) cat(paste(note, collapse = "  \n"), "\n\n")
+  print_sentences(exhibit_note(out$table, out$note), sep = "  \n")
+  print_sentences(out$after)
   invisible(TRUE)
+}
+
+# Print sentences as one paragraph (or lines joined by `sep`); nothing
+# when there are none.
+print_sentences <- function(x, sep = " ") {
+  if (length(x) > 0) cat(paste(x, collapse = sep), "\n\n")
+  invisible(NULL)
 }
 
 # The appendix of tables (R15): the table of every exhibit shown whose
