@@ -1,109 +1,113 @@
 # Handoff
 
 - **Date:** 2026-11-14
-- **Model:** Opus (steps 12d.5 and 12d.6, and P132).
-- **Branch:** `claude/sweet-johnson-9pez6g` (starts from `1f98531` of the
+- **Model:** Opus (steps 12d.7 to 12d.10).
+- **Branch:** `claude/read-routing-docs-ypdlx6` (starts from `639fb9b`, the
   previous handoff; `main` is not updated by this session). Merge it into
   `main` before the next session, or continue on it.
-- **Environment:** `hcesfort`. `tinytable` installed by hand at the start
-  (P126 stays open until the setup script is edited).
+- **Environment:** `hcesfort`. `tinytable` installed by hand again at the
+  start (P126 stays open until the setup script is edited; `tinytable` is
+  now in Suggests and the knit tests skip without it).
 
 ## What was done
 
 | Commit | Step |
 |---|---|
-| `7017136` | 12d.5: optional `short_label`, `label_codes(short = TRUE)`, label type `compound` (C6, U17); answers to P126 and P130 recorded |
-| `246dd6e` | 12d.6, C4: dependency map `readiness_needs()`; `needed_by` per row of section 4.2 (U16) |
-| `e400c1c` | 12d.6, C5: check `domain_cells` and the verdict (U15) |
-| `72d1575` | P132: one `group_id()` (bug found on the way) |
+| `8e4fba9` | 12d.7: the 40-household dataset becomes the test fixture `hces_fixture()` (identical tables); P131 recorded as resolved |
+| `32711d5` | 12d.7: `data-raw/example_foods.csv` (46 invented foods, zinc added per V-D8); households and members of the generating script |
+| `a87d618` | 12d.8: acquisitions, planted defects, expenditure quintiles, user tables in the script; calibration |
+| `8cebb8c` | 12d.8: the realistic `hces_example` shipped (2,000 households); documentation, NEWS, template labels; K27 test |
+| `811a6d0` | Roadmap; P133–P135 |
+| `46ed02b` | 12d.9: golden values on both datasets, with Korn-Graubard limits and presentation status |
+| `d2c37d7` | 12d.10, part 1: `presentation_standard` and the new `choices` in the template |
+| `d9bd083` | 12d.10, part 2: `exhibits.csv`, `_exhibits.R` (`show_exhibit()`, titles, notes, appendix), `tinytable` |
+| `2256576` | 12d.10, part 3: `fig_effect()`, `fig_histogram()`, stylesheet; P136–P139 |
 | last commit | Handoff |
 
 `devtools::check()` after the last code commit: 0 errors, 0 warnings, 0
-notes. `lintr::lint_package()`: no lints. Tests: no failures; one skip
-(Quarto not installed).
+notes (6.8 minutes, was 4.3; P135). `lintr::lint_package()`: no lints.
+One skip (Quarto not installed).
 
 Facts found on the way:
 
-- **P132 (fixed).** `R/design.R` and `R/outliers.R` both defined
-  `group_id()`; the outlier one won, so the estimators paired cells by
-  `dplyr` group order (C locale) against base `order()` (session locale).
-  Not reproducible here (only C locales), but possible on a Spanish or
-  English locale with mixed-case domain values. Golden values unchanged.
-- `estimate_households()` treats a missing value of a `by` domain as one
-  more cell; `domain_cells` does the same (P131).
-- The 40 households of `hces_example` leave 4 of 5 expenditure groups below
-  `min_n = 8`, so the approved `max_small_cells = 0.5` disables that domain
-  in the shipped template. The knit tests append
-  `choices$max_small_cells <- 0.8` (in `tests/testthat/helper-report.R`)
-  until the realistic example (12d.8); remove it then.
-- `_chain.R` passes `choices$min_n` to `readiness_checks()` until
-  `presentation_standard` replaces it (12d.10).
+- **Calibration of the example** (checked by `test-example-data.R`):
+  median energy 2,390 kcal per AFE (reference 2,291); baseline inadequacy
+  folate 33%, iron 78%, vitamin A 74%, zinc 34%, each falling from Q1 to
+  Q5; among households with energy 500–6,000 kcal only folic acid passes
+  its upper level (9 households, from `plus_rice` on). To get there the
+  scenario levels were tuned (rice carries no zinc) and the planted
+  extreme quantities are ten times too large, not a hundred.
+- **Golden script bug, fixed in the script:** a first draft capped the
+  effective sample size at `n` before the degrees-of-freedom factor; C2
+  caps after, as the package does. The package agreed with C2.
+- `wheat_flour` is both a vehicle and a vehicle group (P134); the rows are
+  told apart by `level`.
+- The reports still print through `show_legacy()`; the 26 builders named
+  in `exhibits.csv` are written in 12d.11 and 12d.13 (P137).
 
-## Open question (P131)
+## Open questions
 
-1. **A missing value of a domain in `domain_cells`.** Implemented: it is
-   one more value (one more cell), as in `estimate_households()`.
-   *Recommended: keep*, so the readiness check counts the cells the results
-   report estimates. Alternatives: leave those households out of every
-   cell; stop with an error.
+1. **P133. Expenditure quintile of non-respondents.** Implemented: missing
+   for the 31 households that did not answer the food module (their food
+   expenditure is unknown), so they form one more cell (P131).
+   *Recommended: keep.* Alternative: a quintile from a total-expenditure
+   variable known for every household.
+2. **P136. No household without a vehicle.** R1.4 shows only its
+   zero-event sentence. *Recommended: lower `p_acquire` of rice, oil and
+   sugar slightly in 12d.11* and re-check the calibration bands.
+3. **P138. Thousands mark in Spanish.** Shipped as "," in both languages
+   (one line of `terms.csv`). *Recommended: keep.*
 
 ## Exact next step
 
-**12d.7** (Opus): C7, part 1 — `example_foods.csv`; households and members
-of the generating script; the old dataset becomes a test fixture (section
-7 of `docs/design-reports-v3.md`).
-
-## Answers of the maintainer (2026-11-14, after 12d.6)
-
-1. **P131:** accepted as recommended: a household without a value of a domain counts as one more cell in `domain_cells`, as in `estimate_households()`. In the reports that cell carries the label of a missing value from `terms.csv`, never `NA`.
-
-Record this in `docs/improvements.md` with the first commit of 12d.7.
+**12d.11** (Opus): readiness report in English on the registry — builders
+of D1 to D10 and DA1 in `_readiness.R`, `en/readiness.qmd` reduced to
+headings, free text and `show_exhibit()` calls; K17 and K18 (section 4.1
+of `docs/design-reports-v3.md`). Then 12d.12 (Spanish).
 
 ## Recommended model for the next session
 
-**Opus** (12d.7 onwards). This session stops at about half of its context.
+**Opus** (12d.11 onwards). This session stops near half of its context,
+at the end of 12d.10, before the reports are rewritten.
 
 ## Maintainer review points
 
-1. **Short labels with fallback:**
+1. **The realistic example reads like a survey:**
 
    ```r
    devtools::load_all()
-   f <- tempfile(fileext = ".csv")
-   writeLines(c("type,parent,code,label,short_label",
-                "scenario,,baseline,No fortification,",
-                "scenario,,wheat,Wheat flour with iron and folic acid,Wheat"),
-              f)
-   label_codes(c("wheat", "baseline"), read_labels(f), "scenario",
-               short = TRUE)
-   # Wheat, No fortification
-   ```
-
-2. **`domain_cells` on the example** (expenditure group: 4 of 5 values
-   with 7 estimated households, below 8):
-
-   ```r
    e <- hces_example
-   nutrients <- nutrient_registry(e$nutrients)
-   grams <- convert_units(e$acquisitions, e$unit_factors, priority = "food")
-   content <- link_composition(grams, e$crosswalk, e$composition, nutrients)
+   n <- nutrient_registry(e$nutrients)
+   g <- convert_units(e$acquisitions, e$unit_factors, priority = "food")
+   b <- unfortified_baseline(e$composition, e$enrichment, n)
    afe <- adult_equivalents(e$members,
      reference_kcal = reference_energy("female", 25, 55, pal = 1.76),
      weight_kg = c(female = 55, male = 65), pal = 1.76)
-   intake <- apparent_intake(content, afe, e$households)
-   ch <- readiness_checks(intake, linkage_ladder(content, e$households),
-     "iron", 0.8, 0.9, 0.9, households = e$households,
-     domains = c("region", "expenditure_group"), min_n = 8,
-     max_small_cells = 0.5)
-   ch[ch$check == "domain_cells", ]
-   table(e$households$expenditure_group, intake$intake_status)
+   intake <- apparent_intake(link_composition(g, e$crosswalk, b), afe,
+                             e$households)
+   table(intake$intake_status)
+   d <- as_hces_design(e$households, lonely_psu = "adjust")
+   x <- intake[intake$intake_status == "estimated", ]
+   estimate_households(d, x, "energy_kcal", statistic = "median",
+                       by = "region")
    ```
 
-3. **The verdict disables only that domain:**
+2. **Korn-Graubard and the presentation status on both datasets** (the
+   fixture is suppressed for folate and flagged for review for iron; the
+   example presents both):
 
    ```r
-   inv <- readiness_inventory(e[names(e) != "nutrients"],
-                              c("region", "expenditure_group"))
-   v <- readiness_verdict(inv, ch, c("region", "expenditure_group"))
-   v[, c("section", "domain", "enabled", "reason", "detail")]
+   read.csv("tests/testthat/fixtures/golden-fixture.csv")[12:25, ]
+   read.csv("tests/testthat/fixtures/golden-example.csv")[13:26, ]
+   ```
+
+3. **Render the results report with Quarto** and look at the marks, the
+   zero-event sentences and the Word export of a `tinytable` table
+   (condition of V-D1):
+
+   ```r
+   dir <- file.path(tempdir(), "report")
+   use_report_template(dir, "en")
+   quarto::quarto_render(file.path(dir, "results.qmd"),
+                         output_format = "docx")
    ```
