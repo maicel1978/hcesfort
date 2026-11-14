@@ -35,7 +35,7 @@ cited by number.
 | CSV | Shipped as | Rows (verified / pending) | Source and place |
 |---|---|---|---|
 | `requirements.csv` | `ref_requirements` | 6 / 1 | IOM 1998, 2000, 2000b, 2001, 2011; EAR for women 19–30 years and UL for adults; place per row |
-| `iron_requirement_percentiles.csv` | `ref_iron_requirements` | 182 / 0 | IOM 2001, Appendix Tables I-3 (p. 700) and I-4 (p. 701); bioavailability from the table footnotes (I-3) and chapter 9, pp. 316–317 and 343 (I-4) |
+| `iron_requirement_percentiles.csv` | `ref_iron_requirements` | 182 / 0 | IOM 2001, Appendix Tables I-3 (p. 699) and I-4 (p. 700); bioavailability from the table footnotes (I-3) and chapter 9, pp. 315–316 and 343 (I-4) |
 | `energy_requirements.csv` | `ref_energy_requirements` | 58 / 0 | FAO/WHO/UNU 2004, Table 3.2 (infants, by month), Tables 4.2 (boys) and 4.3 (girls), column "Daily energy requirement, kcal/d" |
 | `bmr_equations.csv` | `ref_bmr_equations` | 12 / 0 | FAO/WHO/UNU 2004, Table 5.2 (Schofield equations, kcal/day) |
 | `nutrient_conversions.csv` | `ref_conversions` | 7 / 1 | IOM 1998 (DFE), IOM 2001 (RAE, IU) |
@@ -45,7 +45,7 @@ cited by number.
 
 | CSV | Row | Value | Why pending | How to check |
 |---|---|---|---|---|
-| `requirements.csv` | `vitamin_d` | EAR 10 µg and UL 100 µg are verified (IOM 2011, pp. 388 and 444); `ul_applies_to = total` is not | The chapters read (summary, 1, 5, 6) were not found to state whether the UL refers to total intake. IOM 2001 says so as a general rule (Summary, p. 27), but that is another report. | Find the statement in IOM 2011 (chapter 1 or the UL chapter); if it says total intake, set `status` to `verified`. |
+| `requirements.csv` | `vitamin_d` | EAR 10 µg and UL 100 µg are verified (IOM 2011, pp. 389 and 444–445); `ul_applies_to = total` is not | The chapters read (summary, 1, 5, 6) were not found to state whether the UL refers to total intake. IOM 2001 says so as a general rule (Summary, table footnote a, pp. 26–27), but that is another report. | Find the statement in IOM 2011 (chapter 1 or the UL chapter); if it says total intake, set `status` to `verified`. |
 | `requirements.csv` | `zinc` | `ear_bioavailability` (left missing; the row is shipped) | The absorption assumed by the zinc EAR was not read. | Read IOM 2001, chapter 12 (derivation of the EAR); enter the fraction if one is stated. |
 | `nutrient_conversions.csv` | `retinyl_palmitate` | no value | No document opened gives a factor from mass of retinyl palmitate to retinol activity (analysis map, E8). A value derived from molecular weights is a computation, not a source. | Give a document with the factor, or decide that scenario levels for vitamin A must be given as retinol. |
 
@@ -58,9 +58,9 @@ level a form counts towards. Read in the documents on 2026-11-12:
 | Value | Place |
 |---|---|
 | Folate UL in µg of folic acid (not DFE); applies to folate from fortified food or supplements | IOM 1998, chapter 8, p. 280 (UL for adults of 1 mg/day, LOAEL 5 mg/day divided by a UF of 5) and p. 282 ("the UL of 1,000 µg/day of folic acid") |
-| Vitamin A UL in µg of preformed vitamin A (not RAE); applies to preformed vitamin A from food, fortified food and supplements | IOM 2001, chapter 4, p. 143 (3,000 µg/day of preformed vitamin A, women 19–50 years), pp. 143–145 (ULs given as µg/day of preformed vitamin A) and p. 127 |
+| Vitamin A UL in µg of preformed vitamin A (not RAE); applies to preformed vitamin A from food, fortified food and supplements | IOM 2001, chapter 4, p. 142 (3,000 µg/day of preformed vitamin A, women 19–50 years), pp. 142–143 (ULs given as µg/day of preformed vitamin A) and p. 126 |
 | Iron, zinc: UL in mg, the unit of the EAR (total intake) | the places already given for their UL |
-| Vitamin E: UL in mg of supplementary alpha-tocopherol | IOM 2000, chapter 6, p. 259, already given |
+| Vitamin E: UL in mg of supplementary alpha-tocopherol | IOM 2000, chapter 6, p. 258, already given |
 
 The folate UL was cited at p. 281 before; the value is stated on p. 280.
 
@@ -73,7 +73,7 @@ in the documents on 2026-11-12:
 |---|---|
 | The EAR cut-point "simply requires the distribution of requirements to be symmetrical"; it "does not work … with iron requirements in menstruating women where the requirement distribution is known to be highly skewed" | IOM 2000b, chapter 4, p. 81 |
 | "In the absence of additional information about the shape of the requirement distribution of a nutrient, it is implicitly assumed … that the unknown distribution is symmetrical around the median requirement (the EAR)"; for iron in menstruating women "the probability approach, not the EAR cut-point method, is recommended" | IOM 2000b, chapter 4, p. 91 |
-| Iron: `cutpoint_valid = FALSE` (the row is women 19–30 years, a menstruating group); `ear_bioavailability = 0.18` | IOM 2000b, pp. 81 and 91; 0.18: IOM 2001, chapter 9, pp. 316–317 and 343, the places already given for Table I-4 |
+| Iron: `cutpoint_valid = FALSE` (the row is women 19–30 years, a menstruating group); `ear_bioavailability = 0.18` | IOM 2000b, pp. 81 and 91; 0.18: IOM 2001, chapter 9, pp. 315–316 and 343, the places already given for Table I-4 |
 | Other nutrients: `cutpoint_valid = TRUE` | IOM 2000b, p. 91: no skewed requirement recorded, symmetry assumed by default. `TRUE` is that assumption, not a positive finding. |
 | Zinc: `ear_bioavailability` missing | `# SOURCE PENDING`: the absorption the IOM zinc EAR assumes was not read (IOM 2001, chapter 12). The column is informative only (`inadequacy()` writes it in the log); a missing value changes no result. |
 
@@ -82,6 +82,48 @@ doi:10.1111/nyas.14697), notes of Figures 1 and 2, pp. 112–113: "iron
 inadequacy cannot be defined using the … cut-point method due to the
 nonnormal distribution of iron requirements". A secondary source, cited in
 `docs/review-v0.1.md`, section 9.1; not needed for any value.
+
+## Page citations re-read (2026-11-14, task 12d.1, P124)
+
+Every page citation of the IOM reports in `requirements.csv`,
+`iron_requirement_percentiles.csv` and `nutrient_conversions.csv` was
+re-read on the scanned page image
+(`https://nap.nationalacademies.org/books/<id>/gif/<page>.gif`, where the
+file number is the printed page). Many earlier citations were one page too
+high. No value changed; only `location` and `ul_form_location`.
+
+| Report | Statement | Was | Is |
+|---|---|---|---|
+| IOM 2001 | Vitamin A EAR, women 19–30 years | 116 | 115 |
+| IOM 2001 | Vitamin A UL, women 19–50 years | 143 | 142 |
+| IOM 2001 | ULs in µg/day of preformed vitamin A | 143–145 | 142–143 |
+| IOM 2001 | The UL applies to preformed vitamin A from food, fortified food and supplements | 127 | 126 |
+| IOM 2001 | The UL for provitamin A carotenoids is addressed in IOM 2000 | 126–127 | 125–126 |
+| IOM 2001 | Table 4-3 (RAE factors) and its note (1 µg retinol = 3.33 IU) | 93 | 92 |
+| IOM 2001 | 1 IU = 0.3 µg of vitamin A (footnote b of Table 4-1) | 89 | 88 |
+| IOM 2001 | UL represents total intake (Summary, table footnote a) | 27 | 26–27 |
+| IOM 2001 | Iron: 18% bioavailability for the EAR | 316–317 | 315–316 |
+| IOM 2001 | Iron: upper limit of 18% absorption | 343 | 343 (unchanged) |
+| IOM 2001 | Iron EAR, women 19–30 years | 345 | 344 |
+| IOM 2001 | Iron UL, adults | 376 | 375 |
+| IOM 2001 | Zinc EAR, women 19–30 years | 476 | 475 |
+| IOM 2001 | Zinc UL, adults (total intake) | 487 | 486 |
+| IOM 2001 | Appendix Table I-3 | 700 | 699 |
+| IOM 2001 | Appendix Table I-4 | 701 | 700 |
+| IOM 1998 | DFE formula | 211 | 210 |
+| IOM 1998 | DFE formula in a table footnote (b) | 223 | 222 |
+| IOM 1998 | Folate EAR, women 19–30 years | 229 | 228 |
+| IOM 1998 | Folate UL, adults; UL in µg of folic acid | 280, 282 | 280, 282 (unchanged) |
+| IOM 1998 | Vitamin B12 EAR, women 19–30 years | 338 | 337 |
+| IOM 1998 | No UL for B12 | 348 | 347 |
+| IOM 2000 | Vitamin E EAR, women 19–30 years | 238 | 237 |
+| IOM 2000 | Vitamin E UL, adults | 259 | 258 |
+| IOM 2000b | Cut-point method (pp. 81, 91) | 81, 91 | 81, 91 (unchanged) |
+| IOM 2011 | Vitamin D EAR 400 IU/day, adults 19–50 years (pending row) | 388 | 389 |
+| IOM 2011 | Vitamin D UL 4,000 IU/day, adults (pending row) | 444 | 444–445 |
+
+The IOM 2000 and 2011 rows were not in the scope of P124 (IOM 1998 and
+2001) and were read because the same shift was found there.
 
 ## Notes on use
 

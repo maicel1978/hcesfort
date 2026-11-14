@@ -1,8 +1,10 @@
 # Design: reports v3 and a realistic example
 
-- **Date:** 2026-11-14. **Status:** written, waiting for the maintainer's
-  approval of the decisions of section 13. No package code is written in
-  this task (12d.0).
+- **Date:** 2026-11-14. **Status:** approved by the maintainer on
+  2026-11-14: the sixteen decisions of section 13 as recommended, with
+  conditions on 1, 2, 5, 8 (zinc added) and 13, recorded in
+  `docs/improvements.md`, section "Decisions (2026-11-14, reports v3)".
+  No package code is written in this task (12d.0).
 - **Input.** `docs/report-requirements-v2.md` (approved 2026-11-14):
   principles P6–P10, requirements DR9–DR13, R15–R24, X1–X2, Q1–Q4. Read
   with `docs/report-requirements-v1.md` and `docs/design-reports-v2.md`,

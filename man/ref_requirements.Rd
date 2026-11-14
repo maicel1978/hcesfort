@@ -20,7 +20,7 @@ where none was set.}
 \item{ul_unit}{Unit of \code{ul}. It differs from \code{unit} where the UL
 applies to a form: the folate UL is in µg of folic acid, not DFE
 (IOM 1998, p. 282); the vitamin A UL in µg of preformed vitamin A,
-not RAE (IOM 2001, pp. 143–145).}
+not RAE (IOM 2001, pp. 142–143).}
 \item{ul_applies_to}{Intake the UL refers to: \code{"total"} (food, water
 and supplements), \code{"preformed_vitamin_a"}, \code{"folic_acid"} (folate
 from fortified food or supplements) or

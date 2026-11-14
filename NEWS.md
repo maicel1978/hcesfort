@@ -35,7 +35,9 @@
   original ENGIH 2018 analysis, every value agrees with its document; the
   WHO 2009 vitamin B12 and vitamin A rows, marked unconfirmed there, are
   now verified (Table 1), and the vitamin E UL (1,000 mg, supplementary
-  alpha-tocopherol only), left blank there, is entered.
+  alpha-tocopherol only), left blank there, is entered. The page of every
+  IOM citation was re-read on the scanned page; many were one page too
+  high and are corrected (`data-raw/SOURCES.md`). No value changed.
 * `adult_equivalents()`: adult female equivalents per household from the
   energy requirement of each member (FAO/WHO/UNU 2004 tables for infants
   and children; BMR times PAL for adults, with weights and PAL given by the

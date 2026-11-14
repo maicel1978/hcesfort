@@ -1,8 +1,8 @@
 # Handoff
 
 - **Date:** 2026-11-14
-- **Model:** Fable (design, task 12d.0).
-- **Branch:** `claude/loving-bell-599967` (the session's development
+- **Model:** Opus (step 12d.1).
+- **Branch:** `claude/clever-cray-7hq3uw` (the session's development
   branch; `main` is not updated by this session). Merge it into `main`
   before the next session, or continue on it.
 
@@ -10,62 +10,41 @@
 
 | Commit | Step |
 |---|---|
-| last commit of the branch | 12d.0: `docs/design-reports-v3.md` written; roadmap split into 12d.1–12d.16; items P124–P129 in `docs/improvements.md` |
+| last commit of the branch | 12d.1: maintainer's answers to the design v3 recorded (`docs/improvements.md`, "Decisions (2026-11-14, reports v3)"; status line of `docs/design-reports-v3.md`); every IOM page citation in `data-raw/` re-read on the scanned page and corrected (P124); md5 and `data/*.rda` rebuilt |
 
-No package code changed. Sources opened and read in this session:
+P124 in detail: the table of corrected pages is in `data-raw/SOURCES.md`,
+section "Page citations re-read". Most citations of IOM 2001 and 1998 were
+one page too high; the same shift was found in IOM 2000 (vitamin E) and
+IOM 2011 (vitamin D, a pending row), which were corrected too. IOM 2000b
+(pp. 81, 91) and the folate UL (pp. 280, 282) were right. No value
+changed: the rebuilt `ref_requirements`, `ref_iron_requirements` and
+`ref_conversions` are identical to the old ones except the `location` and
+`ul_form_location` columns (checked in R).
 
-- Parker et al. 2017, Vital Health Stat 2(175) (NCHS presentation
-  standard): thresholds on p. 2, definitions on pp. 3–4, flow chart on
-  p. 7. Its twelve published examples (pp. 8–9) were recomputed by hand.
-- IOM 1998 (folate UL: pp. 13, 273, 280, 282) and IOM 2001 (vitamin A
-  UL: pp. 125, 126, 142, the last two on the scanned pages).
-
-`devtools::check()`: 0 errors, 0 warnings, 0 notes, with `ggplot2`
-installed, so the knit tests of the template ran.
-`lintr::lint_package()`: no lints. It needs the package installed
-(`devtools::install(quick = TRUE)`); otherwise `object_usage_linter`
-reports every internal function as undefined.
+`devtools::test()`: 0 failures, 1 skip (Quarto not installed).
+`devtools::check()`: 0 errors, 0 warnings, 0 notes. `lintr::lint_package()`:
+no lints (package installed first).
 
 ## Exact next step
 
-1. **The maintainer** answers the sixteen decisions of section 13 of
-   `docs/design-reports-v3.md` (each has a recommended option).
-2. **Opus** records the answers in `docs/improvements.md` (section
-   "Decisions (reports v3)") and in the status line of the design, then
-   starts at 12d.1 and follows section 12 of the design, one step per
-   commit.
-3. An answer that changes a contract of sections 3 to 5 of the design
-   beyond the alternatives listed goes back to Fable.
+**12d.2** (Opus): `ref_presentation_standard` (C1 of the design, section
+3.2). Enter `data-raw/presentation_standard.csv` with the seven rows of C1,
+each with its page in Parker et al. 2017 (Vital Health Stat 2(175)),
+register its md5, list it in `data-raw/SOURCES.md` as verified only after
+opening the report (`https://www.cdc.gov/nchs/data/series/sr_02/sr02_175.pdf`,
+md5 `2ae6002af069bb55f555e2e271f1908d`; `www.cdc.gov` is allowed only in
+the `hcesfort` environment, not in Default). Then 12d.3 onwards, one step
+per commit, as in section 12 of the design.
 
 ## Open questions
 
-The sixteen decisions (P125). The ones that shape the most work:
-1 (table package), 2 (Korn-Graubard interval with the NCHS cap),
-5 (opening of the results report), 6 (two-panel effect figure),
-7 and 8 (the example).
+None for the maintainer. One environment action:
 
-## Answers of the maintainer (2026-11-14, design v3)
-
-All sixteen questions of section 13 of `docs/design-reports-v3.md` as recommended, with these conditions:
-
-1. **Tables:** `tinytable`, in Suggests and used only by the template. Check that a Word export of a rendered report through Quarto keeps the tables readable.
-2. **Korn-Graubard:** the own formula is accepted only with its tests against `survey`, `binom.test()` and the published NCHS examples (pp. 8–9), to the stated tolerance. It is a golden test.
-5. **Opening of the results report:** the findings slot for the analyst is omitted from the render when the analyst writes nothing. No placeholder text is ever printed (v1 R3).
-8. **Example:** add zinc, which the ENGIH 2018 analysis included. Five nutrients: iron, zinc, folate, vitamin A and energy. Zinc levels and requirements need a verified source, or `# SOURCE PENDING`.
-13. **UL sentence:** as recommended; the sentence names the upper limit as the upper limit of the 95% interval and gives the interval method.
-
-Record these in `docs/improvements.md` with the first commit of 12d.1.
-
-## Environment
-
-- A cloud environment named `hcesfort` was created for this repository
-  (the hosts of the Default environment plus `www.cdc.gov` and
-  `stacks.cdc.gov`, needed to read the NCHS report). Choose it when
-  opening the next session. Its setup script is the one of the Default
-  environment and has not yet started a fresh container.
-- `ggplot2` is not in that script (P126): without it the knit tests of
-  the report template are skipped. Install it by hand at the start of the
-  session until the script has it:
+- **P126 (open).** This session ran in the Default environment, which
+  cannot reach `www.cdc.gov` (needed for 12d.2). Open the next session in
+  the `hcesfort` environment. Its setup script still lacks `ggplot2` and
+  `tinytable`; add them to the `pkgs` vector of the script in Settings, or
+  install them by hand at the start of the session:
 
   ```r
   install.packages(c("ggplot2", "tinytable"))
@@ -73,45 +52,31 @@ Record these in `docs/improvements.md` with the first commit of 12d.1.
 
 ## Recommended model for the next session
 
-**Opus**, after the maintainer's answers (12d.1 onwards). Sonnet for the
-wording pass of 12d.14.
+**Opus** (12d.2 onwards). Sonnet for the wording pass of 12d.14.
 
 ## Maintainer review points
 
-1. **The NCHS interval, by hand, against a published row** (Parker et al.
-   2017, Table II, p. 9: Hispanic men, published limits 42.0 and 62.3;
-   non-Hispanic black women, where the cap at `n` acts, 18.8 and 32.2):
+1. **Two corrected pages, on the scanned image.** The vitamin A UL for
+   women 19–50 years (p. 142, not 143) and the iron EAR for women 19–30
+   years (p. 344, not 345):
 
    ```r
-   kg <- function(p, se, n, df, cap = TRUE) {
-     ne <- p * (1 - p) / se^2 * (qt(0.025, n - 1) / qt(0.025, df))^2
-     if (cap) ne <- min(ne, n)
-     100 * c(qbeta(0.025, ne * p, ne * (1 - p) + 1),
-             qbeta(0.975, ne * p + 1, ne * (1 - p)))
-   }
-   kg(0.522, 0.0449, 169, 11)               # 42.0 62.3
-   kg(0.251, 0.0283, 175, 12)               # 18.9 32.2 (published 18.8 32.2)
-   kg(0.251, 0.0283, 175, 12, cap = FALSE)  # 19.1 31.8: survey's "beta"
-   ```
-
-2. **The IOM pages** (P124): the vitamin A statements are on pp. 126 and
-   142, not 127 and 143 as `data-raw/SOURCES.md` says.
-
-   ```r
-   browseURL("https://nap.nationalacademies.org/books/10026/gif/126.gif")
    browseURL("https://nap.nationalacademies.org/books/10026/gif/142.gif")
-   browseURL("https://nap.nationalacademies.org/books/6015/gif/280.gif")
+   browseURL("https://nap.nationalacademies.org/books/10026/gif/344.gif")
    ```
 
-3. **The table package** (decision 1), on any small table:
+2. **No value changed** in the reference tables, only their locations:
 
    ```r
-   d <- data.frame(Nutrient = c("Iron", "Folate"), `%` = c("62.1", "—"),
-                   check.names = FALSE)
-   x <- tinytable::tt(d, caption = "Table R2.1. Title",
-                      notes = list("n = 1,962 households.",
-                                   "—: suppressed (sample size)."))
-   tinytable::save_tt(tinytable::theme_html(x, portable = TRUE),
-                      file.path(tempdir(), "t.html"), overwrite = TRUE)
-   browseURL(file.path(tempdir(), "t.html"))
+   old <- new.env()
+   system("git show HEAD~1:data/ref_requirements.rda > /tmp/old.rda")
+   load("/tmp/old.rda", old)
+   keep <- setdiff(names(hcesfort::ref_requirements), "location")
+   identical(old$ref_requirements[keep], hcesfort::ref_requirements[keep])
+   ```
+
+3. **The DFE formula is on p. 210 of IOM 1998** (cited p. 211 before):
+
+   ```r
+   browseURL("https://nap.nationalacademies.org/books/6015/gif/210.gif")
    ```

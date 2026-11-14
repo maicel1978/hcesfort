@@ -459,6 +459,33 @@ The maintainer approved section 11 of `docs/design-reports-v2.md` on
 P107 is resolved by these decisions. P109 is resolved by R-D7 (the
 comparison between two scenarios stays, as a template choice).
 
+## Decisions (2026-11-14, reports v3)
+
+The maintainer approved section 13 of `docs/design-reports-v3.md` on
+2026-11-14: all sixteen decisions as recommended, with conditions on 1, 2,
+5, 8 and 13.
+
+| # | Decision |
+|---|---|
+| V-D1 | Tables with `tinytable`, in Suggests and used only by the template, called from one function. Condition: check that a Word export of a rendered report through Quarto keeps the tables readable. |
+| V-D2 | Korn-Graubard interval by the formula of C2 on the estimate and variance of `survey`, with the NCHS cap at `n`. Condition: accepted only with its tests against `survey`, `binom.test()` and the published NCHS examples (Parker et al. 2017, pp. 8–9) to the stated tolerance; a golden test. |
+| V-D3 | `choices$review = "show"` in the shipped template; `"suppress"` is the other value. |
+| V-D4 | Estimators other than proportions (S1): sample size and degrees of freedom only; the interval is always shown. |
+| V-D5 | Opening of the results report: figure R0 and a slot for the analyst's findings. Condition: the slot is omitted from the render when the analyst writes nothing; no placeholder text is ever printed (v1 R3). |
+| V-D6 | Effect of a scenario: the two panels of 6.3 (levels; paired difference with its interval). |
+| V-D7 | `hces_example` is replaced; the present dataset becomes a test fixture. |
+| V-D8 | Structure of the example as in 7.1 (3 regions, 6 strata, 200 PSUs of 10 households, five scenarios). Amended: add zinc, which the ENGIH 2018 analysis included, so five nutrients: iron, zinc, folate, vitamin A and energy. Zinc levels and requirements need a verified source, or `# SOURCE PENDING`. |
+| V-D9 | Thresholds as the shipped reference table `ref_presentation_standard`, replaceable in `_inputs.R`. |
+| V-D10 | DR11: `max_small_cells = 0.5`, cells counted on the households with an estimated intake against the `min_n` of the standard. |
+| V-D11 | Unlinked share by domain: the table of a domain variable is printed with all its values when at least one differs. |
+| V-D12 | Visible exhibit IDs ("Figure R2.2", "Table D4"). |
+| V-D13 | Upper-level sentence with "in the sample", `n` and the upper limit; the sentence names the upper limit as the upper limit of the 95% interval and gives the interval method. |
+| V-D14 | P124: page citations corrected in 12d.1, each after reading the scanned page. Done (2026-11-14). |
+| V-D15 | Getting-started vignette in 12d.16, in English; its Spanish version with task 12. |
+| V-D16 | Names as proposed: `flag_presentation()`, `ref_presentation_standard`, `ci_method = "korn_graubard"`, columns `presentation`, `presentation_reason`, `n_effective`, `ci_width`, `ci_relative_width`, `complement_unreliable`, `short_label`; check `domain_cells`; choices `place`, `survey`, `vehicles`, `review`, `max_small_cells`. |
+
+P125 is resolved by these decisions.
+
 ## Open items from the design of the reports v2 (2026-11-13)
 
 Design `docs/design-reports-v2.md` (task 12c.0), from the approved
@@ -521,9 +548,9 @@ Design: `docs/design-reports-v3.md` (task 12d.0). Its sixteen decisions
 
 | Id | Priority | Proposal | Why | Task |
 |---|---|---|---|---|
-| P124 | high | **Page citations of the IOM reports in `data-raw/requirements.csv` and `data-raw/SOURCES.md` are one page too high.** Read on the scanned pages: the vitamin A UL for women 19–50 years is on p. 142 (cited 143) and "applies to chronic intake of preformed vitamin A from food, fortified food, and/or supplements" on p. 126 (cited 127). By the page anchors of the online text the same shift affects the vitamin A EAR (116 → 115), the iron EAR (345 → 344) and UL (376 → 375), the zinc EAR (476 → 475) and UL (487 → 486), the folate EAR (229 → 228) and the 18% iron absorption (316–317 → 315). No value changes. Re-read each citation on the scanned page (`https://nap.nationalacademies.org/books/<id>/gif/<page>.gif`), correct it, update the md5. | Peer-review standard (P6): a wrong page is a wrong citation. | 12d.1 |
-| P125 | high | **Approve the sixteen decisions of section 13 of the design.** They change contracts or exported interfaces: `ref_presentation_standard`, `ci_method = "korn_graubard"` and the column `ci_method`, `flag_presentation()`, `short_label` in the label table, `needed_by` and `domain_cells` in the readiness functions, and the replacement of `hces_example`. | Implementation cannot start without them. | 12d |
-| P126 | high | **The setup script of the cloud environment does not install `ggplot2`**, so in a fresh container the knit tests of the report template are skipped and nobody sees it. `tinytable` (if decision 1 is approved) has the same problem. Quarto is not installed either (K15 runs in CI only). | Never claim it works without running it. | 12d.1 |
+| P124 | resolved (2026-11-14, 12d.1: every IOM page citation in `data-raw/` re-read on the scanned page and corrected, also those of IOM 2000 and 2011; the table of changes is in `data-raw/SOURCES.md`) | **Page citations of the IOM reports in `data-raw/requirements.csv` and `data-raw/SOURCES.md` are one page too high.** Read on the scanned pages: the vitamin A UL for women 19–50 years is on p. 142 (cited 143) and "applies to chronic intake of preformed vitamin A from food, fortified food, and/or supplements" on p. 126 (cited 127). By the page anchors of the online text the same shift affects the vitamin A EAR (116 → 115), the iron EAR (345 → 344) and UL (376 → 375), the zinc EAR (476 → 475) and UL (487 → 486), the folate EAR (229 → 228) and the 18% iron absorption (316–317 → 315). No value changes. Re-read each citation on the scanned page (`https://nap.nationalacademies.org/books/<id>/gif/<page>.gif`), correct it, update the md5. | Peer-review standard (P6): a wrong page is a wrong citation. | 12d.1 |
+| P125 | resolved (2026-11-14: section "Decisions (2026-11-14, reports v3)") | **Approve the sixteen decisions of section 13 of the design.** They change contracts or exported interfaces: `ref_presentation_standard`, `ci_method = "korn_graubard"` and the column `ci_method`, `flag_presentation()`, `short_label` in the label table, `needed_by` and `domain_cells` in the readiness functions, and the replacement of `hces_example`. | Implementation cannot start without them. | 12d |
+| P126 | high (2026-11-14: `ggplot2` and `tinytable` installed by hand in the session of 12d.1; the setup script of the `hcesfort` environment still lacks them, see `docs/handoff.md`) | **The setup script of the cloud environment does not install `ggplot2`**, so in a fresh container the knit tests of the report template are skipped and nobody sees it. `tinytable` (if decision 1 is approved) has the same problem. Quarto is not installed either (K15 runs in CI only). | Never claim it works without running it. | 12d.1 |
 | P127 | medium | **Time of the knit tests on the realistic example.** One knit of the results report takes about 8 s on 2,000 households; the tests knit many variants. Tests that only check structure can run on a subsample appended to `_inputs.R` (a few PSUs per stratum); snapshot tests need the full example. Budget: the test suite under 5 minutes in CI. | Test time. | 12d.15 |
 | P128 | low | **`ci_method = "beta"` of `estimate_households()` stays the uncapped interval of `survey::svyciprop()`**, beside the new `"korn_graubard"`. Its documentation should say how the two differ (the cap at the sample size; the interval of a 0 or 1 proportion). | Two near-identical options need a clear difference. | 12d.3 |
 | P129 | low | **Food-group shares, unlinked shares and medians have no published presentation thresholds** (departure S1 of the design). NCHS published standards for rates and counts after 2017; a later version could look for a published rule for ratios and quantiles. | P6: no invented thresholds where a standard exists. | v0.2 |
