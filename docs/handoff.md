@@ -17,8 +17,14 @@
 | last commit | Spanish note says "Cuadro DA1"; roadmap; handoff |
 
 `devtools::test()`: 0 failures, 1 skip (Quarto not installed).
-`devtools::check()` and `lintr::lint_package()`: see the last commit
-message (run before the push).
+`devtools::check()` after `98a3d34`: 0 errors, 0 warnings, 0 notes (8.4
+minutes with the lint; P135). `lintr::lint_package()`: the changed files
+are clean; 13 `object_usage_linter` warnings in test files this step did
+not touch (`helper-linkage.R`, `test-example-data.R`,
+`test-golden-example.R`: `hces_fixture`, `hces_example`, `expect_equal`
+"not visible"). They depend on how the package is installed in the
+session (after a plain `R CMD INSTALL`); the previous session reported
+none. Check them in CI before taking them as real.
 
 Facts found on the way:
 
