@@ -1,10 +1,10 @@
-# Full chain on hces_example against golden values computed without the
+# Full chain on hces_fixture against golden values computed without the
 # package (data-raw/golden_example.R, base R and survey only). The choices
 # of the chain are listed in that script. Regression net of the review of
 # v0.1 (M11) and template of the acceptance test.
 
 golden_chain <- function() {
-  ex <- hcesfort::hces_example
+  ex <- hces_fixture
   req <- hcesfort::ref_requirements
   n <- nutrient_registry(ex$nutrients)
   g <- convert_units(ex$acquisitions, ex$unit_factors, priority = "food")
@@ -34,7 +34,7 @@ golden_chain <- function() {
        design = design)
 }
 
-test_that("the full chain on hces_example reproduces the golden values", {
+test_that("the full chain on hces_fixture reproduces the golden values", {
   gold <- utils::read.csv(testthat::test_path("fixtures",
                                               "golden-example.csv"))
   gold <- stats::setNames(gold$value, gold$name)
@@ -122,7 +122,7 @@ test_that("the logs of the full chain hold no branch twice", {
 test_that("E1: the baseline lowers the share of the enriched group", {
   # The shares on the composition as linked (with the enriched pasta) are
   # computed by hand here: food_group_shares() refuses that table.
-  ex <- hcesfort::hces_example
+  ex <- hces_fixture
   ch <- golden_chain()
   n <- nutrient_registry(ex$nutrients)
   g <- convert_units(ex$acquisitions, ex$unit_factors, priority = "food")

@@ -169,20 +169,20 @@ test_that("invariant: results do not depend on row order", {
 })
 
 test_that("a link_composition() table is accepted, and the example runs", {
-  nutrients <- nutrient_registry(hces_example$nutrients)
-  g <- convert_units(hces_example$acquisitions, hces_example$unit_factors,
+  nutrients <- nutrient_registry(hces_fixture$nutrients)
+  g <- convert_units(hces_fixture$acquisitions, hces_fixture$unit_factors,
                      priority = "food")
-  content <- link_composition(g, hces_example$crosswalk,
-                              hces_example$composition, nutrients)
+  content <- link_composition(g, hces_fixture$crosswalk,
+                              hces_fixture$composition, nutrients)
   afe <- new_hces_tbl(
-    data.frame(household_id = hces_example$households$household_id,
+    data.frame(household_id = hces_fixture$households$household_id,
                n_members = 1, afe = 1),
     "hces_afe", key = "household_id"
   )
-  u1 <- vehicle_coverage(g, hces_example$vehicles, afe,
-                         hces_example$households)
-  u2 <- vehicle_coverage(content, hces_example$vehicles, afe,
-                         hces_example$households)
+  u1 <- vehicle_coverage(g, hces_fixture$vehicles, afe,
+                         hces_fixture$households)
+  u2 <- vehicle_coverage(content, hces_fixture$vehicles, afe,
+                         hces_fixture$households)
   expect_identical(u1$qty_vehicle_g_d, u2$qty_vehicle_g_d)
   expect_identical(nrow(u1), 40L * 5L)
 })

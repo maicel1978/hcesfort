@@ -1,18 +1,18 @@
-# The synthetic dataset must pass every validator and contain the cases
-# it is documented to contain (data-raw/hces_example.R).
+# The 40-household test fixture must pass every validator and contain the
+# cases it is documented to contain (fixtures/hces_fixture.R).
 
-test_that("hces_example has its eleven tables", {
-  expect_named(hces_example, c(
+test_that("hces_fixture has its eleven tables", {
+  expect_named(hces_fixture, c(
     "households", "members", "acquisitions", "unit_factors", "crosswalk",
     "nutrients", "composition", "enrichment", "vehicles", "scenarios",
     "food_groups"
   ))
-  expect_identical(nrow(hces_example$households), 40L)
-  expect_identical(length(unique(hces_example$households$psu)), 8L)
+  expect_identical(nrow(hces_fixture$households), 40L)
+  expect_identical(length(unique(hces_fixture$households$psu)), 8L)
 })
 
 test_that("the survey tables pass and their notes are the planted cases", {
-  e <- hces_example
+  e <- hces_fixture
   s <- validate_survey(e$households, e$members, e$acquisitions)
   expect_identical(
     audit_log(s$households)$cause,
@@ -34,7 +34,7 @@ test_that("the survey tables pass and their notes are the planted cases", {
 })
 
 test_that("the user tables pass with the planted notes", {
-  e <- hces_example
+  e <- hces_fixture
   r <- nutrient_registry(e$nutrients)
   expect_identical(r$column, c("energy_kcal", "iron_mg", "folate_ug_dfe",
                                "vitamin_a_ug_rae"))
@@ -59,7 +59,7 @@ test_that("the user tables pass with the planted notes", {
 })
 
 test_that("every validated food code has a vehicle or composition row", {
-  e <- hces_example
+  e <- hces_fixture
   expect_true(all(e$vehicles$food_code %in% e$crosswalk$food_code))
   matched <- e$crosswalk$composition_id[!is.na(e$crosswalk$composition_id)]
   expect_true(all(matched %in% e$composition$composition_id))
@@ -67,7 +67,7 @@ test_that("every validated food code has a vehicle or composition row", {
 })
 
 test_that("planted units: one record without factor, one without density", {
-  g <- convert_units(hces_example$acquisitions, hces_example$unit_factors,
+  g <- convert_units(hces_fixture$acquisitions, hces_fixture$unit_factors,
                      priority = "food")
   expect_identical(sum(g$grams_status == "no_density"), 1L)
   expect_identical(g$food_code[g$grams_status == "no_density"], "milk")
@@ -76,7 +76,7 @@ test_that("planted units: one record without factor, one without density", {
 })
 
 test_that("the example grouping passes and leaves only the egg out", {
-  e <- hces_example
+  e <- hces_fixture
   g <- validate_food_groups(e$food_groups)
   expect_identical(audit_log(g)$cause, "all")
   expect_true(all(g$food_code %in% e$crosswalk$food_code))
@@ -84,7 +84,7 @@ test_that("the example grouping passes and leaves only the egg out", {
 })
 
 test_that("the invented expenditure groups have eight households each", {
-  g <- hces_example$households$expenditure_group
+  g <- hces_fixture$households$expenditure_group
   expect_identical(as.vector(table(g)), rep(8L, 5))
   expect_identical(sort(unique(g)), paste0("Q", 1:5))
 })

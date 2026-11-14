@@ -1,5 +1,5 @@
 # readiness_inventory() and readiness_checks() (U1, U2). Fixtures:
-# hces_example (helper-linkage.R) and hand-built tables.
+# hces_fixture (helper-linkage.R) and hand-built tables.
 
 test_that("the inventory has one row per schema column, domain, table", {
   inv <- readiness_inventory(example_tables(),
@@ -54,11 +54,11 @@ test_that("needed_by follows the dependency map row by row", {
 
 test_that("missing values are shared by hand", {
   inv <- readiness_inventory(example_tables())
-  a <- hces_example$acquisitions
+  a <- hces_fixture$acquisitions
   row <- inv[inv$table == "acquisitions" & inv$variable %in% "quantity", ]
   expect_equal(row$share_missing, mean(is.na(a$quantity)))
   m <- inv[inv$table == "members" & inv$variable %in% "sex", ]
-  expect_equal(m$share_missing, 1 / nrow(hces_example$members))
+  expect_equal(m$share_missing, 1 / nrow(hces_fixture$members))
   expect_true(m$present)
 })
 
@@ -101,7 +101,7 @@ test_that("readiness_inventory() checks its arguments", {
                class = "hcesfort_error_argument")
   expect_error(readiness_inventory(list(households = 1)),
                class = "hcesfort_error_argument")
-  expect_error(readiness_inventory(hces_example$households),
+  expect_error(readiness_inventory(hces_fixture$households),
                class = "hcesfort_error_argument")
   expect_error(readiness_inventory(list(), domains = 1),
                class = "hcesfort_error_argument")
@@ -168,7 +168,7 @@ test_that("met is FALSE exactly when inadequacy() fails for that measure", {
 })
 
 test_that("without expenditure, linked_expenditure has no verdict", {
-  e <- hces_example
+  e <- hces_fixture
   a <- e$acquisitions
   a$expenditure_lcu <- NULL
   g <- convert_units(a, e$unit_factors, priority = "food")

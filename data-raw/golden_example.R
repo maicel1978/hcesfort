@@ -1,9 +1,10 @@
-# Golden values of the full chain on `hces_example` (review of v0.1, M11).
+# Golden values of the full chain on `hces_fixture` (review of v0.1, M11).
 #
 # Computed here WITHOUT any function of hcesfort: base R and `survey` only,
 # from the documented rules of each step, so that a shared misreading of a
-# rule by the package and its tests cannot hide. The data are the shipped
-# `hces_example` and reference tables (read as data). The values are written
+# rule by the package and its tests cannot hide. The data are the test
+# fixture `hces_fixture` (the 40 households that were `hces_example` until
+# 2026-11-14) and the shipped reference tables (read as data). The values are written
 # to tests/testthat/fixtures/golden-example.csv and compared at 1e-8 by
 # tests/testthat/test-golden-example.R, which runs the chain with the
 # package.
@@ -17,12 +18,12 @@
 #
 # Run from the package root: Rscript data-raw/golden_example.R
 
-load("data/hces_example.rda")
+hces_fixture <- readRDS("tests/testthat/fixtures/hces-fixture.rds")
 for (f in c("ref_energy_requirements", "ref_bmr_equations", "ref_conversions",
             "ref_iron_requirements", "ref_requirements")) {
   load(file.path("data", paste0(f, ".rda")))
 }
-ex <- hces_example
+ex <- hces_fixture
 hh <- ex$households
 
 # 1. Adult female equivalents.

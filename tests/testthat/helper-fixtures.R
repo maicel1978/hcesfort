@@ -126,3 +126,9 @@ fixture_scenarios <- function() {
     nutrient_fraction = c(NA, 0.9), source = "invented"
   )
 }
+
+# The 40 invented households that were `hces_example` until 2026-11-14,
+# built by fixtures/hces_fixture.R. Unit tests whose expected values are
+# worked out by hand on these households use this fixture, not the shipped
+# realistic example.
+hces_fixture <- readRDS(testthat::test_path("fixtures", "hces-fixture.rds"))

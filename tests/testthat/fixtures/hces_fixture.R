@@ -1,16 +1,25 @@
-# Build `hces_example`, the synthetic example dataset of hcesfort.
+# Build `hces_fixture`, the 40-household test fixture of hcesfort.
+#
+# Until 2026-11-14 this script built the shipped dataset `hces_example`
+# (it was data-raw/hces_example.R). The realistic example replaced it
+# (docs/design-reports-v3.md, section 7.1); these 40 households stay as the
+# fixture of the unit tests whose expected values are worked out by hand on
+# them. The tables are unchanged: the fixture is identical to the old
+# `hces_example`.
 #
 # Every value is INVENTED. Nothing comes from a survey, a food composition
 # table or a fortification standard; the numbers only have plausible orders
 # of magnitude so that examples and vignettes read naturally. Do not use
 # them for analysis.
 #
-# Run from the package root: Rscript data-raw/hces_example.R
+# Run from the package root: Rscript tests/testthat/fixtures/hces_fixture.R
+# It writes tests/testthat/fixtures/hces-fixture.rds, read by
+# tests/testthat/helper-fixtures.R as `hces_fixture`.
 # The result is deterministic (fixed seed, base R only).
 #
 # The dataset deliberately contains the cases the package must handle, so
 # examples and tests exercise them (expected counts are checked in
-# tests/testthat/test-example-data.R):
+# tests/testthat/test-fixture-data.R):
 # - a household that did not answer the food module, and one with members
 #   but no acquisitions;
 # - members with a missing age and a missing sex, a pregnant and a
@@ -249,12 +258,12 @@ food_groups <- data.frame(
   source = "synthetic: invented"
 )
 
-hces_example <- list(
+hces_fixture <- list(
   households = households, members = members, acquisitions = acquisitions,
   unit_factors = unit_factors, crosswalk = crosswalk,
   nutrients = nutrients, composition = composition, enrichment = enrichment,
   vehicles = vehicles, scenarios = scenarios, food_groups = food_groups
 )
 
-save(hces_example, file = "data/hces_example.rda", compress = "xz",
-     version = 2)
+saveRDS(hces_fixture, "tests/testthat/fixtures/hces-fixture.rds",
+        version = 2)

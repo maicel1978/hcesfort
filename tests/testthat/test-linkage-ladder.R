@@ -15,7 +15,7 @@ test_that("linkage_ladder() counts each step by hand", {
 
 test_that("the ladder never goes up", {
   for (x in list(lk_content(), example_content())) {
-    h <- if (nrow(x) == 11) lk_households() else hces_example$households
+    h <- if (nrow(x) == 11) lk_households() else hces_fixture$households
     l <- linkage_ladder(x, h)
     for (col in c("n_records", "n_households", "share_records",
                   "share_grams", "share_expenditure")) {

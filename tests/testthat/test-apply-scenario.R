@@ -192,23 +192,23 @@ test_that("derived functions accept the scenario table", {
 })
 
 test_that("the example data run end to end", {
-  nutrients <- nutrient_registry(hces_example$nutrients)
-  baseline <- unfortified_baseline(hces_example$composition,
-                                   hces_example$enrichment, nutrients)
-  g <- convert_units(hces_example$acquisitions, hces_example$unit_factors,
+  nutrients <- nutrient_registry(hces_fixture$nutrients)
+  baseline <- unfortified_baseline(hces_fixture$composition,
+                                   hces_fixture$enrichment, nutrients)
+  g <- convert_units(hces_fixture$acquisitions, hces_fixture$unit_factors,
                      priority = "food")
   afe <- new_hces_tbl(
-    data.frame(household_id = hces_example$households$household_id,
+    data.frame(household_id = hces_fixture$households$household_id,
                n_members = 1, afe = 1),
     "hces_afe", key = "household_id"
   )
   intake <- apparent_intake(
-    link_composition(g, hces_example$crosswalk, baseline), afe,
-    hces_example$households
+    link_composition(g, hces_fixture$crosswalk, baseline), afe,
+    hces_fixture$households
   )
-  use <- vehicle_coverage(g, hces_example$vehicles, afe,
-                          hces_example$households)
-  s <- apply_scenario(intake, use, hces_example$scenarios,
+  use <- vehicle_coverage(g, hces_fixture$vehicles, afe,
+                          hces_fixture$households)
+  s <- apply_scenario(intake, use, hces_fixture$scenarios,
                       compliance_model = "average_content")
   expect_identical(nrow(s), 3L * 40L)
   ok <- s$intake_status == "estimated"
