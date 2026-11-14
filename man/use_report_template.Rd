@@ -40,10 +40,12 @@ default in the package; the values shipped are those of \link{hces_example}.
 The analyst also edits \code{labels.csv} (the label of every code printed,
 in the language of the report: nothing is printed as a code) and
 \code{decisions.csv} (the decisions taken with the data and their evidence).
-\code{terms.csv} labels the package vocabulary. Tables and figures are plain
-code in \verb{_tables.R} and \verb{_figures.R} (\code{ggplot2}), meant to be edited.
-Rendering needs Quarto and the suggested packages \code{ggplot2} and
-\code{knitr}; copying needs neither.
+\code{terms.csv} labels the package vocabulary, \code{exhibits.csv} registers
+every table and figure (its ID, section and the function that builds
+it). Tables and figures are plain code in \verb{_tables.R}, \verb{_figures.R}
+(\code{ggplot2}) and \verb{_exhibits.R}, meant to be edited. Rendering needs
+Quarto and the suggested packages \code{ggplot2}, \code{knitr} and \code{tinytable};
+copying needs none of them.
 }
 \examples{
 dir <- file.path(tempdir(), "report")

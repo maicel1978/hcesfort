@@ -135,3 +135,36 @@ ul_bias,,form_diet_and_added,"Puede estar subestimado (composición de la forma 
 ul_bias,,not_assessable,No evaluable
 sentence,,exact,"En la muestra, el mismo valor en todos los hogares"
 sentence,,limit,límite del intervalo
+kind,,figure,Figura
+kind,,table,Cuadro
+title,,D1,Veredicto: secciones y dominios que los datos permiten
+title,,D2,"Variables: esenciales, y opcionales ausentes o con faltantes"
+title,,D3,Cantidad y calidad mínimas de los datos
+title,,D4,Escalera de enlace
+title,,D5,"Cola de trabajo: alimentos por resolver, según la proporción que representan"
+title,,D6,"Proporción enlazada a medida que se resuelven los alimentos de la cola, %"
+title,,D7,"Regla de parada y proporción no enlazada, % (IC {level}%)"
+title,,D8,"Proporción no enlazada por {instance}, % (IC {level}%)"
+title,,D9,"Ingesta aparente de energía por equivalente de mujer adulta, kcal por día"
+title,,D10,Decisiones tomadas con los datos
+title,,DA1,Inventario de variables
+title,,R0,"Hogares con ingesta aparente inadecuada, sin fortificación y con cada escenario, % (IC {level}%)"
+title,,R1.1,"Hogares que adquieren cada vehículo de fortificación, % (IC {level}%)"
+title,,R1.2,"Hogares que adquieren cada grupo de vehículos o algún vehículo, % (IC {level}%)"
+title,,R1.3,"Cantidad de cada vehículo en los hogares que lo adquieren, mediana en g por equivalente de mujer adulta por día (IC {level}%)"
+title,,R1.4,"Hogares que no adquieren ningún vehículo, por {instance}, % (IC {level}%)"
+title,,R2.1,"Hogares con ingesta aparente inadecuada sin fortificación, por nutriente, % (IC {level}%)"
+title,,R2.2,"Hogares con ingesta aparente inadecuada sin fortificación, por {instance}, % (IC {level}%)"
+title,,R3.1,Escenarios de fortificación
+title,,R3.2,"Efecto de cada escenario en la ingesta aparente inadecuada, {instance}, % y puntos porcentuales (IC {level}%)"
+title,,R3.3,"Hogares por encima del nivel máximo, por escenario, % (IC {level}%)"
+title,,R3.4,"Efecto de cada escenario en la ingesta aparente inadecuada por valor del dominio, {instance}, % y puntos porcentuales (IC {level}%)"
+title,,R4.1,"Proporción de cada grupo de alimentos en la ingesta aparente, por nutriente, % (IC {level}%)"
+title,,RT1,Requerimientos y niveles máximos utilizados
+title,,RT2,Norma de presentación utilizada
+title,,RT3,"Hogares con ingesta aparente inadecuada de hierro, por biodisponibilidad del hierro, % (IC {level}%)"
+note,,n,n = {n} hogares
+note,,suppressed,— Suprimida según la norma de presentación
+note,,review,† Señalada para revisión estadística
+note,,complement,‡ El complemento de la estimación puede no ser fiable.
+format,,big_mark,","

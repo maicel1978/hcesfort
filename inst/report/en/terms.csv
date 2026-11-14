@@ -135,3 +135,36 @@ ul_bias,,form_diet_and_added,"May be understated (incomplete composition of the 
 ul_bias,,not_assessable,Not assessable
 sentence,,exact,"In the sample, the same value in every household"
 sentence,,limit,interval limit
+kind,,figure,Figure
+kind,,table,Table
+title,,D1,Verdict: sections and domains the data support
+title,,D2,"Variables: essential, and optional ones absent or partly missing"
+title,,D3,Minimum quantity and quality of the data
+title,,D4,Linkage ladder
+title,,D5,"Work queue: foods to resolve, by the share they hold"
+title,,D6,"Share linked as the foods of the queue are resolved, %"
+title,,D7,"Stopping rule and unlinked share, % ({level}% CI)"
+title,,D8,"Unlinked share by {instance}, % ({level}% CI)"
+title,,D9,"Apparent energy intake per adult female equivalent, kcal per day"
+title,,D10,Decisions taken with the data
+title,,DA1,Inventory of variables
+title,,R0,"Households with inadequate apparent intake, without fortification and with each scenario, % ({level}% CI)"
+title,,R1.1,"Households that acquire each fortification vehicle, % ({level}% CI)"
+title,,R1.2,"Households that acquire each vehicle group or any vehicle, % ({level}% CI)"
+title,,R1.3,"Quantity of each vehicle among the households that acquire it, median g per adult female equivalent per day ({level}% CI)"
+title,,R1.4,"Households that acquire no vehicle, by {instance}, % ({level}% CI)"
+title,,R2.1,"Households with inadequate apparent intake without fortification, by nutrient, % ({level}% CI)"
+title,,R2.2,"Households with inadequate apparent intake without fortification, by {instance}, % ({level}% CI)"
+title,,R3.1,Fortification scenarios
+title,,R3.2,"Effect of each scenario on inadequate apparent intake, {instance}, % and percentage points ({level}% CI)"
+title,,R3.3,"Households above the upper level, by scenario, % ({level}% CI)"
+title,,R3.4,"Effect of each scenario on inadequate apparent intake by domain value, {instance}, % and percentage points ({level}% CI)"
+title,,R4.1,"Share of each food group in apparent intake, by nutrient, % ({level}% CI)"
+title,,RT1,Requirements and upper levels used
+title,,RT2,Presentation standard used
+title,,RT3,"Households with inadequate apparent intake of iron, by iron bioavailability, % ({level}% CI)"
+note,,n,n = {n} households
+note,,suppressed,— Suppressed under the presentation standard
+note,,review,† Flagged for statistical review
+note,,complement,‡ The complement of the estimate may be unreliable.
+format,,big_mark,","

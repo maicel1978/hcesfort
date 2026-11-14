@@ -29,6 +29,7 @@ source("_inputs.R", local = TRUE)
 source("_chain.R", local = TRUE)
 source("_tables.R", local = TRUE)
 source("_figures.R", local = TRUE)
+source("_exhibits.R", local = TRUE)
 source("_results.R", local = TRUE)
 lev <- 100 * level
 small_note <- paste0(
@@ -53,13 +54,13 @@ if (!enabled("coverage")) {
   cat(disabled_sentence("coverage"), "\n")
 } else {
   tables$coverage_vehicle <- coverage_table("vehicle")
-  show_exhibit("coverage_vehicle", paste0(
+  show_legacy("coverage_vehicle", paste0(
     "Households that acquired each vehicle in the reference period, % of ",
     "households, with its ", lev, "% interval. ", small_note
   ), fig_interval(tables$coverage_vehicle, "acquired", "vehicle",
                   xlab = "Households acquiring (%)", ylab = "Vehicle"))
   tables$coverage_group <- coverage_table(c("group", "combined"))
-  show_exhibit("coverage_group", paste0(
+  show_legacy("coverage_group", paste0(
     "Households that acquired at least one vehicle of each group, % of ",
     "households, with its ", lev, "% interval. Groups: ", group_note()
   ), fig_interval(tables$coverage_group, "acquired", "vehicle_group",
@@ -72,7 +73,7 @@ if (!enabled("quantity")) {
   cat(disabled_sentence("quantity"), "\n")
 } else {
   tables$quantity <- quantity_table()
-  show_exhibit("quantity", paste0(
+  show_legacy("quantity", paste0(
     "Quantity acquired among the households that acquire each vehicle: ",
     "median grams per adult female equivalent (AFE) per day, with its ",
     lev, "% interval."
@@ -84,7 +85,7 @@ if (!enabled("quantity")) {
 ```{r no-vehicle, results = "asis"}
 if (enabled("coverage")) {
   tables$no_vehicle <- no_vehicle_table()
-  show_exhibit("no_vehicle", paste0(
+  show_legacy("no_vehicle", paste0(
     "Households that acquired no vehicle, % of households, with its ",
     lev, "% interval."
   ), fig_interval(tables$no_vehicle, "none", "population",
@@ -97,7 +98,7 @@ if (enabled("coverage")) {
     }
     id <- paste0("no_vehicle_", d)
     tables[[id]] <- no_vehicle_table(d)
-    show_exhibit(id, paste0(
+    show_legacy(id, paste0(
       "Households that acquired no vehicle by ", tolower(lab(d, "domain")),
       ", % of households, with its ", lev, "% interval. ", small_note
     ), fig_interval(tables[[id]], "none", "domain_value",
@@ -115,7 +116,7 @@ if (!enabled("risk")) {
   cat(disabled_sentence("risk"), "\n")
 } else {
   tables$risk <- risk_table()
-  show_exhibit("risk", paste0(
+  show_legacy("risk", paste0(
     "Households whose apparent intake per AFE is below the requirement, ",
     "without fortification, % of households, with its ", lev,
     "% interval. Method: ", method_note(), " ", small_note
@@ -128,7 +129,7 @@ if (!enabled("risk")) {
     }
     id <- paste0("risk_", d)
     tables[[id]] <- risk_table(d)
-    show_exhibit(id, paste0(
+    show_legacy(id, paste0(
       "Inadequate intake without fortification by ",
       tolower(lab(d, "domain")), ", % of households, with its ", lev,
       "% interval. ", small_note
@@ -148,7 +149,7 @@ if (!enabled("scenarios")) {
   cat(disabled_sentence("scenarios"), "\n")
 } else {
   tables$scenarios <- scenario_table()
-  show_exhibit("scenarios", paste(
+  show_legacy("scenarios", paste(
     "Fortification scenarios: vehicle, nutrient, level in mg of nutrient",
     "per kg of vehicle (compounds converted), form, share of the vehicle",
     "fortified (compliance) and source."
@@ -158,7 +159,7 @@ if (!enabled("scenarios")) {
     id <- paste0("effects_", n)
     tables[[id]] <- eff[eff$nutrient %in% as.character(lab(n, "nutrient")), ]
     if (nrow(tables[[id]]) == 0) next
-    show_exhibit(id, paste0(
+    show_legacy(id, paste0(
       as.character(lab(n, "nutrient")), ": inadequate intake under each ",
       "scenario and under the scenario it is compared with, % of ",
       "households, and their paired difference in percentage points with ",
@@ -176,12 +177,12 @@ if (!enabled("scenarios")) {
 if (enabled("scenarios")) {
   ul <- above_ul_estimates()
   tables$ul_scope <- ul_scope_table(ul)
-  show_exhibit("ul_scope", paste(
+  show_legacy("ul_scope", paste(
     "Intake compared with the tolerable upper intake level (UL) of each",
     "nutrient, and the direction of the bias of that comparison."
   ))
   tables$above_ul <- above_ul_table(ul)
-  show_exhibit("above_ul", paste0(
+  show_legacy("above_ul", paste0(
     "Households above the UL under each scenario, % of households, with ",
     "its ", lev, "% interval. The UL of adults is applied to the intake ",
     "per AFE. ", small_note
@@ -201,7 +202,7 @@ if (enabled("scenarios")) {
       id <- paste0("equity_", n, "_", d)
       tables[[id]] <- eff[eff$nutrient %in% as.character(lab(n, "nutrient")), ]
       if (nrow(tables[[id]]) == 0) next
-      show_exhibit(id, paste0(
+      show_legacy(id, paste0(
         as.character(lab(n, "nutrient")), " by ", tolower(lab(d, "domain")),
         ": inadequate intake under each scenario and under the scenario ",
         "it is compared with, % of households, and their paired ",
@@ -227,7 +228,7 @@ if (!enabled("food_groups")) {
   fg <- tables$food_groups
   unclassified <- as.character(lab("unclassified", "food_group"))
   none <- fg[fg$food_group %in% unclassified, ]
-  show_exhibit("food_groups", paste0(
+  show_legacy("food_groups", paste0(
     "Share of the apparent intake of each nutrient supplied by each food ",
     "group, without fortification, %, with its ", lev, "% interval. A ",
     "share of 0 has no interval. Foods with no group assigned: ",
@@ -241,13 +242,13 @@ if (!enabled("food_groups")) {
 
 ```{r reference, results = "asis"}
 tables$reference <- reference_table()
-show_exhibit("reference", paste(
+show_legacy("reference", paste(
   "Estimated average requirement (EAR) and tolerable upper intake level",
   "(UL) used, with their source."
 ))
 if (enabled("risk") && "iron" %in% choices$nutrients) {
   tables$iron_sensitivity <- iron_sensitivity_table()
-  show_exhibit("iron_sensitivity", paste0(
+  show_legacy("iron_sensitivity", paste0(
     "Inadequate intake of iron without fortification under each iron ",
     "bioavailability, % of households, with its ", lev, "% interval. The ",
     "results above use ", pct(choices$iron_bioavailability, 0), "%."

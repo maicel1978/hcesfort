@@ -27,6 +27,7 @@ source("_inputs.R", local = TRUE)
 source("_chain.R", local = TRUE)
 source("_tables.R", local = TRUE)
 source("_figures.R", local = TRUE)
+source("_exhibits.R", local = TRUE)
 source("_readiness.R", local = TRUE)
 lev <- 100 * level
 ```

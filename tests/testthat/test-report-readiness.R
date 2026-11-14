@@ -7,6 +7,7 @@ skip_if_no_knit <- function() {
   testthat::skip_if_not_installed("knitr")
   testthat::skip_if_not_installed("rmarkdown")
   testthat::skip_if_not_installed("ggplot2")
+  testthat::skip_if_not_installed("tinytable")
 }
 
 report_langs <- c("en", "es")
@@ -64,7 +65,12 @@ test_that("terms.csv labels the whole vocabulary the reports print (U10)", {
     method = c("ear_cutpoint", "probability"),
     ul_scope = c("total_intake", "form_added_only", "form_diet_and_added",
                  "not_assessable"),
-    sentence = c("exact", "limit")
+    sentence = c("exact", "limit"),
+    kind = c("figure", "table"),
+    title = utils::read.csv(system.file("report", "exhibits.csv",
+                                        package = "hcesfort"))$id,
+    note = c("n", "suppressed", "review", "complement"),
+    format = "big_mark"
   )
   vocabulary$ul_bias <- vocabulary$ul_scope
   for (lang in report_langs) {

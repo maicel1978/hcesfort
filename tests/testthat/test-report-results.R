@@ -7,6 +7,7 @@ skip_if_no_knit <- function() {
   testthat::skip_if_not_installed("knitr")
   testthat::skip_if_not_installed("rmarkdown")
   testthat::skip_if_not_installed("ggplot2")
+  testthat::skip_if_not_installed("tinytable")
 }
 
 results_langs <- c("en", "es")

@@ -21,10 +21,12 @@
 #' The analyst also edits `labels.csv` (the label of every code printed,
 #' in the language of the report: nothing is printed as a code) and
 #' `decisions.csv` (the decisions taken with the data and their evidence).
-#' `terms.csv` labels the package vocabulary. Tables and figures are plain
-#' code in `_tables.R` and `_figures.R` (`ggplot2`), meant to be edited.
-#' Rendering needs Quarto and the suggested packages `ggplot2` and
-#' `knitr`; copying needs neither.
+#' `terms.csv` labels the package vocabulary, `exhibits.csv` registers
+#' every table and figure (its ID, section and the function that builds
+#' it). Tables and figures are plain code in `_tables.R`, `_figures.R`
+#' (`ggplot2`) and `_exhibits.R`, meant to be edited. Rendering needs
+#' Quarto and the suggested packages `ggplot2`, `knitr` and `tinytable`;
+#' copying needs none of them.
 #'
 #' @param path Folder to copy the template to. Created if it does not
 #'   exist; files already there are never overwritten.
@@ -53,7 +55,7 @@ use_report_template <- function(path, lang = "en") {
                    arg = "lang")
   }
   root <- system.file("report", package = "hcesfort", mustWork = TRUE)
-  from <- c(list.files(root, pattern = "\\.R$", full.names = TRUE),
+  from <- c(list.files(root, pattern = "\\.(R|csv)$", full.names = TRUE),
             list.files(file.path(root, lang), full.names = TRUE))
   to <- file.path(path, basename(from))
   there <- to[file.exists(to)]

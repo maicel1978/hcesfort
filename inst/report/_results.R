@@ -38,22 +38,6 @@ scenario_comparators <- function(comparator, codes) {
   out
 }
 
-# Whether the verdict enables a section, nationally (`domain = NA`) or for
-# one domain, and the sentence printed when it does not.
-enabled <- function(section, domain = NA) {
-  v <- verdict[verdict$section == section & verdict$domain %in% domain, ]
-  nrow(v) == 1 && v$enabled
-}
-disabled_sentence <- function(section, domain = NA) {
-  v <- verdict[verdict$section == section & verdict$domain %in% domain, ]
-  where <- if (is.na(domain)) {
-    term(section, "section")
-  } else {
-    lab(domain, "domain")
-  }
-  paste0(where, ": ", verdict_text(v), ".")
-}
-
 # Header of the domain value column of a by-domain table: the domain label.
 value_header <- function(d) {
   c(domain_value = as.character(lab(d, "domain")))

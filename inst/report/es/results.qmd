@@ -31,6 +31,7 @@ source("_inputs.R", local = TRUE)
 source("_chain.R", local = TRUE)
 source("_tables.R", local = TRUE)
 source("_figures.R", local = TRUE)
+source("_exhibits.R", local = TRUE)
 source("_results.R", local = TRUE)
 lev <- 100 * level
 small_note <- paste0(
@@ -56,13 +57,13 @@ if (!enabled("coverage")) {
   cat(disabled_sentence("coverage"), "\n")
 } else {
   tables$coverage_vehicle <- coverage_table("vehicle")
-  show_exhibit("coverage_vehicle", paste0(
+  show_legacy("coverage_vehicle", paste0(
     "Hogares que adquirieron cada vehículo en el período de referencia, % ",
     "de hogares, con su intervalo del ", lev, "%. ", small_note
   ), fig_interval(tables$coverage_vehicle, "acquired", "vehicle",
                   xlab = "Hogares que adquieren (%)", ylab = "Vehículo"))
   tables$coverage_group <- coverage_table(c("group", "combined"))
-  show_exhibit("coverage_group", paste0(
+  show_legacy("coverage_group", paste0(
     "Hogares que adquirieron al menos un vehículo de cada grupo, % de ",
     "hogares, con su intervalo del ", lev, "%. Grupos: ", group_note()
   ), fig_interval(tables$coverage_group, "acquired", "vehicle_group",
@@ -76,7 +77,7 @@ if (!enabled("quantity")) {
   cat(disabled_sentence("quantity"), "\n")
 } else {
   tables$quantity <- quantity_table()
-  show_exhibit("quantity", paste0(
+  show_legacy("quantity", paste0(
     "Cantidad adquirida entre los hogares que adquieren cada vehículo: ",
     "mediana de gramos por equivalente de mujer adulta (EMA) y día, con ",
     "su intervalo del ", lev, "%."
@@ -89,7 +90,7 @@ if (!enabled("quantity")) {
 ```{r no-vehicle, results = "asis"}
 if (enabled("coverage")) {
   tables$no_vehicle <- no_vehicle_table()
-  show_exhibit("no_vehicle", paste0(
+  show_legacy("no_vehicle", paste0(
     "Hogares que no adquirieron ningún vehículo, % de hogares, con su ",
     "intervalo del ", lev, "%."
   ), fig_interval(tables$no_vehicle, "none", "population",
@@ -102,7 +103,7 @@ if (enabled("coverage")) {
     }
     id <- paste0("no_vehicle_", d)
     tables[[id]] <- no_vehicle_table(d)
-    show_exhibit(id, paste0(
+    show_legacy(id, paste0(
       "Hogares que no adquirieron ningún vehículo por ",
       tolower(lab(d, "domain")), ", % de hogares, con su intervalo del ",
       lev, "%. ", small_note
@@ -121,7 +122,7 @@ if (!enabled("risk")) {
   cat(disabled_sentence("risk"), "\n")
 } else {
   tables$risk <- risk_table()
-  show_exhibit("risk", paste0(
+  show_legacy("risk", paste0(
     "Hogares cuya ingesta aparente por EMA está por debajo del ",
     "requerimiento, sin fortificación, % de hogares, con su intervalo del ",
     lev, "%. Método: ", method_note(), " ", small_note
@@ -134,7 +135,7 @@ if (!enabled("risk")) {
     }
     id <- paste0("risk_", d)
     tables[[id]] <- risk_table(d)
-    show_exhibit(id, paste0(
+    show_legacy(id, paste0(
       "Ingesta inadecuada sin fortificación por ",
       tolower(lab(d, "domain")), ", % de hogares, con su intervalo del ",
       lev, "%. ", small_note
@@ -154,7 +155,7 @@ if (!enabled("scenarios")) {
   cat(disabled_sentence("scenarios"), "\n")
 } else {
   tables$scenarios <- scenario_table()
-  show_exhibit("scenarios", paste(
+  show_legacy("scenarios", paste(
     "Escenarios de fortificación: vehículo, nutriente, nivel en mg de",
     "nutriente por kg de vehículo (compuestos convertidos), forma,",
     "proporción del vehículo fortificada (cumplimiento) y fuente."
@@ -164,7 +165,7 @@ if (!enabled("scenarios")) {
     id <- paste0("effects_", n)
     tables[[id]] <- eff[eff$nutrient %in% as.character(lab(n, "nutrient")), ]
     if (nrow(tables[[id]]) == 0) next
-    show_exhibit(id, paste0(
+    show_legacy(id, paste0(
       as.character(lab(n, "nutrient")), ": ingesta inadecuada con cada ",
       "escenario y con el escenario con que se compara, % de hogares, y ",
       "su diferencia pareada en puntos porcentuales con su intervalo del ",
@@ -182,12 +183,12 @@ if (!enabled("scenarios")) {
 if (enabled("scenarios")) {
   ul <- above_ul_estimates()
   tables$ul_scope <- ul_scope_table(ul)
-  show_exhibit("ul_scope", paste(
+  show_legacy("ul_scope", paste(
     "Ingesta comparada con el nivel máximo de ingesta tolerable (UL) de",
     "cada nutriente y dirección del sesgo de esa comparación."
   ))
   tables$above_ul <- above_ul_table(ul)
-  show_exhibit("above_ul", paste0(
+  show_legacy("above_ul", paste0(
     "Hogares por encima del UL con cada escenario, % de hogares, con su ",
     "intervalo del ", lev, "%. El UL de los adultos se aplica a la ",
     "ingesta por EMA. ", small_note
@@ -207,7 +208,7 @@ if (enabled("scenarios")) {
       id <- paste0("equity_", n, "_", d)
       tables[[id]] <- eff[eff$nutrient %in% as.character(lab(n, "nutrient")), ]
       if (nrow(tables[[id]]) == 0) next
-      show_exhibit(id, paste0(
+      show_legacy(id, paste0(
         as.character(lab(n, "nutrient")), " por ",
         tolower(lab(d, "domain")), ": ingesta inadecuada con cada ",
         "escenario y con el escenario con que se compara, % de hogares, y ",
@@ -233,7 +234,7 @@ if (!enabled("food_groups")) {
   fg <- tables$food_groups
   unclassified <- as.character(lab("unclassified", "food_group"))
   none <- fg[fg$food_group %in% unclassified, ]
-  show_exhibit("food_groups", paste0(
+  show_legacy("food_groups", paste0(
     "Proporción de la ingesta aparente de cada nutriente que aporta cada ",
     "grupo de alimentos, sin fortificación, %, con su intervalo del ", lev,
     "%. Una proporción de 0 no tiene intervalo. Alimentos sin grupo ",
@@ -249,13 +250,13 @@ if (!enabled("food_groups")) {
 
 ```{r reference, results = "asis"}
 tables$reference <- reference_table()
-show_exhibit("reference", paste(
+show_legacy("reference", paste(
   "Requerimiento promedio estimado (EAR) y nivel máximo de ingesta",
   "tolerable (UL) utilizados, con su fuente."
 ))
 if (enabled("risk") && "iron" %in% choices$nutrients) {
   tables$iron_sensitivity <- iron_sensitivity_table()
-  show_exhibit("iron_sensitivity", paste0(
+  show_legacy("iron_sensitivity", paste0(
     "Ingesta inadecuada de hierro sin fortificación con cada ",
     "biodisponibilidad del hierro, % de hogares, con su intervalo del ",
     lev, "%. Los resultados anteriores usan ",

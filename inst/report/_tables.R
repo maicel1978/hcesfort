@@ -7,7 +7,6 @@
 # numeric values before it is printed; print_table() turns the names into
 # headers and each pair of interval columns into one column.
 
-options(knitr.kable.NA = "—")
 tables <- list()
 figures <- list()
 
@@ -72,8 +71,10 @@ print_table <- function(d, caption = NULL, headers = NULL) {
   shown <- character(length(codes))
   shown[own] <- headers[codes[own]]
   shown[!own] <- term(codes[!own], "header")
-  shown <- gsub("{level}", 100 * level, shown, fixed = TRUE)
-  knitr::kable(d, col.names = shown, caption = caption, row.names = FALSE)
+  names(d) <- gsub("{level}", 100 * level, shown, fixed = TRUE)
+  x <- tinytable::tt(d, caption = caption)
+  x <- tinytable::format_tt(x, replace = "\u2014")
+  tinytable::theme_html(x, portable = TRUE)
 }
 
 # Estimates for display (R17, R19), from a table of flag_presentation():
@@ -85,8 +86,8 @@ print_table <- function(d, caption = NULL, headers = NULL) {
 # proportion with zero events (0 or every household) leaves the table,
 # unless `drop_exact` is FALSE, for the sentence of exact_sentence(), with
 # `n` and the upper limit. Columns in `extra` are copied after `n`. The
-# reasons of the suppressed and flagged rows are kept in the attribute
-# `reasons`.
+# reasons of the suppressed and of the flagged rows are kept in the
+# attributes `suppressed_reasons` and `review_reasons`, for the notes.
 display <- function(e, keys, value, scale = pct, unit = "%",
                     drop_exact = TRUE, extra = NULL) {
   e <- as.data.frame(e)
@@ -109,10 +110,12 @@ display <- function(e, keys, value, scale = pct, unit = "%",
                               e[zero, , drop = FALSE], scale, unit)
   }
   rownames(out) <- NULL
+  reasons <- function(rows) {
+    unique(stats::na.omit(e$presentation_reason[rows & !zero]))
+  }
   structure(out[!zero, , drop = FALSE], exact = sentence, value = value,
-            reasons = unique(stats::na.omit(
-              e$presentation_reason[(hide | review) & !zero]
-            )))
+            suppressed_reasons = reasons(hide),
+            review_reasons = reasons(review & !hide))
 }
 
 # The sentence of the zero-event estimates (S4): each cell with its value,
@@ -146,8 +149,9 @@ verdict_text <- function(v) {
 
 # Print the table `id` of `tables` (if it has rows), the sentence of its
 # exact estimates and, when `figure` has data, the figure, stored in
-# `figures` under the same id (R5: table first, then its figure).
-show_exhibit <- function(id, caption, figure = NULL, headers = NULL) {
+# `figures` under the same id (R5: table first, then its figure). Used by
+# the reports until they move to show_exhibit() of _exhibits.R.
+show_legacy <- function(id, caption, figure = NULL, headers = NULL) {
   d <- tables[[id]]
   if (nrow(d) > 0) {
     print(print_table(d, caption = caption, headers = headers))
