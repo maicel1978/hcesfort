@@ -1,79 +1,105 @@
 # Handoff
 
-- **Date:** 2026-11-13
-- **Model:** Opus 5.5 (implementation, steps 12c.12 and 12c.13).
-- **Branch:** `claude/loving-shannon-3huy7k` (the session's development
-  branch; `main` is not updated by this session). It continues
-  `claude/sleepy-gates-9i3pi1`. Merge it into `main` before the next
-  session, or continue on it.
+- **Date:** 2026-11-14
+- **Model:** Fable (design, task 12d.0).
+- **Branch:** `claude/loving-bell-599967` (the session's development
+  branch; `main` is not updated by this session). Merge it into `main`
+  before the next session, or continue on it.
 
 ## What was done
 
 | Commit | Step |
 |---|---|
-| `12cb05e` | 12c.12: Spanish results report (`es/results.qmd`); answers on P119 ("adecuada") and P120 (sentence "No variation in the sample, so no interval") applied and recorded; results knit tests in both languages |
-| `26a96de` | 12c.13: `estimate_households(statistic = "median")` returns `NA` for an undefined interval and logs `undefined_quantile_interval`; median tests no longer compare NaN with NaN |
-| `76ba4e6` | 12c.13: Quarto installed on the ubuntu release runner; render test (K15) in both languages |
-| last commit of the branch | 12c.13: specification updated; test that both languages run the same code; self-review items P121–P123 |
+| last commit of the branch | 12d.0: `docs/design-reports-v3.md` written; roadmap split into 12d.1–12d.16; items P124–P129 in `docs/improvements.md` |
 
-`devtools::test()`: 2415 passed, 0 failed (1 skip: Quarto not
-installed). `devtools::check()`: 0 errors, 0 warnings, 0 notes.
-`lintr::lint_package()`: no lints.
+No package code changed. Sources opened and read in this session:
+
+- Parker et al. 2017, Vital Health Stat 2(175) (NCHS presentation
+  standard): thresholds on p. 2, definitions on pp. 3–4, flow chart on
+  p. 7. Its twelve published examples (pp. 8–9) were recomputed by hand.
+- IOM 1998 (folate UL: pp. 13, 273, 280, 282) and IOM 2001 (vitamin A
+  UL: pp. 125, 126, 142, the last two on the scanned pages).
+
+`devtools::check()`: 0 errors, 0 warnings, 0 notes, with `ggplot2`
+installed, so the knit tests of the template ran.
+`lintr::lint_package()`: no lints. It needs the package installed
+(`devtools::install(quick = TRUE)`); otherwise `object_usage_linter`
+reports every internal function as undefined.
 
 ## Exact next step
 
-CI on `main` (`00223dd`) passed on all jobs. In the `ubuntu-latest (release)` job, the Quarto render test ran and passed; the 4 skips are the installed-package skips. P123 is closed.
+1. **The maintainer** answers the sixteen decisions of section 13 of
+   `docs/design-reports-v3.md` (each has a recommended option).
+2. **Opus** records the answers in `docs/improvements.md` (section
+   "Decisions (reports v3)") and in the status line of the design, then
+   starts at 12d.1 and follows section 12 of the design, one step per
+   commit.
+3. An answer that changes a contract of sections 3 to 5 of the design
+   beyond the alternatives listed goes back to Fable.
 
-The maintainer rendered both Spanish reports on `hces_example` and reviewed them (2026-11-14). The result is `docs/report-requirements-v2.md` (approved) and roadmap task 12d.
+## Open questions
 
-**Fable** writes `docs/design-reports-v3.md` (task 12d.0) from `docs/report-requirements-v2.md`, read together with v1 and `docs/design-reports-v2.md`. The design covers:
+The sixteen decisions (P125). The ones that shape the most work:
+1 (table package), 2 (Korn-Graubard interval with the NCHS cap),
+5 (opening of the results report), 6 (two-panel effect figure),
+7 and 8 (the example).
 
-- both reports (DR9–DR13, R15–R24);
-- the presentation standard R18: verify the NCHS thresholds in the document itself (Parker et al. 2017, Vital Health Stat 2(175)) and cite the page;
-- the UL statements of R21: verify them in the IOM reports;
-- the realistic example (X1–X2): structure, sizes, vehicles, scenario levels labelled as invented, and the seeded generating script;
-- robustness and change (Q1–Q3);
-- the commit plan for 12d.1 onwards.
+## Environment
 
-Act as a hostile but fair journal reviewer and as an information designer. Ask all questions at once, numbered, each with a recommendation. Stop for approval; no package code in 12d.0.
+- A cloud environment named `hcesfort` was created for this repository
+  (the hosts of the Default environment plus `www.cdc.gov` and
+  `stacks.cdc.gov`, needed to read the NCHS report). Choose it when
+  opening the next session. Its setup script is the one of the Default
+  environment and has not yet started a fresh container.
+- `ggplot2` is not in that script (P126): without it the knit tests of
+  the report template are skipped. Install it by hand at the start of the
+  session until the script has it:
 
-Acceptance C2 (render with ENGIH 2018) moves to after 12d. Task 12 (vignettes) waits for 12d.
-
-## Open questions (in `docs/improvements.md`)
-
-None that block. P121 (one report per kind instead of one per language)
-and P122 (larger fixture for the median) are low priority.
+  ```r
+  install.packages(c("ggplot2", "tinytable"))
+  ```
 
 ## Recommended model for the next session
 
-**Fable**, effort high (12d.0). Then Opus (12d.1 onwards).
+**Opus**, after the maintainer's answers (12d.1 onwards). Sonnet for the
+wording pass of 12d.14.
 
 ## Maintainer review points
 
-1. **Read the Spanish results report:**
+1. **The NCHS interval, by hand, against a published row** (Parker et al.
+   2017, Table II, p. 9: Hispanic men, published limits 42.0 and 62.3;
+   non-Hispanic black women, where the cap at `n` acts, 18.8 and 32.2):
 
    ```r
-   dir <- file.path(tempdir(), "rep_es")
-   hcesfort::use_report_template(dir, "es")
-   setwd(dir)
-   knitr::opts_chunk$set(echo = FALSE, warning = FALSE)
-   knitr::knit("results.qmd")   # or: quarto::quarto_render("results.qmd")
+   kg <- function(p, se, n, df, cap = TRUE) {
+     ne <- p * (1 - p) / se^2 * (qt(0.025, n - 1) / qt(0.025, df))^2
+     if (cap) ne <- min(ne, n)
+     100 * c(qbeta(0.025, ne * p, ne * (1 - p) + 1),
+             qbeta(0.975, ne * p + 1, ne * (1 - p)))
+   }
+   kg(0.522, 0.0449, 169, 11)               # 42.0 62.3
+   kg(0.251, 0.0283, 175, 12)               # 18.9 32.2 (published 18.8 32.2)
+   kg(0.251, 0.0283, 175, 12, cap = FALSE)  # 19.1 31.8: survey's "beta"
    ```
 
-2. **Undefined median interval (P116)**, energy by region in the
-   example:
+2. **The IOM pages** (P124): the vitamin A statements are on pp. 126 and
+   142, not 127 and 143 as `data-raw/SOURCES.md` says.
 
    ```r
-   library(hcesfort)
-   source("_inputs.R"); source("_chain.R")   # in the directory above
-   source("_tables.R"); source("_readiness.R")
-   e <- estimate_households(design, flagged, energy_column,
-                            statistic = "median", by = "region")
-   e                                   # north: se, ci_low, ci_high NA
-   subset(audit_log(e), cause == "undefined_quantile_interval")
+   browseURL("https://nap.nationalacademies.org/books/10026/gif/126.gif")
+   browseURL("https://nap.nationalacademies.org/books/10026/gif/142.gif")
+   browseURL("https://nap.nationalacademies.org/books/6015/gif/280.gif")
    ```
 
-3. **Both languages run the same code:** change a function call in
-   `es/results.qmd` of the installed template source and run
-   `devtools::test(filter = "report-template")`; the test "the reports
-   run the same code in every language" must fail.
+3. **The table package** (decision 1), on any small table:
+
+   ```r
+   d <- data.frame(Nutrient = c("Iron", "Folate"), `%` = c("62.1", "—"),
+                   check.names = FALSE)
+   x <- tinytable::tt(d, caption = "Table R2.1. Title",
+                      notes = list("n = 1,962 households.",
+                                   "—: suppressed (sample size)."))
+   tinytable::save_tt(tinytable::theme_html(x, portable = TRUE),
+                      file.path(tempdir(), "t.html"), overwrite = TRUE)
+   browseURL(file.path(tempdir(), "t.html"))
+   ```

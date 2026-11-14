@@ -514,6 +514,20 @@ report (Opus).
 | P122 | low | **The 8-household fixture of `test-estimate.R` gives an undefined median interval at levels 0.9 and 0.95**; the median tests against `survey` run at level 0.5. A fixture with more PSUs would test the median at the usual level. | Tests at the level users choose. | 11 (revisit) |
 | P123 | medium | **K15 (Quarto render of both reports in both languages) has not run yet**: Quarto could not be installed in the session's container. The first run of the R-CMD-check workflow on the ubuntu release runner (on `main` or a pull request) is its verification. | Never claim it works without running it. | 12c.13 (CI) |
 
+## Open items from the design of the reports v3 (2026-11-14)
+
+Design: `docs/design-reports-v3.md` (task 12d.0). Its sixteen decisions
+(section 13) wait for the maintainer.
+
+| Id | Priority | Proposal | Why | Task |
+|---|---|---|---|---|
+| P124 | high | **Page citations of the IOM reports in `data-raw/requirements.csv` and `data-raw/SOURCES.md` are one page too high.** Read on the scanned pages: the vitamin A UL for women 19–50 years is on p. 142 (cited 143) and "applies to chronic intake of preformed vitamin A from food, fortified food, and/or supplements" on p. 126 (cited 127). By the page anchors of the online text the same shift affects the vitamin A EAR (116 → 115), the iron EAR (345 → 344) and UL (376 → 375), the zinc EAR (476 → 475) and UL (487 → 486), the folate EAR (229 → 228) and the 18% iron absorption (316–317 → 315). No value changes. Re-read each citation on the scanned page (`https://nap.nationalacademies.org/books/<id>/gif/<page>.gif`), correct it, update the md5. | Peer-review standard (P6): a wrong page is a wrong citation. | 12d.1 |
+| P125 | high | **Approve the sixteen decisions of section 13 of the design.** They change contracts or exported interfaces: `ref_presentation_standard`, `ci_method = "korn_graubard"` and the column `ci_method`, `flag_presentation()`, `short_label` in the label table, `needed_by` and `domain_cells` in the readiness functions, and the replacement of `hces_example`. | Implementation cannot start without them. | 12d |
+| P126 | high | **The setup script of the cloud environment does not install `ggplot2`**, so in a fresh container the knit tests of the report template are skipped and nobody sees it. `tinytable` (if decision 1 is approved) has the same problem. Quarto is not installed either (K15 runs in CI only). | Never claim it works without running it. | 12d.1 |
+| P127 | medium | **Time of the knit tests on the realistic example.** One knit of the results report takes about 8 s on 2,000 households; the tests knit many variants. Tests that only check structure can run on a subsample appended to `_inputs.R` (a few PSUs per stratum); snapshot tests need the full example. Budget: the test suite under 5 minutes in CI. | Test time. | 12d.15 |
+| P128 | low | **`ci_method = "beta"` of `estimate_households()` stays the uncapped interval of `survey::svyciprop()`**, beside the new `"korn_graubard"`. Its documentation should say how the two differ (the cap at the sample size; the interval of a 0 or 1 proportion). | Two near-identical options need a clear difference. | 12d.3 |
+| P129 | low | **Food-group shares, unlinked shares and medians have no published presentation thresholds** (departure S1 of the design). NCHS published standards for rates and counts after 2017; a later version could look for a published rule for ratios and quantiles. | P6: no invented thresholds where a standard exists. | v0.2 |
+
 ## Open items from step 12c.11 (2026-11-13)
 
 | Id | Priority | Proposal | Why | Task |
