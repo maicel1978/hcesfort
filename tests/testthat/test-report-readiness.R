@@ -54,7 +54,7 @@ test_that("terms.csv labels the whole vocabulary the reports print (U10)", {
     section = names(hcesfort:::readiness_sections()),
     verdict = "enabled",
     verdict_reason = c("missing_input", "threshold_not_met"),
-    role = c("essential", "optional"), needed_by = c("all", "none"),
+    role = c("essential", "optional"), needed_by = c("all", "domain", unname(hcesfort:::readiness_needs())),
     flag = c("TRUE", "FALSE"),
     measure = c("records", "grams", "expenditure"),
     precision_status = c("small_cell", "exact", "wide_interval", "ok"),

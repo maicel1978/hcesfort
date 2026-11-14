@@ -19,9 +19,15 @@ An absent table is \code{NULL} or left out.}
 A tibble: \code{table}, \code{variable} (\code{NA} for a table row), \code{role}
 (\code{"essential"} or \code{"optional"}), \code{present} (exists and is not all
 missing; a table: exists and has rows), \code{share_missing} (of a column;
-\code{NA} for a table or an absent column) and \code{needed_by} (\code{"all"}, the
-sections of the results report that depend on it separated by \code{", "},
-or \code{"none"}).
+\code{NA} for a table or an absent column) and \code{needed_by}: what the input
+is needed for. \code{"all"} for the essential ones; \code{"domain"} for a domain
+(the analysis by that domain); \code{"household_status"} for
+\code{food_module_response}; \code{"adult_equivalents"} for \code{age_months},
+\code{pregnant}, \code{lactating}, \code{meals_home_share} and \code{weight_kg};
+\code{"quantities"} for \code{household_share}; \code{"linkage_expenditure"} for
+\code{expenditure_lcu}; \code{"baseline"} for the table \code{enrichment}; the
+sections of the results report that need it, separated by \code{", "}, for
+\code{vehicles}, \code{scenarios} and \code{food_groups}; \code{"none"} for \code{origin}.
 }
 \description{
 The first section of the data readiness report: which variables of the

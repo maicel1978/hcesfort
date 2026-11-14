@@ -11,10 +11,17 @@ labels <- read_labels("labels.csv", needed = list(
 ))
 decisions <- read_decisions("decisions.csv")
 
-# Section 1. `needed_by` is "all", "none" or a list of sections.
+# Section 1. `needed_by` is one term of type `needed_by` ("domain" is
+# followed by the label of the domain) or a list of sections.
 inventory_table <- function(inv) {
-  needed <- vapply(strsplit(inv$needed_by, ", ", fixed = TRUE), function(v) {
-    if (length(v) == 1 && v %in% c("all", "none")) {
+  single <- terms$code[terms$type == "needed_by"]
+  needed <- vapply(seq_len(nrow(inv)), function(i) {
+    v <- strsplit(inv$needed_by[[i]], ", ", fixed = TRUE)[[1]]
+    if (length(v) == 1 && v == "domain") {
+      return(paste(term(v, "needed_by"),
+                   as.character(lab(inv$variable[[i]], "domain"))))
+    }
+    if (length(v) == 1 && v %in% single) {
       return(term(v, "needed_by"))
     }
     paste(term(v, "section"), collapse = ", ")

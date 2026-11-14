@@ -16,7 +16,7 @@ test_that("the inventory has one row per schema column, domain, table", {
   expect_true(all(tab$present))
   expect_identical(tab$needed_by[tab$table == "vehicles"],
                    "coverage, quantity, scenarios")
-  expect_identical(tab$needed_by[tab$table == "enrichment"], "none")
+  expect_identical(tab$needed_by[tab$table == "enrichment"], "baseline")
   essential <- inv$role == "essential"
   expect_true(all(inv$present[essential]))
   expect_true(all(inv$needed_by[essential] == "all"))
@@ -24,6 +24,32 @@ test_that("the inventory has one row per schema column, domain, table", {
   absent <- inv$variable[!inv$present & !is.na(inv$variable)]
   expect_setequal(absent, c("age_months", "meals_home_share", "weight_kg",
                             "household_share"))
+})
+
+# U16 (docs/design-reports-v3.md, section 4.2, C4): every row of the map,
+# typed by hand.
+test_that("needed_by follows the dependency map row by row", {
+  inv <- readiness_inventory(example_tables(), domains = "region")
+  got <- stats::setNames(inv$needed_by,
+                         ifelse(is.na(inv$variable), inv$table,
+                                inv$variable))
+  expected <- c(
+    food_module_response = "household_status",
+    age_months = "adult_equivalents", pregnant = "adult_equivalents",
+    lactating = "adult_equivalents", meals_home_share = "adult_equivalents",
+    weight_kg = "adult_equivalents", household_share = "quantities",
+    expenditure_lcu = "linkage_expenditure", origin = "none",
+    region = "domain", enrichment = "baseline",
+    vehicles = "coverage, quantity, scenarios", scenarios = "scenarios",
+    food_groups = "food_groups", unit_factors = "all", crosswalk = "all",
+    composition = "all", household_id = "all", weight = "all",
+    stratum = "all", psu = "all", member_id = "all", age_years = "all",
+    sex = "all", record_id = "all", food_code = "all", quantity = "all",
+    unit = "all", section = "all", period_days = "all", include = "all"
+  )
+  expect_identical(got[names(expected)], expected)
+  # Every row is in the map: no optional input falls through to "none".
+  expect_setequal(names(got), names(expected))
 })
 
 test_that("missing values are shared by hand", {

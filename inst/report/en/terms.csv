@@ -73,6 +73,12 @@ role,,essential,essential
 role,,optional,optional
 needed_by,,all,all sections
 needed_by,,none,none
+needed_by,,domain,analysis by
+needed_by,,household_status,status of each household
+needed_by,,adult_equivalents,adult female equivalents
+needed_by,,quantities,quantities of each household
+needed_by,,linkage_expenditure,linkage by expenditure
+needed_by,,baseline,unfortified baseline
 section,,coverage,Coverage of the vehicles
 section,,quantity,Quantity among acquirers
 section,,risk,Risk of inadequate intake

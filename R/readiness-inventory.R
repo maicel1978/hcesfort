@@ -25,9 +25,15 @@
 #' @returns A tibble: `table`, `variable` (`NA` for a table row), `role`
 #'   (`"essential"` or `"optional"`), `present` (exists and is not all
 #'   missing; a table: exists and has rows), `share_missing` (of a column;
-#'   `NA` for a table or an absent column) and `needed_by` (`"all"`, the
-#'   sections of the results report that depend on it separated by `", "`,
-#'   or `"none"`).
+#'   `NA` for a table or an absent column) and `needed_by`: what the input
+#'   is needed for. `"all"` for the essential ones; `"domain"` for a domain
+#'   (the analysis by that domain); `"household_status"` for
+#'   `food_module_response`; `"adult_equivalents"` for `age_months`,
+#'   `pregnant`, `lactating`, `meals_home_share` and `weight_kg`;
+#'   `"quantities"` for `household_share`; `"linkage_expenditure"` for
+#'   `expenditure_lcu`; `"baseline"` for the table `enrichment`; the
+#'   sections of the results report that need it, separated by `", "`, for
+#'   `vehicles`, `scenarios` and `food_groups`; `"none"` for `origin`.
 #' @seealso [readiness_checks()], [readiness_verdict()].
 #' @examples
 #' e <- hces_example
@@ -43,11 +49,12 @@ readiness_inventory <- function(tables, domains = NULL) {
     schema <- schema_registry()[[t]]()
     column_rows(tables[[t]], t, schema$column,
                 ifelse(schema$required, "essential", "optional"),
-                ifelse(schema$required, "all", "none"))
+                ifelse(schema$required, "all",
+                       vapply(schema$column, needed_by, character(1))))
   })
   dom <- column_rows(tables[["households"]], "households", domains,
                      rep("optional", length(domains)),
-                     rep("all", length(domains)))
+                     rep("domain", length(domains)))
   user <- readiness_tables()
   tab <- dplyr::tibble(
     table = names(user), variable = NA_character_, role = unname(user),
