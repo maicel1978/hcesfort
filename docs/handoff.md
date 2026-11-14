@@ -65,6 +65,14 @@ of D1 to D10 and DA1 in `_readiness.R`, `en/readiness.qmd` reduced to
 headings, free text and `show_exhibit()` calls; K17 and K18 (section 4.1
 of `docs/design-reports-v3.md`). Then 12d.12 (Spanish).
 
+## Answers of the maintainer (2026-11-14, after 12d.10)
+
+1. **P133:** accepted as recommended (non-respondent households form the missing-value cell of the expenditure group, labelled from `terms.csv`).
+2. **P136:** accepted as recommended: lower the purchase probability of rice, oil and sugar in 12d.11 so that exhibit R1.4 has a nonzero estimate, and re-check the calibration test.
+3. **P138:** accepted as recommended: decimal point and comma as thousands mark in both languages (Dominican usage), from `terms.csv`.
+
+Record these in `docs/improvements.md` with the first commit of 12d.11.
+
 ## Recommended model for the next session
 
 **Opus** (12d.11 onwards). This session stops near half of its context,
