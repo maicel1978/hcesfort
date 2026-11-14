@@ -78,7 +78,7 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
 - [ ] 12d. Reports v3 and a realistic example, after the maintainer's review of the v2 renders (2026-11-14). Requirements: `docs/report-requirements-v2.md` (approved 2026-11-14). Comes before task 12 and before the ENGIH adapter work resumes.
   - [x] 12d.0 Design (`docs/design-reports-v3.md`): both reports (DR9–DR13, R15–R24), the presentation standard (R18), the realistic example (X1–X2), and robustness and change (Q1–Q3); commit plan. Model: Fable. No package code. Written 2026-11-14; approved 2026-11-14 with conditions (`docs/improvements.md`, "Decisions (2026-11-14, reports v3)").
   - Implementation (Opus unless noted), after approval; each step at most 300 lines of code, split if larger. Detail in section 12 of the design.
-  - [x] 12d.1 IOM page citations in `data-raw/` re-read and corrected (P124); `ggplot2` and `tinytable` installed by hand; the setup script of the environment still lacks them (P126, open).
+  - [x] 12d.1 IOM page citations in `data-raw/` re-read and corrected (P124); the setup script of the `hcesfort` environment has `ggplot2`; `tinytable` still to add (P126, open).
   - [x] 12d.2 `ref_presentation_standard` (C1).
   - [ ] 12d.3 `ci_method = "korn_graubard"`; column `ci_method` (C2).
   - [ ] 12d.4 `flag_presentation()` (C3).

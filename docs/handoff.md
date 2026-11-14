@@ -1,58 +1,60 @@
 # Handoff
 
 - **Date:** 2026-11-14
-- **Model:** Opus (step 12d.1).
+- **Model:** Opus (steps 12d.1 and 12d.2).
 - **Branch:** `claude/clever-cray-7hq3uw` (the session's development
   branch; `main` is not updated by this session). Merge it into `main`
   before the next session, or continue on it.
+- **Environment:** the session moved from Default to the `hcesfort`
+  environment (network only) to reach `www.cdc.gov`. Open the next session
+  in `hcesfort`.
 
 ## What was done
 
 | Commit | Step |
 |---|---|
-| last commit of the branch | 12d.1: maintainer's answers to the design v3 recorded (`docs/improvements.md`, "Decisions (2026-11-14, reports v3)"; status line of `docs/design-reports-v3.md`); every IOM page citation in `data-raw/` re-read on the scanned page and corrected (P124); md5 and `data/*.rda` rebuilt |
+| `3785810` | 12d.1: maintainer's answers to the design v3 recorded (`docs/improvements.md`, "Decisions (2026-11-14, reports v3)"; status line of the design); every IOM page citation in `data-raw/` re-read on the scanned page and corrected (P124); md5 and `data/*.rda` rebuilt; no value changed |
+| `665b9b6` | 12d.2: `ref_presentation_standard` (C1), the seven NCHS thresholds read in Parker et al. 2017 (Table, p. 2; definitions pp. 3–4; PDF md5 `2ae6002af069bb55f555e2e271f1908d`) |
+| last commit | Handoff |
 
-P124 in detail: the table of corrected pages is in `data-raw/SOURCES.md`,
-section "Page citations re-read". Most citations of IOM 2001 and 1998 were
-one page too high; the same shift was found in IOM 2000 (vitamin E) and
-IOM 2011 (vitamin D, a pending row), which were corrected too. IOM 2000b
-(pp. 81, 91) and the folate UL (pp. 280, 282) were right. No value
-changed: the rebuilt `ref_requirements`, `ref_iron_requirements` and
-`ref_conversions` are identical to the old ones except the `location` and
-`ul_form_location` columns (checked in R).
+P124 in detail: table of corrected pages in `data-raw/SOURCES.md`, section
+"Page citations re-read". Most IOM 2001 and 1998 citations were one page
+too high; the same shift was found and corrected in IOM 2000 (vitamin E)
+and IOM 2011 (vitamin D, pending row). IOM 2000b and the folate UL pages
+were right.
 
-`devtools::test()`: 0 failures, 1 skip (Quarto not installed).
-`devtools::check()`: 0 errors, 0 warnings, 0 notes. `lintr::lint_package()`:
-no lints (package installed first).
+`devtools::check()` after 12d.2: 0 errors, 0 warnings, 0 notes.
+`lintr::lint_package()`: no lints (package installed first). Tests: no
+failures; one skip (Quarto not installed).
 
 ## Exact next step
 
-**12d.2** (Opus): `ref_presentation_standard` (C1 of the design, section
-3.2). Enter `data-raw/presentation_standard.csv` with the seven rows of C1,
-each with its page in Parker et al. 2017 (Vital Health Stat 2(175)),
-register its md5, list it in `data-raw/SOURCES.md` as verified only after
-opening the report (`https://www.cdc.gov/nchs/data/series/sr_02/sr02_175.pdf`,
-md5 `2ae6002af069bb55f555e2e271f1908d`; `www.cdc.gov` is allowed only in
-the `hcesfort` environment, not in Default). Then 12d.3 onwards, one step
-per commit, as in section 12 of the design.
+**12d.3** (Opus): `estimate_households(ci_method = "korn_graubard")` and
+the column `ci_method` in every `hces_estimate` (C2 of
+`docs/design-reports-v3.md`, section 3.2; tests U11–U12 of section 3.4;
+P128 for the documentation of `"beta"` against `"korn_graubard"`).
+Condition V-D2 of the maintainer: golden tests against
+`survey::svyciprop(method = "beta")` (where the cap does not bind),
+`stats::binom.test()` (equal weights, including 0 and `n` events) and the
+twelve published rows of Tables I and II of the NCHS report (pp. 8–9),
+typed into the test with their page. The PDF is at
+`https://www.cdc.gov/nchs/data/series/sr_02/sr02_175.pdf` (reachable from
+the `hcesfort` environment); `pdftotext` is installed. Then 12d.4 onwards.
 
 ## Open questions
 
-None for the maintainer. One environment action:
+None for the maintainer. P126: add `"tinytable"` to the `pkgs` vector of
+the setup script of the `hcesfort` environment (Settings), or install it
+by hand at the start of the session until then (needed from 12d.10):
 
-- **P126 (open).** This session ran in the Default environment, which
-  cannot reach `www.cdc.gov` (needed for 12d.2). Open the next session in
-  the `hcesfort` environment. Its setup script still lacks `ggplot2` and
-  `tinytable`; add them to the `pkgs` vector of the script in Settings, or
-  install them by hand at the start of the session:
-
-  ```r
-  install.packages(c("ggplot2", "tinytable"))
-  ```
+```r
+install.packages("tinytable")
+```
 
 ## Recommended model for the next session
 
-**Opus** (12d.2 onwards). Sonnet for the wording pass of 12d.14.
+**Opus** (12d.3 onwards). This session stops at more than half of its
+context. Sonnet for the wording pass of 12d.14.
 
 ## Maintainer review points
 
@@ -65,18 +67,20 @@ None for the maintainer. One environment action:
    browseURL("https://nap.nationalacademies.org/books/10026/gif/344.gif")
    ```
 
-2. **No value changed** in the reference tables, only their locations:
+2. **No value changed** in the reference tables of 12d.1, only their
+   locations (run from the package root):
 
    ```r
    old <- new.env()
-   system("git show HEAD~1:data/ref_requirements.rda > /tmp/old.rda")
+   system("git show 7cc78a3:data/ref_requirements.rda > /tmp/old.rda")
    load("/tmp/old.rda", old)
    keep <- setdiff(names(hcesfort::ref_requirements), "location")
    identical(old$ref_requirements[keep], hcesfort::ref_requirements[keep])
    ```
 
-3. **The DFE formula is on p. 210 of IOM 1998** (cited p. 211 before):
+3. **The NCHS thresholds against the Table on p. 2 of the report:**
 
    ```r
-   browseURL("https://nap.nationalacademies.org/books/6015/gif/210.gif")
+   hcesfort::ref_presentation_standard[c("criterion", "value")]
+   browseURL("https://www.cdc.gov/nchs/data/series/sr_02/sr02_175.pdf")
    ```
