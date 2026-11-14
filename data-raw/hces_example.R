@@ -143,6 +143,235 @@ members$age_years[stats::runif(n_members) < 0.003] <- NA
 members$sex[stats::runif(n_members) < 0.002] <- NA
 members$age_years <- as.numeric(members$age_years)
 
-# Part 2 (12d.8): acquisitions from `foods`, expenditure groups (weighted
-# quintiles of food expenditure per member), unit factors, crosswalk,
-# composition, enrichment, vehicles, scenarios, food groups, and save().
+# Acquisitions ------------------------------------------------------------
+
+# Households that answered the food module; about 0.3% of them report no
+# acquisition at all.
+respond <- households$household_id[households$food_module_response]
+empty <- respond[stats::runif(length(respond)) < 0.003]
+buyers <- setdiff(respond, empty)
+
+# One row per buying household and food. The odds of acquiring a food rise
+# or fall with wealth, change by region, and have a PSU effect, so that
+# neighbours buy alike.
+psu_ids <- unique(households$psu)
+psu_food <- matrix(round(stats::rnorm(length(psu_ids) * nrow(foods), 0, 0.5),
+                         3), nrow = length(psu_ids))
+regions <- c("north", "central", "south")
+region_mult <- as.matrix(foods[paste0("mult_", regions)])
+grid <- expand.grid(food = seq_len(nrow(foods)),
+                    hh = match(buyers, households$household_id))
+hh <- households[grid$hh, ]
+fd <- foods[grid$food, ]
+logit <- stats::qlogis(fd$p_acquire) + fd$wealth_slope * hh$wealth +
+  log(region_mult[cbind(grid$food, match(hh$region, regions))]) +
+  psu_food[cbind(match(hh$psu, psu_ids), grid$food)]
+keep <- stats::runif(nrow(grid)) < stats::plogis(logit)
+hh <- hh[keep, ]
+fd <- fd[keep, ]
+n_records <- nrow(fd)
+
+# Quantity in the recording unit for the period of the section: the weekly
+# quantity of a household of three, scaled by size and wealth, with
+# household noise. Diary: 7 days; recall: 30 days.
+period <- ifelse(fd$section == "recall", 30, 7)
+quantity <- fd$qty_week * (size[grid$hh[keep]] / 3)^0.85 *
+  exp(fd$qty_elasticity * hh$wealth) *
+  exp(stats::rnorm(n_records, 0, 0.35)) * period / 7
+count_unit <- fd$unit %in% c("piece", "can", "bunch")
+quantity <- ifelse(count_unit, pmax(1, round(quantity)),
+                   ifelse(fd$unit == "g", round(quantity, -1),
+                          round(quantity, 2)))
+
+origin <- ifelse(hh$area == "rural",
+                 sample(c("purchase", "own_production", "gift"), n_records,
+                        replace = TRUE, prob = c(0.84, 0.12, 0.04)),
+                 sample(c("purchase", "own_production", "gift"), n_records,
+                        replace = TRUE, prob = c(0.95, 0.01, 0.04)))
+acquisitions <- data.frame(
+  record_id = seq_len(n_records), household_id = hh$household_id,
+  food_code = fd$food_code, quantity = quantity, unit = fd$unit,
+  section = fd$section, period_days = period, include = TRUE,
+  origin = origin,
+  # Amount paid, or the value imputed to own production and gifts.
+  expenditure_lcu = round(fd$price_lcu * quantity *
+                            exp(stats::rnorm(n_records, 0, 0.1)), 2)
+)
+
+# Planted defects, at rates of a real survey. Milk sometimes in cups (a
+# volume unit without a density for milk); a few records in sacks (a unit
+# without factor); a few extreme quantities (a zero typed too many: the
+# expenditure is not scaled); missing quantities (the amount paid is
+# known), missing units; records left out by the section rule of the
+# invented adapter.
+cups <- which(acquisitions$food_code == "milk_fresh" &
+                stats::runif(n_records) < 0.1)
+acquisitions$quantity[cups] <- round(acquisitions$quantity[cups] / 0.24)
+acquisitions$unit[cups] <- "cup"
+pick <- function(rate, among = rep(TRUE, n_records)) {
+  which(among & stats::runif(n_records) < rate)
+}
+sacks <- pick(0.002, acquisitions$unit == "lb")
+acquisitions$unit[sacks] <- "sack"
+acquisitions$quantity[sacks] <- 1
+extreme <- pick(0.001)
+acquisitions$quantity[extreme] <- acquisitions$quantity[extreme] * 10
+acquisitions$quantity[pick(0.003)] <- NA
+acquisitions$unit[pick(0.002)] <- NA
+acquisitions$include[pick(0.005)] <- FALSE
+
+# Expenditure groups ------------------------------------------------------
+
+# Weighted quintiles (household weights) of food expenditure per member and
+# day. A household that answered the module and acquired nothing spends 0;
+# a household that did not answer has no group (its food expenditure is
+# unknown).
+spent <- tapply(acquisitions$expenditure_lcu / acquisitions$period_days,
+                acquisitions$household_id, sum)
+per_member <- unname(spent[as.character(households$household_id)]) / size
+per_member[households$household_id %in% empty] <- 0
+weighted_quintile <- function(x, w) {
+  ok <- !is.na(x)
+  o <- order(x[ok])
+  share <- cumsum(w[ok][o]) / sum(w[ok])
+  group <- rep(NA_character_, length(x))
+  group[which(ok)[o]] <- paste0("Q", pmin(5L, ceiling(share * 5 - 1e-9)))
+  group
+}
+households$expenditure_group <- weighted_quintile(per_member,
+                                                  households$weight)
+
+# User tables -------------------------------------------------------------
+
+invented <- "synthetic: invented"
+
+# Unit factors. Volume units have a density only for named foods, so milk
+# in cups has none; "sack" has no factor at all.
+counted <- c(bread = 60, plantain = 280, sardines_canned = 125,
+             egg = 50, evaporated_milk = 410, avocado = 250,
+             local_herb = 80, leafy_greens = 250, banana = 120,
+             orange = 180, mango = 250)
+count_unit_of <- foods$unit[match(names(counted), foods$food_code)]
+unit_factors <- data.frame(
+  unit = c("lb", "kg", "g", "l", "l", "l", "l", "cup", count_unit_of),
+  food_code = c(NA, NA, NA, NA, "milk_fresh", "vegetable_oil", "soft_drink",
+                NA, names(counted)),
+  factor = c(453.6, 1000, 1, 1000, 1000, 1000, 1000, 240,
+             rep(1, length(counted))),
+  factor_type = c("mass_g", "mass_g", "mass_g", rep("volume_ml", 5),
+                  rep("count", length(counted))),
+  density_g_ml = c(NA, NA, NA, NA, 1.03, 0.92, 1.04, NA,
+                   rep(NA, length(counted))),
+  piece_weight_g = c(rep(NA, 8), unname(counted)),
+  source = invented
+)
+
+# Crosswalk and composition: one composition row per matched food, and the
+# enriched wheat flour that enrichment rules refer to.
+matched <- !is.na(foods$match_type)
+foods$composition_id <- NA_character_
+foods$composition_id[matched] <- sprintf("C%02d", seq_len(sum(matched)))
+crosswalk <- foods[c("food_code", "composition_id", "match_type",
+                     "validated", "edible_portion")]
+
+nutrients <- c(energy = "kcal", iron = "mg", zinc = "mg",
+               folate = "ug_dfe", vitamin_a = "ug_rae")
+value_cols <- paste(names(nutrients), nutrients, sep = "_")
+composition <- rbind(
+  foods[matched, c("composition_id", "description", value_cols,
+                   "food_state", "fortified")],
+  data.frame(composition_id = "C90", description = "wheat flour, enriched",
+             energy_kcal = 364, iron_mg = 4.4, zinc_mg = 0.7,
+             folate_ug_dfe = 290, vitamin_a_ug_rae = 0, food_state = "raw",
+             fortified = TRUE)
+)
+composition$basis <- "per_100g_edible"
+composition$source <- invented
+rownames(composition) <- NULL
+
+# What enrichment added. The pasta is made of flour only: enriched flour
+# (C90) against unfortified flour at fraction 1. The breakfast cereal gives
+# the amounts added per 100 g directly.
+id_of <- function(food) foods$composition_id[foods$food_code == food]
+enrichment <- data.frame(
+  composition_id = c(rep(id_of("pasta"), 2), rep(id_of("breakfast_cereal"),
+                                                 4)),
+  nutrient = c("iron", "folate", "iron", "zinc", "folate", "vitamin_a"),
+  enriched_ref_id = c("C90", "C90", NA, NA, NA, NA),
+  unenriched_ref_id = c(rep(id_of("wheat_flour"), 2), NA, NA, NA, NA),
+  ingredient_fraction = c(1, 1, NA, NA, NA, NA),
+  added = c(NA, NA, 10, 4, 400, 250),
+  source = invented
+)
+
+# Vehicles: up to two per food.
+v1 <- foods[!is.na(foods$vehicle), c("food_code", "vehicle",
+                                     "vehicle_group", "vehicle_fraction")]
+v2 <- foods[!is.na(foods$vehicle_2), c("food_code", "vehicle_2",
+                                       "vehicle_fraction_2")]
+names(v2) <- c("food_code", "vehicle", "vehicle_fraction")
+v2$vehicle_group <- NA_character_
+vehicles <- rbind(v1, v2[names(v1)])
+vehicles$source <- invented
+rownames(vehicles) <- NULL
+
+# Scenarios: five, each adding to the one before. Levels and compliance are
+# invented, not taken from any standard; they were tuned so that only folic
+# acid passes its upper level, and only once rice is fortified (rice has
+# no zinc).
+level_rows <- function(scenario, vehicle, compliance, iron_compound,
+                       folic_acid = 2, zinc = 20) {
+  rows <- data.frame(
+    scenario = scenario, vehicle = vehicle,
+    nutrient = c("iron", "zinc", "folate"),
+    level_mg_kg = c(40, zinc, folic_acid), level_basis = "nutrient",
+    compound = c(iron_compound, "zinc oxide", NA),
+    form = c(NA, NA, "folic_acid"), nutrient_fraction = NA_real_,
+    compliance = compliance, source = invented
+  )
+  rows[!is.na(rows$level_mg_kg), ]
+}
+vitamin_a <- data.frame(
+  vehicle = c("sugar", "oil"), nutrient = "vitamin_a",
+  level_mg_kg = c(10, 6), level_basis = c("compound", "nutrient"),
+  compound = c("vitamin A compound (invented)", NA), form = "retinol",
+  nutrient_fraction = c(0.5, NA), compliance = c(0.7, 0.9),
+  source = invented
+)
+wheat <- do.call(rbind, lapply(c("wheat_flour", "bread", "pasta"),
+                               level_rows, scenario = "wheat_flour",
+                               compliance = 0.8,
+                               iron_compound = "ferrous fumarate"))
+maize <- level_rows("x", "maize_flour", 0.6, "sodium iron EDTA")
+rice <- level_rows("x", "rice", 0.5, "ferric pyrophosphate",
+                   folic_acid = 4, zinc = NA)
+stack <- list(wheat, maize, rice, vitamin_a[1, ], vitamin_a[2, ])
+names_s <- c("wheat_flour", "plus_maize", "plus_rice", "plus_sugar",
+             "plus_oil")
+scenarios <- do.call(rbind, lapply(seq_along(names_s), function(k) {
+  rows <- do.call(rbind, lapply(stack[seq_len(k)], function(r) {
+    r$scenario <- names_s[[k]]
+    r[c("scenario", names(r)[names(r) != "scenario"])]
+  }))
+  rows
+}))
+rownames(scenarios) <- NULL
+
+food_groups <- foods[!is.na(foods$food_group), c("food_code", "food_group")]
+food_groups$source <- invented
+rownames(food_groups) <- NULL
+
+# Save --------------------------------------------------------------------
+
+households$wealth <- NULL
+households <- households[c("household_id", "weight", "stratum", "psu",
+                           "food_module_response", "region", "area",
+                           "expenditure_group")]
+hces_example <- list(
+  households = households, members = members, acquisitions = acquisitions,
+  unit_factors = unit_factors, crosswalk = crosswalk,
+  nutrients = nutrients, composition = composition, enrichment = enrichment,
+  vehicles = vehicles, scenarios = scenarios, food_groups = food_groups
+)
+save(hces_example, file = "data/hces_example.rda", compress = "xz",
+     version = 2)
