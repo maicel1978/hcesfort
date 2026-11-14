@@ -1,6 +1,8 @@
 # The data readiness report of the template (inst/report): tests U10, K1,
-# K3 and K10 to K13 of docs/design-reports-v2.md, section 9. Knitted on
-# hces_example with knitr, as Quarto would.
+# K3 and K10 to K13 of docs/design-reports-v2.md, section 9, and K17, K18
+# and U15 of docs/design-reports-v3.md, section 10. Knitted on
+# hces_example with knitr, as Quarto would. Tables and figures are stored
+# under their exhibit ID (exhibits.csv), with the instance for D8.
 
 skip_if_no_knit <- function() {
   testthat::skip_on_cran()
@@ -65,11 +67,20 @@ test_that("terms.csv labels the whole vocabulary the reports print (U10)", {
     method = c("ear_cutpoint", "probability"),
     ul_scope = c("total_intake", "form_added_only", "form_diet_and_added",
                  "not_assessable"),
-    sentence = c("exact", "limit"),
+    sentence = c(
+      "exact", "limit", "supported", "supported_none", "supported_domains",
+      "unsupported", "unsupported_none", "left", "left_inputs",
+      "left_foods", "left_expenditure", "left_checks", "left_none",
+      "not_ready", "not_included", "no_expenditure_records",
+      "no_expenditure", "queue_empty", "rule", "rule_expenditure", "met",
+      "not_met", "no_domain_differs", "domain_absent", "energy", "no_energy"
+    ),
+    axis = c("queue_x", "queue_y", "energy_x", "energy_y"),
     kind = c("figure", "table"),
     title = utils::read.csv(system.file("report", "exhibits.csv",
                                         package = "hcesfort"))$id,
-    note = c("n", "suppressed", "review", "complement"),
+    note = c("n", "suppressed", "review", "complement", "inventory",
+             "queue", "differs", "energy_lines"),
     format = "big_mark"
   )
   vocabulary$ul_bias <- vocabulary$ul_scope
@@ -101,22 +112,22 @@ test_that("the readiness report knits on hces_example (K1, K3, K10)", {
   for (lang in report_langs) {
     r <- knit_report(lang, "readiness")
     expect_true(file.exists(file.path(r$dir, "readiness-sessionInfo.txt")))
-    expect_setequal(names(r$tables), c(
-      "inventory", "checks", "ladder", "queue", "unlinked", "unlinked_region",
-      "unlinked_area", "unlinked_expenditure_group", "energy",
-      "energy_region", "energy_area", "energy_expenditure_group",
-      "decisions", "verdict"
+    # Area and expenditure quintile differ from the rest in the unlinked
+    # share; region does not (D8 only for the first two, DR10).
+    expect_identical(names(r$tables), c(
+      "D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8_area",
+      "D8_expenditure_group", "D9", "D10", "DA1"
     ))
     expect_false(grepl("Analyst|Analista", strip_comments(r$md),
                        ignore.case = TRUE), info = lang)
     expect_false(grepl("Error|```", r$md), info = lang)
-    ladder <- r$tables$ladder
+    ladder <- r$tables$D4
     for (col in c("n_records", "n_households", "share_records",
                   "share_grams", "share_expenditure")) {
       v <- stats::na.omit(ladder[[col]])
       expect_true(all(diff(v) <= 0), info = paste(lang, col))
     }
-    expect_true(all(r$tables$verdict$national == say[[lang]]$enabled))
+    expect_true(all(r$tables$D1$national == say[[lang]]$enabled))
   }
 })
 
@@ -124,18 +135,17 @@ test_that("every figure has axis titles, data and its table (K5)", {
   skip_if_no_knit()
   for (lang in report_langs) {
     r <- knit_report(lang, "readiness")
-    expect_setequal(names(r$figures),
-                    c("queue", "energy_region", "energy_area",
-                      "energy_expenditure_group"))
+    expect_identical(names(r$figures), c("D6", "D9"))
     for (id in names(r$figures)) {
       g <- r$figures[[id]]
       expect_s3_class(g, "ggplot")
       expect_true(nzchar(g$labels$x) && nzchar(g$labels$y),
                   info = paste(lang, id))
-      expect_gt(nrow(ggplot2::layer_data(g, 2)), 0)
+      expect_gt(nrow(ggplot2::layer_data(g, 1)), 0)
       expect_true(id %in% names(r$tables))
+      expect_match(r$md, paste0("](figure/", id, ".png)"), fixed = TRUE)
     }
-    q <- r$tables$queue
+    q <- r$tables$D5
     expect_true(all(q$cum_share_grams >= 0 & q$cum_share_grams <= 100))
   }
 })
@@ -147,7 +157,7 @@ test_that("each threshold appears with its status (K11)", {
       "choices$min_records_used <- 0.85", "choices$min_coverage <- 0.75",
       "choices$min_linked_share <- 0.95"
     ))
-    ch <- r$tables$checks
+    ch <- r$tables$D3
     for (threshold in c(85, 75, 95)) {
       rows <- ch[ch$threshold %in% threshold, ]
       expect_gt(nrow(rows), 0)
@@ -181,7 +191,7 @@ test_that("an absent essential input stops after the inventory (K13)", {
   skip_if_no_knit()
   for (lang in report_langs) {
     r <- knit_report(lang, "readiness", append = "acquisitions$unit <- NULL")
-    expect_identical(names(r$tables), "inventory")
+    expect_identical(names(r$tables), c("D1", "D2"))
     expect_match(r$md, say[[lang]]$essential, fixed = TRUE)
     expect_false(grepl(say[[lang]]$records_heading, r$md), info = lang)
   }
@@ -199,10 +209,10 @@ test_that("absent optional inputs leave one sentence each (P5)", {
     expect_match(r$md, say[[lang]]$region_absent, fixed = TRUE)
     expect_match(r$md, say[[lang]]$no_expenditure, fixed = TRUE)
     expect_match(r$md, say[[lang]]$no_energy, fixed = TRUE)
-    expect_null(r$tables$ladder$share_expenditure)
-    expect_null(r$tables$energy)
-    expect_identical(unique(r$tables$unlinked$measure), say[[lang]]$grams)
-    v <- r$tables$verdict
+    expect_null(r$tables$D4$share_expenditure)
+    expect_null(r$tables$D9)
+    expect_identical(unique(r$tables$D7$measure), say[[lang]]$grams)
+    v <- r$tables$D1
     expect_true(all(grepl(say[[lang]]$absent_input, v$region)), info = lang)
     expect_true(all(v$national == say[[lang]]$enabled), info = lang)
   }
@@ -216,9 +226,9 @@ test_that("a domain with too many small cells is disabled (U15, DR11)", {
     "presentation_standard$value[presentation_standard$criterion ==",
     "'min_n'] <- 450"
   ))
-  v <- r$tables$verdict
+  v <- r$tables$D1
   small <- "Values of the domain with few households"
-  expect_identical(sum(r$tables$checks$check == small), 3L)
+  expect_identical(sum(r$tables$D3$check == small), 3L)
   expect_true(all(grepl(small, v$expenditure_group, fixed = TRUE)))
   expect_identical(v$region, v$national)
   expect_identical(v$area, v$national)
@@ -230,5 +240,59 @@ test_that("energy must be a registry nutrient in kcal", {
     expect_error(knit_report(lang, "readiness",
                              append = "choices$energy <- 'iron'"),
                  class = "hcesfort_error_argument")
+  }
+})
+
+test_that("the report opens with the verdict and its summary (K17, DR9)", {
+  skip_if_no_knit()
+  summary <- list(
+    en = c("The data support these sections", "Left to do: link 44 foods"),
+    es = c("Los datos permiten estas secciones", "Falta por hacer: vincular 44")
+  )
+  for (lang in report_langs) {
+    r <- knit_report(lang, "readiness")
+    md <- strip_comments(r$md)
+    first <- regmatches(md, regexpr("\\*\\*[^ ]+ [A-Z0-9.]+\\. ", md))
+    expect_match(first, " D1\\. $", info = lang)
+    expect_identical(names(r$tables)[1], "D1")
+    # The summary follows the matrix, before the next section.
+    d1 <- substr(md, regexpr("D1\\. ", md), regexpr("## 2\\. ", md))
+    for (s in summary[[lang]]) expect_match(d1, s, fixed = TRUE)
+  }
+})
+
+test_that("a disabled section and a domain are named in the summary (DR9)", {
+  skip_if_no_knit()
+  r <- knit_report("en", "readiness", append = c(
+    "food_groups <- NULL",
+    "presentation_standard$value[presentation_standard$criterion ==",
+    "  'min_n'] <- 450"
+  ))
+  md <- strip_comments(r$md)
+  expect_match(md, paste0(
+    "Not supported: Contribution of each food group, disabled: input ",
+    "absent \\(food_groups\\); analysis by expenditure quintile, disabled: ",
+    "threshold not met \\(Values of the domain with few households\\)\\."
+  ))
+  expect_match(md, "Each of them can also be reported by region, area.")
+})
+
+test_that("energy is national only, and D8 only where a domain differs (K18)", {
+  skip_if_no_knit()
+  domain_says <- list(
+    en = paste("no value of these domain variables differs from the rest",
+               "of the population: region."),
+    es = paste("ningún valor de estas variables de dominio difiere del",
+               "resto de la población: región.")
+  )
+  for (lang in report_langs) {
+    r <- knit_report(lang, "readiness", append = c(
+      "choices$domains <- 'region'", "choices$equity_domains <- 'region'"
+    ))
+    expect_false(any(grepl("^D8|^D9_", names(r$tables))), info = lang)
+    expect_identical(names(r$figures), c("D6", "D9"))
+    expect_match(strip_comments(r$md), domain_says[[lang]], fixed = TRUE)
+    expect_identical(lengths(regmatches(r$md, gregexpr("\\*\\*Figur[ea] D9\\.",
+                                                       r$md))), 1L)
   }
 })
