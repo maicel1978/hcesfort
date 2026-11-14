@@ -53,6 +53,12 @@ Facts found on the way:
 of the generating script; the old dataset becomes a test fixture (section
 7 of `docs/design-reports-v3.md`).
 
+## Answers of the maintainer (2026-11-14, after 12d.6)
+
+1. **P131:** accepted as recommended: a household without a value of a domain counts as one more cell in `domain_cells`, as in `estimate_households()`. In the reports that cell carries the label of a missing value from `terms.csv`, never `NA`.
+
+Record this in `docs/improvements.md` with the first commit of 12d.7.
+
 ## Recommended model for the next session
 
 **Opus** (12d.7 onwards). This session stops at about half of its context.
