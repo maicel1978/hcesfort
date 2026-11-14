@@ -195,7 +195,7 @@ note,,n,n = {n} hogares
 note,,suppressed,— Suprimida según la norma de presentación
 note,,review,† Señalada para revisión estadística
 note,,complement,‡ El complemento de la estimación puede no ser fiable.
-note,,inventory,Las variables opcionales presentes y completas solo aparecen en la Tabla DA1.
+note,,inventory,Las variables opcionales presentes y completas solo aparecen en el Cuadro DA1.
 note,,queue,Línea discontinua: la proporción de la regla de parada.
 note,,differs,Un valor difiere cuando el IC {level}% de la diferencia excluye el cero; las señales no se ajustan por el número de comparaciones.
 note,,energy_lines,Líneas discontinuas: el rango plausible; línea continua: la energía de la persona de referencia.

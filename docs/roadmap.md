@@ -88,8 +88,8 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
   - [x] 12d.8 Realistic example, part 2: acquisitions and user tables; data, documentation, template labels.
   - [x] 12d.9 Golden values on the new example and on the fixture (X2).
   - [x] 12d.10 Template machinery: exhibit registry, titles, notes, `tinytable`, figures, new `choices`.
-  - [ ] 12d.11 Readiness report in English.
-  - [ ] 12d.12 Readiness report in Spanish.
+  - [x] 12d.11 Readiness report in English: builders of D1 to D10 and DA1 (`_readiness.R`, `_verdict.R`), `readiness.qmd` reduced to headings and `show_exhibit()` calls; K17, K18. The Spanish `readiness.qmd` already runs the same code, with Spanish headings and terms.
+  - [ ] 12d.12 Readiness report in Spanish: read the rendered Spanish report and settle its wording (e.g. "enlazada" in the titles against "vinculada" in the sentences); the code is done.
   - [ ] 12d.13 Results report in English.
   - [ ] 12d.14 Results report in Spanish; wording pass in both languages (Sonnet).
   - [ ] 12d.15 Snapshot and registry tests (Q1, Q2).
