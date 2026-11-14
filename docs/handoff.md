@@ -63,6 +63,14 @@ report, read it, settle its wording against section 8 of
 English, builders R0 to RT3 in `_results.R` (K19 to K26), with P140
 applied as the maintainer decides.
 
+## CI is red on `main` since `30d8933` (fix first)
+
+CI passed on `639fb9b` and fails on `30d8933` (12d.7–12d.10) and `b712972` (12d.11). Fix both before any new step, in one commit, and confirm CI is green after the merge.
+
+1. **Quarto render test** (`test-report-template.R:68`, ubuntu release and test-coverage): the rendered HTML contains a `<code>` element, which violates R2. Find which exhibit or which `tinytable` or `ggplot2` output emits it, and remove it at the source. Do not relax the test.
+2. **Lint** (`object_usage_linter`): `hces_fixture` is not visible in `tests/testthat/helper-linkage.R`, and `hces_example`, `ref_iron_requirements` and `ref_requirements` are not visible in `tests/testthat/test-example-data.R` (and possibly others). Fix them by calling the objects explicitly, or by excluding the linter for test helpers in `.lintr`, the same way as before.
+3. Lesson recorded: the local `lint_package()` and `check()` passed without Quarto, so CI is the only place where the render test runs. A step is closed only after CI is green on `main`.
+
 ## Answers of the maintainer (2026-11-14, after 12d.11)
 
 1. **P140:** option (a): about 1% of households with a short food list and no staple purchases, so that R1.4 has a small nonzero estimate. Re-check the calibration test and regenerate the golden values from the independent script.
