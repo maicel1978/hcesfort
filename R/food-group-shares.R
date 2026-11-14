@@ -36,11 +36,11 @@
 #' @param x A table returned by [food_group_intake()].
 #' @returns A tibble of class `hces_estimate` (and `hces_tbl`): the `by`
 #'   columns, `food_group`, `statistic` (`"share"`), `variable` (the
-#'   nutrient column), `estimate`, `se`, `ci_low`, `ci_high`,
-#'   `conf_level`, `df`, `n` (households in the domain) and `n_missing`
-#'   (households of the `by` domain without an estimated intake). One row
-#'   per nutrient, group and domain. It passes through [flag_precision()].
-#'   Its audit log continues the log of `x`.
+#'   nutrient column), `estimate`, `se`, `ci_low`, `ci_high`, `ci_method`
+#'   (`"logit_delta"`), `conf_level`, `df`, `n` (households in the domain)
+#'   and `n_missing` (households of the `by` domain without an estimated
+#'   intake). One row per nutrient, group and domain. It passes through
+#'   [flag_precision()]. Its audit log continues the log of `x`.
 #' @seealso [food_group_intake()], [flag_precision()].
 #' @examples
 #' e <- hces_example
@@ -107,6 +107,7 @@ share_cell <- function(design, num, total, mask, level, df) {
   }
   ci <- logit_interval(r$estimate, r$se, level, r$df)
   dplyr::tibble(estimate = r$estimate, se = r$se, ci_low = ci[[1]],
-                ci_high = ci[[2]], conf_level = level, df = r$df, n = r$n,
+                ci_high = ci[[2]], ci_method = "logit_delta",
+                conf_level = level, df = r$df, n = r$n,
                 n_missing = sum(mask & is.na(total)))
 }

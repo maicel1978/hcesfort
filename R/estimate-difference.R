@@ -21,7 +21,8 @@
 #' @returns A tibble of class `hces_estimate` (and `hces_tbl`): the group
 #'   columns of `x`, `reference`, the `by` columns, `statistic`
 #'   (`"mean_difference"`), `variable`, `estimate` (scenario minus
-#'   reference), `se`, `ci_low`, `ci_high`, `conf_level`, `df`, `n` and
+#'   reference), `se`, `ci_low`, `ci_high`, `ci_method` (`"t"`),
+#'   `conf_level`, `df`, `n` and
 #'   `n_missing`.
 #' @seealso [estimate_households()].
 #' @examples

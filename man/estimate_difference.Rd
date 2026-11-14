@@ -51,7 +51,8 @@ are added, so the thresholds behind the flag stay with the estimate.}
 A tibble of class \code{hces_estimate} (and \code{hces_tbl}): the group
 columns of \code{x}, \code{reference}, the \code{by} columns, \code{statistic}
 (\code{"mean_difference"}), \code{variable}, \code{estimate} (scenario minus
-reference), \code{se}, \code{ci_low}, \code{ci_high}, \code{conf_level}, \code{df}, \code{n} and
+reference), \code{se}, \code{ci_low}, \code{ci_high}, \code{ci_method} (\code{"t"}),
+\code{conf_level}, \code{df}, \code{n} and
 \code{n_missing}.
 }
 \description{

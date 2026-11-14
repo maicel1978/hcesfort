@@ -31,7 +31,8 @@
 #'   (needs the column `expenditure_lcu`).
 #' @returns A tibble of class `hces_estimate` (and `hces_tbl`): the `by`
 #'   columns, `statistic` (`"share"`), `variable` (`"unlinked_<measure>"`),
-#'   `estimate`, `se`, `ci_low`, `ci_high`, `conf_level`, `df`, `n`
+#'   `estimate`, `se`, `ci_low`, `ci_high`, `ci_method` (`"logit_delta"`),
+#'   `conf_level`, `df`, `n`
 #'   (households in the domain), `n_missing` (0: every household counts),
 #'   `rest_estimate`, `difference`, `difference_ci_low`,
 #'   `difference_ci_high` and `differs` (the last five missing for the

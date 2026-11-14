@@ -22,11 +22,11 @@ domain.}
 \value{
 A tibble of class \code{hces_estimate} (and \code{hces_tbl}): the \code{by}
 columns, \code{food_group}, \code{statistic} (\code{"share"}), \code{variable} (the
-nutrient column), \code{estimate}, \code{se}, \code{ci_low}, \code{ci_high},
-\code{conf_level}, \code{df}, \code{n} (households in the domain) and \code{n_missing}
-(households of the \code{by} domain without an estimated intake). One row
-per nutrient, group and domain. It passes through \code{\link[=flag_precision]{flag_precision()}}.
-Its audit log continues the log of \code{x}.
+nutrient column), \code{estimate}, \code{se}, \code{ci_low}, \code{ci_high}, \code{ci_method}
+(\code{"logit_delta"}), \code{conf_level}, \code{df}, \code{n} (households in the domain)
+and \code{n_missing} (households of the \code{by} domain without an estimated
+intake). One row per nutrient, group and domain. It passes through
+\code{\link[=flag_precision]{flag_precision()}}. Its audit log continues the log of \code{x}.
 }
 \description{
 For each nutrient and food group, the share of the mean apparent intake

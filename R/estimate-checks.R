@@ -34,7 +34,7 @@ check_estimate_args <- function(design, x, statistic, by, ci_method,
     bad("statistic", "{.arg statistic} must be one of {.val {stats_ok}}.")
   }
   methods <- c("logit", "likelihood", "asin", "beta", "mean", "xlogit",
-               "wilson")
+               "wilson", "korn_graubard")
   if (!rlang::is_string(ci_method) || !ci_method %in% methods) {
     bad("ci_method", "{.arg ci_method} must be one of {.val {methods}}.")
   }
@@ -79,8 +79,8 @@ estimate_log <- function(step, design, x, value, statistic, ci_method, df,
     audit_row(step, "estimate", "note", cause, nrow(out), detail = detail)
   }
   empty <- sum(out$n == 0)
-  degenerate <- sum(out$n > 0 & !is.na(out$se) & out$se == 0 &
-                      is.na(out$ci_low))
+  degenerate <- sum(out$statistic %in% "proportion" & out$n > 0 &
+                      out$estimate %in% c(0, 1) & out$se %in% 0)
   undefined <- sum(out$statistic %in% "median" & !is.na(out$estimate) &
                      is.na(out$ci_low))
   dplyr::bind_rows(

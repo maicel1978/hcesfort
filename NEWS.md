@@ -41,6 +41,15 @@
 * `ref_presentation_standard`: the thresholds of the NCHS data
   presentation standards for proportions (Parker et al. 2017, Table, p. 2),
   with their source, replaceable by the user's own copy.
+* `estimate_households(ci_method = "korn_graubard")`: the Korn-Graubard
+  interval the NCHS standards judge, on the estimate and variance of
+  `survey`, with the degrees-of-freedom adjustment and the effective sample
+  size capped at the households of the domain; a proportion of 0 or 1 gets
+  the Clopper-Pearson interval on that number. It reproduces the published
+  limits of Tables I and II of the report within 0.1 percentage point. The
+  default method does not change. Every estimate table gains the column
+  `ci_method` (`"t"` for means and differences, `"woodruff"` for medians,
+  `"logit_delta"` for food-group and unlinked shares).
 * `adult_equivalents()`: adult female equivalents per household from the
   energy requirement of each member (FAO/WHO/UNU 2004 tables for infants
   and children; BMR times PAL for adults, with weights and PAL given by the

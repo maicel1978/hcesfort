@@ -10,7 +10,8 @@
 #' * `"proportion"`: a 0/1 indicator or a probability (`p_inadequate`,
 #'   `above_ul_total`, `acquired`); interval by [survey::svyciprop()] with
 #'   `ci_method` (`"logit"` by default, which stays between 0 and 1; `"mean"`
-#'   is the symmetric interval of the original analysis, E24).
+#'   is the symmetric interval of the original analysis, E24), or
+#'   `"korn_graubard"` (below).
 #' * `"mean"`: [survey::svymean()] and a *t* interval.
 #' * `"median"`: [survey::svyquantile()] at 0.5, interval by its default
 #'   (Woodruff) method. Where that interval is undefined (in a small
@@ -18,12 +19,25 @@
 #'   median is kept with `se`, `ci_low` and `ci_high` missing, and the cell
 #'   is counted in the log (`undefined_quantile_interval`).
 #'
+#' `"korn_graubard"` is the interval of the NCHS data presentation
+#' standards for proportions (Parker et al. 2017, Vital Health Stat
+#' 2(175), pp. 3-4, 8-9), the interval those standards judge.
+#' The estimate and its variance come from [survey::svymean()] on the
+#' domain; the effective sample size \eqn{p(1 - p) / var} is multiplied by
+#' \eqn{(t_{n-1} / t_{df})^2}, with `n` the households of the domain and
+#' `df` as below, and capped at `n`; the limits are the Clopper-Pearson
+#' limits on that size. `"beta"` is [survey::svyciprop()] as it is: the
+#' same formula without the cap (so its interval is narrower where the
+#' design effect is below 1), with the degrees of freedom of the subset
+#' design whatever `df` says, and no interval for a proportion of 0 or 1.
+#'
 #' A proportion whose values in the domain are all 0 (or all 1) is
-#' returned as that exact value with `se = 0` and no interval (`ci_low`,
-#' `ci_high` missing), and counted in the log (`degenerate_proportion`):
-#' the interval methods give either a spurious estimate (`"logit"`) or no
-#' limits (`"beta"`) there, and a sample of few households is not
-#' certainty.
+#' returned as that exact value with `se = 0` and counted in the log
+#' (`degenerate_proportion`). Under `"korn_graubard"` its interval is the
+#' Clopper-Pearson interval on `n`, as the NCHS standards prescribe (p. 4).
+#' Under the other methods it has no interval (`ci_low`, `ci_high`
+#' missing): they give either a spurious estimate (`"logit"`) or no limits
+#' (`"beta"`) there, and a sample of few households is not certainty.
 #'
 #' Degrees of freedom of the *t* intervals: `"domain"` (by default) uses
 #' those of the domain, `survey::degf()` of the subset design, as the
@@ -48,13 +62,16 @@
 #'   is missing is outside the domain and counted in the log
 #'   (`domain_flag_missing`). Its log rows not already in the log of `x`
 #'   are added, so the thresholds behind the flag stay with the estimate.
-#' @param ci_method Interval method for proportions, passed to
-#'   [survey::svyciprop()].
+#' @param ci_method Interval method for proportions: `"korn_graubard"`, or
+#'   a method of [survey::svyciprop()] (`"logit"`, `"likelihood"`,
+#'   `"asin"`, `"beta"`, `"mean"`, `"xlogit"`, `"wilson"`).
 #' @param level Confidence level.
 #' @param df `"domain"`, `"design"` or a number.
 #' @returns A tibble of class `hces_estimate` (and `hces_tbl`): the group
 #'   columns of `x`, the `by` columns, `statistic`, `variable`, `estimate`,
-#'   `se`, `ci_low`, `ci_high`, `conf_level`, `df`, `n` (households in the
+#'   `se`, `ci_low`, `ci_high`, `ci_method` (the interval method: the
+#'   `ci_method` given for a proportion, `"t"` for a mean, `"woodruff"` for
+#'   a median), `conf_level`, `df`, `n` (households in the
 #'   domain) and `n_missing` (households of the `by` domain whose value is
 #'   missing). Its audit log continues the log of `x`.
 #' @seealso [estimate_difference()], [flag_precision()].
@@ -114,16 +131,30 @@ estimate_cell <- function(design, y, mask, statistic, ci_method, level,
     if (identical(df, "design")) survey::degf(design) else df
   na_row <- dplyr::tibble(statistic = statistic, estimate = NA_real_,
                           se = NA_real_, ci_low = NA_real_,
-                          ci_high = NA_real_, conf_level = level, df = dfv,
-                          n = n, n_missing = sum(mask & !inside))
+                          ci_high = NA_real_,
+                          ci_method = interval_name(statistic, ci_method),
+                          conf_level = level, df = dfv, n = n,
+                          n_missing = sum(mask & !inside))
   if (n == 0) return(na_row)
-  if (statistic == "proportion" && degenerate(y[inside])) {
-    na_row[c("estimate", "se")] <- list(y[inside][[1]], 0)
-    return(na_row)
+  r <- if (statistic == "proportion" && degenerate(y[inside])) {
+    degenerate_values(y[inside][[1]], n, ci_method, level)
+  } else {
+    cell_values(sub, statistic, ci_method, level, dfv, n)
   }
-  r <- switch(
+  na_row[c("estimate", "se", "ci_low", "ci_high")] <- as.list(unname(r))
+  na_row
+}
+
+# Estimate, SE and interval limits of one cell with variation.
+cell_values <- function(sub, statistic, ci_method, level, dfv, n) {
+  switch(
     statistic,
-    proportion = {
+    proportion = if (ci_method == "korn_graubard") {
+      e <- survey::svymean(~.y, sub)
+      p <- unname(stats::coef(e))
+      se <- unname(survey::SE(e))[[1]]
+      c(p, se, korn_graubard_interval(p, se, n, dfv, level))
+    } else {
       e <- survey::svyciprop(~.y, sub, method = ci_method, level = level,
                              df = dfv)
       c(stats::coef(e), survey::SE(e), attr(e, "ci"))
@@ -140,8 +171,24 @@ estimate_cell <- function(design, y, mask, statistic, ci_method, level,
                            stats::confint(e)))
     }
   )
-  na_row[c("estimate", "se", "ci_low", "ci_high")] <- as.list(unname(r))
-  na_row
+}
+
+# A proportion of exactly 0 or 1 in the sample: the value with se = 0;
+# the Clopper-Pearson interval on `n` under "korn_graubard" (NCHS 2017,
+# p. 4), no interval under the other methods.
+degenerate_values <- function(p, n, ci_method, level) {
+  ci <- if (ci_method == "korn_graubard") {
+    clopper_pearson(p * n, n, level)
+  } else {
+    c(NA_real_, NA_real_)
+  }
+  c(p, 0, ci)
+}
+
+# The name of the interval method stored in the column ci_method.
+interval_name <- function(statistic, ci_method) {
+  switch(statistic, proportion = ci_method, mean = "t",
+         median = "woodruff")
 }
 
 # A quantile whose interval is undefined (a limit or the SE not finite,

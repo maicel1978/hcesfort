@@ -43,8 +43,9 @@ is missing is outside the domain and counted in the log
 (\code{domain_flag_missing}). Its log rows not already in the log of \code{x}
 are added, so the thresholds behind the flag stay with the estimate.}
 
-\item{ci_method}{Interval method for proportions, passed to
-\code{\link[survey:svyciprop]{survey::svyciprop()}}.}
+\item{ci_method}{Interval method for proportions: \code{"korn_graubard"}, or
+a method of \code{\link[survey:svyciprop]{survey::svyciprop()}} (\code{"logit"}, \code{"likelihood"},
+\code{"asin"}, \code{"beta"}, \code{"mean"}, \code{"xlogit"}, \code{"wilson"}).}
 
 \item{level}{Confidence level.}
 
@@ -53,7 +54,9 @@ are added, so the thresholds behind the flag stay with the estimate.}
 \value{
 A tibble of class \code{hces_estimate} (and \code{hces_tbl}): the group
 columns of \code{x}, the \code{by} columns, \code{statistic}, \code{variable}, \code{estimate},
-\code{se}, \code{ci_low}, \code{ci_high}, \code{conf_level}, \code{df}, \code{n} (households in the
+\code{se}, \code{ci_low}, \code{ci_high}, \code{ci_method} (the interval method: the
+\code{ci_method} given for a proportion, \code{"t"} for a mean, \code{"woodruff"} for
+a median), \code{conf_level}, \code{df}, \code{n} (households in the
 domain) and \code{n_missing} (households of the \code{by} domain whose value is
 missing). Its audit log continues the log of \code{x}.
 }
@@ -70,7 +73,8 @@ the design.
 \item \code{"proportion"}: a 0/1 indicator or a probability (\code{p_inadequate},
 \code{above_ul_total}, \code{acquired}); interval by \code{\link[survey:svyciprop]{survey::svyciprop()}} with
 \code{ci_method} (\code{"logit"} by default, which stays between 0 and 1; \code{"mean"}
-is the symmetric interval of the original analysis, E24).
+is the symmetric interval of the original analysis, E24), or
+\code{"korn_graubard"} (below).
 \item \code{"mean"}: \code{\link[survey:svymean]{survey::svymean()}} and a \emph{t} interval.
 \item \code{"median"}: \code{\link[survey:svyquantile]{survey::svyquantile()}} at 0.5, interval by its default
 (Woodruff) method. Where that interval is undefined (in a small
@@ -79,12 +83,25 @@ median is kept with \code{se}, \code{ci_low} and \code{ci_high} missing, and the
 is counted in the log (\code{undefined_quantile_interval}).
 }
 
+\code{"korn_graubard"} is the interval of the NCHS data presentation
+standards for proportions (Parker et al. 2017, Vital Health Stat
+2(175), pp. 3-4, 8-9), the interval those standards judge.
+The estimate and its variance come from \code{\link[survey:svymean]{survey::svymean()}} on the
+domain; the effective sample size \eqn{p(1 - p) / var} is multiplied by
+\eqn{(t_{n-1} / t_{df})^2}, with \code{n} the households of the domain and
+\code{df} as below, and capped at \code{n}; the limits are the Clopper-Pearson
+limits on that size. \code{"beta"} is \code{\link[survey:svyciprop]{survey::svyciprop()}} as it is: the
+same formula without the cap (so its interval is narrower where the
+design effect is below 1), with the degrees of freedom of the subset
+design whatever \code{df} says, and no interval for a proportion of 0 or 1.
+
 A proportion whose values in the domain are all 0 (or all 1) is
-returned as that exact value with \code{se = 0} and no interval (\code{ci_low},
-\code{ci_high} missing), and counted in the log (\code{degenerate_proportion}):
-the interval methods give either a spurious estimate (\code{"logit"}) or no
-limits (\code{"beta"}) there, and a sample of few households is not
-certainty.
+returned as that exact value with \code{se = 0} and counted in the log
+(\code{degenerate_proportion}). Under \code{"korn_graubard"} its interval is the
+Clopper-Pearson interval on \code{n}, as the NCHS standards prescribe (p. 4).
+Under the other methods it has no interval (\code{ci_low}, \code{ci_high}
+missing): they give either a spurious estimate (\code{"logit"}) or no limits
+(\code{"beta"}) there, and a sample of few households is not certainty.
 
 Degrees of freedom of the \emph{t} intervals: \code{"domain"} (by default) uses
 those of the domain, \code{survey::degf()} of the subset design, as the

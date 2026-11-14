@@ -30,7 +30,8 @@ estimate_unlinked(
 \value{
 A tibble of class \code{hces_estimate} (and \code{hces_tbl}): the \code{by}
 columns, \code{statistic} (\code{"share"}), \code{variable} (\code{"unlinked_<measure>"}),
-\code{estimate}, \code{se}, \code{ci_low}, \code{ci_high}, \code{conf_level}, \code{df}, \code{n}
+\code{estimate}, \code{se}, \code{ci_low}, \code{ci_high}, \code{ci_method} (\code{"logit_delta"}),
+\code{conf_level}, \code{df}, \code{n}
 (households in the domain), \code{n_missing} (0: every household counts),
 \code{rest_estimate}, \code{difference}, \code{difference_ci_low},
 \code{difference_ci_high} and \code{differs} (the last five missing for the

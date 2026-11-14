@@ -48,7 +48,8 @@ unlinked_cell <- function(design, h, mask, level, df, compare) {
   ci <- logit_interval(r$estimate, r$se, level, r$df)
   out <- dplyr::tibble(
     estimate = r$estimate, se = r$se, ci_low = ci[[1]], ci_high = ci[[2]],
-    conf_level = level, df = r$df, n = r$n, n_missing = 0L,
+    ci_method = "logit_delta", conf_level = level, df = r$df, n = r$n,
+    n_missing = 0L,
     rest_estimate = NA_real_, difference = NA_real_,
     difference_ci_low = NA_real_, difference_ci_high = NA_real_,
     differs = NA
