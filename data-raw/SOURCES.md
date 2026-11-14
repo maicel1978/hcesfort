@@ -149,3 +149,8 @@ The IOM 2000 and 2011 rows were not in the scope of P124 (IOM 1998 and
   added in parts per million"; ppm is mg/kg.
 - The iron requirement percentiles are of **dietary** iron at the stated
   bioavailability (absorbed requirement divided by the bioavailability).
+- `example_foods.csv` is **not** a reference table: every value in it
+  (probabilities, quantities, prices, composition, edible portions,
+  vehicles) is invented for the synthetic example `hces_example` and has
+  no source. It is in `MD5` so that `hces_example.R` builds from a checked
+  file.
