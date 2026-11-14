@@ -82,7 +82,7 @@ unlinked_table <- function(by = NULL) {
   measures <- c("grams", if (has_expenditure) "expenditure")
   dplyr::bind_rows(lapply(measures, function(m) {
     e <- estimate_unlinked(design, content, by = by, measure = m,
-                           level = choices$level)
+                           level = level)
     out <- data.frame(measure = term(rep(m, nrow(e)), "measure"), n = e$n,
                       unlinked = pct(e$estimate), ci_low = pct(e$ci_low),
                       ci_high = pct(e$ci_high))
@@ -103,7 +103,7 @@ unlinked_table <- function(by = NULL) {
 energy_table <- function(flagged, column, by = NULL) {
   est <- function(value, statistic) {
     estimate_households(design, flagged, value, statistic = statistic,
-                        by = by, level = choices$level)
+                        by = by, level = level)
   }
   m <- est(column, "median")
   o <- est("energy_outside", "proportion")

@@ -30,11 +30,12 @@ source("_chain.R", local = TRUE)
 source("_tables.R", local = TRUE)
 source("_figures.R", local = TRUE)
 source("_results.R", local = TRUE)
-lev <- 100 * choices$level
+lev <- 100 * level
 small_note <- paste0(
-  "A dash marks a cell with fewer than ", choices$min_n, " households. ",
-  "Precision: a wide interval has a half-width above ",
-  pct(choices$max_half_width, 0), " points; its point is drawn hollow."
+  "Estimates judged by the presentation standard (technical note). ",
+  "A dash marks a suppressed estimate; \u2020 an estimate flagged for ",
+  "statistical review; \u2021 an estimate whose complement may be ",
+  "unreliable."
 )
 ```
 

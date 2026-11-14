@@ -48,11 +48,19 @@ ci_text <- function(low, high) {
 }
 
 # Print a table of `tables`: interval pairs (`*ci_low`, `*ci_high`) become
-# one column, column codes become the headers of terms.csv (type
-# `header`; `{level}` is replaced by the confidence level) unless
-# `headers` (code = label) gives them.
+# one column, a `mark` column ("†", "‡") is appended to the value column
+# named by the attribute `value`, and column codes become the headers of
+# terms.csv (type `header`; `{level}` is replaced by the confidence level)
+# unless `headers` (code = label) gives them.
 print_table <- function(d, caption = NULL, headers = NULL) {
+  value <- attr(d, "value")
   d <- as.data.frame(d)
+  if (!is.null(d$mark) && !is.null(value)) {
+    d[[value]] <- ifelse(is.na(d$mark), format(d[[value]], trim = TRUE),
+                         paste0(format(d[[value]], trim = TRUE), d$mark))
+    d[[value]][is.na(d$mark) & grepl("^NA$", d[[value]])] <- NA
+  }
+  d$mark <- NULL
   for (low in grep("ci_low$", names(d), value = TRUE)) {
     high <- sub("ci_low$", "ci_high", low)
     d[[low]] <- ci_text(d[[low]], d[[high]])
@@ -64,40 +72,61 @@ print_table <- function(d, caption = NULL, headers = NULL) {
   shown <- character(length(codes))
   shown[own] <- headers[codes[own]]
   shown[!own] <- term(codes[!own], "header")
-  shown <- gsub("{level}", 100 * choices$level, shown, fixed = TRUE)
+  shown <- gsub("{level}", 100 * level, shown, fixed = TRUE)
   knitr::kable(d, col.names = shown, caption = caption, row.names = FALSE)
 }
 
-# Estimates for display (R7), from a table of flag_precision(): `keys`
-# are the label columns kept, `value` the name of the estimate column.
-# Values are scaled by `scale` (percent by default). A cell with fewer
-# households than `min_n` keeps its row with no value ("—"); an exact
-# estimate (the same value in every household) leaves the table, unless
-# `drop_exact` is FALSE, and is given in the sentence of exact_sentence().
-# Columns in `extra` are copied after `n`, as they are.
+# Estimates for display (R17, R19), from a table of flag_presentation():
+# `keys` are the label columns kept, `value` the name of the estimate
+# column. Values are scaled by `scale` (percent by default). A suppressed
+# estimate, or one flagged for review when `choices$review` is
+# "suppress", keeps its row with no value ("—"); one flagged for review
+# gets the mark "†", one whose complement may be unreliable "‡". A
+# proportion with zero events (0 or every household) leaves the table,
+# unless `drop_exact` is FALSE, for the sentence of exact_sentence(), with
+# `n` and the upper limit. Columns in `extra` are copied after `n`. The
+# reasons of the suppressed and flagged rows are kept in the attribute
+# `reasons`.
 display <- function(e, keys, value, scale = pct, unit = "%",
                     drop_exact = TRUE, extra = NULL) {
   e <- as.data.frame(e)
-  small <- e$precision_status %in% "small_cell"
-  exact <- drop_exact & e$precision_status %in% "exact"
+  review <- e$presentation %in% "review"
+  hide <- e$presentation %in% "suppress" |
+    (review & choices$review == "suppress")
+  zero <- drop_exact & !hide & e$presentation_reason %in% "zero_events"
   out <- e[keys]
   out$n <- e[["n"]]
   out[extra] <- e[extra]
-  out[[value]] <- ifelse(small, NA, scale(e$estimate))
-  out$ci_low <- ifelse(small, NA, scale(e$ci_low))
-  out$ci_high <- ifelse(small, NA, scale(e$ci_high))
-  out$precision_status <- term(e$precision_status, "precision_status")
+  out[[value]] <- ifelse(hide, NA, scale(e$estimate))
+  out$ci_low <- ifelse(hide, NA, scale(e$ci_low))
+  out$ci_high <- ifelse(hide, NA, scale(e$ci_high))
+  mark <- paste0(ifelse(review, "\u2020", ""),
+                 ifelse(e$complement_unreliable %in% TRUE, "\u2021", ""))
+  out$mark <- ifelse(hide | !nzchar(mark), NA, mark)
+  sentence <- NULL
+  if (any(zero)) {
+    sentence <- zero_sentence(out[zero, , drop = FALSE], keys,
+                              e[zero, , drop = FALSE], scale, unit)
+  }
+  rownames(out) <- NULL
+  structure(out[!zero, , drop = FALSE], exact = sentence, value = value,
+            reasons = unique(stats::na.omit(
+              e$presentation_reason[(hide | review) & !zero]
+            )))
+}
+
+# The sentence of the zero-event estimates (S4): each cell with its value,
+# `n` and the limit of the interval away from the value.
+zero_sentence <- function(out, keys, e, scale, unit) {
   cells <- vapply(seq_len(nrow(out)), function(i) {
     paste(vapply(out[i, keys, drop = FALSE], as.character, ""),
           collapse = ", ")
   }, character(1))
-  sentence <- if (any(exact)) {
-    paste0(term("exact", "sentence"), ": ",
-           paste0(cells[exact], " = ", scale(e$estimate[exact]), unit,
-                  collapse = "; "), ".")
-  }
-  rownames(out) <- NULL
-  structure(out[!exact, , drop = FALSE], exact = sentence)
+  limit <- ifelse(e$estimate == 0, e$ci_high, e$ci_low)
+  paste0(term("exact", "sentence"), ": ",
+         paste0(cells, " = ", scale(e$estimate), unit, " (n = ", e$n, "; ",
+                term("limit", "sentence"), " ", scale(limit), unit, ")",
+                collapse = "; "), ".")
 }
 
 # The sentence of the exact estimates of a table of display(), or "".

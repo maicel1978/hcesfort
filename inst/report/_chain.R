@@ -11,12 +11,12 @@ template_abort <- function(message) {
 
 # Every choice is named in `choices`; none has a default.
 check_choices <- function(choices) {
-  need <- c("nutrients", "energy", "domains", "equity_domains",
-            "comparator", "min_n", "max_half_width", "max_small_cells",
+  need <- c("place", "survey", "vehicles", "review", "nutrients", "energy",
+            "domains", "equity_domains", "comparator", "max_small_cells",
             "min_coverage", "min_records_used", "min_linked_share",
             "iron_bioavailability",
             "iron_bioavailability_sensitivity", "energy_lower",
-            "energy_upper", "level", "lonely_psu")
+            "energy_upper", "lonely_psu")
   absent <- setdiff(need, names(choices))
   if (length(absent) > 0) {
     template_abort(paste0(
@@ -27,7 +27,41 @@ check_choices <- function(choices) {
   if (!all(choices$equity_domains %in% choices$domains)) {
     template_abort("`choices$equity_domains` must be among `choices$domains`.")
   }
+  if (!identical(choices$review, "show") &&
+        !identical(choices$review, "suppress")) {
+    template_abort('`choices$review` must be "show" or "suppress".')
+  }
   invisible(TRUE)
+}
+
+# The thresholds of the presentation standard by criterion; `criterion`
+# and `value` are required.
+standard_thresholds <- function(standard) {
+  if (!all(c("criterion", "value") %in% names(standard))) {
+    template_abort(paste(
+      "`presentation_standard` of _inputs.R needs the columns `criterion`",
+      "and `value`, as `hcesfort::ref_presentation_standard`."
+    ))
+  }
+  stats::setNames(standard$value, standard$criterion)
+}
+
+# The vehicles of `choices$vehicles` (NULL: all). A scenario that fortifies
+# a vehicle left out stops the render.
+keep_vehicles <- function(vehicles, scenarios, keep) {
+  if (is.null(keep) || is.null(vehicles)) {
+    return(vehicles)
+  }
+  out <- setdiff(unique(scenarios$vehicle), keep)
+  if (length(out) > 0) {
+    bad <- unique(scenarios$scenario[scenarios$vehicle %in% out])
+    template_abort(paste0(
+      "`choices$vehicles` leaves out vehicles fortified by the scenarios ",
+      paste(bad, collapse = ", "), " (", paste(out, collapse = ", "),
+      "). Add them to `choices$vehicles` or remove those scenarios."
+    ))
+  }
+  vehicles[vehicles$vehicle %in% keep, , drop = FALSE]
 }
 
 # An enrichment table with no rows: no enriched food is declared.
@@ -37,6 +71,9 @@ no_enrichment <- function() {
 }
 
 check_choices(choices)
+standard <- standard_thresholds(presentation_standard)
+level <- standard[["conf_level"]]
+vehicles <- keep_vehicles(vehicles, scenarios, choices$vehicles)
 inputs <- list(
   households = households, members = members, acquisitions = acquisitions,
   unit_factors = unit_factors, crosswalk = crosswalk,
@@ -69,7 +106,7 @@ if (ready) {
     min_coverage = choices$min_coverage,
     min_linked_share = choices$min_linked_share,
     households = households, domains = choices$domains,
-    min_n = choices$min_n, max_small_cells = choices$max_small_cells
+    min_n = standard[["min_n"]], max_small_cells = choices$max_small_cells
   )
 }
 verdict <- readiness_verdict(inventory, checks, choices$domains)

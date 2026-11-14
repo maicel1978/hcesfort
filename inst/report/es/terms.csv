@@ -66,7 +66,6 @@ header,,unit,Unidad
 header,,ul,UL
 header,,ul_unit,Unidad del UL
 header,,bioavailability_pct,Biodisponibilidad del hierro
-header,,precision_status,Precisión
 flag,,TRUE,sí
 flag,,FALSE,no
 role,,essential,esencial
@@ -118,10 +117,12 @@ reason,,missing_edible_portion,falta la porción comestible
 measure,,records,Registros
 measure,,grams,Gramos
 measure,,expenditure,Gasto
-precision_status,,small_cell,menos hogares que el mínimo
-precision_status,,exact,mismo valor en todos los hogares
-precision_status,,wide_interval,intervalo amplio
-precision_status,,ok,adecuada
+presentation_reason,,sample_size,menos hogares que el mínimo
+presentation_reason,,effective_sample_size,tamaño de muestra efectivo menor que el mínimo
+presentation_reason,,absolute_width,intervalo demasiado amplio
+presentation_reason,,relative_width,intervalo demasiado amplio respecto de la estimación
+presentation_reason,,zero_events,ningún hogar o todos los hogares de la muestra
+presentation_reason,,degrees_of_freedom,muy pocos grados de libertad
 method,,ear_cutpoint,punto de corte del EAR
 method,,probability,método probabilístico
 ul_scope,,total_intake,Ingesta total
@@ -132,4 +133,5 @@ ul_bias,,total_intake,Puede estar subestimado (composición o registros incomple
 ul_bias,,form_added_only,Cota inferior: no cuenta la forma ya presente en la dieta
 ul_bias,,form_diet_and_added,"Puede estar subestimado (composición de la forma o registros incompletos)"
 ul_bias,,not_assessable,No evaluable
-sentence,,exact,"Sin variación en la muestra, por lo que no hay intervalo"
+sentence,,exact,"En la muestra, el mismo valor en todos los hogares"
+sentence,,limit,límite del intervalo

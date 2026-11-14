@@ -58,11 +58,13 @@ test_that("terms.csv labels the whole vocabulary the reports print (U10)", {
     needed_by = c("all", "domain", unname(hcesfort:::readiness_needs())),
     flag = c("TRUE", "FALSE"),
     measure = c("records", "grams", "expenditure"),
-    precision_status = c("small_cell", "exact", "wide_interval", "ok"),
+    presentation_reason = c("sample_size", "effective_sample_size",
+                            "absolute_width", "relative_width",
+                            "zero_events", "degrees_of_freedom"),
     method = c("ear_cutpoint", "probability"),
     ul_scope = c("total_intake", "form_added_only", "form_diet_and_added",
                  "not_assessable"),
-    sentence = "exact"
+    sentence = c("exact", "limit")
   )
   vocabulary$ul_bias <- vocabulary$ul_scope
   for (lang in report_langs) {
@@ -156,7 +158,10 @@ test_that("decisions.csv and every choice are required (K12)", {
     expect_error(knit_report(lang, "readiness", remove = "decisions.csv"),
                  class = "hcesfort_error_argument")
     expect_error(knit_report(lang, "readiness",
-                             append = "choices$level <- NULL"),
+                             append = "choices$review <- NULL"),
+                 class = "hcesfort_error_argument")
+    expect_error(knit_report(lang, "readiness",
+                             append = "choices$review <- 'hide'"),
                  class = "hcesfort_error_argument")
     expect_error(
       knit_report(lang, "readiness",
@@ -201,7 +206,10 @@ test_that("a domain with too many small cells is disabled (U15, DR11)", {
   skip_if_no_knit()
   # Each expenditure quintile has fewer than 450 households with an
   # estimated intake; every region and area has more.
-  r <- knit_report("en", "readiness", append = "choices$min_n <- 450")
+  r <- knit_report("en", "readiness", append = paste(
+    "presentation_standard$value[presentation_standard$criterion ==",
+    "'min_n'] <- 450"
+  ))
   v <- r$tables$verdict
   small <- "Values of the domain with few households"
   expect_identical(sum(r$tables$checks$check == small), 3L)

@@ -28,7 +28,7 @@ source("_chain.R", local = TRUE)
 source("_tables.R", local = TRUE)
 source("_figures.R", local = TRUE)
 source("_readiness.R", local = TRUE)
-lev <- 100 * choices$level
+lev <- 100 * level
 ```
 
 ## Which variables does the analysis need?

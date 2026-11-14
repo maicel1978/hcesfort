@@ -6,22 +6,23 @@ library(ggplot2)
 
 # Dot and interval of a table of `tables`: `x` is the column of the
 # estimate, `ci_low` and `ci_high` its limits, `y` the column of the
-# categories (drawn top to bottom in their order). `ref` adds a dashed
-# vertical line at a reference value; `facet` names a column of panels.
-# Rows without an estimate (suppressed cells) are left out; estimates
-# with a wide interval are drawn hollow. Both axes have titles (R5).
+# categories (drawn top to bottom in their order). The value is printed
+# beside each point, with the mark "†" when it is flagged for review
+# (P9: one meaning per mark). `ref` adds a dashed vertical line at a
+# reference value; `facet` names a column of panels. Rows without an
+# estimate (suppressed) are not drawn. Both axes have titles (R5).
 fig_interval <- function(d, x, y, xlab, ylab, ref = NULL, facet = NULL) {
   d <- as.data.frame(d)
   d <- d[!is.na(d[[x]]), , drop = FALSE]
   d[[y]] <- factor(d[[y]], levels = rev(unique(as.character(d[[y]]))))
-  wide <- term("wide_interval", "precision_status")
-  d$.hollow <- rep(FALSE, nrow(d))
-  if (!is.null(d$precision_status)) d$.hollow <- d$precision_status %in% wide
+  mark <- if (is.null(d$mark)) "" else ifelse(is.na(d$mark), "", d$mark)
+  d$.label <- paste0(format(d[[x]], trim = TRUE), mark)
   g <- ggplot(d, aes(x = .data[[x]], y = .data[[y]])) +
     geom_linerange(aes(xmin = .data$ci_low, xmax = .data$ci_high),
                    na.rm = TRUE) +
-    geom_point(aes(shape = .data$.hollow), size = 2.5) +
-    scale_shape_manual(values = c(`FALSE` = 16, `TRUE` = 1), guide = "none") +
+    geom_point(shape = 16, size = 2.5) +
+    geom_text(aes(label = .data$.label), nudge_y = 0.3, size = 3,
+              check_overlap = TRUE) +
     labs(x = xlab, y = ylab) +
     theme_minimal(base_size = 11)
   if (!is.null(ref)) {

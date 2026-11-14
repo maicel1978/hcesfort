@@ -14,12 +14,12 @@ results_langs <- c("en", "es")
 # Sentences the tests match, in the language of each report.
 say_results <- list(
   en = list(
-    exact = "No variation in the sample, so no interval",
+    exact = "In the sample, the same value in every household",
     region_disabled = "Region: disabled: input absent",
     food_groups_disabled = "Contribution of each food group: disabled"
   ),
   es = list(
-    exact = "Sin variación en la muestra, por lo que no hay intervalo",
+    exact = "En la muestra, el mismo valor en todos los hogares",
     region_disabled = "Región: deshabilitada: falta el insumo",
     food_groups_disabled = "Aporte de cada grupo de alimentos: deshabilitada"
   )
@@ -119,35 +119,65 @@ test_that("an absent domain leaves one sentence per section (K6)", {
   }
 })
 
-test_that("small cells print a dash and exact estimates a sentence (K7)", {
+test_that("the presentation standard marks every estimate (R17, R19)", {
   skip_if_no_knit()
+  # Each expenditure quintile has fewer than 450 households: those cells
+  # are suppressed for their sample size; every region and area has more.
+  # max_small_cells = 1 keeps the quintiles as a domain.
+  big_n <- c(paste(
+    "presentation_standard$value[presentation_standard$criterion ==",
+    "'min_n'] <- 450"
+  ), "choices$max_small_cells <- 1")
   for (lang in results_langs) {
-    r <- knit_report(lang, "results")
-    exact <- term_label(lang, "exact", "precision_status")
+    r <- knit_report(lang, "results", append = big_n)
     small <- 0
     for (id in names(r$tables)) {
       d <- r$tables[[id]]
+      expect_false("precision_status" %in% names(d), info = id)
       if (is.null(d[["n"]])) next
       values <- intersect(c(percent_columns, "median_g", "difference"),
                           names(d))
-      below <- d[["n"]] < 8
+      below <- d[["n"]] < 450
       small <- small + sum(below)
       for (col in values) {
         expect_true(all(is.na(d[[col]][below])), info = paste(id, col))
-      }
-      if (id != "food_groups") {
-        expect_false(any(d$precision_status %in% exact), info = id)
       }
     }
     expect_gt(small, 0)
     for (id in names(r$figures)) {
       g <- r$figures[[id]]
       if (!is.null(g$data[["n"]])) {
-        expect_true(all(g$data[["n"]] >= 8), info = id)
+        expect_true(all(g$data[["n"]] >= 450), info = id)
       }
     }
+    # Upper-level shares of 0 are zero-event estimates: one sentence.
     expect_match(r$md, say_results[[lang]]$exact, fixed = TRUE)
   }
+})
+
+test_that("choices$review = 'suppress' hides the flagged estimates (S3)", {
+  skip_if_no_knit()
+  r <- knit_report("en", "results", append = "choices$review <- 'suppress'")
+  expect_false(grepl(say_results$en$exact, r$md, fixed = TRUE))
+  for (id in names(r$tables)) {
+    expect_true(all(is.na(r$tables[[id]]$mark)), info = id)
+  }
+})
+
+test_that("choices$vehicles restricts the vehicles (K26)", {
+  skip_if_no_knit()
+  r <- knit_report("en", "results", append = c(
+    "scenarios <- scenarios[scenarios$scenario == 'wheat_flour', ]",
+    "choices$vehicles <- c('wheat_flour', 'bread', 'pasta')"
+  ))
+  shown <- labels_of_type("en", "vehicle")
+  kept <- shown[c("wheat_flour", "bread", "pasta")]
+  for (id in grep("^coverage_vehicle", names(r$tables), value = TRUE)) {
+    expect_setequal(as.character(unique(r$tables[[id]]$vehicle)), kept)
+  }
+  expect_error(knit_report("en", "results",
+                           append = "choices$vehicles <- 'rice'"),
+               class = "hcesfort_error_argument")
 })
 
 test_that("every scenario is printed by its one label (K8)", {

@@ -28,6 +28,11 @@ food_groups <- ex$food_groups
 requirements <- hcesfort::ref_requirements
 iron <- hcesfort::ref_iron_requirements
 iron_distribution <- iron[iron$group == "females_menstruating_adult", ]
+# Presentation standard of the estimates: the NCHS data presentation
+# standards for proportions (Parker et al. 2017), as shipped. It gives the
+# confidence level, the minimum number of households of a cell and the
+# other thresholds. If you replace it, justify each row in decisions.csv.
+presentation_standard <- hcesfort::ref_presentation_standard
 # The reference person of the adult female equivalents: woman of 25
 # years and 55 kg, physical activity level 1.76 (example values).
 reference_kcal <- reference_energy("female", 25, 55, pal = 1.76)
@@ -49,6 +54,16 @@ compliance_model <- "average_content"
 
 # ---- Choices shared by both reports ----------------------------------
 choices <- list(
+  # Place and survey, appended to every title ("Region X, Survey 2024");
+  # NULL leaves them out.
+  place = NULL,
+  survey = NULL,
+  # Vehicles of the coverage section; NULL is every vehicle of `vehicles`.
+  # A scenario on a vehicle left out stops the render.
+  vehicles = NULL,
+  # Estimates flagged for statistical review by the presentation standard:
+  # "show" (printed with a mark and the reason) or "suppress".
+  review = "show",
   nutrients = c("iron", "zinc", "folate", "vitamin_a"),
   energy = "energy", # registry name of energy, or NULL
   domains = c("region", "area", "expenditure_group"),
@@ -58,10 +73,9 @@ choices <- list(
   # comparator = c(plus_maize = "wheat_flour", plus_rice = "wheat_flour",
   #                plus_sugar = "wheat_flour", plus_oil = "wheat_flour"),
   comparator = NULL,
-  min_n = 8, # example value
-  max_half_width = 0.15,
-  # Largest share of the values of a domain with fewer than min_n
-  # households with an estimated intake; above it the domain is disabled.
+  # Largest share of the values of a domain with fewer households with an
+  # estimated intake than the `min_n` of the presentation standard; above
+  # it the domain is disabled.
   max_small_cells = 0.5,
   min_coverage = 0.8,
   min_records_used = 0.8,
@@ -73,6 +87,5 @@ choices <- list(
   # source. Justify yours in decisions.csv.
   energy_lower = 500,
   energy_upper = 6000,
-  level = 0.95,
   lonely_psu = "adjust"
 )

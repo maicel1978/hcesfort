@@ -384,6 +384,16 @@
   `region`, `area` and `expenditure_group`. The former 40 households are
   kept as a test fixture. The report templates use the new codes and
   labels.
+* Report templates: estimates are judged by `presentation_standard`
+  (`ref_presentation_standard` in `_inputs.R`, replaceable) through
+  `flag_presentation()`, with Korn-Graubard intervals for proportions; a
+  suppressed estimate prints a dash, one flagged for review "†" (or is
+  hidden with `choices$review = "suppress"`), one with an unreliable
+  complement "‡"; zero-event estimates leave the tables for one sentence
+  with `n` and the interval limit. `choices` gains `place`, `survey`,
+  `vehicles` and `review` and loses `min_n`, `max_half_width` and `level`
+  (now from the standard). **Breaking** for `_inputs.R` files written
+  before.
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is

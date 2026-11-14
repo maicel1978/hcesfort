@@ -32,11 +32,12 @@ source("_chain.R", local = TRUE)
 source("_tables.R", local = TRUE)
 source("_figures.R", local = TRUE)
 source("_results.R", local = TRUE)
-lev <- 100 * choices$level
+lev <- 100 * level
 small_note <- paste0(
-  "Un guion marca una celda con menos de ", choices$min_n, " hogares. ",
-  "Precisión: un intervalo amplio tiene una semiamplitud mayor de ",
-  pct(choices$max_half_width, 0), " puntos; su punto se dibuja hueco."
+  "Estimaciones juzgadas con la norma de presentación (nota técnica). ",
+  "Un guion marca una estimación suprimida; \u2020 una estimación ",
+  "señalada para revisión estadística; \u2021 una estimación cuyo ",
+  "complemento puede no ser fiable."
 )
 ```
 

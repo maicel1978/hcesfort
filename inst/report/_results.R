@@ -59,13 +59,14 @@ value_header <- function(d) {
   c(domain_value = as.character(lab(d, "domain")))
 }
 
+# Status of each estimate under the presentation standard of _inputs.R.
 precision <- function(e) {
-  flag_precision(e, min_n = choices$min_n,
-                 max_half_width = choices$max_half_width)
+  flag_presentation(e, presentation_standard)
 }
+# Proportions use the Korn-Graubard interval, the one the standard judges.
 est <- function(x, value, by = NULL, ...) {
-  precision(estimate_households(design, x, value, by = by,
-                                level = choices$level, ...))
+  precision(estimate_households(design, x, value, by = by, level = level,
+                                ci_method = "korn_graubard", ...))
 }
 # Label columns of an estimate table: the code columns in `types` (column
 # = label type) and the domain values of `by`.
@@ -132,7 +133,7 @@ quantity_table <- function() {
   x <- use[use$level == "vehicle", ]
   e <- precision(estimate_households(
     design, x, "qty_vehicle_g_d", statistic = "median", domain = "acquired",
-    level = choices$level
+    level = level
   ))
   e <- label_columns(e, c(vehicle = "vehicle"))
   display(e, "vehicle", "median_g", scale = round, unit = " g")
@@ -208,7 +209,7 @@ effects <- function(by = NULL) {
   out <- lapply(unique(comparators), function(cmp) {
     d <- precision(estimate_difference(design, risk, "p_inadequate",
                                        reference = cmp, by = by,
-                                       level = choices$level))
+                                       level = level))
     d <- as.data.frame(d)
     d <- d[d$scenario %in% names(comparators)[comparators == cmp] &
              paste(d$scenario, d$nutrient) %in% pairs, ]
@@ -223,7 +224,7 @@ effects <- function(by = NULL) {
 
 effects_table <- function(by = NULL) {
   d <- effects(by)
-  small <- d$precision_status %in% "small_cell"
+  small <- d$presentation %in% "suppress"
   d$from <- ifelse(small, NA, pct(d$from))
   d$to <- ifelse(small, NA, pct(d$to))
   d <- label_columns(d, c(scenario = "scenario", comparator = "scenario",
@@ -263,7 +264,7 @@ above_ul_table <- function(ul) {
 # ---- Section 4. Food groups ------------------------------------------
 food_group_table <- function() {
   groups <- food_group_intake(content, food_groups, afe, households)
-  e <- precision(food_group_shares(design, groups, level = choices$level))
+  e <- precision(food_group_shares(design, groups, level = level))
   cols <- nutrients$column[match(choices$nutrients, nutrients$nutrient)]
   e <- e[e$variable %in% cols, ]
   e$nutrient <- choices$nutrients[match(e$variable, cols)]
