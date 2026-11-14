@@ -21,6 +21,10 @@ knit_report <- function(lang, report, append = NULL, remove = NULL,
                         envir = parent.frame()) {
   dir <- withr::local_tempdir(.local_envir = envir)
   use_report_template(dir, lang)
+  # The 40 households of hces_example leave 4 of 5 expenditure groups below
+  # min_n = 8, so the shipped max_small_cells = 0.5 disables that domain.
+  # The knit tests keep it enabled until the realistic example (12d.8).
+  append <- c("choices$max_small_cells <- 0.8", append)
   if (!is.null(append)) {
     cat(append, file = file.path(dir, "_inputs.R"), sep = "\n", append = TRUE)
   }

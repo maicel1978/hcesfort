@@ -19,7 +19,11 @@
 #' others meet it leaves the sections enabled: the report leaves that
 #' nutrient out and names it. An essential input absent from the inventory
 #' disables every section. A domain row is disabled when its column is
-#' absent from `households` or its national row is disabled.
+#' absent from `households` or its national row is disabled, and also when
+#' its check `domain_cells` is not met (DR11: too many of its values have
+#' fewer than `min_n` households with an estimated intake; reason
+#' `"threshold_not_met"`, detail `"domain_cells"`). Only that domain is
+#' disabled.
 #'
 #' @param inventory Table returned by [readiness_inventory()].
 #' @param checks Table returned by [readiness_checks()]; may be `NULL` when
@@ -44,7 +48,9 @@
 #' intake <- apparent_intake(content, afe, e$households)
 #' checks <- readiness_checks(intake, linkage_ladder(content, e$households),
 #'                            "iron", min_records_used = 0.95,
-#'                            min_coverage = 0.9, min_linked_share = 0.9)
+#'                            min_coverage = 0.9, min_linked_share = 0.9,
+#'                            households = e$households, domains = "region",
+#'                            min_n = 30, max_small_cells = 0.5)
 #' inventory <- readiness_inventory(e[names(e) != "nutrients"], "region")
 #' readiness_verdict(inventory, checks, domains = "region")
 #' @export
@@ -73,6 +79,8 @@ readiness_verdict <- function(inventory, checks, domains = NULL) {
       out$enabled <- FALSE
       out$reason[off] <- "missing_input"
       out$detail[off] <- d
+    } else if (small_cells(checks, d)) {
+      out <- disable_small_cells(out)
     }
     out
   })
@@ -94,6 +102,26 @@ verdict_row <- function(section, domain, absent, spec, inventory, failed) {
   }
   dplyr::tibble(section = section, domain = domain, enabled = is.na(reason),
                 reason = reason, detail = detail)
+}
+
+# Whether the check `domain_cells` of domain `d` is not met.
+small_cells <- function(checks, d) {
+  !is.null(checks) &&
+    any(checks$met[checks$check == "domain_cells" &
+                     checks$detail %in% d] %in% FALSE)
+}
+
+# Verdict rows of a domain with too many small cells: enabled rows are
+# disabled for `threshold_not_met`; rows already disabled for a threshold
+# add `domain_cells` to their detail.
+disable_small_cells <- function(out) {
+  on <- out$enabled
+  gated <- out$reason %in% "threshold_not_met"
+  out$detail[gated] <- paste(out$detail[gated], "domain_cells", sep = ", ")
+  out$reason[on] <- "threshold_not_met"
+  out$detail[on] <- "domain_cells"
+  out$enabled <- FALSE
+  out
 }
 
 # The gating checks not met; `composition_value` when no nutrient meets it.

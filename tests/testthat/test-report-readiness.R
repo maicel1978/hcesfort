@@ -46,9 +46,9 @@ test_that("terms.csv labels the whole vocabulary the reports print (U10)", {
   )
   intake <- apparent_intake(content, afe, e$households)
   ladder <- linkage_ladder(content, e$households)
-  checks <- readiness_checks(intake, ladder, "iron", 0.8, 0.8, 0.9)
+  checks <- rc(intake, ladder, "iron", 0.8, 0.8, 0.9)
   vocabulary <- list(
-    step = ladder$step, check = checks$check,
+    step = ladder$step, check = c(checks$check, "domain_cells"),
     household_status = checks$detail[checks$check == "household_status"],
     reason = hcesfort:::not_linked_reasons,
     section = names(hcesfort:::readiness_sections()),
@@ -193,6 +193,17 @@ test_that("absent optional inputs leave one sentence each (P5)", {
     expect_true(all(grepl(say[[lang]]$absent_input, v$region)), info = lang)
     expect_true(all(v$national == say[[lang]]$enabled), info = lang)
   }
+})
+
+test_that("a domain with too many small cells is disabled (U15, DR11)", {
+  skip_if_no_knit()
+  r <- knit_report("en", "readiness",
+                   append = "choices$max_small_cells <- 0.5")
+  v <- r$tables$verdict
+  small <- "Values of the domain with few households"
+  expect_identical(sum(r$tables$checks$check == small), 2L)
+  expect_true(all(grepl(small, v$expenditure_group, fixed = TRUE)))
+  expect_identical(v$region, v$national)
 })
 
 test_that("energy must be a registry nutrient in kcal", {

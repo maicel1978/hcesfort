@@ -109,9 +109,9 @@ test_that("readiness_inventory() checks its arguments", {
 
 test_that("readiness_checks() gives every threshold with its value", {
   ch <- example_chain()
-  out <- readiness_checks(ch$intake, ch$ladder, c("iron", "folate"),
-                          min_records_used = 0.5, min_coverage = 0.5,
-                          min_linked_share = 0.5)
+  out <- rc(ch$intake, ch$ladder, c("iron", "folate"),
+            min_records_used = 0.5, min_coverage = 0.5,
+            min_linked_share = 0.5)
   expect_identical(unique(out$check), c(
     "household_status", "records_without_quantity",
     "records_without_grams", "records_used", "composition_value",
@@ -141,8 +141,8 @@ test_that("met is FALSE exactly when inadequacy() fails for that measure", {
   req <- data.frame(nutrient = c("folate", "vitamin_a"),
                     unit = c("ug_dfe", "ug_rae"), ear = c(320, 500),
                     cutpoint_valid = TRUE)
-  base <- readiness_checks(ch$intake, ch$ladder, c("folate", "vitamin_a"),
-                           0, 0, 0)
+  base <- rc(ch$intake, ch$ladder, c("folate", "vitamin_a"),
+             0, 0, 0)
   used <- base$value[base$check == "records_used"]
   cov <- base$value[base$check == "composition_value"]
   expect_lt(cov[[1]], 1)
@@ -154,14 +154,14 @@ test_that("met is FALSE exactly when inadequacy() fails for that measure", {
     }, hcesfort_error_coverage = function(e) e$measure)
   }
   for (u in c(used - 1e-6, used, used + 1e-6)) {
-    out <- readiness_checks(ch$intake, ch$ladder, c("folate", "vitamin_a"),
-                            u, 0, 0)
+    out <- rc(ch$intake, ch$ladder, c("folate", "vitamin_a"),
+              u, 0, 0)
     met <- out$met[out$check == "records_used"]
     expect_identical(fails(u, 0) == "records_used", !met)
   }
   for (k in c(min(cov) - 1e-6, min(cov) + 1e-6, min(max(cov) + 1e-6, 1))) {
-    out <- readiness_checks(ch$intake, ch$ladder, c("folate", "vitamin_a"),
-                            0, k, 0)
+    out <- rc(ch$intake, ch$ladder, c("folate", "vitamin_a"),
+              0, k, 0)
     met <- out$met[out$check == "composition_value"]
     expect_identical(fails(0, k) == "composition_value", any(!met))
   }
@@ -175,8 +175,8 @@ test_that("without expenditure, linked_expenditure has no verdict", {
   x <- link_composition(g, e$crosswalk, e$composition,
                         nutrient_registry(e$nutrients))
   ch <- example_chain()
-  out <- readiness_checks(ch$intake, linkage_ladder(x, e$households),
-                          "iron", 0.5, 0.5, 0.99)
+  out <- rc(ch$intake, linkage_ladder(x, e$households),
+            "iron", 0.5, 0.5, 0.99)
   row <- out[out$check == "linked_expenditure", ]
   expect_true(is.na(row$value) && is.na(row$met))
   expect_false(out$met[out$check == "linked_grams"])
@@ -184,17 +184,17 @@ test_that("without expenditure, linked_expenditure has no verdict", {
 
 test_that("readiness_checks() checks its arguments", {
   ch <- example_chain()
-  expect_error(readiness_checks(ch$intake, ch$ladder, "iron", 0.5, 0.5),
+  expect_error(rc(ch$intake, ch$ladder, "iron", 0.5, 0.5),
                class = "hcesfort_error_argument")
-  expect_error(readiness_checks(ch$intake, ch$ladder, "zinc", 0.5, 0.5, 0.5),
+  expect_error(rc(ch$intake, ch$ladder, "zinc", 0.5, 0.5, 0.5),
                class = "hcesfort_error_argument")
-  expect_error(readiness_checks(ch$intake, ch$ladder, "iron", 2, 0.5, 0.5),
+  expect_error(rc(ch$intake, ch$ladder, "iron", 2, 0.5, 0.5),
                class = "hcesfort_error_argument")
-  expect_error(readiness_checks(ch$intake, ch$ladder[, 1:2], "iron", 0.5,
-                                0.5, 0.5),
+  expect_error(rc(ch$intake, ch$ladder[, 1:2], "iron", 0.5,
+                  0.5, 0.5),
                class = "hcesfort_error_schema")
-  expect_error(readiness_checks(ch$content, ch$ladder, "iron", 0.5, 0.5,
-                                0.5),
+  expect_error(rc(ch$content, ch$ladder, "iron", 0.5, 0.5,
+                  0.5),
                class = "hcesfort_error_audit")
 })
 
@@ -286,4 +286,124 @@ test_that("readiness_verdict() checks its arguments", {
                class = "hcesfort_error_schema")
   expect_error(readiness_verdict(f$inventory, f$checks, domains = 1),
                class = "hcesfort_error_argument")
+})
+
+# U15 (docs/design-reports-v3.md, section 4.3, C5): domains with small
+# cells. Fixture small_cell_fixture() in helper-linkage.R.
+
+test_that("domain_cells counts values below min_n by hand", {
+  f <- small_cell_fixture()
+  out <- readiness_checks(f$ch$intake, f$ch$ladder, "iron", 0, 0, 0,
+                          households = f$h, domains = c("region", "size"),
+                          min_n = 18, max_small_cells = 0.5)
+  cells <- out[out$check == "domain_cells", ]
+  expect_identical(cells$detail, c("region", "size"))
+  expect_identical(cells$n, c(2L, 3L))
+  # region: 18 and 18, none below 18. size: 30, 6, 0; two of three below.
+  expect_equal(cells$value, c(0, 2 / 3), tolerance = 1e-12)
+  expect_identical(cells$threshold, c(0.5, 0.5))
+  expect_identical(cells$met, c(TRUE, FALSE))
+  # Boundary: min_n 19 puts both regions below; met only at a threshold
+  # of 1. The share equal to the threshold is met.
+  out <- readiness_checks(f$ch$intake, f$ch$ladder, "iron", 0, 0, 0,
+                          households = f$h, domains = "region",
+                          min_n = 19, max_small_cells = 1)
+  expect_identical(out$value[out$check == "domain_cells"], 1)
+  expect_true(out$met[out$check == "domain_cells"])
+  same <- readiness_checks(f$ch$intake, f$ch$ladder, "iron", 0, 0, 0,
+                           households = f$h, domains = "size",
+                           min_n = 18, max_small_cells = 2 / 3)
+  expect_true(same$met[same$check == "domain_cells"])
+})
+
+test_that("domain_cells: row order, missing values, absent column", {
+  f <- small_cell_fixture()
+  run <- function(h, domains = "size") {
+    out <- readiness_checks(f$ch$intake, f$ch$ladder, "iron", 0, 0, 0,
+                            households = h, domains = domains, min_n = 18,
+                            max_small_cells = 0.5)
+    out[out$check == "domain_cells", ]
+  }
+  base <- run(f$h)
+  expect_identical(run(f$h[rev(seq_len(nrow(f$h))), ]), base)
+  # A missing value is one more value (a cell of estimate_households()).
+  h <- f$h
+  h$size[h$size == "empty"] <- NA
+  expect_identical(run(h), base)
+  h$size[h$size == "small"] <- NA
+  expect_identical(run(h)$n, 2L)
+  expect_identical(run(h)$value, 0.5)
+  absent <- run(f$h, "district")
+  expect_true(is.na(absent$value) && is.na(absent$met) && is.na(absent$n))
+  out <- readiness_checks(f$ch$intake, f$ch$ladder, "iron", 0, 0, 0,
+                          households = f$h, domains = NULL, min_n = 18,
+                          max_small_cells = 0.5)
+  expect_false("domain_cells" %in% out$check)
+})
+
+test_that("domain_cells checks its arguments", {
+  f <- small_cell_fixture()
+  call <- function(...) {
+    args <- list(
+      intake = f$ch$intake, ladder = f$ch$ladder, nutrients = "iron",
+      min_records_used = 0, min_coverage = 0, min_linked_share = 0,
+      households = f$h, domains = "size", min_n = 18, max_small_cells = 0.5
+    )
+    new <- list(...)
+    args[names(new)] <- new
+    do.call(readiness_checks, args)
+  }
+  for (bad in list(0, 2.5, NA, c(1, 2), "30")) {
+    expect_error(call(min_n = bad), class = "hcesfort_error_argument")
+  }
+  for (bad in list(-0.1, 1.1, NA_real_, "0.5", c(0, 1))) {
+    expect_error(call(max_small_cells = bad),
+                 class = "hcesfort_error_argument")
+  }
+  expect_error(call(domains = c("size", NA)),
+               class = "hcesfort_error_argument")
+  expect_error(call(households = f$h[-1, ]), class = "hcesfort_error_join")
+  expect_error(call(households = rbind(f$h, f$h[1, ])),
+               class = "hcesfort_error_join")
+  expect_error(call(households = f$h["size"]),
+               class = "hcesfort_error_schema")
+  expect_error(readiness_checks(f$ch$intake, f$ch$ladder, "iron", 0, 0, 0,
+                                domains = NULL, min_n = 18,
+                                max_small_cells = 0.5),
+               class = "hcesfort_error_argument")
+  expect_error(readiness_checks(f$ch$intake, f$ch$ladder, "iron", 0, 0, 0,
+                                households = f$h, domains = NULL,
+                                max_small_cells = 0.5),
+               class = "hcesfort_error_argument")
+})
+
+test_that("a domain with too many small cells is disabled, and only it", {
+  f <- small_cell_fixture()
+  inv <- readiness_inventory(example_tables(), domains = "region")
+  inv <- dplyr::bind_rows(inv, dplyr::tibble(
+    table = "households", variable = "size", role = "optional",
+    present = TRUE, share_missing = 0, needed_by = "domain"
+  ))
+  checks <- readiness_checks(f$ch$intake, f$ch$ladder, c("iron", "folate"),
+                             0.8, 0.9, 0.9, households = f$h,
+                             domains = c("region", "size"), min_n = 18,
+                             max_small_cells = 0.5)
+  v <- readiness_verdict(inv, checks, domains = c("region", "size"))
+  national <- v[is.na(v$domain), ]
+  region <- v[v$domain %in% "region", ]
+  size <- v[v$domain %in% "size", ]
+  expect_identical(region$enabled, national$enabled)
+  expect_identical(region$reason, national$reason)
+  expect_false(any(size$enabled))
+  on <- national$enabled
+  expect_identical(size$reason[on], rep("threshold_not_met", sum(on)))
+  expect_identical(size$detail[on], rep("domain_cells", sum(on)))
+  # Rows disabled for a missing input keep their reason and detail.
+  expect_identical(size$reason[!on], national$reason[!on])
+  expect_identical(size$detail[!on], national$detail[!on])
+  # A domain that meets the check keeps the national verdict.
+  ok <- checks
+  ok$met[ok$check == "domain_cells"] <- TRUE
+  v2 <- readiness_verdict(inv, ok, domains = "size")
+  expect_identical(v2$enabled[v2$domain %in% "size"], national$enabled)
 })

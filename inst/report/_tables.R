@@ -108,8 +108,9 @@ exact_sentence <- function(d) {
 
 # Text of each row of a verdict: "enabled", or the reason and its detail.
 verdict_text <- function(v) {
-  detail <- ifelse(v$reason %in% "threshold_not_met",
-                   term_list(v$detail, "check"), v$detail)
+  detail <- v$detail
+  checks <- v$reason %in% "threshold_not_met"
+  detail[checks] <- term_list(v$detail[checks], "check")
   ifelse(v$enabled, term(rep("enabled", nrow(v)), "verdict"),
          paste0(term(v$reason, "verdict_reason"), " (", detail, ")"))
 }

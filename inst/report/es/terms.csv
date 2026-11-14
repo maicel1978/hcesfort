@@ -94,6 +94,7 @@ check,,records_used,Registros incluidos utilizados
 check,,composition_value,Gramos comestibles con valor de composición
 check,,linked_grams,Gramos vinculados a la composición
 check,,linked_expenditure,Gasto vinculado a la composición
+check,,domain_cells,Valores del dominio con pocos hogares
 household_status,,food_module_nonresponse,No respuesta al módulo de alimentos
 household_status,,no_food_records,Sin registros de alimentos
 household_status,,all_records_lost,Todos los registros perdidos

@@ -56,6 +56,9 @@ choices <- list(
   comparator = NULL, # NULL: every scenario against "baseline"
   min_n = 8, # example value: shows a suppressed and a shown cell
   max_half_width = 0.15,
+  # Largest share of the values of a domain with fewer than min_n
+  # households with an estimated intake; above it the domain is disabled.
+  max_small_cells = 0.5,
   min_coverage = 0.8,
   min_records_used = 0.8,
   min_linked_share = 0.9,

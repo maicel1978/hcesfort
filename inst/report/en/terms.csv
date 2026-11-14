@@ -94,6 +94,7 @@ check,,records_used,Included records used
 check,,composition_value,Edible grams with a composition value
 check,,linked_grams,Grams linked to composition
 check,,linked_expenditure,Expenditure linked to composition
+check,,domain_cells,Values of the domain with few households
 household_status,,food_module_nonresponse,Food module non-response
 household_status,,no_food_records,No food records
 household_status,,all_records_lost,All records lost

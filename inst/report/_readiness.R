@@ -32,13 +32,15 @@ inventory_table <- function(inv) {
              share_missing = pct(inv$share_missing), needed_by = needed)
 }
 
-# Section 2. The detail is a household status or a nutrient.
+# Section 2. The detail is a household status, a nutrient or a domain.
 checks_table <- function(ch) {
   detail <- rep(NA_character_, nrow(ch))
   s <- ch$check == "household_status"
   detail[s] <- term(ch$detail[s], "household_status")
   v <- ch$check == "composition_value"
   detail[v] <- as.character(lab(ch$detail[v], "nutrient"))
+  d <- ch$check == "domain_cells"
+  detail[d] <- as.character(lab(ch$detail[d], "domain"))
   data.frame(check = term(ch$check, "check"), detail = detail, n = ch$n,
              value = pct(ch$value), threshold = pct(ch$threshold),
              met = term(ch$met, "flag"))

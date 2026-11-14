@@ -64,6 +64,16 @@
   and falls back to the label per code. Short labels are unique within
   `type` and `parent`, the fallback included. The type `compound` labels
   the fortificant compounds of the scenarios.
+* `readiness_checks()` gains the arguments `households`, `domains`,
+  `min_n` and `max_small_cells` (no defaults) and one row `domain_cells`
+  per domain: the share of the values of the domain with fewer than
+  `min_n` households with an estimated intake. `readiness_verdict()`
+  disables a domain whose share passes `max_small_cells`, and only that
+  domain. **Breaking:** calls without the new arguments fail.
+* `readiness_inventory()`: `needed_by` says what each optional input is
+  needed for (`household_status`, `adult_equivalents`, `quantities`,
+  `linkage_expenditure`, `baseline`, `domain`, or the sections), from one
+  dependency map; a domain column is `"domain"`, not `"all"`.
 * `adult_equivalents()`: adult female equivalents per household from the
   energy requirement of each member (FAO/WHO/UNU 2004 tables for infants
   and children; BMR times PAL for adults, with weights and PAL given by the

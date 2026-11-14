@@ -13,6 +13,7 @@
 #' | `composition_value` | each nutrient of `nutrients` | `min_coverage` |
 #' | `linked_grams` | | `min_linked_share` |
 #' | `linked_expenditure` | | `min_linked_share` |
+#' | `domain_cells` | each domain of `domains` | `max_small_cells` |
 #'
 #' `records_used` and `composition_value` are computed by the functions
 #' [inadequacy()] and [above_ul()] use, so `met` is `FALSE` exactly when
@@ -22,6 +23,16 @@
 #' linkage ladder; `linked_expenditure` is missing without the column
 #' `expenditure_lcu`.
 #'
+#' `domain_cells` (DR11) has `n` the number of values of the domain in
+#' `households`, and `value` the share of them with fewer than `min_n`
+#' households whose intake is estimated (`intake_status == "estimated"`);
+#' it is met when `value` is at most `max_small_cells`, the one check met
+#' from below. The effective sample size cannot be used: it is known only
+#' once an estimate exists. A missing value of the domain is one more
+#' value, as in the cells of [estimate_households()]. A domain column
+#' absent from `households` gives missing `value` and `met`;
+#' [readiness_verdict()] disables that domain as a missing input.
+#'
 #' @param intake Table returned by [apparent_intake()] on the baseline.
 #' @param ladder Table returned by [linkage_ladder()].
 #' @param nutrients Registry names of the nutrients the results report
@@ -30,6 +41,15 @@
 #' @param min_linked_share Minimum share of the included grams and of the
 #'   included expenditure that is linked to the composition table. No
 #'   default.
+#' @param households The households table the intake was computed from,
+#'   with the domain columns.
+#' @param domains `NULL` or the names of the domain columns of
+#'   `households`.
+#' @param min_n Smallest number of households with an estimated intake a
+#'   value of a domain needs (the `min_n` of [ref_presentation_standard]).
+#'   No default.
+#' @param max_small_cells Largest share of the values of a domain that may
+#'   fall below `min_n`. No default.
 #' @returns A tibble: `check`, `detail` (`NA` when the check has one row),
 #'   `n` (households or records; `NA` for `composition_value`), `value` (a
 #'   share), `threshold` and `met` (both `NA` for rows without a
@@ -49,10 +69,12 @@
 #' readiness_checks(intake, linkage_ladder(content, e$households),
 #'                  c("iron", "folate", "vitamin_a"),
 #'                  min_records_used = 0.8, min_coverage = 0.9,
-#'                  min_linked_share = 0.9)
+#'                  min_linked_share = 0.9, households = e$households,
+#'                  domains = "region", min_n = 30, max_small_cells = 0.5)
 #' @export
 readiness_checks <- function(intake, ladder, nutrients, min_records_used,
-                             min_coverage, min_linked_share) {
+                             min_coverage, min_linked_share, households,
+                             domains, min_n, max_small_cells) {
   check_required()
   require_hces(intake, "hces_intake")
   min_used <- check_min_records_used(min_records_used)
@@ -62,6 +84,8 @@ readiness_checks <- function(intake, ladder, nutrients, min_records_used,
   check_ladder(ladder)
   registry <- attr(intake, "nutrients", exact = TRUE)
   check_assessed(nutrients, registry)
+  check_domain_cell_args(min_n, max_small_cells)
+  check_domains_arg(domains, households)
   step <- function(s, col) ladder[[col]][ladder$step == s]
   n_inc <- step("records", "n_records")
   lost <- function(s) n_inc - step(s, "n_records")
@@ -78,7 +102,8 @@ readiness_checks <- function(intake, ladder, nutrients, min_records_used,
     check_row("linked_grams", NA, step("validated", "n_records"),
               step("validated", "share_grams"), min_link),
     check_row("linked_expenditure", NA, step("validated", "n_records"),
-              step("validated", "share_expenditure"), min_link)
+              step("validated", "share_expenditure"), min_link),
+    domain_cell_checks(intake, households, domains, min_n, max_small_cells)
   )
 }
 

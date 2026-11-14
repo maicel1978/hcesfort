@@ -12,8 +12,9 @@ template_abort <- function(message) {
 # Every choice is named in `choices`; none has a default.
 check_choices <- function(choices) {
   need <- c("nutrients", "energy", "domains", "equity_domains",
-            "comparator", "min_n", "max_half_width", "min_coverage",
-            "min_records_used", "min_linked_share", "iron_bioavailability",
+            "comparator", "min_n", "max_half_width", "max_small_cells",
+            "min_coverage", "min_records_used", "min_linked_share",
+            "iron_bioavailability",
             "iron_bioavailability_sensitivity", "energy_lower",
             "energy_upper", "level", "lonely_psu")
   absent <- setdiff(need, names(choices))
@@ -66,7 +67,9 @@ if (ready) {
     intake, ladder, choices$nutrients,
     min_records_used = choices$min_records_used,
     min_coverage = choices$min_coverage,
-    min_linked_share = choices$min_linked_share
+    min_linked_share = choices$min_linked_share,
+    households = households, domains = choices$domains,
+    min_n = choices$min_n, max_small_cells = choices$max_small_cells
   )
 }
 verdict <- readiness_verdict(inventory, checks, choices$domains)

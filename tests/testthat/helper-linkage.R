@@ -124,6 +124,12 @@ example_tables <- function() {
   e[names(e) != "nutrients"]
 }
 
+# readiness_checks() on the example without domains.
+rc <- function(...) {
+  readiness_checks(..., households = hcesfort::hces_example$households,
+                   domains = NULL, min_n = 1, max_small_cells = 0)
+}
+
 # Inventory and checks of the example for readiness_verdict().
 verdict_fixture <- function(tables = example_tables(), domains = "region",
                             min_used = 0.8) {
@@ -131,6 +137,22 @@ verdict_fixture <- function(tables = example_tables(), domains = "region",
   list(
     inventory = readiness_inventory(tables, domains = domains),
     checks = readiness_checks(ch$intake, ch$ladder, c("iron", "folate"),
-                              min_used, 0.9, 0.9)
+                              min_used, 0.9, 0.9,
+                              hcesfort::hces_example$households,
+                              domains, min_n = 1, max_small_cells = 0)
   )
+}
+
+# Fixture of U15 (domains with small cells): the 40 households of the
+# example (36 with an estimated intake; 18 in each region) and a domain
+# `size` typed by hand.
+small_cell_fixture <- function() {
+  ch <- example_chain()
+  h <- hcesfort::hces_example$households
+  est <- ch$intake$intake_status == "estimated"
+  # "big": the first 30 estimated households; "small": the other 6
+  # estimated ones; "empty": the 4 not estimated.
+  h$size <- ifelse(!est, "empty",
+                   ifelse(cumsum(est) <= 30, "big", "small"))
+  list(ch = ch, h = h)
 }

@@ -44,7 +44,11 @@ missing does not disable. A nutrient that fails \code{min_coverage} while
 others meet it leaves the sections enabled: the report leaves that
 nutrient out and names it. An essential input absent from the inventory
 disables every section. A domain row is disabled when its column is
-absent from \code{households} or its national row is disabled.
+absent from \code{households} or its national row is disabled, and also when
+its check \code{domain_cells} is not met (DR11: too many of its values have
+fewer than \code{min_n} households with an estimated intake; reason
+\code{"threshold_not_met"}, detail \code{"domain_cells"}). Only that domain is
+disabled.
 }
 \examples{
 e <- hces_example
@@ -59,7 +63,9 @@ afe <- adult_equivalents(
 intake <- apparent_intake(content, afe, e$households)
 checks <- readiness_checks(intake, linkage_ladder(content, e$households),
                            "iron", min_records_used = 0.95,
-                           min_coverage = 0.9, min_linked_share = 0.9)
+                           min_coverage = 0.9, min_linked_share = 0.9,
+                           households = e$households, domains = "region",
+                           min_n = 30, max_small_cells = 0.5)
 inventory <- readiness_inventory(e[names(e) != "nutrients"], "region")
 readiness_verdict(inventory, checks, domains = "region")
 }

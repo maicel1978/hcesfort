@@ -10,7 +10,11 @@ readiness_checks(
   nutrients,
   min_records_used,
   min_coverage,
-  min_linked_share
+  min_linked_share,
+  households,
+  domains,
+  min_n,
+  max_small_cells
 )
 }
 \arguments{
@@ -26,6 +30,19 @@ assesses (\code{nutrient} of \code{\link[=nutrient_registry]{nutrient_registry()
 \item{min_linked_share}{Minimum share of the included grams and of the
 included expenditure that is linked to the composition table. No
 default.}
+
+\item{households}{The households table the intake was computed from,
+with the domain columns.}
+
+\item{domains}{\code{NULL} or the names of the domain columns of
+\code{households}.}
+
+\item{min_n}{Smallest number of households with an estimated intake a
+value of a domain needs (the \code{min_n} of \link{ref_presentation_standard}).
+No default.}
+
+\item{max_small_cells}{Largest share of the values of a domain that may
+fall below \code{min_n}. No default.}
 }
 \value{
 A tibble: \code{check}, \code{detail} (\code{NA} when the check has one row),
@@ -48,6 +65,7 @@ analysis depends on, with its value and whether it is met.
    \code{composition_value} \tab each nutrient of \code{nutrients} \tab \code{min_coverage} \cr
    \code{linked_grams} \tab  \tab \code{min_linked_share} \cr
    \code{linked_expenditure} \tab  \tab \code{min_linked_share} \cr
+   \code{domain_cells} \tab each domain of \code{domains} \tab \code{max_small_cells} \cr
 }
 
 
@@ -58,6 +76,16 @@ missing value does not fail them, and \code{met} is then missing).
 \code{linked_grams} and \code{linked_expenditure} are the last step of the
 linkage ladder; \code{linked_expenditure} is missing without the column
 \code{expenditure_lcu}.
+
+\code{domain_cells} (DR11) has \code{n} the number of values of the domain in
+\code{households}, and \code{value} the share of them with fewer than \code{min_n}
+households whose intake is estimated (\code{intake_status == "estimated"});
+it is met when \code{value} is at most \code{max_small_cells}, the one check met
+from below. The effective sample size cannot be used: it is known only
+once an estimate exists. A missing value of the domain is one more
+value, as in the cells of \code{\link[=estimate_households]{estimate_households()}}. A domain column
+absent from \code{households} gives missing \code{value} and \code{met};
+\code{\link[=readiness_verdict]{readiness_verdict()}} disables that domain as a missing input.
 }
 \examples{
 e <- hces_example
@@ -73,7 +101,8 @@ intake <- apparent_intake(content, afe, e$households)
 readiness_checks(intake, linkage_ladder(content, e$households),
                  c("iron", "folate", "vitamin_a"),
                  min_records_used = 0.8, min_coverage = 0.9,
-                 min_linked_share = 0.9)
+                 min_linked_share = 0.9, households = e$households,
+                 domains = "region", min_n = 30, max_small_cells = 0.5)
 }
 \seealso{
 \code{\link[=readiness_inventory]{readiness_inventory()}}, \code{\link[=readiness_verdict]{readiness_verdict()}}.
