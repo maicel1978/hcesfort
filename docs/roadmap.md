@@ -86,7 +86,7 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
   - [x] 12d.6 Dependency map; `domain_cells` in the checks and the verdict (C4, C5).
   - [x] 12d.7 Realistic example, part 1: foods table, households and members; the old dataset becomes a test fixture (C7).
   - [x] 12d.8 Realistic example, part 2: acquisitions and user tables; data, documentation, template labels.
-  - [ ] 12d.9 Golden values on the new example and on the fixture (X2).
+  - [x] 12d.9 Golden values on the new example and on the fixture (X2).
   - [ ] 12d.10 Template machinery: exhibit registry, titles, notes, `tinytable`, figures, new `choices`.
   - [ ] 12d.11 Readiness report in English.
   - [ ] 12d.12 Readiness report in Spanish.

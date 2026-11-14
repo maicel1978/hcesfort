@@ -1,10 +1,10 @@
-# Full chain on hces_fixture() against golden values computed without the
-# package (data-raw/golden_example.R, base R and survey only). The choices
-# of the chain are listed in that script. Regression net of the review of
-# v0.1 (M11) and template of the acceptance test.
+# Full chain on the shipped hces_example and on hces_fixture() against
+# golden values computed without the package (data-raw/golden_example.R,
+# base R and survey only). The choices of the chain are listed in that
+# script. Regression net of the review of v0.1 (M11), X2 of the reports v3
+# design, and template of the acceptance test.
 
-golden_chain <- function() {
-  ex <- hces_fixture()
+golden_chain <- function(ex = hces_fixture()) {
   req <- hcesfort::ref_requirements
   n <- nutrient_registry(ex$nutrients)
   g <- convert_units(ex$acquisitions, ex$unit_factors, priority = "food")
@@ -31,63 +31,86 @@ golden_chain <- function() {
   design <- as_hces_design(ex$households, lonely_psu = "adjust")
   list(afe = afe, intake = intake, use = use, s = s, risk = risk, ul = ul,
        groups = groups, shares = food_group_shares(design, groups),
-       design = design)
+       design = design, cols = paste(names(ex$nutrients), ex$nutrients,
+                                     sep = "_"))
 }
 
-test_that("the full chain on hces_fixture() reproduces the golden values", {
-  gold <- utils::read.csv(testthat::test_path("fixtures",
-                                              "golden-example.csv"))
-  gold <- stats::setNames(gold$value, gold$name)
-  ch <- golden_chain()
+# Prevalence of one nutrient in the baseline: Korn-Graubard estimate judged
+# by the presentation standard, as the golden script names its values.
+golden_prevalence <- function(ch, nutrient, suffix) {
+  r <- ch$risk[ch$risk$nutrient == nutrient, ]
+  e <- estimate_households(ch$design, r, "p_inadequate",
+                           ci_method = "korn_graubard")
+  f <- flag_presentation(e[e$scenario == "baseline", ])
+  status <- c(present = 0, review = 1, suppress = 2)
+  stats::setNames(
+    c(f$estimate, f$se, f$ci_low, f$ci_high, f$n_effective,
+      status[[f$presentation]], as.numeric(f$complement_unreliable)),
+    paste0(c("prev", "se", "kg_low", "kg_high", "n_effective",
+             "presentation", "complement_unreliable"), "_", suffix)
+  )
+}
+
+# The package's values under the names of the golden script; `cfg` names
+# the vehicle and the scenarios `one` and `two` of the dataset.
+golden_got <- function(ch, cfg) {
   est <- ch$intake[ch$intake$intake_status == "estimated", ]
   s <- ch$s[ch$s$intake_status == "estimated", ]
-  fs <- s[s$scenario == "flour_and_sugar", ]
-  flour <- ch$use[ch$use$vehicle == "flour" &
-                    ch$use$use_status == "estimated", ]
-  r <- ch$risk
-  pick <- function(e, sc) e[e$scenario == sc, ]
-  folate <- r[r$nutrient == "folate", ]
-  iron <- r[r$nutrient == "iron", ]
-  p_folate <- pick(estimate_households(ch$design, folate, "p_inadequate"),
-                   "baseline")
-  p_iron <- pick(estimate_households(ch$design, iron, "p_inadequate"),
-                 "baseline")
-  d_folate <- pick(estimate_difference(ch$design, folate, "p_inadequate",
-                                       reference = "baseline"), "flour")
-  folic <- ch$ul[ch$ul$nutrient == "folate" &
-                   ch$ul$scenario == "flour_and_sugar", ]
+  two <- s[s$scenario == cfg$two, ]
+  vehicle <- ch$use[ch$use$vehicle == cfg$vehicle &
+                      ch$use$level == "vehicle" &
+                      ch$use$use_status == "estimated", ]
+  folate <- ch$risk[ch$risk$nutrient == "folate", ]
+  d_folate <- estimate_difference(ch$design, folate, "p_inadequate",
+                                  reference = "baseline")
+  d_folate <- d_folate[d_folate$scenario == cfg$one, ]
+  folic <- ch$ul[ch$ul$nutrient == "folate" & ch$ul$scenario == cfg$two, ]
   share <- function(col) {
     ch$shares[ch$shares$food_group == "cereals" &
                 ch$shares$variable == col, ]
   }
-  got <- c(
+  c(
     afe_sum = sum(ch$afe$afe, na.rm = TRUE),
     n_estimated = nrow(est),
     share_records_used = sum(ch$intake$n_records_used) /
       sum(ch$intake$n_records_included),
-    mean_energy_kcal = mean(est$energy_kcal),
-    mean_iron_mg = mean(est$iron_mg),
-    mean_folate_ug_dfe = mean(est$folate_ug_dfe),
-    mean_vitamin_a_ug_rae = mean(est$vitamin_a_ug_rae),
-    mean_flour_g_d = mean(flour$qty_vehicle_g_d),
-    mean_folate_added_flour_and_sugar = mean(fs$folate_ug_dfe_added),
-    mean_vitamin_a_flour_and_sugar = mean(fs$vitamin_a_ug_rae),
-    n_above_folic_acid_ul = sum(folic$above_ul_added, na.rm = TRUE),
-    prev_folate_baseline = p_folate$estimate,
-    se_folate_baseline = p_folate$se,
-    prev_iron_b010_baseline = p_iron$estimate,
-    se_iron_b010_baseline = p_iron$se,
-    diff_folate_flour = d_folate$estimate,
-    se_diff_folate_flour = d_folate$se,
+    stats::setNames(colMeans(est[ch$cols]), paste0("mean_", ch$cols)),
+    mean_vehicle_g_d = mean(vehicle$qty_vehicle_g_d),
+    mean_folate_added_two = mean(two$folate_ug_dfe_added),
+    mean_vitamin_a_two = mean(two$vitamin_a_ug_rae),
+    n_above_folic_acid_ul_two = sum(folic$above_ul_added, na.rm = TRUE),
+    golden_prevalence(ch, "folate", "folate_baseline"),
+    golden_prevalence(ch, "iron", "iron_b010_baseline"),
+    diff_folate_one = d_folate$estimate,
+    se_diff_folate_one = d_folate$se,
     share_cereals_folate = share("folate_ug_dfe")$estimate,
     se_share_cereals_folate = share("folate_ug_dfe")$se,
     share_cereals_iron = share("iron_mg")$estimate,
     se_share_cereals_iron = share("iron_mg")$se
   )
+}
+
+expect_golden <- function(file, ex, cfg) {
+  gold <- utils::read.csv(testthat::test_path("fixtures", file))
+  gold <- stats::setNames(gold$value, gold$name)
+  got <- golden_got(golden_chain(ex), cfg)
   expect_setequal(names(got), names(gold))
   for (nm in names(gold)) {
     expect_equal(got[[nm]], gold[[nm]], tolerance = 1e-8, label = nm)
   }
+}
+
+test_that("the full chain on hces_fixture() reproduces the golden values", {
+  expect_golden("golden-fixture.csv", hces_fixture(),
+                list(vehicle = "flour", one = "flour",
+                     two = "flour_and_sugar"))
+})
+
+test_that("the full chain on hces_example reproduces the golden values", {
+  skip_on_cran()
+  expect_golden("golden-example.csv", hces_example,
+                list(vehicle = "wheat_flour", one = "wheat_flour",
+                     two = "plus_oil"))
 })
 
 test_that("the recalibrated example reads like a survey (H6)", {
