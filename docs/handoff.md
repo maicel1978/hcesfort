@@ -52,7 +52,7 @@ All sixteen questions of section 13 of `docs/design-reports-v3.md` as recommende
 2. **Korn-Graubard:** the own formula is accepted only with its tests against `survey`, `binom.test()` and the published NCHS examples (pp. 8–9), to the stated tolerance. It is a golden test.
 5. **Opening of the results report:** the findings slot for the analyst is omitted from the render when the analyst writes nothing. No placeholder text is ever printed (v1 R3).
 8. **Example:** add zinc, which the ENGIH 2018 analysis included. Five nutrients: iron, zinc, folate, vitamin A and energy. Zinc levels and requirements need a verified source, or `# SOURCE PENDING`.
-13. **UL sentence:** as recommended, stating that the upper limit is one-sided.
+13. **UL sentence:** as recommended; the sentence names the upper limit as the upper limit of the 95% interval and gives the interval method.
 
 Record these in `docs/improvements.md` with the first commit of 12d.1.
 
