@@ -32,7 +32,8 @@ Flag the estimates computed on few households or with a wide interval.
 Nothing is removed: the flag is for reporting. The limits have no
 default: the original ENGIH 2018 analysis used 50 households and a
 half-width of 10 percentage points (0.10 for a proportion), without a
-published source.
+published source. For the published NCHS standards, use
+\code{\link[=flag_presentation]{flag_presentation()}}.
 }
 \examples{
 grams <- convert_units(hces_example$acquisitions,

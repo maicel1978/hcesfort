@@ -50,6 +50,15 @@
   default method does not change. Every estimate table gains the column
   `ci_method` (`"t"` for means and differences, `"woodruff"` for medians,
   `"logit_delta"` for food-group and unlinked shares).
+* `flag_presentation()`: each estimate judged by the NCHS data
+  presentation standards for proportions with the thresholds of
+  `ref_presentation_standard` (present, review or suppress, with the
+  reason and whether the complement is unreliable). Proportions follow the
+  flow chart of the standards and must carry the Korn-Graubard interval;
+  means, medians, differences and shares are judged on sample size and
+  degrees of freedom only, as the standards give no thresholds for them.
+  It reproduces the published decisions of Tables I and II of the report.
+  `flag_precision()` stays for callers with their own limits.
 * `adult_equivalents()`: adult female equivalents per household from the
   energy requirement of each member (FAO/WHO/UNU 2004 tables for infants
   and children; BMR times PAL for adults, with weights and PAL given by the

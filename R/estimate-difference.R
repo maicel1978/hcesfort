@@ -109,7 +109,8 @@ check_reference_scenario <- function(x, reference, call = rlang::caller_env()) {
 #' Nothing is removed: the flag is for reporting. The limits have no
 #' default: the original ENGIH 2018 analysis used 50 households and a
 #' half-width of 10 percentage points (0.10 for a proportion), without a
-#' published source.
+#' published source. For the published NCHS standards, use
+#' [flag_presentation()].
 #'
 #' @param estimates Table returned by [estimate_households()] or
 #'   [estimate_difference()].

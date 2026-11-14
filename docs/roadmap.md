@@ -81,7 +81,7 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
   - [x] 12d.1 IOM page citations in `data-raw/` re-read and corrected (P124); the setup script of the `hcesfort` environment has `ggplot2`; `tinytable` still to add (P126, open).
   - [x] 12d.2 `ref_presentation_standard` (C1).
   - [x] 12d.3 `ci_method = "korn_graubard"`; column `ci_method` (C2).
-  - [ ] 12d.4 `flag_presentation()` (C3).
+  - [x] 12d.4 `flag_presentation()` (C3).
   - [ ] 12d.5 `short_label` and label type `compound` (C6).
   - [ ] 12d.6 Dependency map; `domain_cells` in the checks and the verdict (C4, C5).
   - [ ] 12d.7 Realistic example, part 1: foods table, households and members; the old dataset becomes a test fixture (C7).
