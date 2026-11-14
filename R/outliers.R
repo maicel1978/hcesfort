@@ -65,9 +65,9 @@ flag_outliers <- function(grams, by, scale, level, probs, multiplier,
   check_outlier_args(g, by, probs, multiplier, min_group, type)
   divisor <- outlier_divisor(g, scale, afe)
   unit <- if (level == "record") seq_len(nrow(g)) else
-    group_id(g, c("household_id", by))
+    group_index(g, c("household_id", by))
   value <- unit_value(g$qty_g_d, unit, divisor)
-  group <- group_id(g, by)[match(seq_len(max(0L, unit)), unit)]
+  group <- group_index(g, by)[match(seq_len(max(0L, unit)), unit)]
   res <- assess_groups(value, group, probs, multiplier, min_group, type)
   out <- dplyr::as_tibble(g)
   out$outlier <- ifelse(is.na(g$qty_g_d), NA, res$flag[unit])
@@ -79,7 +79,7 @@ flag_outliers <- function(grams, by, scale, level, probs, multiplier,
 
 # An integer id per distinct combination of the columns `cols` of `x`;
 # missing values form their own group.
-group_id <- function(x, cols) {
+group_index <- function(x, cols) {
   keys <- dplyr::as_tibble(x)[cols]
   dplyr::group_indices(dplyr::group_by(keys, dplyr::across(dplyr::all_of(
     cols

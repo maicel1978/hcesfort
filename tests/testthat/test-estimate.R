@@ -468,3 +468,17 @@ test_that("a table keyed by household only is one group", {
   expect_identical(nrow(estimate_households(es_design(), one, "intake",
                                             statistic = "median")), 1L)
 })
+
+# P132: the cells of `by` pair each label with its own households, whatever
+# the order of the values (mixed case, missing values).
+test_that("by_cells() pairs each level with its households", {
+  h <- hces_example$households
+  h$region <- rep(c("b", "B", "a", NA), length.out = nrow(h))
+  d <- as_hces_design(h, lonely_psu = "adjust")
+  cells <- hcesfort:::by_cells(d, "region")
+  for (i in seq_len(nrow(cells$levels))) {
+    expect_identical(unique(h$region[cells$masks[[i]]]),
+                     cells$levels$region[[i]])
+  }
+  expect_identical(sum(vapply(cells$masks, sum, integer(1))), nrow(h))
+})
