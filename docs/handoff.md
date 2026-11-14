@@ -63,6 +63,14 @@ report, read it, settle its wording against section 8 of
 English, builders R0 to RT3 in `_results.R` (K19 to K26), with P140
 applied as the maintainer decides.
 
+## Answers of the maintainer (2026-11-14, after 12d.11)
+
+1. **P140:** option (a): about 1% of households with a short food list and no staple purchases, so that R1.4 has a small nonzero estimate. Re-check the calibration test and regenerate the golden values from the independent script.
+2. **D9 long tail:** the histogram shows the plausible range used by the readiness checks; households above the upper bound are not drawn but counted in the note ("n households above <bound> kcal, not shown"). Nothing is dropped from the data.
+3. **Lint warnings in untouched tests:** confirm on CI after the merge into `main`. If CI also reports them, fix them in the first commit of the next step.
+
+Record these in `docs/improvements.md` with the first commit of the next step.
+
 ## Recommended model for the next session
 
 **Opus** (12d.12 is short; 12d.13 is implementation). This session stops
