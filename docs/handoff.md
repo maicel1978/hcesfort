@@ -22,17 +22,22 @@ installed). `devtools::check()`: 0 errors, 0 warnings, 0 notes.
 
 ## Exact next step
 
-1. **Maintainer:** merge the branch into `main` (or open a pull request:
-   the workflow runs on `main` and on pull requests, not on this branch's
-   pushes) and check that CI run: the job
-   `ubuntu-latest (release)` must run, not skip, the test "the template
-   renders with Quarto when it is installed" (P123). If it fails, return
-   to Opus with the log.
-2. **Maintainer:** acceptance C2: render both reports, in both languages,
-   on ENGIH 2018 in the companion repository, and read them. Task 12c is
-   ticked only after this.
-3. **Next task:** 12, vignettes in English and Spanish (Sonnet, per
-   `docs/model-routing.md`).
+CI on `main` (`00223dd`) passed on all jobs. In the `ubuntu-latest (release)` job, the Quarto render test ran and passed; the 4 skips are the installed-package skips. P123 is closed.
+
+The maintainer rendered both Spanish reports on `hces_example` and reviewed them (2026-11-14). The result is `docs/report-requirements-v2.md` (approved) and roadmap task 12d.
+
+**Fable** writes `docs/design-reports-v3.md` (task 12d.0) from `docs/report-requirements-v2.md`, read together with v1 and `docs/design-reports-v2.md`. The design covers:
+
+- both reports (DR9–DR13, R15–R24);
+- the presentation standard R18: verify the NCHS thresholds in the document itself (Parker et al. 2017, Vital Health Stat 2(175)) and cite the page;
+- the UL statements of R21: verify them in the IOM reports;
+- the realistic example (X1–X2): structure, sizes, vehicles, scenario levels labelled as invented, and the seeded generating script;
+- robustness and change (Q1–Q3);
+- the commit plan for 12d.1 onwards.
+
+Act as a hostile but fair journal reviewer and as an information designer. Ask all questions at once, numbered, each with a recommendation. Stop for approval; no package code in 12d.0.
+
+Acceptance C2 (render with ENGIH 2018) moves to after 12d. Task 12 (vignettes) waits for 12d.
 
 ## Open questions (in `docs/improvements.md`)
 
@@ -41,7 +46,7 @@ and P122 (larger fixture for the median) are low priority.
 
 ## Recommended model for the next session
 
-**Sonnet 5.5** (task 12, vignettes), after the CI run and C2.
+**Fable**, effort high (12d.0). Then Opus (12d.1 onwards).
 
 ## Maintainer review points
 

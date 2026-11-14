@@ -75,6 +75,10 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
   - [x] 12c.12 Results report in Spanish.
   - [x] 12c.13 Quarto in CI; specification, `NEWS.md`, self-review; handoff for the maintainer's render on ENGIH 2018 (acceptance C2).
 
+- [ ] 12d. Reports v3 and a realistic example, after the maintainer's review of the v2 renders (2026-11-14). Requirements: `docs/report-requirements-v2.md` (approved 2026-11-14). Comes before task 12 and before the ENGIH adapter work resumes.
+  - [ ] 12d.0 Design (`docs/design-reports-v3.md`): both reports (DR9–DR13, R15–R24), the presentation standard (R18), the realistic example (X1–X2), and robustness and change (Q1–Q3); commit plan. Model: Fable. No package code.
+  - [ ] 12d.1+ Implementation in commits of at most 300 lines. Model: Opus.
+
 ## v0.1, companion repository `hcesfort.engih2018`: ENGIH 2018 adapter (needs the microdata)
 - [ ] A1. Stage-level control figures exported from the original pipeline (record counts by section and drop cause, grams by section, AFE distribution, median intake per nutrient), md5 of the microdata, and the three checks left open on E4 (energy of Sec 3A alone by days with a record, upper tail by days, the eighth day) plus the number of records in dozens (E2). Run by the maintainer when the microdata are at hand.
 - [ ] A2. Thin adapter: ENGIH files → standard tables that pass the contracts of task 2. Start right after task 2 so the contracts meet a real survey early.
