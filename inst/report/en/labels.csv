@@ -1,40 +1,59 @@
-type,parent,code,label
-nutrient,,energy,Energy
-nutrient,,iron,Iron
-nutrient,,folate,Folate
-nutrient,,vitamin_a,Vitamin A
-unit,,kcal,kcal
-unit,,mg,mg
-unit,,ug,µg
-unit,,ug_dfe,µg DFE
-unit,,ug_rae,µg RAE
-vehicle,,flour,Wheat flour
-vehicle,,bread,Bread
-vehicle,,pasta,Pasta
-vehicle,,sugar,Sugar
-vehicle_group,,wheat_flour,"Wheat flour (any form)"
-vehicle_group,,any_vehicle,Any vehicle
-scenario,,baseline,Without fortification
-scenario,,flour,Flour fortification
-scenario,,flour_and_sugar,Flour and sugar fortification
-domain,,region,Region
-domain,,expenditure_group,Expenditure quintile
-domain_value,region,north,North
-domain_value,region,south,South
-domain_value,expenditure_group,Q1,Q1 (lowest expenditure)
-domain_value,expenditure_group,Q2,Q2
-domain_value,expenditure_group,Q3,Q3
-domain_value,expenditure_group,Q4,Q4
-domain_value,expenditure_group,Q5,Q5 (highest expenditure)
-food_group,,cereals,Cereals
-food_group,,pulses,Pulses
-food_group,,fats_and_oils,Fats and oils
-food_group,,sugars,Sugars
-food_group,,dairy,Dairy
-food_group,,meat,Meat
-food_group,,fruits,Fruits
-food_group,,vegetables,Vegetables
-food_group,,unclassified,No group assigned
-form,,folic_acid,folic acid
-form,,retinol,retinol
-source,,synthetic: invented,Invented for the example
+type,parent,code,label,short_label
+nutrient,,energy,Energy,
+nutrient,,iron,Iron,
+nutrient,,zinc,Zinc,
+nutrient,,folate,Folate,
+nutrient,,vitamin_a,Vitamin A,
+unit,,kcal,kcal,
+unit,,mg,mg,
+unit,,ug,µg,
+unit,,ug_dfe,µg DFE,
+unit,,ug_rae,µg RAE,
+vehicle,,wheat_flour,Wheat flour,
+vehicle,,bread,Bread,
+vehicle,,pasta,Pasta,
+vehicle,,maize_flour,Maize flour,
+vehicle,,rice,Rice,
+vehicle,,sugar,Sugar,
+vehicle,,oil,Vegetable oil,Oil
+vehicle_group,,wheat_flour,"Wheat flour (any form)",Wheat flour
+vehicle_group,,any_vehicle,Any vehicle,
+scenario,,baseline,Without fortification,Baseline
+scenario,,wheat_flour,"Wheat flour with iron, zinc and folic acid",Wheat flour
+scenario,,plus_maize,"Wheat and maize flour with iron, zinc and folic acid",+ maize flour
+scenario,,plus_rice,"Wheat and maize flour, and rice with iron and folic acid",+ rice
+scenario,,plus_sugar,"Wheat and maize flour, rice, and sugar with vitamin A",+ sugar
+scenario,,plus_oil,"Wheat and maize flour, rice, sugar, and oil with vitamin A",+ oil
+domain,,region,Region,
+domain,,area,Area,
+domain,,expenditure_group,Expenditure quintile,Quintile
+domain_value,region,north,North,
+domain_value,region,central,Central,
+domain_value,region,south,South,
+domain_value,area,urban,Urban,
+domain_value,area,rural,Rural,
+domain_value,expenditure_group,Q1,Q1 (lowest expenditure),Q1
+domain_value,expenditure_group,Q2,Q2,
+domain_value,expenditure_group,Q3,Q3,
+domain_value,expenditure_group,Q4,Q4,
+domain_value,expenditure_group,Q5,Q5 (highest expenditure),Q5
+food_group,,cereals,Cereals,
+food_group,,roots_and_tubers,Roots and tubers,
+food_group,,pulses,Pulses,
+food_group,,meat_and_fish,Meat and fish,
+food_group,,eggs,Eggs,
+food_group,,dairy,Dairy,
+food_group,,fats_and_oils,Fats and oils,
+food_group,,sugars,Sugars,
+food_group,,vegetables,Vegetables,
+food_group,,fruits,Fruits,
+food_group,,beverages,Beverages,
+food_group,,unclassified,No group assigned,
+form,,folic_acid,folic acid,
+form,,retinol,retinol,
+compound,,ferrous fumarate,ferrous fumarate,
+compound,,sodium iron EDTA,sodium iron EDTA,
+compound,,ferric pyrophosphate,ferric pyrophosphate,
+compound,,zinc oxide,zinc oxide,
+compound,,vitamin A compound (invented),vitamin A compound (invented),
+source,,synthetic: invented,Invented for the example,

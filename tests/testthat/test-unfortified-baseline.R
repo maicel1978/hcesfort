@@ -191,9 +191,9 @@ test_that("invariant: results do not depend on row order", {
 })
 
 test_that("the example data run end to end", {
-  nutrients <- nutrient_registry(hces_fixture$nutrients)
-  out <- unfortified_baseline(hces_fixture$composition,
-                              hces_fixture$enrichment, nutrients)
+  nutrients <- nutrient_registry(hces_fixture()$nutrients)
+  out <- unfortified_baseline(hces_fixture()$composition,
+                              hces_fixture()$enrichment, nutrients)
   # Pasta C04: iron 3.3 - (3 - 1.2) = 1.5; folate 400 - (290 - 26) = 136.
   expect_equal(out$iron_mg[out$composition_id == "C04"], 1.5)
   expect_equal(out$folate_ug_dfe[out$composition_id == "C04"], 136)

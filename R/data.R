@@ -1,61 +1,83 @@
 #' Synthetic example survey
 #'
-#' An invented household survey, with every table hcesfort takes as input,
-#' for examples, tests and vignettes. **All values are invented**: nothing
-#' comes from a real survey, food composition table or fortification
-#' standard, and the numbers must not be used for analysis. The tables are
-#' plain data frames in the standard schemas ([hces_schema()]); they pass
-#' the validators of the package.
+#' An invented household survey of realistic size, with every table
+#' hcesfort takes as input, for examples, the report templates and
+#' vignettes. **All values are invented**: nothing comes from a real
+#' survey, food composition table or fortification standard, and the
+#' numbers must not be used for analysis. The tables are plain data frames
+#' in the standard schemas ([hces_schema()]); they pass the validators of
+#' the package.
 #'
-#' The data contain, on purpose, the cases the package has to handle and
-#' count: a household that did not answer the food module and one without
-#' acquisitions; a member without age and one without sex; an acquisition
-#' without quantity, one without unit, one left out by the section rule,
-#' one with an implausibly large quantity and one in a unit without factor
-#' (`"sack"`); a milk record in cups, a volume unit without a density for
-#' milk; two recall periods (7 and 30 days); an unmatched and an
-#' unvalidated food; a missing nutrient value
-#' and two enriched composition rows with the rules that remove what
-#' enrichment added; a food with two vehicles of different groups; a
-#' scenario that fortifies only some vehicles of a group; a scenario level
-#' given for a compound; a grouping of foods that leaves the egg without a
-#' group. The planted defects stay in a few records, so
-#' that most included records reach the intake.
+#' The sample has 3 regions by urban and rural area (6 strata) and 200
+#' primary sampling units of 10 households, so 194 design degrees of
+#' freedom. Weights are unequal (a base weight of the stratum times a
+#' factor of the unit), and households of one unit are alike in wealth and
+#' in what they acquire, so design effects are above 1, as in a real
+#' survey. Household size falls with wealth.
 #'
-#' Quantities were recalibrated (2026-11-12) so that results read like a
-#' survey: the median apparent energy intake is about 2,200 kcal per adult
-#' female equivalent per day, iron, folate and vitamin A straddle their
-#' requirements, and the scenario `flour_and_sugar` takes a few households
-#' above the upper level of folic acid.
+#' The data contain, at rates of a real survey, the cases the package has
+#' to handle and count: households that did not answer the food module and
+#' households without acquisitions; members without age or sex (their
+#' households have no adult female equivalents); acquisitions without
+#' quantity or unit, left out by the section rule, with a quantity ten
+#' times too large, or in a unit without factor (`"sack"`); milk in cups, a
+#' volume unit without a density for milk; two recall periods (7 and 30
+#' days); an unmatched food, an unvalidated match and a food without edible
+#' portion; a missing nutrient value; two enriched foods with the rules
+#' that remove what enrichment added (by reference foods and by the amount
+#' added); a food with two vehicles; a scenario level given for a
+#' compound; a food without group.
+#'
+#' Quantities were calibrated so that results read like a survey: the
+#' median apparent energy intake is near the requirement of the reference
+#' woman of the examples; the share below the requirement of iron, zinc,
+#' folate and vitamin A without fortification lies between 20% and 80%
+#' and falls from the lowest to the highest expenditure quintile; among
+#' households with plausible energy, only folic acid passes its upper
+#' level, and only in the scenarios that fortify rice.
+#'
+#' Until 2026-11-14 `hces_example` was a dataset of 40 households; it is
+#' kept as a fixture of the test suite.
 #'
 #' @format A list of eleven elements:
 #' \describe{
-#'   \item{households}{40 households in 2 strata and 8 primary sampling
-#'     units, with two domains: `region` and an invented
-#'     `expenditure_group` (`"Q1"`, the lowest, to `"Q5"`, eight households
-#'     each).}
+#'   \item{households}{2,000 households with three domains: `region`
+#'     (`"north"`, `"central"`, `"south"`), `area` (`"urban"`, `"rural"`)
+#'     and `expenditure_group`, weighted quintiles of food expenditure per
+#'     member (`"Q1"`, the lowest, to `"Q5"`; missing for households that
+#'     did not answer the food module).}
 #'   \item{members}{Members of the households, with age, sex and pregnancy
 #'     and lactation flags.}
-#'   \item{acquisitions}{Food acquisitions in survey units, with an
-#'     invented expenditure (`expenditure_lcu`) for every record, also
-#'     those without quantity or unit factor.}
+#'   \item{acquisitions}{Food acquisitions in survey units, with the
+#'     origin and an expenditure (`expenditure_lcu`, the value imputed to
+#'     own production and gifts) for every record, also those without
+#'     quantity or unit factor.}
 #'   \item{unit_factors}{Factors from survey units to grams, millilitres
 #'     or pieces.}
-#'   \item{crosswalk}{Survey foods matched to the composition table.}
+#'   \item{crosswalk}{The 46 survey foods matched to the composition
+#'     table.}
 #'   \item{nutrients}{Named character vector of units for
-#'     [nutrient_registry()]: energy, iron, folate and vitamin A.}
-#'   \item{composition}{An invented composition table of 14 foods, per
-#'     100 g edible portion.}
+#'     [nutrient_registry()]: energy, iron, zinc, folate and vitamin A.}
+#'   \item{composition}{An invented composition table, per 100 g edible
+#'     portion, with an enriched wheat flour used as a reference.}
 #'   \item{enrichment}{What enrichment added to the enriched pasta and
-#'     flour, for [unfortified_baseline()].}
+#'     breakfast cereal, for [unfortified_baseline()].}
 #'   \item{vehicles}{Fraction of each food that is a fortification
-#'     vehicle, by product class, with a vehicle group.}
-#'   \item{scenarios}{Two invented fortification scenarios.}
+#'     vehicle (rice; wheat flour, bread and pasta, in the group
+#'     `"wheat_flour"`; maize flour; sugar; vegetable oil; a biscuit that
+#'     carries flour and sugar).}
+#'   \item{scenarios}{Five invented scenarios, each adding to the one
+#'     before: wheat flour with iron, zinc and folic acid (`"wheat_flour"`);
+#'     the same plus maize flour (`"plus_maize"`); plus rice with iron and
+#'     folic acid (`"plus_rice"`); plus vitamin A in sugar (`"plus_sugar"`);
+#'     plus vitamin A in oil (`"plus_oil"`). Levels and compliance are
+#'     invented; iron rows name a compound.}
 #'   \item{food_groups}{An invented grouping of the survey foods, for
-#'     [food_group_intake()]; the egg has no group.}
+#'     [food_group_intake()]; salt has no group.}
 #' }
 #' @source Invented by the package authors; built by
-#'   `data-raw/hces_example.R` in the source repository.
+#'   `data-raw/hces_example.R` from `data-raw/example_foods.csv` in the
+#'   source repository.
 #' @examples
 #' survey <- validate_survey(
 #'   hces_example$households, hces_example$members,

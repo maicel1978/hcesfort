@@ -375,6 +375,15 @@
   variation in the sample leaves its table for one sentence; a scenario may be
   compared with another scenario (`choices$comparator`). The previous
   `report.qmd`, `_headlines.R` and `actions.csv` are removed.
+* **Breaking:** `hces_example` is replaced by a realistic synthetic survey
+  of 2,000 households (6 strata, 200 primary sampling units, unequal
+  weights, design effects above 1), 46 foods, five nutrients (zinc added)
+  and five cumulative scenarios, with the planted defects at survey-like
+  rates and results calibrated to read like a survey. Values are still all
+  invented; table, column, food and scenario codes change. The domains are
+  `region`, `area` and `expenditure_group`. The former 40 households are
+  kept as a test fixture. The report templates use the new codes and
+  labels.
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is

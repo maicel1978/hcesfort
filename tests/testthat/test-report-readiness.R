@@ -95,8 +95,9 @@ test_that("the readiness report knits on hces_example (K1, K3, K10)", {
     expect_true(file.exists(file.path(r$dir, "readiness-sessionInfo.txt")))
     expect_setequal(names(r$tables), c(
       "inventory", "checks", "ladder", "queue", "unlinked", "unlinked_region",
-      "unlinked_expenditure_group", "energy", "energy_region",
-      "energy_expenditure_group", "decisions", "verdict"
+      "unlinked_area", "unlinked_expenditure_group", "energy",
+      "energy_region", "energy_area", "energy_expenditure_group",
+      "decisions", "verdict"
     ))
     expect_false(grepl("Analyst|Analista", strip_comments(r$md),
                        ignore.case = TRUE), info = lang)
@@ -116,7 +117,8 @@ test_that("every figure has axis titles, data and its table (K5)", {
   for (lang in report_langs) {
     r <- knit_report(lang, "readiness")
     expect_setequal(names(r$figures),
-                    c("queue", "energy_region", "energy_expenditure_group"))
+                    c("queue", "energy_region", "energy_area",
+                      "energy_expenditure_group"))
     for (id in names(r$figures)) {
       g <- r$figures[[id]]
       expect_s3_class(g, "ggplot")
@@ -197,13 +199,15 @@ test_that("absent optional inputs leave one sentence each (P5)", {
 
 test_that("a domain with too many small cells is disabled (U15, DR11)", {
   skip_if_no_knit()
-  r <- knit_report("en", "readiness",
-                   append = "choices$max_small_cells <- 0.5")
+  # Each expenditure quintile has fewer than 450 households with an
+  # estimated intake; every region and area has more.
+  r <- knit_report("en", "readiness", append = "choices$min_n <- 450")
   v <- r$tables$verdict
   small <- "Values of the domain with few households"
-  expect_identical(sum(r$tables$checks$check == small), 2L)
+  expect_identical(sum(r$tables$checks$check == small), 3L)
   expect_true(all(grepl(small, v$expenditure_group, fixed = TRUE)))
   expect_identical(v$region, v$national)
+  expect_identical(v$area, v$national)
 })
 
 test_that("energy must be a registry nutrient in kcal", {

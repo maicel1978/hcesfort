@@ -43,7 +43,7 @@ test_that("order ranks by records or by expenditure", {
 
 test_that("cumulative shares rise to 1 from the last step of the ladder", {
   for (case in list(list(lk_content(), lk_households()),
-                    list(example_content(), hces_fixture$households))) {
+                    list(example_content(), hces_fixture()$households))) {
     u <- unmatched_foods(case[[1]], case[[2]])
     l <- linkage_ladder(case[[1]], case[[2]])
     last <- l[l$step == "validated", ]

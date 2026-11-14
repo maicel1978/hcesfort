@@ -49,12 +49,16 @@ compliance_model <- "average_content"
 
 # ---- Choices shared by both reports ----------------------------------
 choices <- list(
-  nutrients = c("iron", "folate", "vitamin_a"),
+  nutrients = c("iron", "zinc", "folate", "vitamin_a"),
   energy = "energy", # registry name of energy, or NULL
-  domains = c("region", "expenditure_group"),
+  domains = c("region", "area", "expenditure_group"),
   equity_domains = "expenditure_group",
-  comparator = NULL, # NULL: every scenario against "baseline"
-  min_n = 8, # example value: shows a suppressed and a shown cell
+  # NULL: every scenario against "baseline". To compare each addition
+  # with the wheat-flour scenario instead:
+  # comparator = c(plus_maize = "wheat_flour", plus_rice = "wheat_flour",
+  #                plus_sugar = "wheat_flour", plus_oil = "wheat_flour"),
+  comparator = NULL,
+  min_n = 8, # example value
   max_half_width = 0.15,
   # Largest share of the values of a domain with fewer than min_n
   # households with an estimated intake; above it the domain is disabled.

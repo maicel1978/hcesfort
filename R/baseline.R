@@ -62,7 +62,8 @@
 #' baseline <- unfortified_baseline(
 #'   hces_example$composition, hces_example$enrichment, nutrients
 #' )
-#' baseline[baseline$composition_id %in% c("C04", "C13"),
+#' # The enriched pasta (C04) and breakfast cereal (C07).
+#' baseline[baseline$composition_id %in% c("C04", "C07"),
 #'          c("composition_id", "iron_mg", "folate_ug_dfe", "baseline_status")]
 #' subset(audit_log(baseline), step == "unfortified_baseline")
 #' @export

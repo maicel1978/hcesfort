@@ -205,16 +205,16 @@ test_that("invariants: row order, scaling, households order", {
 })
 
 test_that("the example chain runs to estimates", {
-  g <- convert_units(hces_fixture$acquisitions, hces_fixture$unit_factors,
+  g <- convert_units(hces_fixture()$acquisitions, hces_fixture()$unit_factors,
                      priority = "food")
   afe <- new_hces_tbl(
-    data.frame(household_id = hces_fixture$households$household_id,
+    data.frame(household_id = hces_fixture()$households$household_id,
                n_members = 1, afe = 1),
     "hces_afe", key = "household_id"
   )
-  use <- vehicle_coverage(g, hces_fixture$vehicles, afe,
-                          hces_fixture$households)
-  d <- as_hces_design(hces_fixture$households, lonely_psu = "adjust")
+  use <- vehicle_coverage(g, hces_fixture()$vehicles, afe,
+                          hces_fixture()$households)
+  d <- as_hces_design(hces_fixture()$households, lonely_psu = "adjust")
   e <- estimate_households(d, use, "acquired", by = "region")
   expect_identical(nrow(e), 5L * 2L)
   ci <- !is.na(e$ci_low)
@@ -472,7 +472,7 @@ test_that("a table keyed by household only is one group", {
 # P132: the cells of `by` pair each label with its own households, whatever
 # the order of the values (mixed case, missing values).
 test_that("by_cells() pairs each level with its households", {
-  h <- hces_fixture$households
+  h <- hces_fixture()$households
   h$region <- rep(c("b", "B", "a", NA), length.out = nrow(h))
   d <- as_hces_design(h, lonely_psu = "adjust")
   cells <- hcesfort:::by_cells(d, "region")

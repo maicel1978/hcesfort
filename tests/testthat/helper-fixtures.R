@@ -131,4 +131,6 @@ fixture_scenarios <- function() {
 # built by fixtures/hces_fixture.R. Unit tests whose expected values are
 # worked out by hand on these households use this fixture, not the shipped
 # realistic example.
-hces_fixture <- readRDS(testthat::test_path("fixtures", "hces-fixture.rds"))
+hces_fixture <- function() {
+  readRDS(testthat::test_path("fixtures", "hces-fixture.rds"))
+}

@@ -56,7 +56,7 @@ test_that("the national row has no comparison", {
 
 test_that("nationally, 1 - estimate is the last step of the ladder", {
   for (case in list(list(lk_content(), lk_households()),
-                    list(example_content(), hces_fixture$households))) {
+                    list(example_content(), hces_fixture()$households))) {
     design <- as_hces_design(case[[2]], lonely_psu = "adjust")
     l <- linkage_ladder(case[[1]], case[[2]])
     for (m in c("grams", "expenditure")) {

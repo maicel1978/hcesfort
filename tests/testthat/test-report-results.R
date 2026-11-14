@@ -29,7 +29,8 @@ say_results <- list(
 labels_of_type <- function(lang, type) {
   file <- system.file("report", lang, "labels.csv", package = "hcesfort")
   d <- utils::read.csv(file, encoding = "UTF-8", stringsAsFactors = FALSE)
-  d$label[d$type == type]
+  rows <- d$type == type
+  stats::setNames(d$label[rows], d$code[rows])
 }
 
 # Label of one code of terms.csv of `lang`.
@@ -180,25 +181,26 @@ test_that("a scenario may be compared with another scenario (K16)", {
   skip_if_no_knit()
   r <- knit_report(
     "en", "results",
-    append = "choices$comparator <- c(flour_and_sugar = 'flour')"
+    append = "choices$comparator <- c(plus_maize = 'wheat_flour')"
   )
   scenario <- labels_of_type("en", "scenario")
-  names(scenario) <- c("baseline", "flour", "flour_and_sugar")
   for (id in c("effects_iron", "equity_iron_expenditure_group")) {
     d <- r$tables[[id]]
-    rows <- d$scenario == scenario[["flour_and_sugar"]]
+    rows <- d$scenario == scenario[["plus_maize"]]
     expect_true(any(rows), info = id)
-    expect_true(all(d$comparator[rows] == scenario[["flour"]]), info = id)
+    expect_true(all(d$comparator[rows] == scenario[["wheat_flour"]]),
+                info = id)
     expect_true(all(d$comparator[!rows] == scenario[["baseline"]]),
                 info = id)
   }
   d <- r$tables$effects_iron
-  expect_equal(d$from[d$scenario == scenario[["flour_and_sugar"]]],
-               d$to[d$scenario == scenario[["flour"]]])
+  expect_equal(d$from[d$scenario == scenario[["plus_maize"]]],
+               d$to[d$scenario == scenario[["wheat_flour"]]])
   expect_identical(r$figures$effects_iron$data$from, d$from)
-  for (bad in c("c(flour = 'flour_and_sugar', flour_and_sugar = 'flour')",
-                "c(flour = 'flour')", "c(flour = 'sugar_only')",
-                "c(baseline = 'flour')", "'flour'")) {
+  for (bad in c("c(plus_maize = 'plus_rice', plus_rice = 'plus_maize')",
+                "c(plus_maize = 'plus_maize')",
+                "c(plus_maize = 'sugar_only')",
+                "c(baseline = 'wheat_flour')", "'wheat_flour'")) {
     expect_error(knit_report("en", "results",
                              append = paste("choices$comparator <-", bad)),
                  class = "hcesfort_error_argument")

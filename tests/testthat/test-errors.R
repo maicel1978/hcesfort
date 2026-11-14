@@ -57,7 +57,7 @@ test_that("tryCatch() on hcesfort_error catches every type", {
 
 # Missing required arguments and unclear messages (review of v0.1, M9, L3).
 test_that("every missing required argument is one classed error", {
-  err <- expect_error(adult_equivalents(hces_fixture$members),
+  err <- expect_error(adult_equivalents(hces_fixture()$members),
                       class = "hcesfort_error_argument")
   expect_identical(err$args, c("reference_kcal", "weight_kg", "pal"))
   expect_identical(err$arg, "reference_kcal")
@@ -65,7 +65,7 @@ test_that("every missing required argument is one classed error", {
   err <- expect_error(flag_outliers(), class = "hcesfort_error_argument")
   expect_identical(err$args, c("grams", "by", "scale", "level", "probs",
                                "multiplier", "min_group"))
-  expect_error(check_crosswalk(hces_fixture$crosswalk),
+  expect_error(check_crosswalk(hces_fixture()$crosswalk),
                class = "hcesfort_error_argument")
   expect_error(inadequacy(), class = "hcesfort_error_argument")
   expect_error(hces_schema(), class = "hcesfort_error_argument")

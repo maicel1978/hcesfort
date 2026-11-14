@@ -87,7 +87,9 @@ reference_energy <- function(sex, age_years, weight_kg, pal,
 #'   weight_kg = c(female = 55, male = 65), pal = 1.76
 #' )
 #' use <- vehicle_coverage(grams, ex$vehicles, afe, ex$households)
-#' flour <- use[use$vehicle == "flour", ]
+#' # Wheat flour in any form: the vehicle group, flour in bread and pasta
+#' # included.
+#' flour <- use[use$vehicle == "wheat_flour" & use$level == "group", ]
 #' flour$flour_g_d <- flour$qty_vehicle_g_d_pc * flour$n_members
 #' h <- merge(ex$households,
 #'            flour[c("household_id", "use_status", "flour_g_d", "n_members")],

@@ -60,7 +60,7 @@ lk_content <- function(a = lk_acquisitions()) {
 # TRUE` the biscuit match is validated, so its missing folate value enters
 # the intake and the coverage of folate falls below 1.
 example_content <- function(biscuit = FALSE) {
-  e <- hces_fixture
+  e <- hces_fixture()
   cw <- e$crosswalk
   if (biscuit) {
     cw$validated[cw$food_code == "biscuit"] <- TRUE
@@ -106,7 +106,7 @@ reference_design <- function(case) {
 # The example survey up to the apparent intake, with its content and
 # ladder.
 example_chain <- function(biscuit = FALSE) {
-  e <- hces_fixture
+  e <- hces_fixture()
   content <- example_content(biscuit)
   afe <- adult_equivalents(
     e$members,
@@ -120,13 +120,13 @@ example_chain <- function(biscuit = FALSE) {
 
 # The example tables as supplied to readiness_inventory().
 example_tables <- function() {
-  e <- hces_fixture
+  e <- hces_fixture()
   e[names(e) != "nutrients"]
 }
 
 # readiness_checks() on the example without domains.
 rc <- function(...) {
-  readiness_checks(..., households = hces_fixture$households,
+  readiness_checks(..., households = hces_fixture()$households,
                    domains = NULL, min_n = 1, max_small_cells = 0)
 }
 
@@ -138,7 +138,7 @@ verdict_fixture <- function(tables = example_tables(), domains = "region",
     inventory = readiness_inventory(tables, domains = domains),
     checks = readiness_checks(ch$intake, ch$ladder, c("iron", "folate"),
                               min_used, 0.9, 0.9,
-                              hces_fixture$households,
+                              hces_fixture()$households,
                               domains, min_n = 1, max_small_cells = 0)
   )
 }
@@ -148,7 +148,7 @@ verdict_fixture <- function(tables = example_tables(), domains = "region",
 # `size` typed by hand.
 small_cell_fixture <- function() {
   ch <- example_chain()
-  h <- hces_fixture$households
+  h <- hces_fixture()$households
   est <- ch$intake$intake_status == "estimated"
   # "big": the first 30 estimated households; "small": the other 6
   # estimated ones; "empty": the 4 not estimated.

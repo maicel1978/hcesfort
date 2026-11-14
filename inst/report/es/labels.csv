@@ -1,40 +1,59 @@
-type,parent,code,label
-nutrient,,energy,Energía
-nutrient,,iron,Hierro
-nutrient,,folate,Folato
-nutrient,,vitamin_a,Vitamina A
-unit,,kcal,kcal
-unit,,mg,mg
-unit,,ug,µg
-unit,,ug_dfe,µg EFD
-unit,,ug_rae,µg RAE
-vehicle,,flour,Harina de trigo
-vehicle,,bread,Pan
-vehicle,,pasta,Pastas
-vehicle,,sugar,Azúcar
-vehicle_group,,wheat_flour,"Harina de trigo (cualquier forma)"
-vehicle_group,,any_vehicle,Cualquier vehículo
-scenario,,baseline,Sin fortificación
-scenario,,flour,Fortificación de la harina
-scenario,,flour_and_sugar,Fortificación de la harina y el azúcar
-domain,,region,Región
-domain,,expenditure_group,Quintil de gasto
-domain_value,region,north,Norte
-domain_value,region,south,Sur
-domain_value,expenditure_group,Q1,Q1 (menor gasto)
-domain_value,expenditure_group,Q2,Q2
-domain_value,expenditure_group,Q3,Q3
-domain_value,expenditure_group,Q4,Q4
-domain_value,expenditure_group,Q5,Q5 (mayor gasto)
-food_group,,cereals,Cereales
-food_group,,pulses,Leguminosas
-food_group,,fats_and_oils,Grasas y aceites
-food_group,,sugars,Azúcares
-food_group,,dairy,Lácteos
-food_group,,meat,Carnes
-food_group,,fruits,Frutas
-food_group,,vegetables,Hortalizas
-food_group,,unclassified,Sin grupo asignado
-form,,folic_acid,ácido fólico
-form,,retinol,retinol
-source,,synthetic: invented,Inventado para el ejemplo
+type,parent,code,label,short_label
+nutrient,,energy,Energía,
+nutrient,,iron,Hierro,
+nutrient,,zinc,Zinc,
+nutrient,,folate,Folato,
+nutrient,,vitamin_a,Vitamina A,
+unit,,kcal,kcal,
+unit,,mg,mg,
+unit,,ug,µg,
+unit,,ug_dfe,µg EFD,
+unit,,ug_rae,µg RAE,
+vehicle,,wheat_flour,Harina de trigo,
+vehicle,,bread,Pan,
+vehicle,,pasta,Pastas,
+vehicle,,maize_flour,Harina de maíz,
+vehicle,,rice,Arroz,
+vehicle,,sugar,Azúcar,
+vehicle,,oil,Aceite vegetal,Aceite
+vehicle_group,,wheat_flour,"Harina de trigo (cualquier forma)",Harina de trigo
+vehicle_group,,any_vehicle,Cualquier vehículo,
+scenario,,baseline,Sin fortificación,Línea de base
+scenario,,wheat_flour,"Harina de trigo con hierro, zinc y ácido fólico",Harina de trigo
+scenario,,plus_maize,"Harinas de trigo y de maíz con hierro, zinc y ácido fólico",+ harina de maíz
+scenario,,plus_rice,"Harinas de trigo y de maíz, y arroz con hierro y ácido fólico",+ arroz
+scenario,,plus_sugar,"Harinas de trigo y de maíz, arroz, y azúcar con vitamina A",+ azúcar
+scenario,,plus_oil,"Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A",+ aceite
+domain,,region,Región,
+domain,,area,Área,
+domain,,expenditure_group,Quintil de gasto,Quintil
+domain_value,region,north,Norte,
+domain_value,region,central,Centro,
+domain_value,region,south,Sur,
+domain_value,area,urban,Urbana,
+domain_value,area,rural,Rural,
+domain_value,expenditure_group,Q1,Q1 (menor gasto),Q1
+domain_value,expenditure_group,Q2,Q2,
+domain_value,expenditure_group,Q3,Q3,
+domain_value,expenditure_group,Q4,Q4,
+domain_value,expenditure_group,Q5,Q5 (mayor gasto),Q5
+food_group,,cereals,Cereales,
+food_group,,roots_and_tubers,Raíces y tubérculos,
+food_group,,pulses,Leguminosas,
+food_group,,meat_and_fish,Carnes y pescados,
+food_group,,eggs,Huevos,
+food_group,,dairy,Lácteos,
+food_group,,fats_and_oils,Grasas y aceites,
+food_group,,sugars,Azúcares,
+food_group,,vegetables,Hortalizas,
+food_group,,fruits,Frutas,
+food_group,,beverages,Bebidas,
+food_group,,unclassified,Sin grupo asignado,
+form,,folic_acid,ácido fólico,
+form,,retinol,retinol,
+compound,,ferrous fumarate,fumarato ferroso,
+compound,,sodium iron EDTA,EDTA férrico sódico,
+compound,,ferric pyrophosphate,pirofosfato férrico,
+compound,,zinc oxide,óxido de zinc,
+compound,,vitamin A compound (invented),compuesto de vitamina A (inventado),
+source,,synthetic: invented,Inventado para el ejemplo,
