@@ -11,7 +11,8 @@ library(ggplot2)
 # (P9: one meaning per mark). `ref` adds a dashed vertical line at a
 # reference value; `facet` names a column of panels. Rows without an
 # estimate (suppressed) are not drawn. Both axes have titles (R5).
-fig_interval <- function(d, x, y, xlab, ylab, ref = NULL, facet = NULL) {
+fig_interval <- function(d, x, y, xlab, ylab, ref = NULL, facet = NULL,
+                         percent = FALSE) {
   d <- as.data.frame(d)
   d <- d[!is.na(d[[x]]), , drop = FALSE]
   d[[y]] <- factor(d[[y]], levels = rev(unique(as.character(d[[y]]))))
@@ -31,7 +32,59 @@ fig_interval <- function(d, x, y, xlab, ylab, ref = NULL, facet = NULL) {
   if (!is.null(facet)) {
     g <- g + facet_wrap(facet, scales = "free_y")
   }
+  if (percent) {
+    g <- g + scale_x_continuous(limits = c(0, 100))
+  }
   g
+}
+
+# Effect of a scenario (section 6.3 of the design): two panels on shared
+# rows `y`. Left, the dumbbell: the comparator (`from`, hollow) joined to
+# the scenario (`to`, filled), % of households on a 0-100 axis. Right, the
+# paired difference (`difference`, with `ci_low` and `ci_high`) in
+# percentage points, with a zero line. `band` names a column of bands
+# (one per scenario in R3.4). `panels` labels the two panels. Rows missing
+# either point or the difference are not drawn.
+fig_effect <- function(d, y, xlab, ylab, panels, band = NULL) {
+  d <- as.data.frame(d)
+  d <- d[!is.na(d$from) & !is.na(d$to) & !is.na(d$difference), ,
+         drop = FALSE]
+  d[[y]] <- factor(d[[y]], levels = rev(unique(as.character(d[[y]]))))
+  level_rows <- d
+  level_rows$.panel <- factor(panels[[1]], levels = panels)
+  diff_rows <- d
+  diff_rows$.panel <- factor(panels[[2]], levels = panels)
+  g <- ggplot(mapping = aes(y = .data[[y]])) +
+    geom_segment(data = level_rows,
+                 aes(x = .data$from, xend = .data$to, yend = .data[[y]]),
+                 colour = "grey50") +
+    geom_point(data = level_rows, aes(x = .data$from), shape = 1,
+               size = 2.5) +
+    geom_point(data = level_rows, aes(x = .data$to), shape = 16, size = 2.5) +
+    geom_vline(data = diff_rows[1, , drop = FALSE], aes(xintercept = 0),
+               linetype = 2) +
+    geom_linerange(data = diff_rows, aes(xmin = .data$ci_low,
+                                         xmax = .data$ci_high)) +
+    geom_point(data = diff_rows, aes(x = .data$difference), shape = 16,
+               size = 2.5) +
+    labs(x = xlab, y = ylab) +
+    theme_minimal(base_size = 11)
+  rows <- if (is.null(band)) NULL else vars(.data[[band]])
+  g + facet_grid(rows = rows, cols = vars(.data$.panel), scales = "free",
+                 space = "free_y")
+}
+
+# Weighted histogram of `x` (weights `w`), with dashed lines at `bounds`
+# and a solid line at `reference` (D9: energy per AFE against the
+# plausibility bounds and the reference energy).
+fig_histogram <- function(d, x, w, bounds, reference, xlab, ylab,
+                          bins = 40) {
+  ggplot(as.data.frame(d), aes(x = .data[[x]], weight = .data[[w]])) +
+    geom_histogram(bins = bins, fill = "grey70", colour = "white") +
+    geom_vline(xintercept = bounds, linetype = 2) +
+    geom_vline(xintercept = reference) +
+    labs(x = xlab, y = ylab) +
+    theme_minimal(base_size = 11)
 }
 
 # Dumbbell (R10f): one row per category `y`, the comparator point

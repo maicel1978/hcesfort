@@ -142,3 +142,36 @@ test_that("the appendix prints the table of each figure under its ID", {
   expect_match(out, "**Table R1.1. Households", fixed = TRUE)
   expect_match(out, "90‡", fixed = TRUE)
 })
+
+test_that("fig_effect() draws the two panels of section 6.3", {
+  env <- exhibit_env()
+  # Two scenarios; the third row lacks its difference and is not drawn.
+  d <- data.frame(scenario = c("A", "B", "C"), from = c(60, 60, 60),
+                  to = c(40, 55, NA), difference = c(-20, -5, NA),
+                  ci_low = c(-25, -9, NA), ci_high = c(-15, -1, NA))
+  g <- env$fig_effect(d, "scenario", "%", "", c("Level", "Change"))
+  b <- ggplot2::ggplot_build(g)
+  expect_identical(levels(b$layout$layout$.panel), c("Level", "Change"))
+  points <- ggplot2::layer_data(g, 3)
+  expect_identical(nrow(points), 2L)
+  expect_identical(sort(points$x), c(40, 55))
+  diff <- ggplot2::layer_data(g, 6)
+  expect_identical(sort(diff$x), c(-20, -5))
+  expect_identical(ggplot2::layer_data(g, 4)$xintercept, 0)
+  d$band <- c("x", "y", "y")
+  g <- env$fig_effect(d, "scenario", "%", "", c("Level", "Change"),
+                      band = "band")
+  expect_identical(nrow(ggplot2::ggplot_build(g)$layout$layout), 4L)
+})
+
+test_that("fig_histogram() weights the counts; percent axes run to 100", {
+  env <- exhibit_env()
+  d <- data.frame(kcal = c(1000, 1000, 3000), w = c(1, 2, 5))
+  g <- env$fig_histogram(d, "kcal", "w", c(500, 6000), 2300, "kcal", "n",
+                         bins = 2)
+  expect_identical(sum(ggplot2::layer_data(g, 1)$count), 8)
+  e <- env$display(fixture_estimates(), "vehicle", "acquired")
+  g <- env$fig_interval(e, "acquired", "vehicle", "%", "", percent = TRUE)
+  limits <- ggplot2::ggplot_build(g)$layout$panel_params[[1]]$x$limits
+  expect_identical(limits, c(0, 100))
+})

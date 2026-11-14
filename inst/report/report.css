@@ -1,0 +1,10 @@
+/* Print layout of both reports (R13): an exhibit (its title, figure or
+   table and notes) is kept on one page. Edit freely. */
+img, table, figure {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+p > strong:only-child {
+  break-after: avoid;
+  page-break-after: avoid;
+}

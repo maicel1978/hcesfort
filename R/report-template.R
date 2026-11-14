@@ -55,7 +55,7 @@ use_report_template <- function(path, lang = "en") {
                    arg = "lang")
   }
   root <- system.file("report", package = "hcesfort", mustWork = TRUE)
-  from <- c(list.files(root, pattern = "\\.(R|csv)$", full.names = TRUE),
+  from <- c(list.files(root, pattern = "\\.(R|csv|css)$", full.names = TRUE),
             list.files(file.path(root, lang), full.names = TRUE))
   to <- file.path(path, basename(from))
   there <- to[file.exists(to)]
