@@ -44,6 +44,18 @@ The sixteen decisions (P125). The ones that shape the most work:
 5 (opening of the results report), 6 (two-panel effect figure),
 7 and 8 (the example).
 
+## Answers of the maintainer (2026-11-14, design v3)
+
+All sixteen questions of section 13 of `docs/design-reports-v3.md` as recommended, with these conditions:
+
+1. **Tables:** `tinytable`, in Suggests and used only by the template. Check that a Word export of a rendered report through Quarto keeps the tables readable.
+2. **Korn-Graubard:** the own formula is accepted only with its tests against `survey`, `binom.test()` and the published NCHS examples (pp. 8–9), to the stated tolerance. It is a golden test.
+5. **Opening of the results report:** the findings slot for the analyst is omitted from the render when the analyst writes nothing. No placeholder text is ever printed (v1 R3).
+8. **Example:** add zinc, which the ENGIH 2018 analysis included. Five nutrients: iron, zinc, folate, vitamin A and energy. Zinc levels and requirements need a verified source, or `# SOURCE PENDING`.
+13. **UL sentence:** as recommended, stating that the upper limit is one-sided.
+
+Record these in `docs/improvements.md` with the first commit of 12d.1.
+
 ## Environment
 
 - A cloud environment named `hcesfort` was created for this repository
