@@ -38,6 +38,9 @@
   alpha-tocopherol only), left blank there, is entered. The page of every
   IOM citation was re-read on the scanned page; many were one page too
   high and are corrected (`data-raw/SOURCES.md`). No value changed.
+* `ref_presentation_standard`: the thresholds of the NCHS data
+  presentation standards for proportions (Parker et al. 2017, Table, p. 2),
+  with their source, replaceable by the user's own copy.
 * `adult_equivalents()`: adult female equivalents per household from the
   energy requirement of each member (FAO/WHO/UNU 2004 tables for infants
   and children; BMR times PAL for adults, with weights and PAL given by the

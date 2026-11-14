@@ -29,6 +29,8 @@ weight, for adult energy requirements.
 unit (DFE, RAE).
 \item \link{ref_who2009_flour}: WHO (2009) average levels of nutrients to consider
 adding to wheat flour.
+\item \link{ref_presentation_standard}: thresholds of the NCHS data presentation
+standards for proportions.
 }
 }
 \seealso{
@@ -37,6 +39,7 @@ Other reference tables:
 \code{\link{ref_conversions}},
 \code{\link{ref_energy_requirements}},
 \code{\link{ref_iron_requirements}},
+\code{\link{ref_presentation_standard}},
 \code{\link{ref_requirements}},
 \code{\link{ref_who2009_flour}}
 }

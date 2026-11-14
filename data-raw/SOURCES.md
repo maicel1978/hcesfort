@@ -24,6 +24,7 @@ every value used there agrees with the document.
 | IOM 2000b | Institute of Medicine. 2000. *Dietary Reference Intakes: Applications in Dietary Assessment.* Washington, DC: The National Academies Press. doi:10.17226/9956 | <https://nap.nationalacademies.org/read/9956> (chapter 4, pp. 73–105: `/read/9956/chapter/10`) |
 | IOM 2001 | Institute of Medicine. 2001. *Dietary Reference Intakes for Vitamin A, Vitamin K, Arsenic, Boron, Chromium, Copper, Iodine, Iron, Manganese, Molybdenum, Nickel, Silicon, Vanadium, and Zinc.* Washington, DC: The National Academies Press. doi:10.17226/10026 | <https://nap.nationalacademies.org/read/10026> |
 | IOM 2011 | Institute of Medicine. 2011. *Dietary Reference Intakes for Calcium and Vitamin D.* Washington, DC: The National Academies Press. doi:10.17226/13050 | <https://nap.nationalacademies.org/read/13050> |
+| NCHS 2017 | Parker JD, Talih M, Malec DJ, et al. 2017. *National Center for Health Statistics Data Presentation Standards for Proportions.* Vital and Health Statistics, Series 2, No. 175. Hyattsville, MD: National Center for Health Statistics. (Revision of 1 November 2018; Table II updated 8 April 2021.) | <https://www.cdc.gov/nchs/data/series/sr_02/sr02_175.pdf> (PDF, md5 `2ae6002af069bb55f555e2e271f1908d`; opened 2026-11-14) |
 | WHO 2009 | World Health Organization. 2009. *Recommendations on wheat and maize flour fortification. Meeting report: interim consensus statement.* WHO/NMH/NHD/MNM/09.1. Geneva. | <https://iris.who.int/handle/10665/111837> (PDF of 3 pages, md5 `9cf668a20a2cf32a8c35b676bb9993d4`) |
 
 Page numbers of the IOM reports are those printed in the books, as shown by
@@ -40,6 +41,7 @@ cited by number.
 | `bmr_equations.csv` | `ref_bmr_equations` | 12 / 0 | FAO/WHO/UNU 2004, Table 5.2 (Schofield equations, kcal/day) |
 | `nutrient_conversions.csv` | `ref_conversions` | 7 / 1 | IOM 1998 (DFE), IOM 2001 (RAE, IU) |
 | `who2009_wheat_flour_levels.csv` | `ref_who2009_flour` | 40 / 0 | WHO 2009, Table 1, with its footnotes |
+| `presentation_standard.csv` | `ref_presentation_standard` | 7 / 0 | NCHS 2017, Table, p. 2; definitions on pp. 3–4. Added 2026-11-14 (task 12d.2) |
 
 ## Pending values (not shipped)
 

@@ -24,6 +24,8 @@
 #'   unit (DFE, RAE).
 #' * [ref_who2009_flour]: WHO (2009) average levels of nutrients to consider
 #'   adding to wheat flour.
+#' * [ref_presentation_standard]: thresholds of the NCHS data presentation
+#'   standards for proportions.
 #'
 #' @name reference_tables
 #' @family reference tables
@@ -230,3 +232,35 @@ NULL
 #' @examples
 #' subset(ref_who2009_flour, nutrient == "iron" & availability_g_d == "<75")
 "ref_who2009_flour"
+
+#' NCHS data presentation standards for proportions
+#'
+#' The thresholds of the National Center for Health Statistics (NCHS) data
+#' presentation standards for proportions (Parker et al. 2017, Table, p. 2),
+#' one row per criterion. A proportion is suppressed when its sample size or
+#' effective sample size is below 30, when the absolute width of its 95%
+#' Korn-Graubard interval is 0.30 or more, or when that width is between
+#' 0.05 and 0.30 and the relative width (width divided by the proportion)
+#' is above 130%. It is flagged for statistical review when it has 0 events
+#' (or `n` events) or fewer than 8 degrees of freedom. The standards give
+#' no thresholds for rates, percentiles or means (p. 5).
+#'
+#' Replace a value by passing a modified copy of the table.
+#'
+#' @format A tibble with one row per criterion:
+#' \describe{
+#'   \item{criterion}{`"conf_level"`, `"min_n"`, `"min_n_effective"`,
+#'     `"small_absolute_width"`, `"large_absolute_width"`,
+#'     `"max_relative_width"` or `"min_df"`.}
+#'   \item{value}{Threshold. Widths are on the proportion scale (0 to 1);
+#'     the relative width is a ratio (1.30 is 130%).}
+#'   \item{source, location}{Document, table and page.}
+#' }
+#' @source Parker JD, Talih M, Malec DJ, et al. (2017). National Center for
+#'   Health Statistics data presentation standards for proportions. Vital
+#'   and Health Statistics, Series 2, No. 175. National Center for Health
+#'   Statistics. <https://www.cdc.gov/nchs/data/series/sr_02/sr02_175.pdf>
+#' @family reference tables
+#' @examples
+#' ref_presentation_standard[c("criterion", "value")]
+"ref_presentation_standard"

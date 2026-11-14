@@ -48,6 +48,7 @@ Other reference tables:
 \code{\link{ref_bmr_equations}},
 \code{\link{ref_energy_requirements}},
 \code{\link{ref_iron_requirements}},
+\code{\link{ref_presentation_standard}},
 \code{\link{ref_requirements}},
 \code{\link{ref_who2009_flour}},
 \code{\link{reference_tables}}

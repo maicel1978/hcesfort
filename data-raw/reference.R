@@ -35,7 +35,8 @@ reference_files <- c(
   ref_energy_requirements = "energy_requirements.csv",
   ref_bmr_equations = "bmr_equations.csv",
   ref_conversions = "nutrient_conversions.csv",
-  ref_who2009_flour = "who2009_wheat_flour_levels.csv"
+  ref_who2009_flour = "who2009_wheat_flour_levels.csv",
+  ref_presentation_standard = "presentation_standard.csv"
 )
 
 if (sys.nframe() == 0L) {

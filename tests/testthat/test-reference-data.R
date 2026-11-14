@@ -13,7 +13,8 @@ data_raw_dir <- function() {
 ref_tables <- function() {
   names <- c(
     "ref_requirements", "ref_iron_requirements", "ref_energy_requirements",
-    "ref_bmr_equations", "ref_conversions", "ref_who2009_flour"
+    "ref_bmr_equations", "ref_conversions", "ref_who2009_flour",
+    "ref_presentation_standard"
   )
   rlang::set_names(lapply(names, get), names)
 }
@@ -151,4 +152,24 @@ test_that("WHO 2009: four categories per row, levels fall with intake", {
   }
   expect_identical(nrow(w), 40L)
   expect_true(all(w$level_basis == "nutrient"))
+})
+
+test_that("presentation standard: the seven NCHS thresholds, by hand", {
+  ps <- ref_presentation_standard
+  expect_identical(names(ps), c("criterion", "value", "source", "location"))
+  # Parker et al. 2017, Table, p. 2, typed in from the document.
+  expected <- c(
+    conf_level = 0.95, min_n = 30, min_n_effective = 30,
+    small_absolute_width = 0.05, large_absolute_width = 0.30,
+    max_relative_width = 1.30, min_df = 8
+  )
+  expect_identical(ps$criterion, names(expected))
+  expect_identical(ps$value, unname(expected))
+  expect_true(all(grepl("^Table, p\\. 2", ps$location)))
+  expect_true(all(grepl("Vital Health Stat 2(175)", ps$source,
+                        fixed = TRUE)))
+  # Consistency: the two absolute widths are ordered and on the 0-1 scale.
+  v <- stats::setNames(ps$value, ps$criterion)
+  expect_lt(v[["small_absolute_width"]], v[["large_absolute_width"]])
+  expect_lt(v[["large_absolute_width"]], 1)
 })
