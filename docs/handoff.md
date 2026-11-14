@@ -56,6 +56,13 @@ Facts found on the way, in the commit messages:
 **12d.5** (Opus): `short_label` and label type `compound` (C6 of
 `docs/design-reports-v3.md`). Then 12d.6 onwards.
 
+## Answers of the maintainer (2026-11-14, after 12d.4)
+
+1. **P130:** the three implementation decisions are accepted as recommended: an undefined estimate with n ≥ 30 gets `NA` plus `presentation_undefined` in the audit log; the invariant is tested as "a stricter standard never moves a status towards present"; threshold comparisons are exact.
+2. **P126:** the environment script is not edited for now. Each session is opened with "Al empezar, instala tinytable si falta." Close P126 when the script is edited.
+
+Record these in `docs/improvements.md` with the first commit of 12d.5.
+
 ## Recommended model for the next session
 
 **Opus** (12d.5 onwards). This session stops at about half of its
