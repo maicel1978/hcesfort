@@ -59,6 +59,11 @@
   degrees of freedom only, as the standards give no thresholds for them.
   It reproduces the published decisions of Tables I and II of the report.
   `flag_precision()` stays for callers with their own limits.
+* Label tables accept the optional column `short_label`, what a figure
+  prints where the label is too long; `label_codes(short = TRUE)` uses it
+  and falls back to the label per code. Short labels are unique within
+  `type` and `parent`, the fallback included. The type `compound` labels
+  the fortificant compounds of the scenarios.
 * `adult_equivalents()`: adult female equivalents per household from the
   energy requirement of each member (FAO/WHO/UNU 2004 tables for infants
   and children; BMR times PAL for adults, with weights and PAL given by the

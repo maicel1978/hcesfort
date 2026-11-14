@@ -7,10 +7,11 @@
 \usage{
 read_labels(file, needed = NULL)
 
-label_codes(x, labels, type, parent = NULL)
+label_codes(x, labels, type, parent = NULL, short = FALSE)
 }
 \arguments{
-\item{file}{Path of a CSV file in UTF-8 with the four columns.}
+\item{file}{Path of a CSV file in UTF-8 with the four columns and,
+optionally, \code{short_label}.}
 
 \item{needed}{\code{NULL} or a named list, type to the codes that must have a
 label; for \code{domain_value}, a named list, domain to its values.}
@@ -22,9 +23,13 @@ label; for \code{domain_value}, a named list, domain to its values.}
 \item{type}{One type of the table.}
 
 \item{parent}{For \code{domain_value}, the domain; otherwise \code{NULL}.}
+
+\item{short}{\code{TRUE} for the short labels (the label where a code has
+none), \code{FALSE} (default) for the labels.}
 }
 \value{
-\code{read_labels()}: the table as a tibble of text columns.
+\code{read_labels()}: the table as a tibble of five text columns
+(\code{short_label} missing throughout when the file has no such column).
 \code{label_codes()}: a factor with the labels of \code{x} (missing where \code{x} is
 missing), whose levels are the labels of the codes present in \code{x}, in
 table order.
@@ -39,12 +44,17 @@ into labels.
 \details{
 The table (\code{\link[=hces_schema]{hces_schema()}}\code{("labels")}) has the columns \code{type} (what the
 code is: \code{nutrient}, \code{unit}, \code{vehicle}, \code{vehicle_group}, \code{scenario},
-\code{domain}, \code{domain_value}, \code{food_group}, \code{form}, \code{source}, or any other
+\code{domain}, \code{domain_value}, \code{food_group}, \code{form}, \code{compound}, \code{source},
+or any other
 word), \code{parent} (the domain a \code{domain_value} belongs to; missing for
-every other type), \code{code} (compared as text) and \code{label}. The key is
+every other type), \code{code} (compared as text), \code{label} and, optionally,
+\code{short_label}: what a figure prints where the label is too long (an
+abbreviation of a scenario, for example); missing means the label. Type
+\code{compound} labels the fortificant compounds a scenario names. The key is
 \code{type} + \code{parent} + \code{code}. A label repeated within one \code{type} +
-\code{parent} is an error: two codes with one label would merge two
-categories silently. Row order is display order. There is no fallback to
+\code{parent} is an error, and so is a short label (or the label where it is
+missing): two codes with one label would merge two categories
+silently. Row order is display order. There is no fallback to
 the code: a code without a label is an error that lists every missing
 code with the lines to add.
 }
@@ -55,13 +65,24 @@ writeLines(c(
   "nutrient,,iron,Iron",
   "domain,,region,Region",
   "domain_value,region,south,South",
-  "domain_value,region,north,North"
+  "domain_value,region,north,North",
+  "scenario,,wheat_iron,Wheat flour with iron"
 ), f)
 labels <- read_labels(f, needed = list(
   nutrient = "iron", domain_value = list(region = c("north", "south"))
 ))
 label_codes(c("north", "south", "north"), labels, "domain_value",
             parent = "region")
+
+# A short label for figures; the label is used where it is missing.
+g <- tempfile(fileext = ".csv")
+writeLines(c(
+  "type,parent,code,label,short_label",
+  "scenario,,wheat_iron,Wheat flour with iron and folic acid,Wheat",
+  "scenario,,baseline,No fortification,"
+), g)
+label_codes(c("baseline", "wheat_iron"), read_labels(g), "scenario",
+            short = TRUE)
 }
 \seealso{
 \code{\link[=read_decisions]{read_decisions()}}, \code{\link[=use_report_template]{use_report_template()}}.

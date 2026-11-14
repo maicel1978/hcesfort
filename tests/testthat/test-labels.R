@@ -20,7 +20,8 @@ label_lines <- c(
 
 test_that("read_labels() reads text, keeps order and UTF-8", {
   x <- read_labels(write_csv_lines(label_lines))
-  expect_identical(names(x), c("type", "parent", "code", "label"))
+  expect_identical(names(x), c("type", "parent", "code", "label",
+                               "short_label"))
   expect_identical(nrow(x), 7L)
   expect_true(all(vapply(x, is.character, logical(1))))
   expect_identical(x$label[[3]], "Sin fortificación")
@@ -130,6 +131,87 @@ test_that("read_decisions() reads and checks the decisions", {
 
 test_that("the schemas of labels and decisions are public", {
   expect_identical(hces_schema("labels")$column,
-                   c("type", "parent", "code", "label"))
+                   c("type", "parent", "code", "label", "short_label"))
+  expect_identical(hces_schema("labels")$required,
+                   c(TRUE, TRUE, TRUE, TRUE, FALSE))
   expect_identical(hces_schema("decisions")$key, c(TRUE, FALSE, FALSE))
+})
+
+# U17 (docs/design-reports-v3.md, section 5.2, C6): short labels.
+short_lines <- c(
+  "type,parent,code,label,short_label",
+  "scenario,,baseline,No fortification,",
+  "scenario,,wheat,Wheat flour with iron and folic acid,Wheat",
+  "scenario,,wheat_maize,Wheat and maize flour,Wheat + maize",
+  "compound,,ferrous_fumarate,Ferrous fumarate,",
+  "domain_value,region,north,North,N"
+)
+
+test_that("short_label is optional and missing when absent", {
+  x <- read_labels(write_csv_lines(label_lines))
+  expect_identical(names(x),
+                   c("type", "parent", "code", "label", "short_label"))
+  expect_identical(x$short_label, rep(NA_character_, 7))
+  expect_identical(label_codes(c("iron", "folate"), x, "nutrient",
+                               short = TRUE),
+                   label_codes(c("iron", "folate"), x, "nutrient"))
+  # A table built in R without the column is accepted too.
+  y <- x[c("type", "parent", "code", "label")]
+  expect_identical(levels(label_codes("iron", y, "nutrient", short = TRUE)),
+                   "Hierro")
+})
+
+test_that("label_codes(short = TRUE) falls back to the label per code", {
+  x <- read_labels(write_csv_lines(short_lines))
+  f <- label_codes(c("wheat", "baseline", "wheat_maize", "wheat"), x,
+                   "scenario", short = TRUE)
+  expect_identical(levels(f), c("No fortification", "Wheat",
+                                "Wheat + maize"))
+  expect_identical(as.character(f), c("Wheat", "No fortification",
+                                      "Wheat + maize", "Wheat"))
+  long <- label_codes(c("wheat", "baseline"), x, "scenario")
+  expect_identical(levels(long), c("No fortification",
+                                   "Wheat flour with iron and folic acid"))
+  expect_identical(as.character(label_codes("north", x, "domain_value",
+                                            "region", short = TRUE)), "N")
+  expect_identical(as.character(label_codes("ferrous_fumarate", x,
+                                            "compound")), "Ferrous fumarate")
+  expect_error(label_codes("wheat", x, "scenario", short = NA),
+               class = "hcesfort_error_argument")
+  expect_error(label_codes("wheat", x, "scenario", short = c(TRUE, FALSE)),
+               class = "hcesfort_error_argument")
+  expect_error(label_codes("rice", x, "scenario", short = TRUE),
+               class = "hcesfort_error_join")
+})
+
+test_that("short labels are unique within type and parent, fallback included", {
+  dup <- c(short_lines, "scenario,,rice,Rice,Wheat")
+  err <- expect_error(read_labels(write_csv_lines(dup)),
+                      class = "hcesfort_error_value")
+  expect_identical(err$rows, 6L)
+  expect_match(conditionMessage(err), "short label")
+  # A short label equal to another code's label (its fallback) collides.
+  clash <- c(short_lines, "scenario,,other,Other,No fortification")
+  err <- expect_error(read_labels(write_csv_lines(clash)),
+                      class = "hcesfort_error_value")
+  expect_identical(err$rows, 6L)
+  # The same short label under another type or parent is allowed.
+  ok <- c(short_lines, "domain_value,zone,north,North,N",
+          "vehicle,,wheat_flour,Wheat flour,Wheat")
+  expect_identical(nrow(read_labels(write_csv_lines(ok))), 7L)
+  # Order of rows does not change which codes are accepted.
+  x <- read_labels(write_csv_lines(c(short_lines[1], rev(short_lines[-1]))))
+  expect_identical(as.character(label_codes("wheat", x, "scenario",
+                                            short = TRUE)), "Wheat")
+})
+
+test_that("a blank short label fails; a wrong type of column fails", {
+  x <- read_labels(write_csv_lines(short_lines))
+  x$short_label[[2]] <- "  "
+  err <- expect_error(label_codes("wheat", x, "scenario"),
+                      class = "hcesfort_error_value")
+  expect_identical(err$rows, 2L)
+  x$short_label <- seq_len(nrow(x))
+  expect_error(label_codes("wheat", x, "scenario"),
+               class = "hcesfort_error_schema")
 })

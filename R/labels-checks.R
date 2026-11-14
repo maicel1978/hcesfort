@@ -9,7 +9,10 @@ schema_labels <- function() {
       "the domain a `domain_value` belongs to; missing for other types"
     ), na = TRUE),
     schema_col("code", "text", "the value as it appears in the tables"),
-    schema_col("label", "text", "what is printed; not empty")
+    schema_col("label", "text", "what is printed; not empty"),
+    schema_col("short_label", "text", paste(
+      "what a figure prints; missing means the label"
+    ), required = FALSE, na = TRUE)
   )
 }
 
@@ -37,28 +40,39 @@ read_text_table <- function(file, call = rlang::caller_env()) {
   dplyr::as_tibble(x)
 }
 
-# `x` checked against the label schema and its two cross-row rules.
+# `x` checked against the label schema and its cross-row rules. The
+# optional `short_label` is added, missing, when absent.
 check_labels <- function(x, call = rlang::caller_env()) {
   check_schema(x, schema_labels(), call = call)
-  x <- dplyr::as_tibble(x)[c("type", "parent", "code", "label")]
+  x <- dplyr::as_tibble(x)
+  if (!"short_label" %in% names(x)) x$short_label <- NA_character_
+  x <- x[c("type", "parent", "code", "label", "short_label")]
   x$parent <- as.character(x$parent)
+  x$short_label <- as.character(x$short_label)
   bad_parent <- which((x$type == "domain_value") == is.na(x$parent))
   group <- paste(x$type, x$parent, sep = "\r")
   repeated <- which(duplicated(paste(group, x$label, sep = "\r")))
-  empty <- which(!nzchar(trimws(x$label)))
-  rows <- sort(unique(c(bad_parent, repeated, empty)))
+  short <- dplyr::coalesce(x$short_label, x$label)
+  repeated_short <- which(duplicated(paste(group, short, sep = "\r")))
+  empty <- which(!nzchar(trimws(x$label)) |
+                   (!is.na(x$short_label) & !nzchar(trimws(x$short_label))))
+  rows <- sort(unique(c(bad_parent, repeated, repeated_short, empty)))
   if (length(rows) > 0) {
     bullets <- c(
       problem_bullet("`parent` set or missing against `type`", bad_parent),
       problem_bullet("label repeated within `type` and `parent`", repeated),
-      problem_bullet("empty label", empty)
+      problem_bullet(paste("short label (or the label where it is missing)",
+                           "repeated within `type` and `parent`"),
+                     repeated_short),
+      problem_bullet("empty label or short label", empty)
     )
     abort_hcesfort("value", c(
       "{.arg labels} has impossible values.",
       rlang::set_names(cli_escape(bullets), rep("x", length(bullets))),
       "i" = "`parent` is the domain of a `domain_value` and missing
       otherwise; each code needs its own label."
-    ), table = "labels", columns = c("parent", "label"), rows = rows,
+    ), table = "labels", columns = c("parent", "label", "short_label"),
+    rows = rows,
     n = length(rows), call = call)
   }
   x
