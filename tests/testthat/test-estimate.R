@@ -482,3 +482,28 @@ test_that("by_cells() pairs each level with its households", {
   }
   expect_identical(sum(vapply(cells$masks, sum, integer(1))), nrow(h))
 })
+
+test_that("a proportion outside [0, 1] is refused (P156)", {
+  # es_result(): `intake` ranges from 1 to 9; every value but row 7 (1)
+  # and rows 5 and 13 (NA) is above 1. `p` lies in [0, 1].
+  d <- es_design()
+  x <- es_result()
+  for (method in c("logit", "mean", "korn_graubard")) {
+    err <- expect_error(
+      estimate_households(d, x, "intake", ci_method = method),
+      class = "hcesfort_error_value"
+    )
+    expect_identical(err$columns, "intake")
+    expect_identical(err$n, 13L)
+    expect_match(conditionMessage(err), "statistic", fixed = TRUE)
+  }
+  expect_identical(err$rows, c(1:4, 6L, 8:12, 14:16))
+  x$p[2] <- -0.1
+  err <- expect_error(estimate_households(d, x, "p"),
+                      class = "hcesfort_error_value")
+  expect_identical(err$rows, 2L)
+  # The same column is accepted as a mean; a logical column as a proportion.
+  e <- estimate_households(d, es_result(), "intake", statistic = "mean")
+  expect_true(all(is.finite(e$estimate)))
+  expect_s3_class(estimate_households(d, es_result(), "ok"), "hces_estimate")
+})

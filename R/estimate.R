@@ -48,7 +48,9 @@
 #' @param x A table returned by [inadequacy()], [above_ul()],
 #'   [apply_scenario()], [apparent_intake()] or [vehicle_coverage()].
 #' @param value Name of the column of `x` to estimate.
-#' @param statistic `"proportion"`, `"mean"` or `"median"`.
+#' @param statistic `"proportion"`, `"mean"` or `"median"`. A proportion
+#'   needs a logical column or values in \[0, 1\], such as `p_inadequate`;
+#'   any other value is an error (`hcesfort_error_value`).
 #' @param by `NULL`, or names of domain columns of the design (households
 #'   table), such as `"region"`; each combination of their values is a
 #'   domain.
@@ -96,9 +98,11 @@ estimate_households <- function(design, x, value, statistic = "proportion",
   check_required()
   require_design(design)
   require_hces(x, "hces_tbl")
+  x <- audit_check_rows(x, "estimate_households")
   check_estimate_args(design, x, statistic, by, ci_method, level, df)
   d <- resolve_domain(design, x, domain, domain_from)
   a <- align_values(design, x, value, d$x_domain)
+  check_proportion_values(x, value, statistic)
   cells <- by_cells(design, by, d$inside)
   out <- lapply(seq_len(nrow(a$keys)), function(k) {
     dplyr::bind_rows(lapply(seq_along(cells$masks), function(j) {

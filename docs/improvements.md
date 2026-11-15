@@ -964,11 +964,28 @@ The maintainer's answers to the nine questions of section 10 of
 | R2-D8 | **Review track:** deferred; the rOpenSci pre-submission enquiry waits until the repository is public. |
 | R2-D9 | **Documents:** the maintainer attaches the PDFs to the session that needs them; they are never committed. Until the hosts are reachable, those sources stay `# SOURCE PENDING`. |
 
-`docs/design-12e5.md` (2026-11-15) proposes two amendments, in its section
-7, that wait for approval: R2-D3 needs a second argument
-(`milk_energy_cost`) when the share is below 1 (decision 1 of the design),
-and R2-D5 is used only when the call says so, `fortifiable = "use"` or
-`"ignore"` (decision 4).
+`docs/design-12e5.md` (2026-11-15) proposed two amendments, in its section
+7: R2-D3 needs a second argument (`milk_energy_cost`) when the share is
+below 1 (decision 1 of the design), and R2-D5 is used only when the call
+says so, `fortifiable = "use"` or `"ignore"` (decision 4). Both approved:
+see R3-D1 to R3-D9.
+
+## Decisions (2026-11-15, design of 12e.5)
+
+The maintainer approved the nine decisions of section 7 of
+`docs/design-12e5.md`, all as recommended.
+
+| # | Decision |
+|---|---|
+| R3-D1 | **Infants:** the milk's energy belongs in the AFE; `infant_food_share` with `milk_energy_cost`. Amends R2-D3: a share below 1 needs the second number. |
+| R3-D2 | **ENGIH keeps `infant_food_share = 1`** as its main analysis, with one sensitivity run. |
+| R3-D3 | **Pregnancy and lactation now** (12e.5.2), with `ref_energy_additions` (P57). |
+| R3-D4 | **`fortifiable` is used only when the call says so** (`"use"` or `"ignore"`); a missing value counts as fortifiable, flagged. Amends R2-D5. |
+| R3-D5 | **`hces_example` gains an invented `fortifiable` column** (false for own production); golden values and snapshots change, recorded in `NEWS.md`. |
+| R3-D6 | **Missing composition values:** the list (`missing_values()`), no new threshold. |
+| R3-D7 | **All or nothing by `compliance_model`**, the states table, and numeric `above_ul_*` for every input. |
+| R3-D8 | **When:** 12e.1 to 12e.4, then 12e.5.1 to 12e.5.8, then A2. |
+| R3-D9 | **Documents, not blocking:** the sources listed in decision 9 of the design stay `# SOURCE PENDING` until attached (P181). |
 
 ## Open items from the design of 12e.5 (2026-11-15)
 

@@ -56,6 +56,7 @@ estimate_difference <- function(design, x, value, reference, by = NULL,
   check_required()
   require_design(design)
   require_hces(x, "hces_tbl")
+  x <- audit_check_rows(x, "estimate_difference")
   check_reference_scenario(x, reference)
   check_estimate_args(design, x, "mean", by, "logit", level, df)
   d <- resolve_domain(design, x, domain, domain_from)

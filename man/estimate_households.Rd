@@ -25,7 +25,9 @@ estimate_households(
 
 \item{value}{Name of the column of \code{x} to estimate.}
 
-\item{statistic}{\code{"proportion"}, \code{"mean"} or \code{"median"}.}
+\item{statistic}{\code{"proportion"}, \code{"mean"} or \code{"median"}. A proportion
+needs a logical column or values in [0, 1], such as \code{p_inadequate};
+any other value is an error (\code{hcesfort_error_value}).}
 
 \item{by}{\code{NULL}, or names of domain columns of the design (households
 table), such as \code{"region"}; each combination of their values is a

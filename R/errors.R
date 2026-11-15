@@ -11,7 +11,10 @@
 #' * `hcesfort_error_schema`: input is not a data frame, a required column
 #'   is missing, or a column has the wrong type. Fields: `table`, `columns`.
 #' * `hcesfort_error_key`: a key is duplicated or missing. Fields: `table`,
-#'   `columns`, `rows`, `n`.
+#'   `columns`, `rows`, `n`. Also raised by every function that takes a
+#'   table returned by hcesfort whose key columns were dropped or repeated
+#'   by a verb in between (a `bind_rows()`, or a `left_join()` that fans
+#'   out).
 #' * `hcesfort_error_value`: a value is impossible, outside the vocabulary,
 #'   or missing where it cannot be. Fields: `table`, `columns`, `rows`, `n`.
 #' * `hcesfort_error_units`: a nutrient column lacks its unit suffix, a unit

@@ -22,6 +22,28 @@ check_value_column <- function(x, value, call = rlang::caller_env()) {
   invisible(TRUE)
 }
 
+# Abort with `hcesfort_error_value` when `statistic` is "proportion" and a
+# value of the column `value` of `x` is outside [0, 1]. A column of
+# probabilities (`p_inadequate`) or of indicators passes; an intake in mg
+# does not.
+check_proportion_values <- function(x, value, statistic,
+                                    call = rlang::caller_env()) {
+  y <- as.numeric(x[[value]])
+  rows <- which(!is.na(y) & (y < 0 | y > 1))
+  if (statistic != "proportion" || length(rows) == 0) {
+    return(invisible(TRUE))
+  }
+  abort_hcesfort("value", c(
+    "{.arg statistic} is {.val proportion}, and {.field {value}} has values
+    outside [0, 1].",
+    "x" = cli_escape(problem_bullet("value outside [0, 1]", rows)),
+    "x" = "They range from {format(min(y[rows]))} to
+    {format(max(y[rows]))}.",
+    "i" = "For a mean of a quantity, use {.code statistic = \"mean\"}."
+  ), table = "x", columns = value, rows = rows, n = length(rows),
+  call = call)
+}
+
 # Check the arguments of the estimators (the domain: resolve_domain()).
 check_estimate_args <- function(design, x, statistic, by, ci_method,
                                 level, df,

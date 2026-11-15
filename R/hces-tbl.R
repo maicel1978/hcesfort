@@ -26,11 +26,13 @@ carrier_table <- function(x) {
   sub("^hces_", "", class(x)[[1]])
 }
 
-# Abort with `hcesfort_error_audit` unless `x` is a carrier of `class`.
+# Abort with `hcesfort_error_audit` unless `x` is a carrier of `class`, and
+# with `hcesfort_error_key` when its key columns are missing or repeated.
 require_hces <- function(x, class, arg = rlang::caller_arg(x),
                          call = rlang::caller_env()) {
   if (inherits(x, class) && inherits(x, "hces_tbl") &&
         !is.null(attr(x, "audit", exact = TRUE))) {
+    check_carrier_key(x, arg, call)
     return(invisible(x))
   }
   abort_hcesfort("audit", c(
@@ -45,6 +47,37 @@ require_hces <- function(x, class, arg = rlang::caller_arg(x),
       "from the table returned by the previous hcesfort function."
     )
   ), arg = arg, expected = class, call = call)
+}
+
+# Abort with `hcesfort_error_key` unless the key columns of the carrier `x`
+# are present and unique together. A verb between two hcesfort functions,
+# such as a `left_join()` that fans out, can repeat a key; the functions
+# that match rows by key would then keep the first or the last row silently.
+check_carrier_key <- function(x, arg, call) {
+  key <- attr(x, "audit_key", exact = TRUE)
+  missing <- setdiff(key, names(x))
+  if (length(missing) > 0) {
+    abort_hcesfort("key", c(
+      paste("{.arg {arg}} lacks the key {cli::qty(missing)}column{?s}",
+            "{.field {missing}}."),
+      "i" = "Keep the key columns of a table returned by hcesfort."
+    ), table = arg, columns = missing, rows = integer(0), n = 0L,
+    call = call)
+  }
+  if (length(key) == 0 ||
+        nrow(dplyr::distinct(dplyr::as_tibble(x)[key])) == nrow(x)) {
+    return(invisible(x))
+  }
+  rows <- which(duplicated(dplyr::as_tibble(x)[key]))
+  abort_hcesfort("key", c(
+    "The key ({.field {key}}) of {.arg {arg}} is repeated.",
+    "x" = cli_escape(problem_bullet("repeated key", rows)),
+    "i" = paste(
+      "A join or a {.fn bind_rows} between two hcesfort functions added",
+      "rows with a key already present; remove them, or join on the full",
+      "key with {.code relationship = \"one-to-one\"}."
+    )
+  ), table = arg, columns = key, rows = rows, n = length(rows), call = call)
 }
 
 # `x` with an `external_change` row in its log when its number of rows

@@ -403,6 +403,17 @@
   (`docs/feedback/`).
 * Vignette `getting-started`: the whole chain on `hces_example`, with one
   `ggplot2` figure by expenditure group. `knitr` is the vignette builder.
+* Every function that takes a table returned by hcesfort refuses one whose
+  key is missing or repeated (`hcesfort_error_key`), as a `bind_rows()` or a
+  `left_join()` that fans out between two calls would leave it. Before, a
+  repeated household was kept or dropped silently by the matching step and
+  could change an estimate without notice. `estimate_households()` and
+  `estimate_difference()` now record a change in the number of rows made
+  outside the package, as the other steps do.
+* `estimate_households()` with `statistic = "proportion"` (the default)
+  refuses values outside [0, 1] (`hcesfort_error_value`). Before, an intake
+  column gave an unclassed error of `survey`, or an estimate above 1
+  labelled a proportion.
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is
