@@ -4,10 +4,12 @@
 # Computed here WITHOUT any function of hcesfort: base R and `survey` only,
 # from the documented rules of each step, so that a shared misreading of a
 # rule by the package and its tests cannot hide. Two datasets: the shipped
-# realistic example `hces_example`, and the test fixture `hces_fixture`
-# (the 40 households that were `hces_example` until 2026-11-14), with the
-# shipped reference tables (read as data). The values are written to
-# tests/testthat/fixtures/golden-example.csv and golden-fixture.csv and
+# realistic example `hces_example`, the test fixture `hces_fixture`
+# (the 40 households that were `hces_example` until 2026-11-14) and the
+# same fixture with the optional columns and a single-PSU stratum
+# (`hces_optional`, P169), with the shipped reference tables (read as
+# data). The values are written to tests/testthat/fixtures/
+# golden-example.csv, golden-fixture.csv and golden-optional.csv and
 # compared at 1e-8 by tests/testthat/test-golden-example.R, which runs the
 # chain with the package.
 #
@@ -32,6 +34,7 @@ for (f in c("ref_energy_requirements", "ref_bmr_equations", "ref_conversions",
   load(file.path("data", paste0(f, ".rda")))
 }
 hces_fixture <- readRDS("tests/testthat/fixtures/hces-fixture.rds")
+hces_optional <- readRDS("tests/testthat/fixtures/hces-fixture-optional.rds")
 
 # 95% Korn-Graubard interval of a proportion on a domain design (section
 # 3.2, C2) and its presentation status (section 3.1). n is the number of
@@ -86,21 +89,32 @@ golden_values <- function(ex, cfg) {
   }
   reference_kcal <- bmr("female", 25, 55) * 1.76
   er <- ref_energy_requirements
-  member_kcal <- function(sex, age) {
+  # Optional columns: an infant with `age_months` in [0, 12) takes the row
+  # of its month; an adult with `weight_kg` takes its own weight; the AFE
+  # is multiplied by `meals_home_share` (a missing share: missing AFE).
+  member_kcal <- function(sex, age, months, weight) {
     if (is.na(sex) || is.na(age)) return(NA_real_)
-    if (age < 1) {
-      return(mean(er$energy_kcal_d[er$age_unit == "month" & er$sex == sex &
-                                     er$age_to <= 12]))
+    mo <- er[er$age_unit == "month" & er$sex == sex & er$age_to <= 12, ]
+    if (age < 1 && !is.na(months) && months < 12) {
+      return(mo$energy_kcal_d[months >= mo$age_from & months < mo$age_to])
     }
+    if (age < 1) return(mean(mo$energy_kcal_d))
     yr <- er[er$age_unit == "year" & er$sex == sex, ]
     if (age < max(yr$age_to)) {
       return(yr$energy_kcal_d[age >= yr$age_from & age < yr$age_to])
     }
-    bmr(sex, age, c(female = 55, male = 65)[[sex]]) * 1.76
+    if (is.na(weight)) weight <- c(female = 55, male = 65)[[sex]]
+    bmr(sex, age, weight) * 1.76
   }
   m <- ex$members
-  m$kcal <- mapply(member_kcal, m$sex, m$age_years)
-  afe <- tapply(m$kcal, m$household_id, sum) / reference_kcal
+  column <- function(x, col, default) {
+    if (is.null(x[[col]])) rep(default, nrow(x)) else x[[col]]
+  }
+  m$kcal <- mapply(member_kcal, m$sex, m$age_years,
+                   column(m, "age_months", NA_real_),
+                   column(m, "weight_kg", NA_real_))
+  m$afe <- m$kcal / reference_kcal * column(m, "meals_home_share", 1)
+  afe <- tapply(m$afe, m$household_id, sum)
   hh$afe <- unname(afe[as.character(hh$household_id)])
 
   # 2. Grams per day.
@@ -117,7 +131,8 @@ golden_values <- function(ex, cfg) {
            ifelse(f$factor_type == "volume_ml",
                   a$quantity * f$factor * f$density_g_ml,
                   a$quantity * f$factor * f$piece_weight_g))
-  a$qty_g_d <- grams / a$period_days
+  # A missing `household_share` leaves the record without grams.
+  a$qty_g_d <- grams * column(a, "household_share", 1) / a$period_days
 
   # 3. Unfortified baseline composition and the link.
   comp <- ex$composition
@@ -142,7 +157,9 @@ golden_values <- function(ex, cfg) {
   linked <- !is.na(cw$composition_id) & cw$validated &
     !is.na(cw$edible_portion) & !is.na(a$qty_g_d)
   used <- linked & a$include
-  edible <- a$qty_g_d * cw$edible_portion
+  # A missing `yield_factor` is taken as 1.
+  yield <- column(cw, "yield_factor", NA_real_)
+  edible <- a$qty_g_d * cw$edible_portion * ifelse(is.na(yield), 1, yield)
   content <- sapply(cols, function(col) {
     edible * base[cw$composition_id, col] / 100
   })
@@ -288,3 +305,7 @@ write_golden(golden_values(hces_fixture, list(vehicle = "flour",
                                               one = "flour",
                                               two = "flour_and_sugar")),
              "golden-fixture.csv")
+write_golden(golden_values(hces_optional, list(vehicle = "flour",
+                                               one = "flour",
+                                               two = "flour_and_sugar")),
+             "golden-optional.csv")

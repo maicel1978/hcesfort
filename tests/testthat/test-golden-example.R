@@ -12,7 +12,8 @@ golden_chain <- function(ex = hces_fixture()) {
   afe <- adult_equivalents(
     ex$members,
     reference_kcal = reference_energy("female", 25, 55, pal = 1.76),
-    weight_kg = c(female = 55, male = 65), pal = 1.76
+    weight_kg = c(female = 55, male = 65), pal = 1.76,
+    meal_share = if (!is.null(ex$members$meals_home_share)) TRUE
   )
   intake <- apparent_intake(link_composition(g, ex$crosswalk, b), afe,
                             ex$households)
@@ -104,6 +105,21 @@ test_that("the full chain on hces_fixture() reproduces the golden values", {
   expect_golden("golden-fixture.csv", hces_fixture(),
                 list(vehicle = "flour", one = "flour",
                      two = "flour_and_sugar"))
+})
+
+test_that("the chain reaches the optional columns (P169)", {
+  expect_golden("golden-optional.csv", hces_fixture(optional = TRUE),
+                list(vehicle = "flour", one = "flour",
+                     two = "flour_and_sugar"))
+  # The optional columns change the values: the golden files differ.
+  read <- function(f) utils::read.csv(testthat::test_path("fixtures", f))
+  plain <- read("golden-fixture.csv")
+  opt <- read("golden-optional.csv")
+  for (nm in c("afe_sum", "mean_iron_mg", "mean_vehicle_g_d",
+               "se_folate_baseline")) {
+    expect_false(isTRUE(all.equal(plain$value[plain$name == nm],
+                                  opt$value[opt$name == nm])), label = nm)
+  }
 })
 
 test_that("the full chain on hces_example reproduces the golden values", {

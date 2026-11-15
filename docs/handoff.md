@@ -1,46 +1,47 @@
 # Handoff
 
 - **Date:** 2026-11-15
-- **Model:** Opus 5.5 (step 12e.1).
-- **Branch:** `claude/compassionate-mayer-6ajmi7`, pushed.
+- **Model:** Opus 5.5 (step 12e.2).
+- **Branch:** `claude/peaceful-davinci-yjsc14`, pushed.
 - **Environment:** run `R CMD INSTALL .` at the start (the Quarto render
-  test uses the installed package).
+  test uses the installed package). The full `devtools::test()` takes
+  about 13 minutes here: run it in the background, one at a time.
 
 ## What was done
 
-- 12e.1 (P155, P156), one commit "Refuse a repeated carrier key; range
-  check of a proportion (12e.1)":
-  - `require_hces()` (`R/hces-tbl.R`) calls the new `check_carrier_key()`:
-    missing or repeated key columns are `hcesfort_error_key`. Every
-    function that takes a carrier goes through it.
-  - `estimate_households()` and `estimate_difference()` call
-    `audit_check_rows()`.
-  - `check_proportion_values()` (`R/estimate-checks.R`): values outside
-    [0, 1] with `statistic = "proportion"` are `hcesfort_error_value`.
-  - Tests: `tests/testthat/test-carrier-key.R` (new) and one test in
-    `test-estimate.R`. Help of `estimate_households()` and
-    `?hcesfort_errors` updated; `NEWS.md`.
-- The approval of the design of 12e.5 recorded as R3-D1 to R3-D9 in
-  `docs/improvements.md`; roadmap 12e.1 ticked.
-- Full `devtools::test()` before the commit: 0 failures (run on the tree
-  before the last two edits; the files touched by them were re-run and
-  pass). `devtools::check()` and `lintr::lint_package()` not run: they run
-  once at the end of task 12e. Lint of the changed files: clean (one
-  `object_usage_linter` warning from the installed copy being older;
-  reinstall first).
+12e.2 (P160, P169, P174), three commits, no package code changed:
+
+- "Tests for the five mutations that survived the review v0.2": S1 to S5
+  in `test-estimate.R`, `test-adult-equivalents.R`, `test-above-ul.R`,
+  `test-apparent-intake.R`. Each mutation was re-applied to `R/` and its
+  test fails on it.
+- "Anchor tests from sources outside the package": `test-anchors.R`.
+  Sources opened this session: FAO/WHO/UNU 2004, examples under Table 5.1
+  (`fao.org/4/y5686e/y5686e07.htm`); IOM 2001 Table I-7, p. 703
+  (`nap.nationalacademies.org/books/10026/gif/703.gif`, non-OC column
+  typed from the page; largest difference at the middle of a band
+  0.0054). Plus conservation of nutrients, `svycontrast()`, `svyratio()`
+  on the full design, `svyciprop(method = "logit")`. `surveytable` was
+  left out (not a dependency; recorded in P160).
+- "Golden chain on the fixture with the optional columns":
+  `hces_fixture(optional = TRUE)` (built by `fixtures/hces_fixture.R`,
+  file `hces-fixture-optional.rds`; the plain fixture is byte-identical),
+  `data-raw/golden_example.R` handles `household_share`, `yield_factor`,
+  `age_months`, `meals_home_share`, member `weight_kg`;
+  `golden-optional.csv`; the two existing golden files did not change.
+  `NEWS.md`, roadmap (12e.2 ticked), P160/P169/P174 marked done.
+
+Full `devtools::test()` and lint of the changed files: see the last
+commit message. `devtools::check()` and `lintr::lint_package()` run once
+at the end of task 12e.
 
 ## Exact next step
 
-**12e.2 (P160, P169, P174), Opus, in a new session.** Read only: sections
-"Finding 6", "Finding 15", 5.3 and 5.4 of `docs/review-v0.2.md`, and the
-ids P160, P169 and P174 in `docs/improvements.md`. Anchors from sources
-outside the package (FAO examples, IOM Table I-7) are reachable online at the
-addresses of section 9 of `docs/review-v0.2.md` (opened by the review): open
-them and cite page and table. Only a source that cannot be opened is marked
-`# SOURCE PENDING`. Also: one full `devtools::test()` at a time, never two
-in parallel.
-
-Then 12e.3 (Sonnet for the text, Opus for the notes), 12e.4 (Opus), and
+**12e.3 (P157, P161, P163, P164, P170).** The roadmap splits it: the audit
+notes on usual intake and on compliance with the upper level are code
+(Opus); the sentences in help pages, README and vignette are text
+(Sonnet). Read only the ids above in `docs/improvements.md` and findings
+3, 7, 9, 10 and 16 of `docs/review-v0.2.md`. Then 12e.4 (Opus) and
 12e.5.1 to 12e.5.8 (Opus).
 
 ## Open questions
@@ -49,42 +50,35 @@ None.
 
 ## Recommended model for the next session
 
-**Opus** for 12e.2.
+**Opus** for the notes of 12e.3, then 12e.4; **Sonnet** may do the text
+of 12e.3 in its own session.
 
 ## Maintainer review points
 
-1. **A fanning join is refused, with the rows named:**
+1. **The FAO examples** (Table 5.1, 1,975 / 2,355 / 3,925 kcal):
 
    ```r
    library(hcesfort)
-   e <- hces_example
-   d <- as_hces_design(e$households, "adjust")
-   n <- nutrient_registry(e$nutrients)
-   g <- convert_units(e$acquisitions, e$unit_factors, priority = "food")
-   afe <- adult_equivalents(e$members,
-     reference_kcal = reference_energy("female", 25, 55, pal = 1.76),
-     weight_kg = c(female = 55, male = 65), pal = 1.76)
-   b <- unfortified_baseline(e$composition, e$enrichment, n)
-   intake <- apparent_intake(link_composition(g, e$crosswalk, b), afe,
-                             e$households)
-   twice <- dplyr::bind_rows(intake, intake[1:50, ])
-   estimate_households(d, twice, "iron_mg", statistic = "mean")
-   # hcesfort_error_key: repeated key: 50 rows (2001, 2002, ...)
+   c(reference_energy("female", 40, 55, pal = 1.53),
+     reference_energy("female", 22, 57, pal = 1.76),
+     reference_energy("male", 22, 70, pal = 2.25))
+   # 1977.6 2343.0 3928.9
    ```
 
-2. **An intake is not accepted as a proportion:**
+2. **Table I-7 of IOM 2001 (p. 703), non-OC users**, at 18% bioavailability:
+   compare with the page, e.g. 7.17 mg should be near 0.65, 11.94 near 0.15.
 
    ```r
-   estimate_households(d, intake, "iron_mg")
-   # hcesfort_error_value naming `statistic`
+   d <- subset(ref_iron_requirements, group == "females_menstruating_adult")
+   1 - approx(d$requirement_mg_d, d$percentile / 100,
+              xout = c(4.65, 7.17, 11.94, 16.865))$y
+   # 0.9625 0.6492 0.1498 0.0375
    ```
 
-3. **Rows removed outside the package are logged by the estimator:**
+3. **The optional fixture changes the chain** (run from the package root):
 
    ```r
-   few <- dplyr::filter(intake, household_id != intake$household_id[1])
-   log <- audit_log(estimate_households(d, few, "iron_mg",
-                                        statistic = "mean"))
-   log[log$kind == "external_change", ]
-   # step estimate_households, 1 record, "removed"
+   g <- read.csv("tests/testthat/fixtures/golden-fixture.csv")
+   o <- read.csv("tests/testthat/fixtures/golden-optional.csv")
+   merge(g, o, by = "name", suffixes = c("_plain", "_optional"))
    ```

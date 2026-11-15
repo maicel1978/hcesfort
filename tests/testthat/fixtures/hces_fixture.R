@@ -267,3 +267,44 @@ hces_fixture <- list(
 
 saveRDS(hces_fixture, "tests/testthat/fixtures/hces-fixture.rds",
         version = 2)
+
+# The same households with the optional columns of the standard tables and
+# a stratum with a single PSU (review v0.2, finding 15; P169), written to
+# tests/testthat/fixtures/hces-fixture-optional.rds and read by
+# hces_fixture(optional = TRUE). Every value is INVENTED and set without
+# the random generator, so the tables above do not change. By hand:
+# - members: the infant (household 36) has `age_months` 7, and an adult of
+#   household 1 has 30, which must be ignored (age >= 1); the first member
+#   of every fourth household, and the infant, have an own `weight_kg`
+#   (used for adults only); `meals_home_share` is 0.75 for every second
+#   member and missing for the first member of household 7 (its AFE is
+#   then missing);
+# - acquisitions: `household_share` 0.5 for every seventh record and
+#   missing for record 13 (its grams are then missing);
+# - crosswalk: `yield_factor` 0.75 for chicken and 0.9 for pumpkin, missing
+#   (taken as 1) for the other foods;
+# - households: household 3 alone in stratum "town", one PSU.
+optional <- hces_fixture
+m <- optional$members
+m$age_months <- NA_real_
+m$age_months[m$household_id == 36 & m$age_years %in% 0] <- 7
+m$age_months[m$household_id == 1 & m$member_id == 2] <- 30
+m$weight_kg <- ifelse(m$member_id == 1 & m$household_id %% 4 == 0,
+                      48 + m$household_id / 2, NA_real_)
+m$weight_kg[m$household_id == 36 & m$age_years %in% 0] <- 8
+m$meals_home_share <- ifelse(m$member_id == 2, 0.75, 1)
+m$meals_home_share[m$household_id == 7 & m$member_id == 1] <- NA
+optional$members <- m
+a <- optional$acquisitions
+a$household_share <- ifelse(a$record_id %% 7 == 0, 0.5, 1)
+a$household_share[a$record_id == 13] <- NA
+optional$acquisitions <- a
+optional$crosswalk$yield_factor <- c(
+  chicken = 0.75, pumpkin = 0.9
+)[optional$crosswalk$food_code]
+optional$crosswalk$yield_factor <- unname(optional$crosswalk$yield_factor)
+optional$households$stratum[[3]] <- "town"
+optional$households$psu[[3]] <- "town_3"
+
+saveRDS(optional, "tests/testthat/fixtures/hces-fixture-optional.rds",
+        version = 2)

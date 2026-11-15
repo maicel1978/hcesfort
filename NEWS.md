@@ -414,6 +414,19 @@
   refuses values outside [0, 1] (`hcesfort_error_value`). Before, an intake
   column gave an unclassed error of `survey`, or an estimate above 1
   labelled a proportion.
+* Tests against sources outside the package (`test-anchors.R`): the three
+  worked examples under Table 5.1 of FAO/WHO/UNU 2004 for
+  `reference_energy()`, Table I-7 of IOM 2001 (p. 703) for the iron
+  probability, the conservation of nutrients in `apparent_intake()`, and
+  `survey::svycontrast()`, `survey::svyratio()` on the full design and
+  `survey::svyciprop(method = "logit")` for the estimators. Five tests for
+  mutations that survived the review v0.2 (a second key in
+  `estimate_difference()`, `n_missing` by cell, a member exactly at an age
+  boundary, two forms of one upper level, `NA` against `NaN` in a
+  coverage). The golden chain now runs also on the test fixture with the
+  optional columns (`household_share`, `yield_factor`, `age_months`,
+  `meals_home_share`, member `weight_kg`) and a single-PSU stratum. No
+  result of the package changed.
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is

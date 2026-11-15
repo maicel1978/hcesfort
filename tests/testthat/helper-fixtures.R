@@ -130,7 +130,10 @@ fixture_scenarios <- function() {
 # The 40 invented households that were `hces_example` until 2026-11-14,
 # built by fixtures/hces_fixture.R. Unit tests whose expected values are
 # worked out by hand on these households use this fixture, not the shipped
-# realistic example.
-hces_fixture <- function() {
-  readRDS(testthat::test_path("fixtures", "hces-fixture.rds"))
+# realistic example. `optional = TRUE` gives the same households with the
+# optional columns of the standard tables and a single-PSU stratum (listed
+# in that script), for the golden chain.
+hces_fixture <- function(optional = FALSE) {
+  file <- if (optional) "hces-fixture-optional.rds" else "hces-fixture.rds"
+  readRDS(testthat::test_path("fixtures", file))
 }

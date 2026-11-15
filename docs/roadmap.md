@@ -98,7 +98,7 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
 - [ ] 12e. Corrections of the hostile review v0.2 (`docs/review-v0.2.md`; brief `docs/review-v0.2-brief.md`). Comes before A2. Approved on 2026-11-15 (answers in `docs/handoff.md`). Order: the design of 12e.5 first (Fable; done), then 12e.1 to 12e.4, then the implementation of 12e.5.
   - [x] 12e.0 Review written (Fable, 2026-11-15): one blocker, eight major and ten minor findings; findings recorded as P155 to P175. No package code changed.
   - [x] 12e.1 Key check in `require_hces()`, `audit_check_rows()` in the estimators, range check of a proportion (P155, P156). Opus.
-  - [ ] 12e.2 Anchor tests from sources outside the package, five tests for the surviving mutations, optional columns in `hces_fixture()` and the golden script (P160, P169, P174). Opus. Before A3.
+  - [x] 12e.2 Anchor tests from sources outside the package, five tests for the surviving mutations, optional columns in `hces_fixture()` and the golden script (P160, P169, P174). Opus. Before A3.
   - [ ] 12e.3 Limits of the method in the help pages, README and vignette; tail citation; audit notes on usual intake and on compliance with the upper level; corrected sentences on the presentation of probabilities (P157, P161, P163, P164, P170). Sonnet for the text, Opus for the notes. Before the first expert round.
   - [ ] 12e.4 Zero-width intervals, `df = 0`, `exact`, the second option of `survey`, validator bounds, `zero_intake` (P165 to P168, P172). Opus.
   - [ ] 12e.5 Infants and pregnancy in the AFE, the fortifiable vehicle, missing composition values, all-or-nothing compliance (P158 with P57, P159, P162, P163 with P69). Before A4; recommended before A2 (decision 8 of the design).
