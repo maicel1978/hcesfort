@@ -509,6 +509,8 @@ first commit of 12d.13:
 | V-D26 | P148: accepted as recommended. `energy_action` (`"keep"` or `"exclude"`, no default) in `_inputs.R`; the shipped template sets `"exclude"` and records it, with its reason, in `decisions.csv`; the readiness report states how many households it removes and the results report says so in its population note. The flag stays in the readiness checks; the action lives only in the template choice. Code: Opus, 12d.15. A change to a package function contract stops the work for the maintainer. |
 | V-D27 | P144: accepted. R3.1 stays as entered, with a note that cumulative scenarios repeat the vehicles of the previous one. |
 | V-D28 | P146: accepted. Cells with n = 0 have their own note line, not the suppression reason (done in 12d.14). |
+| V-D29 | 12d.15, open question 1 (2026-11-15): accepted as recommended. The population sentence stays at the start of the technical note, outside the analyst's findings slot. |
+| V-D30 | 12d.15, open question 2 (2026-11-15): accepted as recommended. `energy_action` applies to every result, coverage included, so the results report speaks of one population with one n. The readiness report keeps all households and states how many the results report excludes. |
 | V-D20, applied | 12d.13: the households with a short food list are drawn from a random stream of their own and their other records are removed after the defects are planted, so every other household keeps its records. A first attempt that drew them from the main stream moved the planted ×10 quantity onto wheat flour, and one household then passed the iron upper level (the calibration test failed). 26 households of `hces_example` acquire no vehicle. |
 
 ## Open items from the design of the reports v2 (2026-11-13)
