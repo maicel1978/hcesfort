@@ -34,10 +34,11 @@
 **12e.2 (P160, P169, P174), Opus, in a new session.** Read only: sections
 "Finding 6", "Finding 15", 5.3 and 5.4 of `docs/review-v0.2.md`, and the
 ids P160, P169 and P174 in `docs/improvements.md`. Anchors from sources
-outside the package (FAO examples, IOM Table I-7) need the documents: the
-maintainer attaches the PDFs (R2-D9); otherwise mark `# SOURCE PENDING` and
-continue with the anchors that need no document (conservation, round trip,
-`svycontrast`, full-design ratio, logit interval).
+outside the package (FAO examples, IOM Table I-7) are reachable online at the
+addresses of section 9 of `docs/review-v0.2.md` (opened by the review): open
+them and cite page and table. Only a source that cannot be opened is marked
+`# SOURCE PENDING`. Also: one full `devtools::test()` at a time, never two
+in parallel.
 
 Then 12e.3 (Sonnet for the text, Opus for the notes), 12e.4 (Opus), and
 12e.5.1 to 12e.5.8 (Opus).
