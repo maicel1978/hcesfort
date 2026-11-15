@@ -49,6 +49,13 @@ self-review, and the handoff for the maintainer's render on ENGIH 2018
    on all households and intake on the plausible ones only, gives two
    values of n in one report.
 
+## Answers of the maintainer (2026-11-15, after 12d.15)
+
+1. **Population sentence:** accepted as recommended: it stays at the start of the technical note, outside the analyst's findings slot.
+2. **Scope of the exclusion:** accepted as recommended: `energy_action` applies to every result, coverage included, so the whole report speaks of one population with one n. The readiness report keeps all households and states how many the results report excludes.
+
+Record these in `docs/improvements.md` with the first commit of 12d.16. CI on `main` is checked by the advisor after this merge.
+
 ## Recommended model for the next session
 
 **Sonnet**: 12d.16 is mostly documentation (vignette, specification,
