@@ -603,8 +603,26 @@ múltiples".
 | Id | Priority | Proposal | Why | Task |
 |---|---|---|---|---|
 | P141 | accepted (V-D23) | **A missing domain value is printed "—" in D8** (12d.12). Households without an expenditure quintile (31 in `hces_example`) form a row whose label is "—", the same mark as a suppressed estimate. *Recommended:* label it with a term ("sin dato" / "missing") in the domain column. | One mark, one meaning (R17). | 12d.13 |
-| P142 | accepted (V-D24) | **"Population" names households in the results report** (12d.12). The header `population` ("Population" / "Población") heads the label column of R1.4, whose only value is "National"; section 8 does not use "population" for households. *Recommended:* a header such as "Domain" / "Dominio", in the wording pass. | Section 8. | 12d.14 |
+| P142 | resolved (12d.13: R1.4 is by domain only, the national row and the header `population` are gone) | **"Population" names households in the results report** (12d.12). The header `population` ("Population" / "Población") heads the label column of R1.4, whose only value is "National"; section 8 does not use "population" for households. *Recommended:* a header such as "Domain" / "Dominio", in the wording pass. | Section 8. | 12d.14 |
 | P143 | accepted (V-D25) | **Axis labels of the figures have no thousands mark** (12d.12). D9 prints "2000" on the axis and "2,000" in its sentence. *Recommended:* `scales::label_number(big.mark = term("big_mark", "format"))` on numeric axes in `_figures.R` (`scales` comes with `ggplot2`). | One number format per report (V-D19). | 12d.13 |
+
+## Open items from 12d.13 (2026-11-15)
+
+Self-review of the results report v3, done as an rOpenSci reviewer
+would. Fixed in the task: the zero line of R3.4 was drawn only in its
+first band; a figure of one row was cut (minimum height); `n` in the
+zero-event sentences had no thousands mark; "vitamin a" in notes
+(`lower_first()` instead of `tolower()`); the shares above the UL print
+two decimals, as a share of 0.03% printed "0.0". The rest:
+
+| Id | Priority | Proposal | Why | Task |
+|---|---|---|---|---|
+| P144 | medium | **Table R3.1 repeats the rows of cumulative scenarios.** The five scenarios of `hces_example` each restate the vehicles of the one before, so the table has 60 rows, 45 of them repeated. *Recommended:* keep one row per scenario, vehicle and nutrient (the scenarios table as entered, which is what the analyst checks), and add to the note that a scenario lists every vehicle it fortifies. Alternative: print, for each scenario, only the rows that differ from the scenario it is compared with. | Legibility of the one table of the body. | maintainer |
+| P145 | low | **Titles of repeated exhibits.** The instance is printed as its label in mid-sentence: "by Region", "…by domain value, Iron, Expenditure quintile". *Recommended:* `lower_first()` on domain labels inside titles, and the title of R3.4 as "Effect of each scenario on inadequate apparent intake of {nutrient}, by {domain}". | Wording (R24). | 12d.14 |
+| P146 | medium | **Cells with no household.** Households that did not answer the food module have no expenditure quintile and no intake, so R2.2, R3.4 and R1.4 by expenditure quintile print a row "No data", n = 0, "—", with the note "fewer households than the minimum". The row is honest but reads as a small cell. *Recommended:* keep the row (nothing silent) and give cells with n = 0 their own note line ("No data: no household with an estimate"), instead of the suppression reason. | One mark, one meaning (R17). | 12d.14 |
+| P147 | low | **Terms no longer used.** `ul_scope`, `ul_bias` and the headers `ul_compared`, `ul_bias` were used only by the v2 table of the upper level, now replaced by the statements of R3.3. *Recommended:* remove them from `terms.csv` and from the vocabulary test (U10) in the wording pass. | Dead vocabulary. | 12d.14 |
+| P148 | high | **The results use households with implausible energy.** The readiness report flags apparent energy outside the plausible range (D9), but nothing acts on the flag: R3.3 shows iron above the UL in 0.2% of households, all of them households outside the plausible energy range (the calibration test, which leaves those out, finds none above the iron UL). CLAUDE.md: "detect, then decide", with no hidden default. *Recommended:* a choice `energy_action` in `_inputs.R` (`"keep"` or `"exclude"`, no default), recorded in `decisions.csv`, applied once in `_chain.R` before the results and counted in the notes; the template ships `"keep"` with the reason. Changes the choices of the template, so it needs the maintainer. | Method; an implausible household can drive an upper-level estimate. | maintainer |
+| P149 | low | **Left panel of R3.2 and R3.4 on a free axis.** Section 5.5 asks for percentages on a 0-100 axis; the dumbbell panel uses the range of its points, so that small changes stay visible. *Recommended:* keep the free axis and say so in section 5.5 of the design. | Design text against implementation. | 12d.16 |
 
 ## Open items from step 12c.11 (2026-11-13)
 
