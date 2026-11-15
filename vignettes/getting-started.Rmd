@@ -1,0 +1,108 @@
+---
+title: "Getting started with hcesfort"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting started with hcesfort}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 6,
+                      fig.height = 3.5)
+```
+
+`hcesfort` estimates apparent micronutrient intake from a Household
+Consumption and Expenditure Survey (HCES) and models what fortifying a food
+would change. This vignette runs the whole chain on `hces_example`, a
+synthetic survey: every value is invented and it describes no country.
+
+```{r library}
+library(hcesfort)
+ex <- hces_example
+names(ex)
+```
+
+## 1. From acquisitions to apparent intake
+
+Quantities are converted to grams, linked to the composition of the
+**unfortified** foods, and divided by the adult female equivalents (AFE) of
+each household.
+
+```{r intake}
+nutrients <- nutrient_registry(ex$nutrients)
+grams <- convert_units(ex$acquisitions, ex$unit_factors, priority = "food")
+baseline <- unfortified_baseline(ex$composition, ex$enrichment, nutrients)
+afe <- adult_equivalents(
+  ex$members,
+  reference_kcal = reference_energy("female", 25, 55, pal = 1.76),
+  weight_kg = c(female = 55, male = 65), pal = 1.76
+)
+content <- link_composition(grams, ex$crosswalk, baseline)
+intake <- apparent_intake(content, afe, ex$households)
+head(intake[intake$intake_status == "estimated", 1:6], 3)
+```
+
+Every step records what it received, excluded or flagged:
+
+```{r audit}
+audit_summary(intake)
+```
+
+## 2. Fortification scenarios
+
+`vehicle_coverage()` measures how much of each vehicle a household acquires;
+`apply_scenario()` adds the nutrients that a scenario would put in it.
+
+```{r scenario}
+use <- vehicle_coverage(grams, ex$vehicles, afe, ex$households)
+scenarios <- apply_scenario(intake, use, ex$scenarios,
+                            compliance_model = "average_content")
+unique(scenarios$scenario)
+```
+
+## 3. Inadequacy and its uncertainty
+
+The probability of inadequacy of each household is averaged with the survey
+design. Estimates come with an interval and are judged by the presentation
+standard before they are shown.
+
+```{r risk}
+iron <- ref_iron_requirements
+iron <- iron[iron$group == "females_menstruating_adult", ]
+risk <- inadequacy(
+  scenarios, ref_requirements, distribution = list(iron = iron),
+  bioavailability = list(iron = 0.10), min_coverage = 0.8,
+  min_records_used = 0.8
+)
+design <- as_hces_design(ex$households, lonely_psu = "adjust")
+folate <- risk[risk$nutrient == "folate", ]
+by_group <- estimate_households(
+  design, folate, "p_inadequate", by = "expenditure_group",
+  ci_method = "korn_graubard"
+)
+by_group <- flag_presentation(by_group)
+head(by_group[c("scenario", "expenditure_group", "estimate", "ci_low",
+                "ci_high", "n", "presentation")], 5)
+```
+
+## 4. One figure by domain
+
+The functions return tidy tibbles, so any figure is a `ggplot2` call. Here
+the folate inadequacy in each expenditure group, before and after one
+scenario. Estimates that the standard suppresses are left out.
+
+```{r figure, eval = requireNamespace("ggplot2", quietly = TRUE)}
+library(ggplot2)
+shown <- by_group[by_group$presentation != "suppress" &
+                    by_group$scenario %in% c("baseline", "wheat_flour"), ]
+ggplot(shown, aes(expenditure_group, estimate, colour = scenario)) +
+  geom_pointrange(aes(ymin = ci_low, ymax = ci_high),
+                  position = position_dodge(width = 0.4)) +
+  labs(x = "Expenditure group", y = "Probability of inadequacy (folate)",
+       colour = "Scenario") +
+  theme_minimal()
+```
+
+Reports in the shape of the results of an analysis (readiness and results)
+are generated with `use_report_template()`.

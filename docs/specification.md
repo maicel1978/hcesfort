@@ -131,6 +131,16 @@ that share their inputs (`_inputs.R`): a data readiness report
 (`readiness.qmd`) and a results report (`results.qmd`) whose sections are
 rendered only where the readiness verdict enables them.
 
+The choices of `_inputs.R` that bear on the population are `energy_action`
+(`"keep"` or `"exclude"`: households with implausible energy are left out
+of every result of the results report, stay in the design outside every
+domain, and are counted in the audit log; the readiness report keeps all
+households and states how many are excluded) and `vehicles` (which vehicles
+enter the report). Every exhibit has an ID in the registry
+(`exhibits.csv`); comments of experts cite these IDs and are kept in
+`docs/feedback/`. The vignette `getting-started` runs the chain on
+`hces_example` and draws one `ggplot2` figure by domain.
+
 ### 3. Reference data shipped with the package, each with its source
 Small, generic, replaceable by argument:
 - EAR and UL (IOM), with the form the UL applies to.

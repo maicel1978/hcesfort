@@ -394,6 +394,15 @@
   `vehicles` and `review` and loses `min_n`, `max_half_width` and `level`
   (now from the standard). **Breaking** for `_inputs.R` files written
   before.
+* Report templates: `choices$energy_action` (`"keep"` or `"exclude"`) decides
+  whether households with implausible energy enter the results; the shipped
+  template excludes them and records the reason in `decisions.csv`, and the
+  results report states its population at the start of the technical note.
+  Tests: a registry test (titles, builders, appendix tables), one snapshot
+  per exhibit, report and language, and a check of the feedback log
+  (`docs/feedback/`).
+* Vignette `getting-started`: the whole chain on `hces_example`, with one
+  `ggplot2` figure by expenditure group. `knitr` is the vignette builder.
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is
