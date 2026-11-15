@@ -50,7 +50,7 @@ one.
 
 ## Answers of the maintainer (2026-11-14, after 12d.13)
 
-1. **P148:** accepted as recommended: `energy_action` in `_inputs.R`, `"keep"` or `"exclude"`, no default. The shipped template sets `"exclude"` and records it, with its reason (energy outside the plausible range of the readiness checks), in `decisions.csv`. The readiness report states how many households it removes, and the results report says so in its population note. Detect, then decide: the flag stays in the readiness checks; the action lives only in the template choice. If this needs a change in a package function contract, stop and ask.
+1. **P148:** accepted as recommended: `energy_action` in `_inputs.R`, `"keep"` or `"exclude"`, no default. The shipped template sets `"exclude"` and records it, with its reason (energy outside the plausible range of the readiness checks), in `decisions.csv`. The readiness report states how many households it removes, and the results report says so in its population note. Detect, then decide: the flag stays in the readiness checks; the action lives only in the template choice. If this needs a change in a package function contract, stop and ask. **P148 is code: Opus implements it in 12d.15, not Sonnet in 12d.14.** Sonnet in 12d.14 only records the answers and settles wording.
 2. **P144:** accepted as recommended (keep R3.1 as introduced, with a note explaining that cumulative scenarios repeat the vehicles of the previous one).
 3. **P146:** accepted as recommended (own note line for "No data" cells with n = 0).
 
