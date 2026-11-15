@@ -61,13 +61,14 @@ None.
    n <- nutrient_registry(e$nutrients)
    g <- convert_units(e$acquisitions, e$unit_factors, priority = "food")
    afe <- adult_equivalents(e$members,
-     reference_energy("female", 25, 55, pal = 1.76),
-     c(female = 55, male = 65), 1.76)
-   intake <- apparent_intake(link_composition(g, e$crosswalk,
-     unfortified_baseline(e$composition, e$enrichment, n)), afe, e$households)
+     reference_kcal = reference_energy("female", 25, 55, pal = 1.76),
+     weight_kg = c(female = 55, male = 65), pal = 1.76)
+   b <- unfortified_baseline(e$composition, e$enrichment, n)
+   intake <- apparent_intake(link_composition(g, e$crosswalk, b), afe,
+                             e$households)
    twice <- dplyr::bind_rows(intake, intake[1:50, ])
    estimate_households(d, twice, "iron_mg", statistic = "mean")
-   # hcesfort_error_key: repeated key: 50 rows (...)
+   # hcesfort_error_key: repeated key: 50 rows (2001, 2002, ...)
    ```
 
 2. **An intake is not accepted as a proportion:**
