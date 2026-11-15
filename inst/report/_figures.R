@@ -130,24 +130,3 @@ fig_coverage_curve <- function(d, measures, threshold, xlab, ylab,
     theme_minimal(base_size = 11) +
     theme(legend.position = "bottom")
 }
-
-# Dumbbell (R10f): one row per category `y`, the comparator point
-# (column `from`, hollow) joined to the scenario point (column `to`,
-# filled) by a segment. Rows missing either point are left out. A dumbbell
-# shows no uncertainty: the interval of the difference is in its table.
-fig_dumbbell <- function(d, from, to, y, xlab, ylab, facet = NULL) {
-  d <- as.data.frame(d)
-  d <- d[!is.na(d[[from]]) & !is.na(d[[to]]), , drop = FALSE]
-  d[[y]] <- factor(d[[y]], levels = rev(unique(as.character(d[[y]]))))
-  g <- ggplot(d, aes(y = .data[[y]])) +
-    geom_segment(aes(x = .data[[from]], xend = .data[[to]],
-                     yend = .data[[y]]), colour = "grey50") +
-    geom_point(aes(x = .data[[from]]), shape = 1, size = 2.5) +
-    geom_point(aes(x = .data[[to]]), shape = 16, size = 2.5) +
-    labs(x = xlab, y = ylab) +
-    theme_minimal(base_size = 11)
-  if (!is.null(facet)) {
-    g <- g + facet_wrap(facet, scales = "free_y")
-  }
-  g
-}

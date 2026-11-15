@@ -1,8 +1,12 @@
-# Estimates and tables of the results report. Sourced by results.qmd after
-# _inputs.R, _chain.R, _tables.R and _figures.R; do not edit. Each
-# section, nationally and by domain, is computed only where the readiness
-# verdict enables it. Every builder returns a table for `tables`, with code
-# column names and values in percent (shares) or points (differences).
+# Exhibits of the results report (docs/design-reports-v3.md, section 6):
+# its inputs and sections 0 to 2. Sourced by results.qmd after _inputs.R,
+# _chain.R, _tables.R, _figures.R and _exhibits.R, before _scenarios.R;
+# do not edit. Each builder named in exhibits.csv takes the instance and
+# returns the list that show_exhibit() prints. Tables have code column
+# names, labels in the order of labels.csv, shares in percent and
+# differences in points; figures print the short labels (R22). Each
+# section, nationally and by domain, is shown only where the readiness
+# verdict enables it.
 
 # Each scenario of `scenarios` and the scenario it is compared with
 # (decision 7): "baseline" unless `choices$comparator` names another.
@@ -52,13 +56,39 @@ est <- function(x, value, by = NULL, ...) {
   precision(estimate_households(design, x, value, by = by, level = level,
                                 ci_method = "korn_graubard", ...))
 }
+
 # Label columns of an estimate table: the code columns in `types` (column
-# = label type) and the domain values of `by`.
-label_columns <- function(e, types, by = NULL) {
+# = label type) and the domain values of `by`, as factors; rows in the
+# order of the labels (domain value first).
+label_columns <- function(e, types, by = NULL, short = FALSE) {
   d <- as.data.frame(e)
-  for (col in names(types)) d[[col]] <- lab(d[[col]], types[[col]])
-  if (!is.null(by)) d$domain_value <- lab(d[[by]], "domain_value", by)
-  d
+  for (col in names(types)) {
+    d[[col]] <- lab(d[[col]], types[[col]], short = short)
+  }
+  if (!is.null(by)) d$domain_value <- domain_label(d[[by]], by, short)
+  keys <- c(if (!is.null(by)) "domain_value", names(types))
+  d[do.call(order, unname(d[keys])), , drop = FALSE]
+}
+
+# One estimate table for display() twice: `table` with the labels, for
+# `tables` and the appendix, and `data` with the short labels, for the
+# figure.
+shown_pair <- function(e, types, by, value, ...) {
+  keys <- c(if (!is.null(by)) "domain_value", names(types))
+  list(table = display(label_columns(e, types, by), keys, value, ...),
+       data = display(label_columns(e, types, by, short = TRUE), keys,
+                      value, ...))
+}
+
+# Height of a figure in rows: the most rows of a panel times the rows of
+# panels (two panels a row).
+panel_rows <- function(d, y, facet = NULL) {
+  if (is.null(facet) || nrow(d) == 0) {
+    return(length(unique(d[[y]])))
+  }
+  per <- tapply(as.character(d[[y]]), as.character(d[[facet]]),
+                function(v) length(unique(v)))
+  max(per) * ceiling(length(per) / 2)
 }
 
 # ---- Inputs of the results ------------------------------------------
@@ -74,16 +104,17 @@ if (ready && !is.null(vehicles)) {
 }
 labels <- read_labels("labels.csv", needed = list(
   domain = choices$domains,
-  domain_value = lapply(stats::setNames(nm = domains),
-                        function(d) unique(as.character(households[[d]]))),
+  domain_value = lapply(stats::setNames(nm = domains), function(d) {
+    unique(stats::na.omit(as.character(households[[d]])))
+  }),
   nutrient = choices$nutrients,
   vehicle = unique(vehicles$vehicle),
   vehicle_group = unique(c(stats::na.omit(vehicles$vehicle_group),
                            if (!is.null(use)) "any_vehicle")),
   scenario = c("baseline", unique(scenarios$scenario)),
-  food_group = c(unique(food_groups$food_group),
-                 if (!is.null(food_groups)) "unclassified"),
+  food_group = unique(food_groups$food_group),
   form = unique(stats::na.omit(scenarios$form)),
+  compound = unique(stats::na.omit(scenarios$compound)),
   source = unique(scenarios$source)
 ))
 risk <- NULL
@@ -104,174 +135,138 @@ if (enabled("risk")) {
   risk$scenario[is.na(risk$scenario)] <- "baseline"
 }
 
-# ---- Section 1. Coverage and quantity --------------------------------
-coverage_table <- function(level, by = NULL) {
-  e <- est(use[use$level %in% level, ], "acquired", by = by)
-  col <- if ("vehicle" %in% level) "vehicle" else "vehicle_group"
-  e[[col]] <- e$vehicle
-  e <- label_columns(e, stats::setNames(col, col), by)
-  display(e, c(if (!is.null(by)) "domain_value", col), "acquired")
+# Rows of the baseline, and of each scenario for the nutrients it adds.
+adds <- function(x) {
+  pairs <- unique(paste(scenarios$scenario, scenarios$nutrient))
+  x$scenario == "baseline" | paste(x$scenario, x$nutrient) %in% pairs
 }
 
-quantity_table <- function() {
-  x <- use[use$level == "vehicle", ]
-  e <- precision(estimate_households(
-    design, x, "qty_vehicle_g_d", statistic = "median", domain = "acquired",
-    level = level
-  ))
-  e <- label_columns(e, c(vehicle = "vehicle"))
-  display(e, "vehicle", "median_g", scale = round, unit = " g")
-}
-
-no_vehicle_table <- function(by = NULL) {
-  e <- est(use[use$vehicle == "any_vehicle", ], "acquired", by = by)
-  e[c("estimate", "ci_low", "ci_high")] <-
-    1 - e[c("estimate", "ci_high", "ci_low")]
-  if (is.null(by)) {
-    e$population <- term("national", "header")
-    return(display(e, "population", "none"))
-  }
-  display(label_columns(e, list(), by), "domain_value", "none")
-}
-
-# The members of each vehicle group, for the note of exhibit 1.2.
-group_note <- function() {
-  g <- unique(stats::na.omit(vehicles$vehicle_group))
-  parts <- vapply(g, function(x) {
-    paste0(lab(x, "vehicle_group"), ": ", paste(
-      lab(unique(vehicles$vehicle[vehicles$vehicle_group %in% x]), "vehicle"),
-      collapse = ", "
-    ))
-  }, character(1))
-  any <- paste0(lab("any_vehicle", "vehicle_group"), ": ",
-                paste(lab(unique(vehicles$vehicle), "vehicle"),
-                      collapse = ", "))
-  paste0(paste(c(parts, any), collapse = ". "), ".")
-}
-
-# ---- Section 2. Risk without fortification ---------------------------
-risk_table <- function(by = NULL) {
-  e <- est(risk[risk$scenario == "baseline", ], "p_inadequate", by = by)
-  e <- label_columns(e, c(nutrient = "nutrient"), by)
-  display(e, c(if (!is.null(by)) "domain_value", "nutrient"), "inadequate")
-}
-
-# Method of each nutrient and the iron bioavailability, for the note.
+# Method of each nutrient and its bioavailability, for the notes (R22:
+# "Iron: probability approach, iron bioavailability 10%").
 method_note <- function() {
   m <- unique(risk[c("nutrient", "method", "bioavailability")])
   m <- m[match(choices$nutrients, m$nutrient), ]
-  b <- ifelse(is.na(m$bioavailability), "",
-              paste0(" (", pct(m$bioavailability, 0), "%)"))
-  paste0(paste0(lab(m$nutrient, "nutrient"), ": ",
-                term(m$method, "method"), b, collapse = "; "), ".")
+  name <- as.character(lab(m$nutrient, "nutrient"))
+  b <- ifelse(is.na(m$bioavailability), "", paste0(
+    ", ", fill(term("bioavailability", "note"), nutrient = lower_first(name)),
+    " ", pct(m$bioavailability, 0), "%"
+  ))
+  fill(term("method", "note"),
+       methods = paste0(name, ": ", term(m$method, "method"), b,
+                        collapse = "; "))
 }
 
-# ---- Section 3. Scenarios --------------------------------------------
-# Level as mg of nutrient per kg: compound rows times their fraction.
-scenario_table <- function() {
-  sc <- as.data.frame(scenarios)
-  compound <- sc$level_basis %in% "compound"
-  level <- ifelse(compound, sc$level_mg_kg * sc$nutrient_fraction,
-                  sc$level_mg_kg)
-  data.frame(scenario = lab(sc$scenario, "scenario"),
-             vehicle = lab(sc$vehicle, "vehicle"),
-             nutrient = lab(sc$nutrient, "nutrient"),
-             level_mg_kg = signif(level, 3),
-             form = lab(sc$form, "form"),
-             compliance = pct(sc$compliance, 0),
-             source = lab(sc$source, "source"))
+# ---- R0. Main findings -----------------------------------------------
+findings_figure <- function(instance) {
+  p <- shown_pair(est(risk[adds(risk), ], "p_inadequate"),
+                  c(nutrient = "nutrient", scenario = "scenario"), NULL,
+                  "inadequate")
+  g <- fig_interval(p$data, "inadequate", "scenario",
+                    xlab = term("inadequate", "header"),
+                    ylab = term("scenario", "header"), facet = "nutrient",
+                    percent = TRUE)
+  list(table = p$table, figure = g,
+       rows = panel_rows(p$data, "scenario", "nutrient"),
+       note = method_note())
 }
 
-# Paired change of each scenario against its comparator, only for the
-# scenario and nutrient pairs of `scenarios`, with both points.
-effects <- function(by = NULL) {
-  pairs <- unique(paste(scenarios$scenario, scenarios$nutrient))
-  points <- est(risk, "p_inadequate", by = by)
-  key <- function(d, scenario) {
-    paste(scenario, d$nutrient, if (!is.null(by)) d[[by]])
-  }
-  out <- lapply(unique(comparators), function(cmp) {
-    d <- precision(estimate_difference(design, risk, "p_inadequate",
-                                       reference = cmp, by = by,
-                                       level = level))
-    d <- as.data.frame(d)
-    d <- d[d$scenario %in% names(comparators)[comparators == cmp] &
-             paste(d$scenario, d$nutrient) %in% pairs, ]
-    d$comparator <- cmp
-    d$from <- points$estimate[match(key(d, cmp), key(points, points$scenario))]
-    d$to <- points$estimate[match(key(d, d$scenario),
-                                  key(points, points$scenario))]
-    d
-  })
-  do.call(rbind, out)
+# ---- Section 1. Coverage and quantity --------------------------------
+coverage_exhibit <- function(e, col, value = "acquired", ...) {
+  p <- shown_pair(e, stats::setNames(col, col), NULL, value, ...)
+  list(table = p$table,
+       figure = fig_interval(p$data, value, col,
+                             xlab = term(value, "header"),
+                             ylab = term(col, "header"),
+                             percent = value == "acquired"))
 }
 
-effects_table <- function(by = NULL) {
-  d <- effects(by)
-  small <- d$presentation %in% "suppress"
-  d$from <- ifelse(small, NA, pct(d$from))
-  d$to <- ifelse(small, NA, pct(d$to))
-  d <- label_columns(d, c(scenario = "scenario", comparator = "scenario",
-                          nutrient = "nutrient"), by)
-  keys <- c(if (!is.null(by)) "domain_value", "nutrient", "scenario",
-            "comparator")
-  out <- display(d, keys, "difference", unit = "", extra = c("from", "to"))
-  names(out) <- sub("^ci_", "difference_ci_", names(out))
+coverage_vehicle <- function(instance) {
+  coverage_exhibit(est(use[use$level == "vehicle", ], "acquired"),
+                   "vehicle")
+}
+
+coverage_group <- function(instance) {
+  e <- est(use[use$level %in% c("group", "combined"), ], "acquired")
+  e$vehicle_group <- e$vehicle
+  out <- coverage_exhibit(e, "vehicle_group")
+  out$note <- fill(term("groups", "note"), groups = group_note())
   out
 }
 
-# Households above the UL of each nutrient. The comparison uses the total
-# where the diet part of the form is known, else the added part; the
-# scope table says which, and the direction of its bias.
-above_ul_estimates <- function() {
-  ul <- above_ul(s, requirements, min_coverage = choices$min_coverage,
-                 min_records_used = choices$min_records_used)
-  ul <- ul[ul$nutrient %in% choices$nutrients, ]
-  ul$above_ul <- ifelse(is.na(ul$above_ul_total), ul$above_ul_added,
-                        ul$above_ul_total)
-  ul
+# The members of each vehicle group and of "any vehicle".
+group_note <- function() {
+  g <- unique(stats::na.omit(vehicles$vehicle_group))
+  members <- function(v) collapse(as.character(lab(unique(v), "vehicle")))
+  parts <- vapply(g, function(x) {
+    paste0(lab(x, "vehicle_group"), ": ",
+           members(vehicles$vehicle[vehicles$vehicle_group %in% x]))
+  }, character(1))
+  any <- paste0(lab("any_vehicle", "vehicle_group"), ": ",
+                members(vehicles$vehicle))
+  paste(c(parts, any), collapse = "; ")
 }
 
-ul_scope_table <- function(ul) {
-  d <- unique(as.data.frame(ul)[c("nutrient", "ul_scope")])
-  data.frame(nutrient = lab(d$nutrient, "nutrient"),
-             ul_compared = term(d$ul_scope, "ul_scope"),
-             ul_bias = term(d$ul_scope, "ul_bias"))
+# Median among acquirers, judged by sample size and degrees of freedom
+# only (S1).
+quantity_vehicle <- function(instance) {
+  e <- precision(estimate_households(
+    design, use[use$level == "vehicle", ], "qty_vehicle_g_d",
+    statistic = "median", domain = "acquired", level = level
+  ))
+  out <- coverage_exhibit(e, "vehicle", "median_g", scale = round,
+                          unit = " g")
+  out$note <- term("not_proportion", "note")
+  out
 }
 
-above_ul_table <- function(ul) {
-  e <- label_columns(est(ul, "above_ul"),
-                     c(scenario = "scenario", nutrient = "nutrient"))
-  display(e, c("nutrient", "scenario"), "above_ul")
+# Households acquiring no vehicle, one domain variable (the national
+# figure is the complement of R1.2). The proportion is estimated as such,
+# so the standard judges the estimate that is printed.
+no_vehicle_by_domain <- function(instance) {
+  x <- use[use$vehicle == "any_vehicle", ]
+  x$no_vehicle <- !x$acquired
+  p <- shown_pair(est(x, "no_vehicle", by = instance), list(), instance,
+                  "none")
+  g <- fig_interval(p$data, "none", "domain_value",
+                    xlab = term("none", "header"),
+                    ylab = as.character(lab(instance, "domain")),
+                    percent = TRUE)
+  list(table = p$table, figure = g, headers = value_header(instance))
 }
 
-# ---- Section 4. Food groups ------------------------------------------
-food_group_table <- function() {
-  groups <- food_group_intake(content, food_groups, afe, households)
-  e <- precision(food_group_shares(design, groups, level = level))
-  cols <- nutrients$column[match(choices$nutrients, nutrients$nutrient)]
-  e <- e[e$variable %in% cols, ]
-  e$nutrient <- choices$nutrients[match(e$variable, cols)]
-  e <- label_columns(e, c(nutrient = "nutrient", food_group = "food_group"))
-  display(e, c("nutrient", "food_group"), "share", drop_exact = FALSE)
+# ---- Section 2. Inadequate apparent intake ---------------------------
+risk_national <- function(instance) {
+  p <- shown_pair(est(risk[risk$scenario == "baseline", ], "p_inadequate"),
+                  c(nutrient = "nutrient"), NULL, "inadequate")
+  g <- fig_interval(p$data, "inadequate", "nutrient",
+                    xlab = term("inadequate", "header"),
+                    ylab = term("nutrient", "header"), percent = TRUE)
+  list(table = p$table, figure = g, note = method_note())
 }
 
-# ---- Technical note --------------------------------------------------
-reference_table <- function() {
-  r <- as.data.frame(requirements)
-  r <- r[r$nutrient %in% choices$nutrients, ]
-  data.frame(nutrient = lab(r$nutrient, "nutrient"), ear = r$ear,
-             unit = lab(r$unit, "unit"), ul = r$ul,
-             ul_unit = lab(r$ul_unit, "unit"), source = r$source)
+# Panels by nutrient, a dashed line at the national estimate.
+risk_by_domain <- function(instance) {
+  base <- risk[risk$scenario == "baseline", ]
+  p <- shown_pair(est(base, "p_inadequate", by = instance),
+                  c(nutrient = "nutrient"), instance, "inadequate")
+  national <- est(base, "p_inadequate")
+  names(national$estimate) <- as.character(
+    lab(national$nutrient, "nutrient", short = TRUE)
+  )
+  p$data$national <- pct(national$estimate[as.character(p$data$nutrient)])
+  g <- fig_interval(p$data, "inadequate", "domain_value",
+                    xlab = term("inadequate", "header"),
+                    ylab = as.character(lab(instance, "domain")),
+                    ref = "national", facet = "nutrient", percent = TRUE)
+  list(table = p$table, figure = g,
+       rows = panel_rows(p$data, "domain_value", "nutrient"),
+       headers = value_header(instance),
+       note = c(term("national_line", "note"), method_note()))
 }
 
-iron_sensitivity_table <- function() {
-  b <- sort(unique(c(choices$iron_bioavailability,
-                     choices$iron_bioavailability_sensitivity)))
-  base <- if (is.null(s$scenario)) s else s[s$scenario == "baseline", ]
-  r <- do.call(inadequacy, c(list(base), risk_args,
-                             list(bioavailability = list(iron = b))))
-  e <- est(r[r$nutrient == "iron", ], "p_inadequate")
-  e$bioavailability_pct <- paste0(pct(e$bioavailability, 0), "%")
-  display(e, "bioavailability_pct", "inadequate")
+# Each domain variable of `choices$domains`: the exhibit, or the sentence
+# of the verdict where the domain is disabled or absent.
+show_domains <- function(id) {
+  for (d in choices$domains) show_exhibit(id, d)
+  invisible(NULL)
 }

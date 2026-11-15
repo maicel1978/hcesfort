@@ -37,7 +37,6 @@ header,,outside,Fuera del rango plausible (%)
 header,,outside_ci,IC {level}% de la proporción fuera
 header,,section,Sección del informe de resultados
 header,,national,Nacional
-header,,population,Población
 header,,decision,Decisión
 header,,choice,Opción
 header,,evidence,Evidencia

@@ -186,21 +186,3 @@ verdict_text <- function(v) {
   ifelse(v$enabled, term(rep("enabled", nrow(v)), "verdict"),
          paste0(term(v$reason, "verdict_reason"), " (", detail, ")"))
 }
-
-# Print the table `id` of `tables` (if it has rows), the sentence of its
-# exact estimates and, when `figure` has data, the figure, stored in
-# `figures` under the same id (R5: table first, then its figure). Used by
-# the reports until they move to show_exhibit() of _exhibits.R.
-show_legacy <- function(id, caption, figure = NULL, headers = NULL) {
-  d <- tables[[id]]
-  if (nrow(d) > 0) {
-    emit_table(print_table(d, caption = caption, headers = headers))
-  }
-  cat("\n\n", exact_sentence(d), "\n\n", sep = "")
-  if (!is.null(figure) && nrow(figure$data) > 0) {
-    figures[[id]] <<- figure
-    print(figure)
-    cat("\n\n")
-  }
-  invisible(NULL)
-}

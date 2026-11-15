@@ -37,7 +37,6 @@ header,,outside,Outside the plausible range (%)
 header,,outside_ci,{level}% CI of the share outside
 header,,section,Section of the results report
 header,,national,National
-header,,population,Population
 header,,decision,Decision
 header,,choice,Choice
 header,,evidence,Evidence
