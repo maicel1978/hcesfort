@@ -12,18 +12,6 @@ labels <- read_labels("labels.csv", needed = list(
   nutrient = choices$nutrients
 ))
 decisions <- read_decisions("decisions.csv")
-absent <- inventory[inventory$role == "essential" & !inventory$present, ]
-absent <- ifelse(is.na(absent$variable), absent$table,
-                 paste0(absent$table, "$", absent$variable))
-
-# A list of labels in one string: "a, b and c" ("y" in Spanish).
-collapse <- function(x) {
-  n <- length(x)
-  if (n < 2) {
-    return(paste(x, collapse = ""))
-  }
-  paste(paste(x[-n], collapse = ", "), term("and", "format"), x[n])
-}
 
 # ---- D2 and DA1. Variables -------------------------------------------
 
@@ -154,7 +142,7 @@ unlinked_table <- function(by = NULL) {
     if (is.null(by)) {
       return(out)
     }
-    cbind(data.frame(domain_value = lab(e[[by]], "domain_value", by)), out,
+    cbind(data.frame(domain_value = domain_label(e[[by]], by)), out,
           data.frame(rest = pct(e$rest_estimate),
                      difference = pct(e$difference),
                      difference_ci_low = pct(e$difference_ci_low),

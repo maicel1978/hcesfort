@@ -22,9 +22,37 @@ term <- function(code, type) {
 }
 
 # Labels of the analyst's codes (labels.csv), as a factor in the order of
-# the label table.
-lab <- function(code, type, parent = NULL) {
-  label_codes(code, labels, type, parent)
+# the label table; `short` for the short labels of figures (R22).
+lab <- function(code, type, parent = NULL, short = FALSE) {
+  label_codes(code, labels, type, parent, short = short)
+}
+
+# Labels of the values of the domain `by`. A missing value is not a
+# suppressed estimate: it carries its own label, last (V-D23).
+domain_label <- function(x, by, short = FALSE) {
+  out <- lab(x, "domain_value", by, short = short)
+  if (!anyNA(x)) {
+    return(out)
+  }
+  missing <- term("no_data", "format")
+  factor(ifelse(is.na(x), missing, as.character(out)),
+         levels = c(levels(out), missing))
+}
+
+# A label inside a sentence: its first letter in lower case ("Vitamin A"
+# becomes "vitamin A").
+lower_first <- function(x) {
+  x <- as.character(x)
+  paste0(tolower(substr(x, 1, 1)), substr(x, 2, nchar(x)))
+}
+
+# A list of labels in one string: "a, b and c" ("y" in Spanish).
+collapse <- function(x) {
+  n <- length(x)
+  if (n < 2) {
+    return(paste(x, collapse = ""))
+  }
+  paste(paste(x[-n], collapse = ", "), term("and", "format"), x[n])
 }
 
 # Lists of codes in one string ("a, b"), each code replaced by its term.
@@ -48,12 +76,14 @@ ci_text <- function(low, high) {
 
 # Print a table of `tables`: interval pairs (`*ci_low`, `*ci_high`) become
 # one column, a `mark` column ("†", "‡") is appended to the value column
-# named by the attribute `value`, and column codes become the headers of
-# terms.csv (type `header`; `{level}` is replaced by the confidence level)
-# unless `headers` (code = label) gives them.
+# named by the attribute `value`, a column `n` that is the same in every
+# row is dropped (the note gives it, R17), and column codes become the
+# headers of terms.csv (type `header`; `{level}` is replaced by the
+# confidence level) unless `headers` (code = label) gives them.
 print_table <- function(d, caption = NULL, headers = NULL) {
   value <- attr(d, "value")
   d <- as.data.frame(d)
+  if (length(unique(d[["n"]])) == 1) d$n <- NULL
   if (!is.null(d$mark) && !is.null(value)) {
     d[[value]] <- ifelse(is.na(d$mark), format(d[[value]], trim = TRUE),
                          paste0(format(d[[value]], trim = TRUE), d$mark))
@@ -135,7 +165,9 @@ zero_sentence <- function(out, keys, e, scale, unit) {
   }, character(1))
   limit <- ifelse(e$estimate == 0, e$ci_high, e$ci_low)
   paste0(term("exact", "sentence"), ": ",
-         paste0(cells, " = ", scale(e$estimate), unit, " (n = ", e$n, "; ",
+         paste0(cells, " = ", scale(e$estimate), unit, " (n = ",
+                format(e$n, big.mark = term("big_mark", "format"),
+                       trim = TRUE), "; ",
                 term("limit", "sentence"), " ", scale(limit), unit, ")",
                 collapse = "; "), ".")
 }

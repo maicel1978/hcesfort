@@ -37,10 +37,10 @@ header,,outside,Fuera del rango plausible (%)
 header,,outside_ci,IC {level}% de la proporción fuera
 header,,section,Sección del informe de resultados
 header,,national,Nacional
+header,,population,Población
 header,,decision,Decisión
 header,,choice,Opción
 header,,evidence,Evidencia
-header,,population,Población
 header,,nutrient,Nutriente
 header,,vehicle,Vehículo
 header,,vehicle_group,Grupo de vehículos
@@ -66,6 +66,10 @@ header,,unit,Unidad
 header,,ul,UL
 header,,ul_unit,Unidad del UL
 header,,bioavailability_pct,Biodisponibilidad del hierro
+header,,abbreviation,Abreviatura
+header,,compound_form,Compuesto o forma
+header,,criterion,Criterio
+header,,location,Lugar en la fuente
 flag,,TRUE,sí
 flag,,FALSE,no
 role,,essential,esencial
@@ -159,10 +163,19 @@ sentence,,no_domain_differs,"En la proporción no vinculada, ningún valor de es
 sentence,,domain_absent,{domain}: la variable no está en la tabla de hogares.
 sentence,,energy,"Mediana de la ingesta aparente de energía: {median} kcal por equivalente de mujer adulta por día (IC {level}% {low} a {high}), el {pct}% de la energía de la persona de referencia ({reference} kcal). Hogares fuera del rango plausible ({lower} a {upper} kcal): {outside}% (IC {level}% {outside_low} a {outside_high})."
 sentence,,no_energy,La energía no se evalúa: `choices$energy` está vacío.
+sentence,,ul_zero,"En la muestra (n = {n}), ningún hogar supera el nivel máximo de {nutrients} con ningún escenario (límite superior del IC {level}%: {limits} de los hogares)."
+sentence,,s1,"Desviación S1. Las estimaciones que no son proporciones (medianas, diferencias pareadas, aportes de los grupos de alimentos) se juzgan solo por su número de hogares y sus grados de libertad, y su intervalo se muestra siempre: la norma no da umbrales para ellas (p. 5)."
+sentence,,s2,"Desviación S2. Donde la inadecuación es una probabilidad (hierro), la proporción es la probabilidad media, y la norma se aplica a ella. Su varianza es a lo sumo la de un resultado de sí o no, de modo que el juicio es conservador; cero eventos significa una media de exactamente 0 o 1."
+sentence,,s3,"Desviación S3. En este informe, las estimaciones señaladas para revisión estadística se {review}. La norma permite mostrarlas tras la revisión o suprimirlas (pp. 2, 5)."
+sentence,,s4,"Desviación S4. Una proporción con ningún hogar, o con todos los hogares, de la muestra se informa en una frase con su n y el límite de su intervalo de Clopper-Pearson, no como fila de una tabla ni como punto de una figura."
+sentence,,lonely_psu,Estratos con una sola unidad primaria de muestreo: {choice}.
 axis,,queue_x,"Alimentos resueltos, en orden de prioridad"
 axis,,queue_y,Proporción vinculada (%)
 axis,,energy_x,"Ingesta aparente de energía, kcal por equivalente de mujer adulta por día"
 axis,,energy_y,% de hogares
+axis,,effect_x,"% de hogares (izquierda), puntos porcentuales (derecha)"
+axis,,effect_level,Ingesta inadecuada (%)
+axis,,effect_difference,Diferencia (puntos)
 kind,,figure,Figura
 kind,,table,Cuadro
 title,,D1,Veredicto: secciones y dominios que los datos permiten
@@ -200,5 +213,37 @@ note,,queue,Línea discontinua: la proporción de la regla de parada.
 note,,differs,"Un valor difiere cuando el IC {level}% de la diferencia excluye el cero, sin ajuste por comparaciones múltiples."
 note,,energy_lines,Líneas discontinuas: el rango plausible; línea continua: la energía de la persona de referencia.
 note,,energy_hidden,"{n} hogares por encima de {upper} kcal, no representados."
+note,,method,Método: {methods}.
+note,,bioavailability,biodisponibilidad del {nutrient}
+note,,groups,Grupos. {groups}.
+note,,not_proportion,"No es una proporción: se juzga solo por el número de hogares y los grados de libertad (nota técnica, desviación S1)."
+note,,national_line,Línea discontinua: la estimación nacional.
+note,,effect,"Panel izquierdo: punto hueco, el escenario de comparación ({comparators}); punto lleno, el escenario. Panel derecho: diferencia pareada en puntos porcentuales, con su IC {level}%."
+note,,ul_adult,El nivel máximo de los adultos se aplica a la ingesta por equivalente de mujer adulta; los niños tienen niveles máximos más bajos.
+note,,no_content,Sin aporte de {nutrient}: {groups}.
+note,,unclassified,Aporte de los alimentos sin grupo asignado: {shares}.
+note,,sensitivity,Las demás exhibiciones usan una biodisponibilidad del hierro del {pct}%.
+ul_statement,,total.total_intake,"Se compara la ingesta total con el escenario. No se cuentan los suplementos ni el agua, y los registros o valores de composición que faltan la reducen (IOM 2001, resumen, pp. 26-27)."
+ul_statement,,folic_acid.form_added_only,"El nivel máximo se aplica al folato de alimentos fortificados o suplementos, no al folato de los alimentos, de modo que el ácido fólico añadido por el escenario es la cantidad que se debe comparar. La encuesta no registra el ácido fólico de alimentos fortificados fuera de los escenarios ni el de suplementos: donde existan, la proporción es una cota inferior (IOM 1998, pp. 13, 280)."
+ul_statement,,folic_acid.form_diet_and_added,"El nivel máximo se aplica al folato de alimentos fortificados o suplementos, no al folato de los alimentos. Se comparan el ácido fólico de la dieta y el añadido por el escenario; la encuesta no registra el ácido fólico de suplementos (IOM 1998, pp. 13, 280)."
+ul_statement,,preformed_vitamin_a.form_added_only,"El nivel máximo se aplica a la vitamina A preformada de alimentos, alimentos fortificados y suplementos. Solo se compara el retinol añadido por el escenario; no se cuenta la vitamina A preformada de la dieta ni la de suplementos, de modo que la proporción es una cota inferior (IOM 2001, pp. 126, 142)."
+ul_statement,,preformed_vitamin_a.form_diet_and_added,"El nivel máximo se aplica a la vitamina A preformada de alimentos, alimentos fortificados y suplementos. Se comparan la vitamina A preformada de la dieta y el retinol añadido por el escenario; no se cuentan los suplementos (IOM 2001, pp. 126, 142)."
+ul_statement,,not_assessable,"No se compara: no se conoce ni la ingesta total ni la forma añadida."
+review,,show,muestran con la marca † y el motivo
+review,,suppress,suprimen
+lonely_psu,,adjust,su aporte a la varianza se centra en la media general
+lonely_psu,,average,reciben el aporte medio a la varianza de los demás estratos
+lonely_psu,,certainty,se tratan como seleccionadas con certeza y no aportan varianza
+lonely_psu,,remove,se dejan fuera de la varianza
+lonely_psu,,fail,no se admiten
+criterion,,conf_level,Nivel de confianza del intervalo
+criterion,,min_n,Mínimo de hogares de una estimación (se suprime por debajo)
+criterion,,min_n_effective,Tamaño de muestra efectivo mínimo (se suprime por debajo)
+criterion,,small_absolute_width,Ancho del intervalo que se presenta sin el control relativo (como máximo)
+criterion,,large_absolute_width,Ancho del intervalo que se suprime (como mínimo)
+criterion,,max_relative_width,"Ancho relativo máximo del intervalo (se suprime por encima, cuando el ancho está entre los dos anchos)"
+criterion,,min_df,Mínimo de grados de libertad (se señala para revisión por debajo)
 format,,big_mark,","
 format,,and,y
+format,,no_data,Sin dato
+format,,not_stated,no indicado

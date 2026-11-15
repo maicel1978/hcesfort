@@ -82,6 +82,9 @@ inputs <- list(
 )
 inventory <- readiness_inventory(inputs, choices$domains)
 ready <- all(inventory$present[inventory$role == "essential"])
+absent <- inventory[inventory$role == "essential" & !inventory$present, ]
+absent <- ifelse(is.na(absent$variable), absent$table,
+                 paste0(absent$table, "$", absent$variable))
 domain_rows <- inventory$table == "households" &
   inventory$variable %in% choices$domains
 domains <- intersect(choices$domains,

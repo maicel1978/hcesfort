@@ -103,7 +103,7 @@ test_that("display() keeps rows, marks values and moves zero events", {
   expect_identical(d$vehicle, c("rice", "maize_flour", "oil"))
   expect_identical(d$acquired, c(90, 40, NA))
   expect_identical(d$mark, c("‡", "†", NA))
-  expect_match(env$exact_sentence(d), "sugar = 0% (n = 1962;", fixed = TRUE)
+  expect_match(env$exact_sentence(d), "sugar = 0% (n = 1,962;", fixed = TRUE)
   env$choices$review <- "suppress"
   d <- env$display(fixture_estimates(), "vehicle", "acquired")
   # Flagged estimates are hidden, the zero-event one included.
@@ -162,6 +162,66 @@ test_that("fig_effect() draws the two panels of section 6.3", {
   g <- env$fig_effect(d, "scenario", "%", "", c("Level", "Change"),
                       band = "band")
   expect_identical(nrow(ggplot2::ggplot_build(g)$layout$layout), 4L)
+  # A zero line in the difference panel of every band.
+  expect_identical(nrow(ggplot2::layer_data(g, 4)), 2L)
+  # Nothing left to draw: an empty plot, which show_exhibit() skips.
+  g <- env$fig_effect(d[3, ], "scenario", "%", "", c("Level", "Change"))
+  expect_identical(env$figure_rows(g), 0L)
+})
+
+test_that("figure_rows() counts the data of a plot or of its layers", {
+  env <- exhibit_env()
+  d <- data.frame(scenario = c("A", "B"), from = 60, to = c(40, 55),
+                  difference = c(-20, -5), ci_low = c(-25, -9),
+                  ci_high = c(-15, -1))
+  g <- env$fig_effect(d, "scenario", "%", "", c("Level", "Change"))
+  # Two rows in each of the five layers with data, one in the zero line.
+  expect_identical(env$figure_rows(g), 11L)
+  e <- env$display(fixture_estimates(), "vehicle", "acquired")
+  # Sugar (zero events) left for the sentence, oil (suppressed) not drawn.
+  expect_identical(env$figure_rows(env$fig_interval(e, "acquired",
+                                                    "vehicle", "%", "")),
+                   2L)
+})
+
+test_that("labels in sentences and missing domain values (V-D23)", {
+  env <- exhibit_env()
+  expect_identical(env$lower_first(c("Vitamin A", "Iron", "")),
+                   c("vitamin A", "iron", ""))
+  expect_identical(env$collapse(c("a", "b", "c")), "a, b and c")
+  expect_identical(env$collapse("a"), "a")
+  file <- withr::local_tempfile(fileext = ".csv")
+  writeLines(c("type,parent,code,label,short_label",
+               "domain_value,area,urban,Urban area,Urban",
+               "domain_value,area,rural,Rural area,"), file)
+  env$labels <- read_labels(file)
+  x <- env$domain_label(c("rural", NA, "urban"), "area")
+  expect_identical(as.character(x), c("Rural area", "No data", "Urban area"))
+  expect_identical(levels(x), c("Urban area", "Rural area", "No data"))
+  expect_identical(as.character(env$domain_label("urban", "area", TRUE)),
+                   "Urban")
+})
+
+test_that("print_table() drops an n that is the same in every row (R17)", {
+  env <- exhibit_env()
+  d <- env$display(fixture_estimates(), "vehicle", "acquired")
+  expect_false("n" %in% names(env$print_table(d)))
+  d$n <- c(10, 20, 30)
+  expect_true("n" %in% names(env$print_table(d)))
+})
+
+test_that("axes print the thousands mark of the text (V-D25)", {
+  env <- exhibit_env()
+  d <- data.frame(kcal = c(1000, 2000, 5000), w = 1)
+  g <- env$fig_histogram(d, "kcal", "w", c(500, 6000), 2300, "kcal", "n",
+                         bins = 3)
+  x <- ggplot2::ggplot_build(g)$layout$panel_params[[1]]$x$get_labels()
+  expect_true(any(grepl("^[0-9],[0-9]{3}$", x)))
+  # A reference line per panel, at the values of a column.
+  e <- env$display(fixture_estimates(), "vehicle", "acquired")
+  e$national <- 50
+  g <- env$fig_interval(e, "acquired", "vehicle", "%", "", ref = "national")
+  expect_identical(ggplot2::layer_data(g, 4)$xintercept, c(50, 50))
 })
 
 test_that("fig_histogram() weights the counts; percent axes run to 100", {

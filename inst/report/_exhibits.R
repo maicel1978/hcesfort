@@ -16,8 +16,10 @@
 
 exhibits <- utils::read.csv("exhibits.csv", stringsAsFactors = FALSE,
                             na.strings = "")
-# The exhibits shown, in order: key = list(id, instance).
+# The exhibits shown, in order: key = list(id, instance); and the headers
+# and notes of each, for the appendix.
 shown <- list()
+built <- list()
 
 # Whether the verdict enables a section, nationally (`domain = NA`) or for
 # one domain, and the sentence printed when it does not.
@@ -123,9 +125,20 @@ save_figure <- function(g, key, title, rows) {
   dir.create("figure", showWarnings = FALSE)
   file <- file.path("figure", paste0(gsub("[^A-Za-z0-9_]", "_", key),
                                      ".png"))
-  ggplot2::ggsave(file, g, width = 7, height = 1.2 + 0.3 * max(rows, 1),
+  ggplot2::ggsave(file, g, width = 7, height = 1.2 + 0.3 * max(rows, 4),
                   dpi = 150)
   cat("![", title, "](", file, ")\n\n", sep = "")
+}
+
+# Rows of data of a figure: of the plot, or of its layers when the plot
+# has none of its own (the two panels of fig_effect()).
+figure_rows <- function(g) {
+  if (is.data.frame(g$data)) {
+    return(nrow(g$data))
+  }
+  sum(vapply(g$layers, function(l) {
+    if (is.data.frame(l$data)) nrow(l$data) else 0L
+  }, integer(1)))
 }
 
 # Show one exhibit: ask the verdict, call the builder, store the table and
@@ -148,14 +161,15 @@ show_exhibit <- function(id, instance = NULL) {
   out <- get(x$builder, mode = "function", envir = home)(instance)
   home$tables[[key]] <- out$table
   home$shown[[key]] <- list(id = id, instance = instance)
+  home$built[[key]] <- out[c("headers", "note")]
   title <- exhibit_title(id, instance)
   cat("**", title, "**\n\n", exact_sentence(out$table), "\n\n", sep = "")
   print_sentences(out$lead)
   if (x$body == "figure" && !is.null(out$figure) &&
-        nrow(out$figure$data) > 0) {
+        figure_rows(out$figure) > 0) {
     home$figures[[key]] <- out$figure
     save_figure(out$figure, key, title,
-                if (is.null(out$rows)) nrow(out$figure$data) else out$rows)
+                if (is.null(out$rows)) figure_rows(out$figure) else out$rows)
   } else if (x$body == "table" && nrow(out$table) > 0) {
     emit_table(print_table(out$table, headers = out$headers))
   }
@@ -172,14 +186,17 @@ print_sentences <- function(x, sep = " ") {
 }
 
 # The appendix of tables (R15): the table of every exhibit shown whose
-# registry row says `appendix`, under its ID, in the order shown.
+# registry row says `appendix`, under its ID, in the order shown, with
+# the sentence of its exact estimates, its headers and its notes.
 show_appendix <- function() {
   for (key in names(shown)) {
     x <- exhibit_row(shown[[key]]$id)
-    if (!x$appendix || nrow(tables[[key]]) == 0) next
+    d <- tables[[key]]
+    if (!x$appendix || nrow(d) == 0) next
     cat("**", exhibit_title(x$id, shown[[key]]$instance, body = "table"),
-        "**\n\n", sep = "")
-    emit_table(print_table(tables[[key]]))
+        "**\n\n", exact_sentence(d), "\n\n", sep = "")
+    emit_table(print_table(d, headers = built[[key]]$headers))
+    print_sentences(exhibit_note(d, built[[key]]$note), sep = "  \n")
   }
   invisible(NULL)
 }
