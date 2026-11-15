@@ -32,29 +32,17 @@ would understate the AFE by about 0.24. The argument without default stays,
 with a second one (`milk_energy_cost`); the value 1 stays defensible and is
 recommended for ENGIH, with one sensitivity run.
 
+## Answers of the maintainer (2026-11-15, design of 12e.5)
+
+Approved by the maintainer: the nine decisions of section 7 of `docs/design-12e5.md`, all as recommended. They amend answers 3 and 5 of the review v0.2 (two arguments for infants; `fortifiable` used only when the call says `"use"`). `hces_example` gets an invented `fortifiable` column (false for own production); golden values and snapshots change and the change is recorded in `NEWS.md`. Order: 12e.1 to 12e.4, then 12e.5.1 to 12e.5.8, then A2. Record these in `docs/improvements.md` with the first commit of 12e.1.
+
 ## Exact next step
 
-**Maintainer:** answer the nine decisions of section 7 of
-`docs/design-12e5.md`. Two amend your answers of 2026-11-15:
-
-1. Infants: a second argument when the share is below 1 (decision 1).
-2. `fortifiable`: used only when the call says `"use"` (decision 4).
-
-**Meanwhile, without waiting:** 12e.1 (P155, P156), then 12e.2, 12e.3 and
-12e.4, as approved. None depends on the design of 12e.5.
+**12e.1 (P155, P156), Opus.** Read only: sections "Finding 1" and "Finding 2" of `docs/review-v0.2.md`, its section 8 (order of work), and the ids P155 and P156 in `docs/improvements.md`. Then 12e.2 in a new session (sections "Finding 6", "Finding 15", 5.3 and 5.4 of the review; P160, P169, P174).
 
 ## Open questions
 
-The nine of section 7 of `docs/design-12e5.md`. The ones that change work:
-
-1. Infants: accept the reading of section 1.1 and the two arguments?
-   (recommended: yes)
-2. `fortifiable` by explicit argument, missing values counted as
-   fortifiable and flagged? (recommended: yes)
-3. `above_ul_added` and `above_ul_total` as numbers in [0, 1] for every
-   input? (recommended: yes)
-4. 12e.5.1 to 12e.5.8 before A2, so the adapter is written once against
-   the final contract? (recommended: yes)
+None.
 
 ## Sources not obtained
 
