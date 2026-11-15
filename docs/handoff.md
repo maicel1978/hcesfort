@@ -41,6 +41,10 @@ the binary `quarto` (the R package `quarto` is not installed here).
 
 None new.
 
+## Before 12d.15 (advisor note, 2026-11-14)
+
+12d.14 was merged into `main` (f7d45dd). Two cosmetic edits came after the last local `check()`. First run `R CMD INSTALL .`, `devtools::test()` and look at CI on `main` (`gh run list`). If anything is red, fix it in its own commit before starting P148.
+
 ## Recommended model for the next session
 
 **Opus** (12d.15 is code). Fable only if the change touches a package
