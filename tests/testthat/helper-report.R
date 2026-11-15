@@ -25,7 +25,8 @@ template_calls <- function(file) {
 # temporary folder, as Quarto would (no echo, errors stop the knit), after
 # appending `append` (lines of R) to _inputs.R and removing the files
 # named in `remove`. Returns the Markdown as one string, the exhibit
-# registry (`tables`, `figures`) and the folder.
+# registry (`tables`, `figures`), the folder and the environment of the
+# knit.
 knit_report <- function(lang, report, append = NULL, remove = NULL,
                         envir = parent.frame()) {
   dir <- withr::local_tempdir(.local_envir = envir)
@@ -46,7 +47,7 @@ knit_report <- function(lang, report, append = NULL, remove = NULL,
   md <- paste0(report, ".md")
   knitr::knit(qmd, md, quiet = TRUE, envir = env)
   list(md = paste(readLines(md, encoding = "UTF-8"), collapse = "\n"),
-       tables = env$tables, figures = env$figures, dir = dir)
+       tables = env$tables, figures = env$figures, dir = dir, env = env)
 }
 
 # Text of a Markdown string without its HTML comments.

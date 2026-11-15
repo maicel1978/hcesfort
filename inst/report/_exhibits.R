@@ -170,7 +170,7 @@ show_exhibit <- function(id, instance = NULL) {
   out <- get(x$builder, mode = "function", envir = home)(instance)
   home$tables[[key]] <- out$table
   home$shown[[key]] <- list(id = id, instance = instance)
-  home$built[[key]] <- out[c("headers", "note")]
+  home$built[[key]] <- out[c("headers", "note", "lead", "after")]
   title <- exhibit_title(id, instance)
   cat("**", title, "**\n\n", exact_sentence(out$table), "\n\n", sep = "")
   print_sentences(out$lead)
@@ -185,6 +185,18 @@ show_exhibit <- function(id, instance = NULL) {
   print_sentences(exhibit_note(out$table, out$note), sep = "  \n")
   print_sentences(out$after)
   invisible(TRUE)
+}
+
+# Plain text of an exhibit shown (Q1): key, title, sentences, its table
+# and its notes, whatever the renderer, for the snapshot tests.
+exhibit_text <- function(key) {
+  s <- shown[[key]]
+  b <- built[[key]]
+  d <- as.data.frame(tables[[key]])
+  rows <- if (nrow(d) > 0) apply(format(d), 1, paste, collapse = " | ")
+  c(paste0("[", key, "] ", exhibit_title(s$id, s$instance)),
+    exact_sentence(d), b$lead, paste(names(d), collapse = " | "), rows,
+    exhibit_note(d, b$note), b$after)
 }
 
 # Print sentences as one paragraph (or lines joined by `sep`); nothing
