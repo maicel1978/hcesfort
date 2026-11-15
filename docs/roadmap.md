@@ -95,6 +95,14 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
   - [x] 12d.15 `energy_action` (P148, V-D26; Opus), then snapshot and registry tests (Q1, Q2).
   - [x] 12d.16 Feedback log (Q3); getting-started vignette (R23); specification, `NEWS.md`, self-review; handoff for the maintainer's render on ENGIH 2018 (Q4).
 
+- [ ] 12e. Corrections of the hostile review v0.2 (`docs/review-v0.2.md`; brief `docs/review-v0.2-brief.md`). Comes before A2. **Waits for the maintainer's approval** and the answers to the nine questions of section 10 of the review.
+  - [x] 12e.0 Review written (Fable, 2026-11-15): one blocker, eight major and ten minor findings; findings recorded as P155 to P175. No package code changed.
+  - [ ] 12e.1 Key check in `require_hces()`, `audit_check_rows()` in the estimators, range check of a proportion (P155, P156). Opus.
+  - [ ] 12e.2 Anchor tests from sources outside the package, five tests for the surviving mutations, optional columns in `hces_fixture()` and the golden script (P160, P169, P174). Opus. Before A3.
+  - [ ] 12e.3 Limits of the method in the help pages, README and vignette; tail citation; audit notes on usual intake and on compliance with the upper level; corrected sentences on the presentation of probabilities (P157, P161, P163, P164, P170). Sonnet for the text, Opus for the notes. Before the first expert round.
+  - [ ] 12e.4 Zero-width intervals, `df = 0`, `exact`, the second option of `survey`, validator bounds, `zero_intake` (P165 to P168, P172). Opus.
+  - [ ] 12e.5 Design note (Fable): infants and pregnancy in the AFE, the fortifiable vehicle, the gate on missing composition values, whether P69 moves before A4 (P158, P159, P162, P163). Then Opus. Before A4.
+
 ## v0.1, companion repository `hcesfort.engih2018`: ENGIH 2018 adapter (needs the microdata)
 - [ ] A1. Stage-level control figures exported from the original pipeline (record counts by section and drop cause, grams by section, AFE distribution, median intake per nutrient), md5 of the microdata, and the three checks left open on E4 (energy of Sec 3A alone by days with a record, upper tail by days, the eighth day) plus the number of records in dozens (E2). Run by the maintainer when the microdata are at hand.
 - [ ] A2. Thin adapter: ENGIH files → standard tables that pass the contracts of task 2. Start right after task 2 so the contracts meet a real survey early.

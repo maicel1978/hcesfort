@@ -913,3 +913,36 @@ numbering. Each question gives the recommended option first.
 | P152 | open | The chain of the vignette repeats that of `tests/testthat/test-golden-example.R` and of `inst/report/_chain.R`. A single exported wrapper would remove the duplication, but it changes the public interface: needs a design (Fable). | medium | 13 |
 | P153 | open | `docs/feedback/` has no round yet; the test passes with none. The first round should come from the maintainer's expert comments. | low | after Q4 |
 | P154 | open | The vignette has no Spanish version (planned with task 12). | low | 12 |
+
+## Open items from the review v0.2 (2026-11-15)
+
+Findings of `docs/review-v0.2.md` (Fable; brief
+`docs/review-v0.2-brief.md`). Evidence, sources and the proposed fix of
+each are there, under the finding number given. Nothing is implemented:
+the step 12e of the roadmap waits for the maintainer's approval and for
+the answers to the nine questions of section 10 of the review. M2 and M3
+of the v0.1 review had never been entered here; they are P158 and P171.
+
+| Id | Priority | Finding | Item | Task |
+|---|---|---|---|---|
+| P155 | high (blocker) | 1 | **A carrier with a repeated key is accepted and changes the estimates silently** (mean iron 10.45 to 19,644.6 with 50 households twice; `n` unchanged, no log row). `require_hces()` must check the key; the estimators must call `audit_check_rows()`. | 12e.1, before A2 |
+| P156 | high | 2 | **`estimate_households()` accepts any number as a proportion** (the default statistic): unclassed error of `survey`, or an estimate of 7.08 labelled a proportion, or a negative effective sample size. Range check, `hcesfort_error_value`. | 12e.1 |
+| P157 | high | 3 | **The limits of the method are written nowhere a user reads.** The cut-point and the probability approach are defined on usual intake (IOM 2000b, pp. 73, 81, 99; IOM 2001, p. 703); the package applies them to acquisitions over `period_days`. Correction 9 of the v0.1 review (H5, H7) was never done. Help pages, README, vignette, one audit note. | 12e.3, before the first expert round; P110 stays in 12 |
+| P158 | high | 4 | **Infants count their whole energy requirement in the AFE** (a woman with an infant of two months: 1.24 AFE), although FAO/WHO/UNU 2004, section 3.4, says breast milk covers it up to six months. Unsupported. An argument without default; P57 with it. M2 of the v0.1 review. | design note (Fable), before A4 |
+| P159 | high | 5 | **Every gram of a vehicle is fortified whatever its origin**; `origin` is in the contract and no function reads it. WHO 2009, p. 1, defines the levels on "fortifiable" flour of industrial roller mills. A logical column `fortifiable` set by the adapter. Contract change. | design note (Fable), before A4 |
+| P160 | high | 6 | **Nine of thirteen core estimators have expected values only from AI-written arithmetic.** Anchors verified on 2026-11-15, ready to become tests: the FAO examples under Table 5.1, IOM 2001 Table I-7, the conservation identity, `svycontrast()`, a ratio on the full design, `svyciprop(method = "logit")`, `surveytable::svyciprop_adjusted()`. | 12e.2, before A3 |
+| P161 | high | 7 | **The README says the package has no functions** (H5 of the v0.1 review, open); version `0.0.0.9000`. | 12e.3 |
+| P162 | high | 8 | **The coverage gate counts grams, not the nutrient**: with the only source of a nutrient lacking a value the gate passes at 0.976 and every household is inadequate. List the foods without a value in the log; say what the gate misses; a readiness check by food. Related to P96. | design note (Fable), before A4 |
+| P163 | high | 9 | **Under average-content compliance below 1 the share above the upper level is understated and nothing says so**: on `hces_example`, folic acid, 0.59% as shipped against 19.68% at compliance 1. H7.3 of the v0.1 review, open. A flagged audit row, the sentence in two help pages, the figure at compliance 1 as a bound. P69 (all-or-nothing) to move before A4 (question 4). | 12e.3; P69 |
+| P164 | medium | 10 | **The presentation standard is not conservative for a mean of probabilities**: `p(1 - p) / se²` overstates the effective sample size (127.8 against 9.0 in the example of the review); departure S2 of the report and `?flag_presentation` say the opposite. | 12e.3 (sentences), 12e.4 or v0.2 (effective size) |
+| P165 | medium | 11 | **An interval of width zero is presented as certainty** by `estimate_difference()` and by a mean or median without variation (0, 0, 0, 0, `present`). Apply the rule of the degenerate proportion. | 12e.4 |
+| P166 | medium | 12 | **`df = 0`: `NaN` limits and base warnings; `precision_status = "exact"` when `se == 0` comes from `lonely_psu = "certainty"` or `"remove"`.** Missing limits, a log row; `exact` decided on the values. | 12e.4 |
+| P167 | low | 13 | **`options(survey.adjust.domain.lonely)` changes the standard errors** (0.13440 to 0.13627): `with_lonely_psu()` sets one option of two. | 12e.4 |
+| P168 | low | 14 | **Impossible or inconsistent values accepted by the validators**: `level_mg_kg` above 1e6; a mass above 100 g per 100 g; `age_months` that contradicts `age_years` (silently the annual mean); a PSU code in two strata under `nest = TRUE`. | 12e.4 |
+| P169 | medium | 15 | **The golden chain does not reach `household_share`, `yield_factor`, `age_months`, `meals_home_share`, member `weight_kg`.** Add them to `hces_fixture()` and to the golden script. | 12e.2 |
+| P170 | low | 16 | **The tail rule of the iron probability is the source's own** (IOM 2001, Table I-7, p. 703, footnote d); the help calls it a convention without source. P74 can cite the page. | 12e.3 |
+| P171 | low | 17 | **Households without an estimate leave the domain as if missing at random**; `n_missing` is unweighted. M3 of the v0.1 review. | v0.2 |
+| P172 | low | 18 | **A household with only zero quantities is `estimated` with intake 0** and `p_inadequate = 1`, without a log row. | 12e.4 |
+| P173 | low | 19 | **The probability approach on intake per AFE is the package's own extension to HCES**; say so in `?inadequacy` and the methods vignette. | 12 |
+| P174 | medium | section 6 | **Five mutations survive**: the reference scenario of `estimate_difference()` with a second grouping key (no test has one), `n_missing` with `by`, a member of exactly one year, the coverage of two forms in `above_ul()`, `NaN` against `NA` in a coverage. The code is right in the five; five tests. | 12e.2 |
+| P175 | low | section 7 | **Before a submission:** the JOSS criteria and the rOpenSci scope policy were not reachable (`# SOURCE PENDING`); a pre-submission enquiry to rOpenSci; a statement on AI assistance; a statement of need against existing software. | 12, v1.0 |

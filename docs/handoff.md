@@ -1,46 +1,89 @@
 # Handoff
 
 - **Date:** 2026-11-15
-- **Model:** Sonnet (12d.16).
-- **Branch:** `claude/hopeful-bardeen-m2cn3r`, pushed. Confirm CI and merge into `main`.
-- **Environment:** run `R CMD INSTALL .` at the start (the Quarto render test uses the installed package).
+- **Model:** Fable, high effort (hostile review v0.2).
+- **Branch:** `claude/amazing-euler-89d57d`, pushed. Documents only: no
+  file of `R/`, `tests/`, `inst/` or `data-raw/` changed.
+- **Environment:** run `R CMD INSTALL .` at the start (the Quarto render
+  test uses the installed package).
 
-## What was done (12d.16, Sonnet)
+## What was done
 
-- V-D29 and V-D30 recorded in `docs/improvements.md`.
-- Q3: `docs/feedback/README.md` and `tests/testthat/test-feedback-log.R` (no round file yet).
-- R23: vignette `vignettes/getting-started.Rmd` (chain on `hces_example`, one `ggplot2` figure by expenditure group); `VignetteBuilder: knitr`.
-- `docs/specification.md`, `NEWS.md` (P148 and the new tests), self-review items P152 to P154 (renumbered: P149 was already taken), roadmap 12d.16 ticked.
-- `devtools::check(args = "--no-manual")`: 0 errors, 0 notes, 1 warning (`qpdf` is not installed in this container, not a package problem; re-run where `qpdf` exists). `lintr::lint_package()`: 0 lints.
+- `docs/review-v0.2.md`: the review asked by `docs/review-v0.2-brief.md`.
+  One blocker, eight major and ten minor findings; the classification of
+  the 48 test files by the source of their expected values; external
+  anchors verified in the session; a run of 30 mutations; what the ENGIH
+  validation proves and does not; nine questions.
+- `docs/improvements.md`: findings recorded as P155 to P175.
+- `docs/roadmap.md`: step 12e (corrections), waiting for approval.
+- `devtools::test()` on the source tree: 48 files, 492 tests, 3,194
+  expectations, 0 failures, 0 skipped. `devtools::check()` and the lint
+  were not re-run (no code changed).
 
 ## Exact next step
 
-**Q4 (maintainer):** render both reports with the ENGIH 2018 microdata. Then the next open roadmap task after 12d (check `docs/roadmap.md`).
+**Maintainer:** read section 0 (verdict) and answer the nine questions of
+section 10 of `docs/review-v0.2.md`. The render of Q4 on the ENGIH 2018
+microdata can go ahead meanwhile, for your reading only: finding 9 says
+why its upper-level sentences must not be shown outside yet.
+
+After approval: 12e.1 (P155, P156), then 12e.2, both Opus.
 
 ## Open questions
 
-None.
+The nine of section 10 of the review. The three that block work:
+
+1. Step 12e before A2? (recommended: yes)
+2. `surveytable` in `Suggests` for one test? (recommended: yes)
+3. P69 (all-or-nothing compliance) before A4? (recommended: yes)
 
 ## Recommended model for the next session
 
-Opus for any code change that comes out of the maintainer's render; Fable for P152.
+Opus for 12e.1 and 12e.2. Sonnet for the text of 12e.3. Fable for 12e.5
+(design note), after the answers to questions 3 to 5.
 
 ## Maintainer review points
 
-1. **The vignette:**
+Each needs the chain of the vignette first (`intake`, `use`, `scenarios`
+and `design` as in `vignettes/getting-started.Rmd`).
+
+1. **A repeated household changes the estimate without a word (finding 1):**
 
    ```r
-   browseVignettes("hcesfort")  # after R CMD INSTALL --build-vignettes .
+   estimate_households(design, intake, "iron_mg", statistic = "mean")$estimate
+   twice <- dplyr::bind_rows(intake, intake[1:50, ])
+   twice$iron_mg[nrow(twice) - 0:49] <- 1e6
+   estimate_households(design, twice, "iron_mg", statistic = "mean")$estimate
+   # 10.45 and 19644.57 on hces_example; the second call should be an error
    ```
 
-2. **Render of both reports on ENGIH 2018 (Q4):**
+2. **The upper level under partial compliance (finding 9):**
 
    ```r
-   dir <- file.path(tempdir(), "results")
-   use_report_template(dir, "en")
-   # point _inputs.R to the ENGIH 2018 adapter tables, then:
-   quarto::quarto_render(file.path(dir, "readiness.qmd"))
-   quarto::quarto_render(file.path(dir, "results.qmd"))
+   full <- hces_example$scenarios
+   full$compliance <- 1
+   for (sc in list(hces_example$scenarios, full)) {
+     s <- apply_scenario(intake, use, sc,
+                         compliance_model = "average_content")
+     u <- above_ul(s, ref_requirements, min_coverage = 0.8,
+                   min_records_used = 0.8)
+     u <- u[u$nutrient == "folate" & u$scenario == "plus_rice", ]
+     print(estimate_households(design, u, "above_ul_added",
+                               ci_method = "korn_graubard")$estimate)
+   }
+   # 0.0059 as shipped; 0.1968 at compliance 1
    ```
 
-3. **The `qpdf` warning:** `devtools::check()` on a machine with `qpdf` should show 0 warnings.
+3. **The iron probabilities against the printed table (finding 6):** open
+   <https://nap.nationalacademies.org/books/10026/gif/703.gif> (IOM 2001,
+   Table I-7, menstruating women not using oral contraceptives) and
+   compare a few rows with:
+
+   ```r
+   d <- subset(ref_iron_requirements, group == "females_menstruating_adult")
+   t <- hcesfort:::distribution_table(d, "iron", "mg", NULL)
+   # middle of the bands 4.42-4.88, 8.08-8.76 and 13.06-15.49 mg:
+   round(hcesfort:::p_inadequate_probability(c(4.65, 8.42, 14.275), 0.18, t), 2)
+   # 0.96, 0.45 and 0.07; the table prints 0.96, 0.45 and 0.08 (0.075,
+   # the middle of the band between the 90th and 95th percentiles)
+   ```
