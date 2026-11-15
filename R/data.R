@@ -17,10 +17,12 @@
 #'
 #' The data contain, at rates of a real survey, the cases the package has
 #' to handle and count: households that did not answer the food module and
-#' households without acquisitions; members without age or sex (their
-#' households have no adult female equivalents); acquisitions without
-#' quantity or unit, left out by the section rule, with a quantity ten
-#' times too large, or in a unit without factor (`"sack"`); milk in cups, a
+#' households without acquisitions; about 1% of households with a short
+#' food list that holds no fortification vehicle; members without age or
+#' sex (their households have no adult female equivalents); acquisitions
+#' without quantity or unit, left out by the section rule, with a quantity
+#' ten times too large, or in a unit without factor (`"sack"`); milk in
+#' cups, a
 #' volume unit without a density for milk; two recall periods (7 and 30
 #' days); an unmatched food, an unvalidated match and a food without edible
 #' portion; a missing nutrient value; two enriched foods with the rules

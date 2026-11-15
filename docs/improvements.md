@@ -498,6 +498,16 @@ first commit of 12d.11:
 | V-D21 | D9 (2026-11-14): the histogram shows the plausible range used by the readiness checks; households above the upper bound are not drawn but counted in the note ("n households above <bound> kcal, not shown"). Nothing is dropped from the data. |
 | V-D22 | Lint warnings in untouched test files (2026-11-14): confirm on CI after the merge, and fix them if CI reports them. CI reported them; fixed in `18be1f1` (exclusion in `.lintr`). |
 
+Answers of the maintainer after 12d.12 (2026-11-14), recorded with the
+first commit of 12d.13:
+
+| # | Decision |
+|---|---|
+| V-D23 | P141: a missing domain value must not look like a suppressed estimate. It carries its own label from `terms.csv` ("Sin dato" / "No data"), as answered in P131; "—" stays reserved for suppressed or undefined estimates. |
+| V-D24 | P142: accepted as recommended (a header such as "Domain" / "Dominio", in the wording pass of 12d.14). |
+| V-D25 | P143: fixed in 12d.13. Figure axes use the thousands mark of the text, from `terms.csv`, through `scales` (already a dependency of `ggplot2`; no new Imports). |
+| V-D20, applied | 12d.13: the households with a short food list are drawn from a random stream of their own and their other records are removed after the defects are planted, so every other household keeps its records. A first attempt that drew them from the main stream moved the planted ×10 quantity onto wheat flour, and one household then passed the iron upper level (the calibration test failed). 26 households of `hces_example` acquire no vehicle. |
+
 ## Open items from the design of the reports v2 (2026-11-13)
 
 Design `docs/design-reports-v2.md` (task 12c.0), from the approved
@@ -592,9 +602,9 @@ múltiples".
 
 | Id | Priority | Proposal | Why | Task |
 |---|---|---|---|---|
-| P141 | medium | **A missing domain value is printed "—" in D8** (12d.12). Households without an expenditure quintile (31 in `hces_example`) form a row whose label is "—", the same mark as a suppressed estimate. *Recommended:* label it with a term ("sin dato" / "missing") in the domain column. | One mark, one meaning (R17). | 12d.13 |
-| P142 | medium | **"Population" names households in the results report** (12d.12). The header `population` ("Population" / "Población") heads the label column of R1.4, whose only value is "National"; section 8 does not use "population" for households. *Recommended:* a header such as "Domain" / "Dominio", in the wording pass. | Section 8. | 12d.14 |
-| P143 | low | **Axis labels of the figures have no thousands mark** (12d.12). D9 prints "2000" on the axis and "2,000" in its sentence. *Recommended:* `scales::label_number(big.mark = term("big_mark", "format"))` on numeric axes in `_figures.R` (`scales` comes with `ggplot2`). | One number format per report (V-D19). | 12d.14 |
+| P141 | accepted (V-D23) | **A missing domain value is printed "—" in D8** (12d.12). Households without an expenditure quintile (31 in `hces_example`) form a row whose label is "—", the same mark as a suppressed estimate. *Recommended:* label it with a term ("sin dato" / "missing") in the domain column. | One mark, one meaning (R17). | 12d.13 |
+| P142 | accepted (V-D24) | **"Population" names households in the results report** (12d.12). The header `population` ("Population" / "Población") heads the label column of R1.4, whose only value is "National"; section 8 does not use "population" for households. *Recommended:* a header such as "Domain" / "Dominio", in the wording pass. | Section 8. | 12d.14 |
+| P143 | accepted (V-D25) | **Axis labels of the figures have no thousands mark** (12d.12). D9 prints "2000" on the axis and "2,000" in its sentence. *Recommended:* `scales::label_number(big.mark = term("big_mark", "format"))` on numeric axes in `_figures.R` (`scales` comes with `ggplot2`). | One number format per report (V-D19). | 12d.13 |
 
 ## Open items from step 12c.11 (2026-11-13)
 

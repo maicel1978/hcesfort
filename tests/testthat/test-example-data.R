@@ -104,6 +104,11 @@ test_that("it carries every planted defect", {
   expect_true(any(duplicated(e$vehicles$food_code)))
   expect_true("compound" %in% e$scenarios$level_basis)
   expect_gt(length(setdiff(cw$food_code, e$food_groups$food_code)), 0)
+  # About 1% of the households keep a short list without vehicles (V-D20).
+  vehicle_buyers <- a$household_id[a$food_code %in% e$vehicles$food_code]
+  no_vehicle <- setdiff(a$household_id, vehicle_buyers)
+  expect_gt(length(no_vehicle), 0.005 * nrow(h))
+  expect_lt(length(no_vehicle), 0.02 * nrow(h))
 })
 
 test_that("results fall in the calibration bands", {

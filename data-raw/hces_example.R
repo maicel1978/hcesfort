@@ -151,6 +151,26 @@ respond <- households$household_id[households$food_module_response]
 empty <- respond[stats::runif(length(respond)) < 0.003]
 buyers <- setdiff(respond, empty)
 
+# About 1% of the buying households keep a short food list: they buy no
+# staples (they eat out, or receive food baskets the survey does not
+# record), only eggs, dairy, vegetables, fruits, beverages and soft drinks.
+# None of these foods is a vehicle, so these households acquire no vehicle
+# and exhibit R1.4 has a small nonzero estimate (P140, V-D20). They are
+# drawn here from a stream of their own, and their other records are
+# removed after the defects are planted, so that every other household
+# keeps the records it had before they were added.
+stream <- .Random.seed
+set.seed(20261115)
+short_list <- buyers[stats::runif(length(buyers)) < 0.01]
+.Random.seed <- stream
+short_foods <- foods$food_code[
+  foods$food_group %in% c("eggs", "dairy", "vegetables", "fruits",
+                          "beverages") | foods$food_code == "soft_drink"
+]
+short_rows <- foods$food_code %in% short_foods
+stopifnot(all(is.na(foods$vehicle[short_rows])),
+          all(is.na(foods$vehicle_2[short_rows])))
+
 # One row per buying household and food. The odds of acquiring a food rise
 # or fall with wealth, change by region, and have a PSU effect, so that
 # neighbours buy alike.
@@ -219,6 +239,13 @@ acquisitions$quantity[extreme] <- acquisitions$quantity[extreme] * 10
 acquisitions$quantity[pick(0.003)] <- NA
 acquisitions$unit[pick(0.002)] <- NA
 acquisitions$include[pick(0.005)] <- FALSE
+
+# The short food lists.
+acquisitions <- acquisitions[acquisitions$food_code %in% short_foods |
+                               !acquisitions$household_id %in% short_list, ]
+acquisitions$record_id <- seq_len(nrow(acquisitions))
+rownames(acquisitions) <- NULL
+stopifnot(all(short_list %in% acquisitions$household_id))
 
 # Expenditure groups ------------------------------------------------------
 
