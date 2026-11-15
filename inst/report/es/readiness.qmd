@@ -61,7 +61,7 @@ if (!ready) {
 show_exhibit("D3")
 ```
 
-## 4. Escalera de enlace
+## 4. Escalera de vinculación
 
 ```{r ladder}
 show_exhibit("D4")

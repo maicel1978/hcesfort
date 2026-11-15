@@ -16,8 +16,14 @@ absent <- inventory[inventory$role == "essential" & !inventory$present, ]
 absent <- ifelse(is.na(absent$variable), absent$table,
                  paste0(absent$table, "$", absent$variable))
 
-# A list of labels in one string.
-collapse <- function(x) paste(x, collapse = ", ")
+# A list of labels in one string: "a, b and c" ("y" in Spanish).
+collapse <- function(x) {
+  n <- length(x)
+  if (n < 2) {
+    return(paste(x, collapse = ""))
+  }
+  paste(paste(x[-n], collapse = ", "), term("and", "format"), x[n])
+}
 
 # ---- D2 and DA1. Variables -------------------------------------------
 
@@ -136,7 +142,7 @@ queue_curve <- function(instance) {
 # ---- D7 and D8. Stopping rule and the unlinked share -----------------
 
 # Share not linked by measure, national (`by = NULL`) or by one domain,
-# with the difference from the rest of the population.
+# with the difference from the other households.
 unlinked_table <- function(by = NULL) {
   measures <- c("grams", if (has_expenditure) "expenditure")
   dplyr::bind_rows(lapply(measures, function(m) {
@@ -181,7 +187,7 @@ unlinked_by_domain <- function(instance) {
 }
 
 # Table D8 for each domain variable with a value that differs from the
-# rest of the population (DR10); one sentence naming the others, and one
+# other households (DR10); one sentence naming the others, and one
 # for each domain variable absent from the households table.
 show_unlinked_domains <- function() {
   same <- character(0)

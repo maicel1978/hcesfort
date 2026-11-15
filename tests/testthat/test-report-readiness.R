@@ -266,16 +266,16 @@ test_that("a disabled section and a domain are named in the summary (DR9)", {
     "absent \\(food_groups\\); analysis by expenditure quintile, disabled: ",
     "threshold not met \\(Values of the domain with few households\\)\\."
   ))
-  expect_match(md, "Each of them can also be reported by region, area.")
+  expect_match(md, "Each of them can also be reported by region and area.")
 })
 
 test_that("energy is national only, and D8 only where a domain differs (K18)", {
   skip_if_no_knit()
   domain_says <- list(
-    en = paste("no value of these domain variables differs from the rest",
-               "of the population: region."),
+    en = paste("no value of these domain variables differs from the other",
+               "households: region."),
     es = paste("ningún valor de estas variables de dominio difiere del",
-               "resto de la población: región.")
+               "resto de los hogares: región.")
   )
   for (lang in report_langs) {
     r <- knit_report(lang, "readiness", append = c(

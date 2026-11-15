@@ -27,13 +27,13 @@ header,,cum_share_expenditure,Gasto vinculado al resolverlo (%)
 header,,measure,Medida
 header,,unlinked,No vinculado (%)
 header,,ci,IC {level}%
-header,,rest,Resto de la población (%)
+header,,rest,Resto de los hogares (%)
 header,,difference,Diferencia (puntos)
 header,,difference_ci,IC {level}% de la diferencia
 header,,differs,Difiere del resto
 header,,median,Mediana por EMA y día
 header,,pct_reference,Mediana como % de la energía de referencia
-header,,outside,Fuera del intervalo plausible (%)
+header,,outside,Fuera del rango plausible (%)
 header,,outside_ci,IC {level}% de la proporción fuera
 header,,section,Sección del informe de resultados
 header,,national,Nacional
@@ -80,7 +80,7 @@ needed_by,,linkage_expenditure,vinculación por gasto
 needed_by,,baseline,línea de base sin fortificar
 section,,coverage,Cobertura de los vehículos
 section,,quantity,Cantidad entre quienes adquieren
-section,,risk,Riesgo de ingesta inadecuada
+section,,risk,Riesgo de ingesta aparente inadecuada
 section,,scenarios,Escenarios de fortificación
 section,,food_groups,Aporte de cada grupo de alimentos
 verdict,,enabled,habilitada
@@ -155,9 +155,9 @@ sentence,,rule,Regla: vincular al menos el {threshold}% de los gramos incluidos{
 sentence,,rule_expenditure,y del gasto incluido
 sentence,,met,se cumple
 sentence,,not_met,no se cumple
-sentence,,no_domain_differs,"En la proporción no vinculada, ningún valor de estas variables de dominio difiere del resto de la población: {domains}."
+sentence,,no_domain_differs,"En la proporción no vinculada, ningún valor de estas variables de dominio difiere del resto de los hogares: {domains}."
 sentence,,domain_absent,{domain}: la variable no está en la tabla de hogares.
-sentence,,energy,"Mediana de la ingesta aparente de energía: {median} kcal por equivalente de mujer adulta por día (IC {level}% {low} a {high}), el {pct}% de la energía de la persona de referencia ({reference} kcal). Hogares fuera de {lower} a {upper} kcal: {outside}% (IC {level}% {outside_low} a {outside_high})."
+sentence,,energy,"Mediana de la ingesta aparente de energía: {median} kcal por equivalente de mujer adulta por día (IC {level}% {low} a {high}), el {pct}% de la energía de la persona de referencia ({reference} kcal). Hogares fuera del rango plausible ({lower} a {upper} kcal): {outside}% (IC {level}% {outside_low} a {outside_high})."
 sentence,,no_energy,La energía no se evalúa: `choices$energy` está vacío.
 axis,,queue_x,"Alimentos resueltos, en orden de prioridad"
 axis,,queue_y,Proporción vinculada (%)
@@ -168,11 +168,11 @@ kind,,table,Cuadro
 title,,D1,Veredicto: secciones y dominios que los datos permiten
 title,,D2,"Variables: esenciales, y opcionales ausentes o con faltantes"
 title,,D3,Cantidad y calidad mínimas de los datos
-title,,D4,Escalera de enlace
+title,,D4,Escalera de vinculación
 title,,D5,"Cola de trabajo: alimentos por resolver, según la proporción que representan"
-title,,D6,"Proporción enlazada a medida que se resuelven los alimentos de la cola, %"
-title,,D7,"Regla de parada y proporción no enlazada, % (IC {level}%)"
-title,,D8,"Proporción no enlazada por {instance}, % (IC {level}%)"
+title,,D6,"Proporción vinculada a medida que se resuelven los alimentos de la cola, %"
+title,,D7,"Regla de parada y proporción no vinculada, % (IC {level}%)"
+title,,D8,"Proporción no vinculada por {instance}, % (IC {level}%)"
 title,,D9,"Ingesta aparente de energía por equivalente de mujer adulta, kcal por día"
 title,,D10,Decisiones tomadas con los datos
 title,,DA1,Inventario de variables
@@ -197,6 +197,7 @@ note,,review,† Señalada para revisión estadística
 note,,complement,‡ El complemento de la estimación puede no ser fiable.
 note,,inventory,Las variables opcionales presentes y completas solo aparecen en el Cuadro DA1.
 note,,queue,Línea discontinua: la proporción de la regla de parada.
-note,,differs,Un valor difiere cuando el IC {level}% de la diferencia excluye el cero; las señales no se ajustan por el número de comparaciones.
+note,,differs,"Un valor difiere cuando el IC {level}% de la diferencia excluye el cero, sin ajuste por comparaciones múltiples."
 note,,energy_lines,Líneas discontinuas: el rango plausible; línea continua: la energía de la persona de referencia.
 format,,big_mark,","
+format,,and,y

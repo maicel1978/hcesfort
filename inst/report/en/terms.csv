@@ -27,7 +27,7 @@ header,,cum_share_expenditure,Expenditure linked once resolved (%)
 header,,measure,Measure
 header,,unlinked,Not linked (%)
 header,,ci,{level}% CI
-header,,rest,Rest of the population (%)
+header,,rest,Other households (%)
 header,,difference,Difference (points)
 header,,difference_ci,{level}% CI of the difference
 header,,differs,Differs from the rest
@@ -80,7 +80,7 @@ needed_by,,linkage_expenditure,linkage by expenditure
 needed_by,,baseline,unfortified baseline
 section,,coverage,Coverage of the vehicles
 section,,quantity,Quantity among acquirers
-section,,risk,Risk of inadequate intake
+section,,risk,Risk of inadequate apparent intake
 section,,scenarios,Fortification scenarios
 section,,food_groups,Contribution of each food group
 verdict,,enabled,enabled
@@ -155,9 +155,9 @@ sentence,,rule,Rule: link at least {threshold}% of the included grams{expenditur
 sentence,,rule_expenditure,and of the included expenditure
 sentence,,met,met
 sentence,,not_met,not met
-sentence,,no_domain_differs,"In the unlinked share, no value of these domain variables differs from the rest of the population: {domains}."
+sentence,,no_domain_differs,"In the unlinked share, no value of these domain variables differs from the other households: {domains}."
 sentence,,domain_absent,{domain}: the variable is absent from the households table.
-sentence,,energy,"Median apparent energy intake: {median} kcal per adult female equivalent per day ({level}% CI {low} to {high}), {pct}% of the energy of the reference person ({reference} kcal). Households outside {lower} to {upper} kcal: {outside}% ({level}% CI {outside_low} to {outside_high})."
+sentence,,energy,"Median apparent energy intake: {median} kcal per adult female equivalent per day ({level}% CI {low} to {high}), {pct}% of the energy of the reference person ({reference} kcal). Households outside the plausible range ({lower} to {upper} kcal): {outside}% ({level}% CI {outside_low} to {outside_high})."
 sentence,,no_energy,Energy is not assessed: `choices$energy` is empty.
 axis,,queue_x,"Foods resolved, in rank order"
 axis,,queue_y,Share linked (%)
@@ -197,6 +197,7 @@ note,,review,† Flagged for statistical review
 note,,complement,‡ The complement of the estimate may be unreliable.
 note,,inventory,Optional variables present and complete are listed only in Table DA1.
 note,,queue,Dashed line: the share of the stopping rule.
-note,,differs,A value differs when the {level}% CI of the difference excludes zero; the flags are not adjusted for the number of comparisons.
+note,,differs,"A value differs when the {level}% CI of the difference excludes zero, without adjustment for multiple comparisons."
 note,,energy_lines,Dashed lines: the plausible range; solid line: the energy of the reference person.
 format,,big_mark,","
+format,,and,and
