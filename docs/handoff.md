@@ -48,6 +48,14 @@ one.
    printed with the suppression reason. *Recommended:* their own note
    line, in 12d.14.
 
+## Answers of the maintainer (2026-11-14, after 12d.13)
+
+1. **P148:** accepted as recommended: `energy_action` in `_inputs.R`, `"keep"` or `"exclude"`, no default. The shipped template sets `"exclude"` and records it, with its reason (energy outside the plausible range of the readiness checks), in `decisions.csv`. The readiness report states how many households it removes, and the results report says so in its population note. Detect, then decide: the flag stays in the readiness checks; the action lives only in the template choice. If this needs a change in a package function contract, stop and ask.
+2. **P144:** accepted as recommended (keep R3.1 as introduced, with a note explaining that cumulative scenarios repeat the vehicles of the previous one).
+3. **P146:** accepted as recommended (own note line for "No data" cells with n = 0).
+
+Record these in `docs/improvements.md` with the first commit of the next step.
+
 ## Recommended model for the next session
 
 **Sonnet** (12d.14 is wording). Fable only if P148 is answered "design
