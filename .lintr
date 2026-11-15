@@ -8,6 +8,7 @@ exclusions: list(
     "inst/report/_verdict.R" = list(object_usage_linter = Inf),
     "inst/report/_figures.R" = list(object_usage_linter = Inf),
     "inst/report/_results.R" = list(object_usage_linter = Inf),
+    "inst/report/_scenarios.R" = list(object_usage_linter = Inf),
     "tests/testthat/helper-linkage.R" = list(object_usage_linter = Inf),
     "tests/testthat/test-example-data.R" = list(object_usage_linter = Inf),
     "tests/testthat/test-golden-example.R" = list(object_usage_linter = Inf)
