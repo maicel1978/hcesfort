@@ -288,3 +288,23 @@ test_that("energy is national only, and D8 only where a domain differs (K18)", {
                                                        r$md))), 1L)
   }
 })
+
+test_that("D9 draws up to the upper bound and counts the rest (V-D21)", {
+  skip_if_no_knit()
+  hidden <- "([0-9,]+) households above 6,000 kcal, not shown\\."
+  r <- knit_report("en", "readiness")
+  g <- r$figures$D9
+  x <- rlang::eval_tidy(g$mapping$x, g$data)
+  expect_true(all(x <= 6000))
+  # Drawn plus counted are every household with an estimated energy.
+  n_hidden <- as.numeric(gsub(",", "", regmatches(
+    r$md, regexec(hidden, r$md)
+  )[[1]][2]))
+  expect_gt(n_hidden, 0)
+  expect_identical(length(x) + n_hidden, as.numeric(unique(r$tables$D9$n)))
+  wide <- knit_report("en", "readiness",
+                      append = "choices$energy_upper <- 1e6")
+  expect_false(grepl("households above", wide$md, fixed = TRUE))
+  expect_identical(nrow(wide$figures$D9$data),
+                   as.integer(unique(wide$tables$D9$n)))
+})

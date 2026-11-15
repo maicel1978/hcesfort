@@ -594,6 +594,7 @@ múltiples".
 |---|---|---|---|---|
 | P141 | medium | **A missing domain value is printed "—" in D8** (12d.12). Households without an expenditure quintile (31 in `hces_example`) form a row whose label is "—", the same mark as a suppressed estimate. *Recommended:* label it with a term ("sin dato" / "missing") in the domain column. | One mark, one meaning (R17). | 12d.13 |
 | P142 | medium | **"Population" names households in the results report** (12d.12). The header `population` ("Population" / "Población") heads the label column of R1.4, whose only value is "National"; section 8 does not use "population" for households. *Recommended:* a header such as "Domain" / "Dominio", in the wording pass. | Section 8. | 12d.14 |
+| P143 | low | **Axis labels of the figures have no thousands mark** (12d.12). D9 prints "2000" on the axis and "2,000" in its sentence. *Recommended:* `scales::label_number(big.mark = term("big_mark", "format"))` on numeric axes in `_figures.R` (`scales` comes with `ggplot2`). | One number format per report (V-D19). | 12d.14 |
 
 ## Open items from step 12c.11 (2026-11-13)
 

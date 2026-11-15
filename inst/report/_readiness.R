@@ -229,8 +229,10 @@ energy_table <- function() {
              outside_ci_high = pct(o$ci_high))
 }
 
-# One sentence and a weighted histogram (% of households) with the bounds
-# and the reference energy (DR10: no by-domain exhibit).
+# One sentence and a weighted histogram (% of all households) with the
+# bounds and the reference energy (DR10: no by-domain exhibit). Households
+# above the upper bound are not drawn, only counted in the note (V-D21);
+# none leaves the data or the estimates.
 energy_histogram <- function(instance) {
   e <- energy_table()
   h <- flagged[!is.na(flagged[[energy_column]]), ]
@@ -239,7 +241,8 @@ energy_histogram <- function(instance) {
     template_abort("Internal: a household of the intake has no weight.")
   }
   h$share <- 100 * w / sum(w)
-  g <- fig_histogram(h, energy_column, "share",
+  above <- h[[energy_column]] > choices$energy_upper
+  g <- fig_histogram(h[!above, ], energy_column, "share",
                      bounds = c(choices$energy_lower, choices$energy_upper),
                      reference = reference_kcal,
                      xlab = term("energy_x", "axis"),
@@ -252,8 +255,12 @@ energy_histogram <- function(instance) {
                upper = format_n(choices$energy_upper), outside = e$outside,
                outside_low = e$outside_ci_low,
                outside_high = e$outside_ci_high)
+  hidden <- if (any(above)) {
+    fill(term("energy_hidden", "note"), n = format_n(sum(above)),
+         upper = format_n(choices$energy_upper))
+  }
   list(table = e, figure = g, rows = 10, lead = lead,
-       note = term("energy_lines", "note"))
+       note = c(term("energy_lines", "note"), hidden))
 }
 
 # ---- D10. Decisions --------------------------------------------------

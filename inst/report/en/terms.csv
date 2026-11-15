@@ -199,5 +199,6 @@ note,,inventory,Optional variables present and complete are listed only in Table
 note,,queue,Dashed line: the share of the stopping rule.
 note,,differs,"A value differs when the {level}% CI of the difference excludes zero, without adjustment for multiple comparisons."
 note,,energy_lines,Dashed lines: the plausible range; solid line: the energy of the reference person.
+note,,energy_hidden,"{n} households above {upper} kcal, not shown."
 format,,big_mark,","
 format,,and,and
