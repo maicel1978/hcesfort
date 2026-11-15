@@ -76,3 +76,5 @@ changes.
 
 3. **The snapshots** read as a proofreading copy of every exhibit:
    `tests/testthat/_snaps/report-snapshots.md`.
+
+`devtools::check()`: 0 errors, 0 warnings, 0 notes; `lintr::lint_package()`: 0 lints (after the last code commit).
