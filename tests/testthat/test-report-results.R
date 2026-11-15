@@ -2,14 +2,6 @@
 # K9, K13 and K16 of docs/design-reports-v2.md, section 9. Knitted on
 # hces_example with knitr, as Quarto would.
 
-skip_if_no_knit <- function() {
-  testthat::skip_on_cran()
-  testthat::skip_if_not_installed("knitr")
-  testthat::skip_if_not_installed("rmarkdown")
-  testthat::skip_if_not_installed("ggplot2")
-  testthat::skip_if_not_installed("tinytable")
-}
-
 results_langs <- c("en", "es")
 
 # Sentences the tests match, in the language of each report.

@@ -77,6 +77,14 @@ print_table <- function(d, caption = NULL, headers = NULL) {
   tinytable::theme_html(x, portable = TRUE)
 }
 
+# Write a table of print_table() into the document. knit_print() wraps the
+# HTML of tinytable, with its inline script, in a raw HTML block; print()
+# does not, and Pandoc then reads the script as Markdown (code spans, K15).
+emit_table <- function(x) {
+  cat(knitr::knit_print(x), "\n\n", sep = "")
+  invisible(NULL)
+}
+
 # Estimates for display (R17, R19), from a table of flag_presentation():
 # `keys` are the label columns kept, `value` the name of the estimate
 # column. Values are scaled by `scale` (percent by default). A suppressed
@@ -154,7 +162,7 @@ verdict_text <- function(v) {
 show_legacy <- function(id, caption, figure = NULL, headers = NULL) {
   d <- tables[[id]]
   if (nrow(d) > 0) {
-    print(print_table(d, caption = caption, headers = headers))
+    emit_table(print_table(d, caption = caption, headers = headers))
   }
   cat("\n\n", exact_sentence(d), "\n\n", sep = "")
   if (!is.null(figure) && nrow(figure$data) > 0) {

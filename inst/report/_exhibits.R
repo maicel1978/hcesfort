@@ -157,8 +157,7 @@ show_exhibit <- function(id, instance = NULL) {
     save_figure(out$figure, key, title,
                 if (is.null(out$rows)) nrow(out$figure$data) else out$rows)
   } else if (x$body == "table" && nrow(out$table) > 0) {
-    print(print_table(out$table, headers = out$headers))
-    cat("\n\n")
+    emit_table(print_table(out$table, headers = out$headers))
   }
   print_sentences(exhibit_note(out$table, out$note), sep = "  \n")
   print_sentences(out$after)
@@ -180,8 +179,7 @@ show_appendix <- function() {
     if (!x$appendix || nrow(tables[[key]]) == 0) next
     cat("**", exhibit_title(x$id, shown[[key]]$instance, body = "table"),
         "**\n\n", sep = "")
-    print(print_table(tables[[key]]))
-    cat("\n\n")
+    emit_table(print_table(tables[[key]]))
   }
   invisible(NULL)
 }

@@ -4,14 +4,6 @@
 # hces_example with knitr, as Quarto would. Tables and figures are stored
 # under their exhibit ID (exhibits.csv), with the instance for D8.
 
-skip_if_no_knit <- function() {
-  testthat::skip_on_cran()
-  testthat::skip_if_not_installed("knitr")
-  testthat::skip_if_not_installed("rmarkdown")
-  testthat::skip_if_not_installed("ggplot2")
-  testthat::skip_if_not_installed("tinytable")
-}
-
 report_langs <- c("en", "es")
 
 # Sentences and labels the tests match, in the language of each report.

@@ -95,3 +95,20 @@ test_that("the reports run the same code in every language", {
                      info = report)
   }
 })
+
+test_that("HTML tables reach Pandoc as raw HTML blocks (K15)", {
+  # As Quarto knits them: tinytable writes HTML with an inline script. Out
+  # of a raw block, Pandoc reads the script as Markdown and emits code
+  # spans (the failure of CI on 2026-11-14).
+  skip_if_no_knit()
+  withr::local_options(tinytable_print_output = "html")
+  old <- knitr::opts_knit$get("rmarkdown.pandoc.to")
+  knitr::opts_knit$set(rmarkdown.pandoc.to = "html")
+  withr::defer(knitr::opts_knit$set(rmarkdown.pandoc.to = old))
+  lines <- strsplit(knit_report("en", "readiness")$md, "\n")[[1]]
+  opens <- grepl("^```\\{=html\\}", lines)
+  inside <- cumsum(opens | grepl("^```\\s*$", lines)) %% 2 == 1
+  script <- grepl("<script", lines, fixed = TRUE)
+  expect_gt(sum(opens), 0)
+  expect_true(all(inside[script]))
+})

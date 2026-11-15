@@ -1,4 +1,13 @@
-# Helpers of test-report-template.R.
+# Helpers of the report tests (test-report-*.R).
+
+# Skip a test that knits a report when what it needs is missing.
+skip_if_no_knit <- function() {
+  testthat::skip_on_cran()
+  testthat::skip_if_not_installed("knitr")
+  testthat::skip_if_not_installed("rmarkdown")
+  testthat::skip_if_not_installed("ggplot2")
+  testthat::skip_if_not_installed("tinytable")
+}
 
 # Names of the functions called in an R script or in the R chunks of a
 # Quarto file.
