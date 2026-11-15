@@ -39,6 +39,14 @@ fits.
 
 None.
 
+## Answers of the maintainer (2026-11-14, after 12d.12)
+
+1. **P141:** a missing domain value must not look like a suppressed estimate. It carries its own label from `terms.csv` ("Sin dato" / "No data"), as answered in P131; "—" stays reserved for suppressed or undefined estimates.
+2. **P142:** accepted as recommended.
+3. **P143:** fix in 12d.13: figure axes use the same thousands mark as the text, from `terms.csv`, through `scales` (already a dependency of `ggplot2`; no new Imports).
+
+Record these in `docs/improvements.md` with the first commit of 12d.13.
+
 ## Recommended model for the next session
 
 **Opus** (12d.13 is implementation). This session stops past half of
