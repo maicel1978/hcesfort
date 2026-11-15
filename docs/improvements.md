@@ -670,7 +670,7 @@ would:
 | P54 | low | **The md5 test of `data-raw/` runs only from the source tree.** `R CMD check` (and so CI) tests the installed package, where `data-raw/` is absent, and the test is skipped. A CI step running `devtools::test()` from the checkout would enforce it. | The check exists and runs locally before every commit. | 12 or v1.0 |
 | P55 | low | **Long tables carry the unit in a `unit` column.** `ref_requirements` holds several nutrients, so `ear` and `ul` cannot carry a unit suffix; the unit is a column written as in `nutrient_registry()`. Functions that use it must check the unit against the registry. | A deliberate exception to "column names carry the unit". | 10 |
 | P56 | low | **`sex = "both"` in `ref_iron_requirements`.** Young children's percentiles are pooled for both sexes; the members contract uses `female`/`male`. The function that picks a group must accept `both`. | Join rule to state in task 10. | 10 |
-| P57 | medium | **Energy for pregnancy and lactation.** FAO/WHO/UNU 2004 gives additions per trimester and for lactation; they enter `ref_energy_requirements` and `adult_equivalents()` once read in the document, with an explicit option. | Decision 4 of task 5 leaves them out in v0.1. | v0.2 |
+| P57 | medium | **Energy for pregnancy and lactation.** FAO/WHO/UNU 2004 gives additions per trimester and for lactation; they enter `ref_energy_requirements` and `adult_equivalents()` once read in the document, with an explicit option. | Decision 4 of task 5 leaves them out in v0.1. | 12e.5.2 if decision 3 of `docs/design-12e5.md` is approved; else v0.2 |
 | P58 | low | **Member-level requirements are not returned.** `adult_equivalents()` returns households only; prevalence by persons (v0.2) needs each member's requirement and AFE. A `level = "member"` option or a second function. | Not needed by v0.1. | v0.2 |
 
 ## Part A. From the review of the original analysis
@@ -764,7 +764,7 @@ Designs: `docs/design-task9.md` and `docs/design-task10.md`, approved
 
 | ID | Priority | Item | Rationale | Roadmap task |
 |---|---|---|---|---|
-| P69 | high | **All-or-nothing compliance model.** A share `compliance` of each vehicle carries the full level and the rest none; the household result is a probability (with one vehicle, `c × indicator(full) + (1 − c) × indicator(baseline)`; with several, over the combinations of vehicles, assumed independent). v0.1 implements the average-content model only, named by a required argument. | The two models give the same mean and different shares below the EAR and above the UL; average content understates the share above the UL when few households are near it. | v0.2 (Fable designs), or task 9 if choice 5 of the design goes the other way |
+| P69 | high | **All-or-nothing compliance model.** A share `compliance` of each vehicle carries the full level and the rest none; the household result is a probability (with one vehicle, `c × indicator(full) + (1 − c) × indicator(baseline)`; with several, over the combinations of vehicles, assumed independent). v0.1 implements the average-content model only, named by a required argument. | The two models give the same mean and different shares below the EAR and above the UL; average content understates the share above the UL when few households are near it. | moved before A4 (R2-D4, 2026-11-15); design: `docs/design-12e5.md`, section 4; 12e.5.6, 12e.5.7 |
 | P70 | medium | **Iron bioavailability by source.** `absorbed = b_diet × baseline + b_added × added`, instead of one value for the whole intake. Needs absorption values per compound and diet with a verifiable source. | WHO 2009 sets different levels per iron compound because absorption differs; one value overstates scenarios with poorly absorbed compounds. | v0.2 |
 | P71 | low | **Helper from `ref_who2009_flour` rows to scenario rows.** Must make the reading of vitamin A (`form`) an argument without default. | The mapping is short, but repeated by every user of the WHO table. | 12 (vignette first) |
 | P72 | low | **Compare `vehicles$vehicle_fraction` with `enrichment$ingredient_fraction`.** Two fractions describe the flour of one food on two bases (purchased food, composition row); a check that lists pairs that disagree beyond a tolerance given by the caller. | Same kind of duplication as E12. | 9 or v0.2 |
@@ -918,22 +918,22 @@ numbering. Each question gives the recommended option first.
 
 Findings of `docs/review-v0.2.md` (Fable; brief
 `docs/review-v0.2-brief.md`). Evidence, sources and the proposed fix of
-each are there, under the finding number given. Nothing is implemented:
-the step 12e of the roadmap waits for the maintainer's approval and for
-the answers to the nine questions of section 10 of the review. M2 and M3
-of the v0.1 review had never been entered here; they are P158 and P171.
+each are there, under the finding number given. Step 12e of the roadmap
+was approved on 2026-11-15 (section "Decisions (2026-11-15, review v0.2)"
+below). M2 and M3 of the v0.1 review had never been entered here; they are
+P158 and P171.
 
 | Id | Priority | Finding | Item | Task |
 |---|---|---|---|---|
 | P155 | high (blocker) | 1 | **A carrier with a repeated key is accepted and changes the estimates silently** (mean iron 10.45 to 19,644.6 with 50 households twice; `n` unchanged, no log row). `require_hces()` must check the key; the estimators must call `audit_check_rows()`. | 12e.1, before A2 |
 | P156 | high | 2 | **`estimate_households()` accepts any number as a proportion** (the default statistic): unclassed error of `survey`, or an estimate of 7.08 labelled a proportion, or a negative effective sample size. Range check, `hcesfort_error_value`. | 12e.1 |
 | P157 | high | 3 | **The limits of the method are written nowhere a user reads.** The cut-point and the probability approach are defined on usual intake (IOM 2000b, pp. 73, 81, 99; IOM 2001, p. 703); the package applies them to acquisitions over `period_days`. Correction 9 of the v0.1 review (H5, H7) was never done. Help pages, README, vignette, one audit note. | 12e.3, before the first expert round; P110 stays in 12 |
-| P158 | high | 4 | **Infants count their whole energy requirement in the AFE** (a woman with an infant of two months: 1.24 AFE), although FAO/WHO/UNU 2004, section 3.4, says breast milk covers it up to six months. Unsupported. An argument without default; P57 with it. M2 of the v0.1 review. | design note (Fable), before A4 |
-| P159 | high | 5 | **Every gram of a vehicle is fortified whatever its origin**; `origin` is in the contract and no function reads it. WHO 2009, p. 1, defines the levels on "fortifiable" flour of industrial roller mills. A logical column `fortifiable` set by the adapter. Contract change. | design note (Fable), before A4 |
+| P158 | medium (was high; reworded 2026-11-15 by `docs/design-12e5.md`, section 1.1) | 4 | **The rule for infants in the AFE is an unwritten assumption.** Finding 4 overstated it: a breastfed infant eats none of the food recorded, but its mother eats for it (FAO/WHO/UNU 2004, section 7.2: 505 to 675 kcal per day in the first six months), so today's AFE of a woman with an infant (1.24) is inside the range of the source (1.22 to 1.29); removing the infant without adding lactation would understate the AFE by about 0.24. Arguments without default `infant_food_share` and `milk_energy_cost`; P57 (`pregnancy_kcal`, `lactation_kcal`) with them. M2 of the v0.1 review. | 12e.5.1, 12e.5.2 (after approval of the design) |
+| P159 | high | 5 | **Every gram of a vehicle is fortified whatever its origin**; `origin` is in the contract and no function reads it. WHO 2009, p. 1, defines the levels on "fortifiable" flour of industrial roller mills. A logical column `fortifiable` set by the adapter. Contract change. | design: `docs/design-12e5.md`, section 2; 12e.5.3, 12e.5.4 |
 | P160 | high | 6 | **Nine of thirteen core estimators have expected values only from AI-written arithmetic.** Anchors verified on 2026-11-15, ready to become tests: the FAO examples under Table 5.1, IOM 2001 Table I-7, the conservation identity, `svycontrast()`, a ratio on the full design, `svyciprop(method = "logit")`, `surveytable::svyciprop_adjusted()`. | 12e.2, before A3 |
 | P161 | high | 7 | **The README says the package has no functions** (H5 of the v0.1 review, open); version `0.0.0.9000`. | 12e.3 |
-| P162 | high | 8 | **The coverage gate counts grams, not the nutrient**: with the only source of a nutrient lacking a value the gate passes at 0.976 and every household is inadequate. List the foods without a value in the log; say what the gate misses; a readiness check by food. Related to P96. | design note (Fable), before A4 |
-| P163 | high | 9 | **Under average-content compliance below 1 the share above the upper level is understated and nothing says so**: on `hces_example`, folic acid, 0.59% as shipped against 19.68% at compliance 1. H7.3 of the v0.1 review, open. A flagged audit row, the sentence in two help pages, the figure at compliance 1 as a bound. P69 (all-or-nothing) to move before A4 (question 4). | 12e.3; P69 |
+| P162 | high | 8 | **The coverage gate counts grams, not the nutrient**: with the only source of a nutrient lacking a value the gate passes at 0.976 and every household is inadequate. List the foods without a value in the log; say what the gate misses; a readiness check by food. Related to P96. | design: `docs/design-12e5.md`, section 3; 12e.5.5 |
+| P163 | high | 9 | **Under average-content compliance below 1 the share above the upper level is understated and nothing says so**: on `hces_example`, folic acid, 0.59% as shipped against 19.68% at compliance 1. H7.3 of the v0.1 review, open. A flagged audit row, the sentence in two help pages, the figure at compliance 1 as a bound. P69 (all-or-nothing) to move before A4 (question 4). | 12e.3; P69 in 12e.5.6, 12e.5.7 |
 | P164 | medium | 10 | **The presentation standard is not conservative for a mean of probabilities**: `p(1 - p) / se²` overstates the effective sample size (127.8 against 9.0 in the example of the review); departure S2 of the report and `?flag_presentation` say the opposite. | 12e.3 (sentences), 12e.4 or v0.2 (effective size) |
 | P165 | medium | 11 | **An interval of width zero is presented as certainty** by `estimate_difference()` and by a mean or median without variation (0, 0, 0, 0, `present`). Apply the rule of the degenerate proportion. | 12e.4 |
 | P166 | medium | 12 | **`df = 0`: `NaN` limits and base warnings; `precision_status = "exact"` when `se == 0` comes from `lonely_psu = "certainty"` or `"remove"`.** Missing limits, a log row; `exact` decided on the values. | 12e.4 |
@@ -946,3 +946,37 @@ of the v0.1 review had never been entered here; they are P158 and P171.
 | P173 | low | 19 | **The probability approach on intake per AFE is the package's own extension to HCES**; say so in `?inadequacy` and the methods vignette. | 12 |
 | P174 | medium | section 6 | **Five mutations survive**: the reference scenario of `estimate_difference()` with a second grouping key (no test has one), `n_missing` with `by`, a member of exactly one year, the coverage of two forms in `above_ul()`, `NaN` against `NA` in a coverage. The code is right in the five; five tests. | 12e.2 |
 | P175 | low | section 7 | **Before a submission:** the JOSS criteria and the rOpenSci scope policy were not reachable (`# SOURCE PENDING`); a pre-submission enquiry to rOpenSci; a statement on AI assistance; a statement of need against existing software. | 12, v1.0 |
+
+## Decisions (2026-11-15, review v0.2)
+
+The maintainer's answers to the nine questions of section 10 of
+`docs/review-v0.2.md`; technical criterion delegated to the advisor.
+
+| # | Decision |
+|---|---|
+| R2-D1 | **Step 12e before A2:** approved. Order: 12e.5 first (the design note, Fable), then 12e.1, 12e.2, 12e.3, 12e.4 (Opus; Sonnet for the text of 12e.3). |
+| R2-D2 | **`statistic` of `estimate_households()`:** the default `"proportion"` stays; the range check is added. Estimates stay proportions in the code; reports and vignettes print percentages. |
+| R2-D3 | **Infants:** a required argument, without default, when `members` has infants; the value 1 reproduces today's rule. The values an analyst may choose are settled in the design note of 12e.5. |
+| R2-D4 | **Upper level and compliance:** the audit row and the bound at compliance 1 in 12e.3; P69 (all or nothing) moves from v0.2 to before A4. |
+| R2-D5 | **Fortifiable vehicle:** an optional logical column `fortifiable` in `acquisitions`, set by the adapter where the survey identifies the origin. If present, `vehicle_coverage()` and the scenarios use it; if absent, every gram is treated as fortifiable and an audit row says so. What the ENGIH records on origin is checked by its adapter (A2). |
+| R2-D6 | **Iron presentation:** the two sentences corrected in 12e.3; the effective size from the variable's own variance in 12e.4. |
+| R2-D7 | **`surveytable`** in `Suggests` for one test, skipped when absent. Statement on AI assistance in the README and `CONTRIBUTING.md`: "Developed with the help of AI tools under the author's supervision; methodological decisions and validation are the author's." |
+| R2-D8 | **Review track:** deferred; the rOpenSci pre-submission enquiry waits until the repository is public. |
+| R2-D9 | **Documents:** the maintainer attaches the PDFs to the session that needs them; they are never committed. Until the hosts are reachable, those sources stay `# SOURCE PENDING`. |
+
+`docs/design-12e5.md` (2026-11-15) proposes two amendments, in its section
+7, that wait for approval: R2-D3 needs a second argument
+(`milk_energy_cost`) when the share is below 1 (decision 1 of the design),
+and R2-D5 is used only when the call says so, `fortifiable = "use"` or
+`"ignore"` (decision 4).
+
+## Open items from the design of 12e.5 (2026-11-15)
+
+| Id | Priority | Item | Why | Task |
+|---|---|---|---|---|
+| P176 | low | **Children of 12 to 23 months who are still breastfed** count their whole yearly requirement; `infant_food_share` stops at 12 months. | The same reasoning as for infants; the effect is smaller. | v0.2 |
+| P177 | low | **Energy of pregnancy by trimester and of lactation by semester per member**, from an optional column, instead of one number for all flagged women. | FAO/WHO/UNU 2004 gives 85, 285 and 475 kcal by trimester; few surveys record it. | v0.2, with a survey that records it |
+| P178 | medium | **Gate on key sources declared by the analyst**: a list of foods per nutrient that must have a value, checked by the readiness functions. | The gate by grams cannot see a nutrient concentrated in few foods (P162); `missing_values()` shows the list but nothing fails. | v0.2 |
+| P179 | medium | **The results report shows the upper-level exhibit under both compliance models**, as the range between blended and all-or-nothing product. | The truth lies between them; one model alone reads as a point answer. | 12 |
+| P180 | medium | **Compliance as two quantities**: the share of the fortifiable vehicle that is fortified at all, and the content of the fortified product relative to the level (an optional column of `scenarios`), instead of one number read by a model. | Market monitoring reports both (Tang et al. 2021, limitations: "some samples were not fortified at all"); `compliance_model` covers only the two extremes. | v0.2 |
+| P181 | medium | **What published HCES analyses do with infants, pregnancy and lactation in the adult equivalents is not known from any document opened** (`# SOURCE PENDING`): the supplement of Tang et al. 2021, Weisell and Dop 2012 and Coates et al. 2017 were not obtained. | Row 1 of section 1.4 of the design rests on the FAO document and on this project's reasoning, not on a published convention. | when the maintainer attaches the documents |
