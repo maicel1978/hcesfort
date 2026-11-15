@@ -95,7 +95,7 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
   - [x] 12d.15 `energy_action` (P148, V-D26; Opus), then snapshot and registry tests (Q1, Q2).
   - [x] 12d.16 Feedback log (Q3); getting-started vignette (R23); specification, `NEWS.md`, self-review; handoff for the maintainer's render on ENGIH 2018 (Q4).
 
-- [ ] 12e. Corrections of the hostile review v0.2 (`docs/review-v0.2.md`; brief `docs/review-v0.2-brief.md`). Comes before A2. **Waits for the maintainer's approval** and the answers to the nine questions of section 10 of the review.
+- [ ] 12e. Corrections of the hostile review v0.2 (`docs/review-v0.2.md`; brief `docs/review-v0.2-brief.md`). Comes before A2. Approved on 2026-11-15 (answers in `docs/handoff.md`). Order: 12e.5 first (Fable), then 12e.1 to 12e.4.
   - [x] 12e.0 Review written (Fable, 2026-11-15): one blocker, eight major and ten minor findings; findings recorded as P155 to P175. No package code changed.
   - [ ] 12e.1 Key check in `require_hces()`, `audit_check_rows()` in the estimators, range check of a proportion (P155, P156). Opus.
   - [ ] 12e.2 Anchor tests from sources outside the package, five tests for the surviving mutations, optional columns in `hces_fixture()` and the golden script (P160, P169, P174). Opus. Before A3.

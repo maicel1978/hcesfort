@@ -37,6 +37,26 @@ The nine of section 10 of the review. The three that block work:
 2. `surveytable` in `Suggests` for one test? (recommended: yes)
 3. P69 (all-or-nothing compliance) before A4? (recommended: yes)
 
+## Answers of the maintainer (2026-11-15, after the review v0.2)
+
+Approved by the maintainer; technical criterion delegated to the advisor.
+
+1. **Step 12e before A2:** approved. **Order by decision of the maintainer: 12e.5 first (Fable, while it is available), then 12e.1, 12e.2, 12e.3, 12e.4 (Opus; Sonnet for the text of 12e.3).** 12e.5 does not depend on 12e.1 to 12e.4.
+2. **`statistic` of `estimate_households()`:** keep the default `"proportion"` and add the range check. Estimates stay proportions in the code; reports and vignettes print them as percentages.
+3. **Infants:** a required argument, without default, when `members` has infants; the value 1 reproduces today's rule. The sources for the values an analyst may choose are settled in the design note of 12e.5, with the PDFs the maintainer attaches to that session (never committed).
+4. **Upper level and compliance:** audit row and bound at compliance 1 in 12e.3; P69 (all-or-nothing) moves from v0.2 to before A4.
+5. **Fortifiable vehicle:** optional logical column `fortifiable` in `acquisitions`, set by the adapter where the survey identifies the origin (own production, gifts in kind, home processing). If present, `vehicle_coverage()` and the scenarios use it; if absent, every gram of the vehicle is treated as fortifiable and an audit row states that assumption. What the ENGIH records on origin is checked by the ENGIH adapter (A2), not assumed here.
+6. **Iron presentation:** correct the two sentences in 12e.3; effective size from the variable's own variance in 12e.4.
+7. **`surveytable`:** accepted in `Suggests` for one test skipped when it is absent. AI statement in the README and `CONTRIBUTING.md`: "Developed with the help of AI tools under the author's supervision; methodological decisions and validation are the author's."
+8. **Review track:** deferred. The rOpenSci pre-submission enquiry waits until the repository is public, which depends on an agreement outside this repository.
+9. **Documents:** the maintainer attaches the PDFs he has to the session that needs them; they are never committed. The hosts `pmc.ncbi.nlm.nih.gov`, `joss.readthedocs.io` and `devguide.ropensci.org` are requested for the environment; until then those sources stay `# SOURCE PENDING`.
+
+Record these in `docs/improvements.md` with the first commit of the next step. CI on `main` is checked by the advisor after this merge.
+
+## Next session
+
+**12e.5, Fable, high effort:** one design note (`docs/design-12e5.md`) covering P158, P159, P162 and P163 with the answers above; it fixes the interfaces Opus implements. No package code. Keep it to what changes figures before A4.
+
 ## Recommended model for the next session
 
 Opus for 12e.1 and 12e.2. Sonnet for the text of 12e.3. Fable for 12e.5
