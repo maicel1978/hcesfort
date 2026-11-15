@@ -54,27 +54,35 @@ instance_domain <- function(x, instance) {
          nutrient_domain = instance[[2]], NA_character_)
 }
 
-# The label of an instance, as printed after the exhibit ID.
+# The labels of an instance, as printed inside a title: lower case after
+# the first word of the sentence (P145). One element, or two (nutrient,
+# domain) for `repeats = "nutrient_domain"`.
 instance_label <- function(x, instance) {
+  low <- function(code, type) lower_first(lab(code, type))
   switch(x$repeats,
          none = NULL,
-         domain = as.character(lab(instance[[1]], "domain")),
-         nutrient = as.character(lab(instance[[1]], "nutrient")),
-         nutrient_domain = paste(as.character(lab(instance[[1]], "nutrient")),
-                                 as.character(lab(instance[[2]], "domain")),
-                                 sep = ", "))
+         domain = low(instance[[1]], "domain"),
+         nutrient = low(instance[[1]], "nutrient"),
+         nutrient_domain = c(low(instance[[1]], "nutrient"),
+                             low(instance[[2]], "domain")))
 }
 
 # Title (R16): "<kind> <ID>. <what>, <unit> (<interval>). <place>,
-# <survey>". The title term of the ID may hold `{instance}` and `{level}`;
-# place and survey are appended only when set.
+# <survey>". The title term of the ID may hold `{instance}`, `{level}` and,
+# for a nutrient and a domain, `{nutrient}` and `{domain}`; place and
+# survey are appended only when set.
 exhibit_title <- function(id, instance = NULL, body = NULL) {
   x <- exhibit_row(id)
   if (is.null(body)) body <- x$body
   what <- term(id, "title")
   what <- gsub("{level}", 100 * level, what, fixed = TRUE)
-  what <- gsub("{instance}", paste(instance_label(x, instance), collapse = ""),
-               what, fixed = TRUE)
+  label <- instance_label(x, instance)
+  if (!is.null(label)) {
+    what <- gsub("{instance}", paste(label, collapse = ", "), what,
+                 fixed = TRUE)
+    what <- gsub("{nutrient}", label[1], what, fixed = TRUE)
+    what <- gsub("{domain}", label[2], what, fixed = TRUE)
+  }
   out <- paste0(term(body, "kind"), " ", id, ". ", what)
   where <- c(choices$place, choices$survey)
   if (length(where) > 0) out <- paste0(out, ". ", paste(where, collapse = ", "))
@@ -113,6 +121,7 @@ exhibit_note <- function(d, extra = NULL) {
   }
   suppressed <- attr(d, "suppressed_reasons")
   if (length(suppressed) > 0) out <- c(out, why("suppressed", suppressed))
+  if (isTRUE(attr(d, "empty_cells"))) out <- c(out, term("empty", "note"))
   review <- attr(d, "review_reasons")
   if (length(review) > 0) out <- c(out, why("review", review))
   if (any(grepl("‡", d$mark))) out <- c(out, term("complement", "note"))

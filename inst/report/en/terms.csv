@@ -46,7 +46,7 @@ header,,vehicle_group,Vehicle group
 header,,acquired,Households acquiring (%)
 header,,median_g,Median g per AFE per day
 header,,none,Households acquiring no vehicle (%)
-header,,inadequate,Inadequate intake (%)
+header,,inadequate,Inadequate apparent intake (%)
 header,,scenario,Scenario
 header,,comparator,Compared with
 header,,from,Compared with (%)
@@ -56,8 +56,6 @@ header,,form,Form
 header,,compliance,Compliance (%)
 header,,source,Source
 header,,above_ul,Above the upper level (%)
-header,,ul_compared,Intake compared
-header,,ul_bias,Direction of the bias
 header,,food_group,Food group
 header,,share,Share of intake (%)
 header,,ear,EAR
@@ -128,14 +126,6 @@ presentation_reason,,zero_events,no household or every household in the sample
 presentation_reason,,degrees_of_freedom,too few degrees of freedom
 method,,ear_cutpoint,EAR cut-point
 method,,probability,probability approach
-ul_scope,,total_intake,Total intake
-ul_scope,,form_added_only,"Added form only, without the diet"
-ul_scope,,form_diet_and_added,Form in the diet and added
-ul_scope,,not_assessable,Not assessable
-ul_bias,,total_intake,May be understated (incomplete composition or records)
-ul_bias,,form_added_only,Lower bound: the form already in the diet is not counted
-ul_bias,,form_diet_and_added,"May be understated (incomplete composition of the form, or records)"
-ul_bias,,not_assessable,Not assessable
 sentence,,exact,"In the sample, the same value in every household"
 sentence,,limit,interval limit
 sentence,,supported,The data support these sections of the results report: {sections}.
@@ -173,7 +163,7 @@ axis,,queue_y,Share linked (%)
 axis,,energy_x,"Apparent energy intake, kcal per adult female equivalent per day"
 axis,,energy_y,% of households
 axis,,effect_x,"% of households (left), percentage points (right)"
-axis,,effect_level,Inadequate intake (%)
+axis,,effect_level,Inadequate apparent intake (%)
 axis,,effect_difference,Difference (points)
 kind,,figure,Figure
 kind,,table,Table
@@ -196,15 +186,17 @@ title,,R1.4,"Households that acquire no vehicle, by {instance}, % ({level}% CI)"
 title,,R2.1,"Households with inadequate apparent intake without fortification, by nutrient, % ({level}% CI)"
 title,,R2.2,"Households with inadequate apparent intake without fortification, by {instance}, % ({level}% CI)"
 title,,R3.1,Fortification scenarios
-title,,R3.2,"Effect of each scenario on inadequate apparent intake, {instance}, % and percentage points ({level}% CI)"
+title,,R3.2,"Effect of each scenario on inadequate apparent intake of {instance}, % and percentage points ({level}% CI)"
 title,,R3.3,"Households above the upper level, by scenario, % ({level}% CI)"
-title,,R3.4,"Effect of each scenario on inadequate apparent intake by domain value, {instance}, % and percentage points ({level}% CI)"
+title,,R3.4,"Effect of each scenario on inadequate apparent intake of {nutrient}, by {domain}, % and percentage points ({level}% CI)"
 title,,R4.1,"Share of each food group in apparent intake, by nutrient, % ({level}% CI)"
 title,,RT1,Requirements and upper levels used
 title,,RT2,Presentation standard used
 title,,RT3,"Households with inadequate apparent intake of iron, by iron bioavailability, % ({level}% CI)"
 note,,n,n = {n} households
 note,,suppressed,— Suppressed under the presentation standard
+note,,cumulative,"A scenario lists every vehicle it fortifies, so cumulative scenarios repeat the vehicles of the one before."
+note,,empty,— No data: no household with an estimate.
 note,,review,† Flagged for statistical review
 note,,complement,‡ The complement of the estimate may be unreliable.
 note,,inventory,Optional variables present and complete are listed only in Table DA1.

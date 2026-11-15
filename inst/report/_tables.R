@@ -125,7 +125,9 @@ emit_table <- function(x) {
 # unless `drop_exact` is FALSE, for the sentence of exact_sentence(), with
 # `n` and the upper limit. Columns in `extra` are copied after `n`. The
 # reasons of the suppressed and of the flagged rows are kept in the
-# attributes `suppressed_reasons` and `review_reasons`, for the notes.
+# attributes `suppressed_reasons` and `review_reasons`, for the notes. A
+# suppressed row with no household (n = 0) has its own note, `empty_cells`
+# (P146), not a suppression reason.
 display <- function(e, keys, value, scale = pct, unit = "%",
                     drop_exact = TRUE, extra = NULL) {
   e <- as.data.frame(e)
@@ -148,11 +150,13 @@ display <- function(e, keys, value, scale = pct, unit = "%",
                               e[zero, , drop = FALSE], scale, unit)
   }
   rownames(out) <- NULL
+  empty <- hide & e[["n"]] %in% 0
   reasons <- function(rows) {
     unique(stats::na.omit(e$presentation_reason[rows & !zero]))
   }
   structure(out[!zero, , drop = FALSE], exact = sentence, value = value,
-            suppressed_reasons = reasons(hide),
+            empty_cells = any(empty),
+            suppressed_reasons = reasons(hide & !empty),
             review_reasons = reasons(review & !hide))
 }
 

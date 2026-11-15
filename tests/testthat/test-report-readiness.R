@@ -57,8 +57,6 @@ test_that("terms.csv labels the whole vocabulary the reports print (U10)", {
                             "absolute_width", "relative_width",
                             "zero_events", "degrees_of_freedom"),
     method = c("ear_cutpoint", "probability"),
-    ul_scope = c("total_intake", "form_added_only", "form_diet_and_added",
-                 "not_assessable"),
     sentence = c(
       "exact", "limit", "supported", "supported_none", "supported_domains",
       "unsupported", "unsupported_none", "left", "left_inputs",
@@ -71,11 +69,11 @@ test_that("terms.csv labels the whole vocabulary the reports print (U10)", {
     kind = c("figure", "table"),
     title = utils::read.csv(system.file("report", "exhibits.csv",
                                         package = "hcesfort"))$id,
-    note = c("n", "suppressed", "review", "complement", "inventory",
+    note = c("n", "suppressed", "empty", "cumulative", "review",
+             "complement", "inventory",
              "queue", "differs", "energy_lines"),
     format = "big_mark"
   )
-  vocabulary$ul_bias <- vocabulary$ul_scope
   for (lang in report_langs) {
     file <- system.file("report", lang, "terms.csv", package = "hcesfort")
     expect_s3_class(read_labels(file, needed = vocabulary), "tbl_df")

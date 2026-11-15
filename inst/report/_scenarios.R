@@ -25,7 +25,7 @@ scenario_table <- function(instance) {
     level_mg_kg = signif(level_mg_kg, 3),
     compliance = pct(sc$compliance, 0),
     source = lab(sc$source, "source")
-  ))
+  ), note = term("cumulative", "note"))
 }
 
 # ---- R3.2 and R3.4. Effect of a scenario (6.3) -----------------------

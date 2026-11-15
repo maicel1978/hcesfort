@@ -91,8 +91,8 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
   - [x] 12d.11 Readiness report in English: builders of D1 to D10 and DA1 (`_readiness.R`, `_verdict.R`), `readiness.qmd` reduced to headings and `show_exhibit()` calls; K17, K18. The Spanish `readiness.qmd` already runs the same code, with Spanish headings and terms.
   - [x] 12d.12 Readiness report in Spanish: read the rendered Spanish report and settle its wording (e.g. "enlazada" in the titles against "vinculada" in the sentences); the code is done. Done 2026-11-15 (`2486d6d`; D9 tail, V-D21, in `38c926f`).
   - [x] 12d.13 Results report in English: builders of R0 to RT3 (`_results.R`, `_scenarios.R`), `results.qmd` reduced to headings and `show_exhibit()` calls in both languages; K19 to K26; P140 (V-D20), P141 (V-D23), P143 (V-D25). Done 2026-11-15 (`535cd75`, `82d2303`, `6b4915c`, `4160b1a`). The Spanish `results.qmd` already runs the same code with Spanish headings and terms.
-  - [ ] 12d.14 Results report in Spanish: read the rendered report and settle its wording in both languages (Sonnet); P142, P145, P147. The code is done.
-  - [ ] 12d.15 Snapshot and registry tests (Q1, Q2).
+  - [x] 12d.14 Results report in Spanish: wording settled in both languages (Sonnet); P144 (note on R3.1), P145 (titles in lower case after "by"; R3.4 as "of {nutrient}, by {domain}"), P146 (own note for cells with n = 0), P147 (dead terms removed); maintainer answers V-D26 to V-D28 recorded. Done 2026-11-15.
+  - [ ] 12d.15 `energy_action` (P148, V-D26; Opus), then snapshot and registry tests (Q1, Q2).
   - [ ] 12d.16 Feedback log (Q3); getting-started vignette (R23); specification, `NEWS.md`, self-review; handoff for the maintainer's render on ENGIH 2018 (Q4).
 
 ## v0.1, companion repository `hcesfort.engih2018`: ENGIH 2018 adapter (needs the microdata)

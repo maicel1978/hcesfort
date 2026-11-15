@@ -69,10 +69,11 @@ test_that("titles end with place and survey only when set (R16, K20)", {
     paste("Figure R1.1. Households that acquire each fortification",
           "vehicle, % (95% CI)")
   )
-  expect_match(env$exhibit_title("R2.2", "region"), "by Region, %",
+  expect_match(env$exhibit_title("R2.2", "region"), "by region, %",
                fixed = TRUE)
-  expect_match(env$exhibit_title("R3.4", c("iron", "area")), "Iron, Area",
-               fixed = TRUE)
+  # P145: nutrient and domain in lower case, each in its own place.
+  expect_match(env$exhibit_title("R3.4", c("iron", "area")),
+               "intake of iron, by area, %", fixed = TRUE)
   env$choices$place <- "Region X"
   env$choices$survey <- "Survey 2024"
   expect_match(env$exhibit_title("RT1"),
@@ -95,6 +96,23 @@ test_that("notes come in the order of R17, each only when it occurs", {
   # A different n in each row: the table gives it in a column.
   d$n <- c(10, 20, 30)
   expect_false(any(grepl("^n = ", env$exhibit_note(d))))
+})
+
+test_that("a suppressed cell with no household has its own note (P146)", {
+  env <- exhibit_env()
+  e <- fixture_estimates()
+  # Oil: no household (n = 0) and suppressed for its sample size.
+  e$n[4] <- 0
+  e$presentation_reason[4] <- "sample_size"
+  d <- env$display(e, "vehicle", "acquired")
+  expect_true(attr(d, "empty_cells"))
+  expect_identical(attr(d, "suppressed_reasons"), character(0))
+  note <- env$exhibit_note(d)
+  expect_true("— No data: no household with an estimate." %in% note)
+  expect_false(any(grepl("fewer households", note)))
+  # With a household, the suppression reason stays.
+  d <- env$display(fixture_estimates(), "vehicle", "acquired")
+  expect_false(attr(d, "empty_cells"))
 })
 
 test_that("display() keeps rows, marks values and moves zero events", {

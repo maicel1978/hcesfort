@@ -46,7 +46,7 @@ header,,vehicle_group,Grupo de vehículos
 header,,acquired,Hogares que adquieren (%)
 header,,median_g,Mediana de g por EMA y día
 header,,none,Hogares que no adquieren ningún vehículo (%)
-header,,inadequate,Ingesta inadecuada (%)
+header,,inadequate,Ingesta aparente inadecuada (%)
 header,,scenario,Escenario
 header,,comparator,Comparado con
 header,,from,Comparación (%)
@@ -56,8 +56,6 @@ header,,form,Forma
 header,,compliance,Cumplimiento (%)
 header,,source,Fuente
 header,,above_ul,Por encima del nivel máximo (%)
-header,,ul_compared,Ingesta comparada
-header,,ul_bias,Dirección del sesgo
 header,,food_group,Grupo de alimentos
 header,,share,Proporción de la ingesta (%)
 header,,ear,EAR
@@ -128,14 +126,6 @@ presentation_reason,,zero_events,ningún hogar o todos los hogares de la muestra
 presentation_reason,,degrees_of_freedom,muy pocos grados de libertad
 method,,ear_cutpoint,punto de corte del EAR
 method,,probability,método probabilístico
-ul_scope,,total_intake,Ingesta total
-ul_scope,,form_added_only,"Solo la forma añadida, sin la dieta"
-ul_scope,,form_diet_and_added,Forma de la dieta y añadida
-ul_scope,,not_assessable,No evaluable
-ul_bias,,total_intake,Puede estar subestimado (composición o registros incompletos)
-ul_bias,,form_added_only,Cota inferior: no cuenta la forma ya presente en la dieta
-ul_bias,,form_diet_and_added,"Puede estar subestimado (composición de la forma o registros incompletos)"
-ul_bias,,not_assessable,No evaluable
 sentence,,exact,"En la muestra, el mismo valor en todos los hogares"
 sentence,,limit,límite del intervalo
 sentence,,supported,Los datos permiten estas secciones del informe de resultados: {sections}.
@@ -173,7 +163,7 @@ axis,,queue_y,Proporción vinculada (%)
 axis,,energy_x,"Ingesta aparente de energía, kcal por equivalente de mujer adulta por día"
 axis,,energy_y,% de hogares
 axis,,effect_x,"% de hogares (izquierda), puntos porcentuales (derecha)"
-axis,,effect_level,Ingesta inadecuada (%)
+axis,,effect_level,Ingesta aparente inadecuada (%)
 axis,,effect_difference,Diferencia (puntos)
 kind,,figure,Figura
 kind,,table,Cuadro
@@ -196,15 +186,17 @@ title,,R1.4,"Hogares que no adquieren ningún vehículo, por {instance}, % (IC {
 title,,R2.1,"Hogares con ingesta aparente inadecuada sin fortificación, por nutriente, % (IC {level}%)"
 title,,R2.2,"Hogares con ingesta aparente inadecuada sin fortificación, por {instance}, % (IC {level}%)"
 title,,R3.1,Escenarios de fortificación
-title,,R3.2,"Efecto de cada escenario en la ingesta aparente inadecuada, {instance}, % y puntos porcentuales (IC {level}%)"
+title,,R3.2,"Efecto de cada escenario en la ingesta aparente inadecuada de {instance}, % y puntos porcentuales (IC {level}%)"
 title,,R3.3,"Hogares por encima del nivel máximo, por escenario, % (IC {level}%)"
-title,,R3.4,"Efecto de cada escenario en la ingesta aparente inadecuada por valor del dominio, {instance}, % y puntos porcentuales (IC {level}%)"
+title,,R3.4,"Efecto de cada escenario en la ingesta aparente inadecuada de {nutrient}, por {domain}, % y puntos porcentuales (IC {level}%)"
 title,,R4.1,"Proporción de cada grupo de alimentos en la ingesta aparente, por nutriente, % (IC {level}%)"
 title,,RT1,Requerimientos y niveles máximos utilizados
 title,,RT2,Norma de presentación utilizada
 title,,RT3,"Hogares con ingesta aparente inadecuada de hierro, por biodisponibilidad del hierro, % (IC {level}%)"
 note,,n,n = {n} hogares
 note,,suppressed,— Suprimida según la norma de presentación
+note,,cumulative,"Un escenario enumera todos los vehículos que fortifica, por lo que los escenarios acumulativos repiten los vehículos del anterior."
+note,,empty,— Sin dato: ningún hogar con estimación.
 note,,review,† Señalada para revisión estadística
 note,,complement,‡ El complemento de la estimación puede no ser fiable.
 note,,inventory,Las variables opcionales presentes y completas solo aparecen en el Cuadro DA1.
