@@ -21,8 +21,8 @@
 | last commit | roadmap, improvements (P144 to P149), handoff |
 
 `devtools::test()`: 0 failures, 0 skips (3073 expectations, Quarto render
-included). `devtools::check()` and `lintr::lint_package()`: see the last
-section.
+included). `devtools::check()` after `4160b1a`: 0 errors, 0 warnings, 0
+notes (11.4 minutes). `lintr::lint_package()`: clean.
 
 ## Exact next step
 
