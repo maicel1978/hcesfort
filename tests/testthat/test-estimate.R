@@ -507,3 +507,39 @@ test_that("a proportion outside [0, 1] is refused (P156)", {
   expect_true(all(is.finite(e$estimate)))
   expect_s3_class(estimate_households(d, es_result(), "ok"), "hces_estimate")
 })
+
+# Mutation S2 of the review v0.2: households without an estimate are
+# counted in their own `by` cell. Household 5 (region "a") is missing.
+test_that("n and n_missing are counted within each by cell", {
+  e <- pick_est(estimate_households(es_design(), es_result(), "p",
+                                    by = "region"), "base")
+  expect_identical(e$region, c("a", "b"))
+  expect_identical(e$n, c(3L, 4L))
+  expect_identical(e$n_missing, c(1L, 0L))
+})
+
+# Mutation S1 of the review v0.2: with a second key besides `scenario`
+# (two nutrients), each scenario is paired with the reference of its own
+# nutrient. The second nutrient is 1 - p of the first, so a reference
+# taken from the wrong nutrient gives another estimate.
+test_that("the paired difference pairs within every other key", {
+  x <- es_result()
+  two <- rbind(cbind(nutrient = "iron", as.data.frame(x)),
+               cbind(nutrient = "zinc", as.data.frame(x)))
+  two$p[two$nutrient == "zinc"] <- 1 - two$p[two$nutrient == "zinc"]
+  two <- new_hces_tbl(two, "hces_inadequacy",
+                      key = c("scenario", "nutrient", "household_id"))
+  e <- estimate_difference(es_design(), two, "p", reference = "base")
+  expect_identical(e$nutrient, c("iron", "zinc"))
+  for (nut in c("iron", "zinc")) {
+    p <- two$p[two$nutrient == nut]
+    y <- p[two$scenario[two$nutrient == nut] == "fort"] -
+      p[two$scenario[two$nutrient == nut] == "base"]
+    r <- survey::svymean(~y, ref_design(y, rep(TRUE, 8)))
+    expect_equal(e$estimate[e$nutrient == nut], as.vector(stats::coef(r)),
+                 tolerance = 1e-8)
+    expect_equal(e$se[e$nutrient == nut], as.vector(survey::SE(r)),
+                 tolerance = 1e-8)
+  }
+  expect_equal(e$estimate[2], -e$estimate[1], tolerance = 1e-12)
+})

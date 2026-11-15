@@ -189,6 +189,9 @@ test_that("records of zero grams give zero intake and no coverage", {
   i <- apparent_intake(x, ai_afe(), ai_households())
   expect_equal(i$energy_kcal[2], 0)
   expect_true(is.na(i$iron_mg_coverage[2]))
+  # NA, not NaN (0 / 0): mutation S5 of the review v0.2.
+  expect_identical(i$iron_mg_coverage[2], NA_real_)
+  expect_identical(i$energy_kcal_coverage[2], NA_real_)
 })
 
 # Record loss (correction 1). By hand from ai_content(): included records

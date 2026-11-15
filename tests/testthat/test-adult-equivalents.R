@@ -177,3 +177,17 @@ test_that("bad arguments are classed errors", {
   expect_error(adult_equivalents(m, 2000, w, 2),
                class = "hcesfort_error_value")
 })
+
+# Mutation S3 of the review v0.2: the boundaries of the age bands. A girl of
+# exactly 1 year is a child (1000 kcal, not the infant mean 600), a girl of
+# exactly 10 years is in [10, 18) (2000 kcal) and a woman of exactly 18 is
+# an adult ((10 * 50 + 500) * 2 = 2000 kcal). Total 5000 kcal, AFE 2.5.
+test_that("a member exactly at an age boundary takes the upper band", {
+  m <- data.frame(household_id = 1, member_id = 1:3,
+                  age_years = c(1, 10, 18), sex = "female")
+  out <- afe_fixture(m)
+  expect_equal(out$energy_kcal_d, 5000)
+  expect_equal(out$afe, 2.5)
+  log <- audit_log(out)
+  expect_false("infant_annual_mean" %in% log$cause)
+})

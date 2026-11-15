@@ -190,3 +190,42 @@ test_that("invariant: row order of requirements", {
   expect_identical(u2$above_ul_total[match(k(u1), k(u2))], u1$above_ul_total)
   expect_identical(u2$above_ul_added[match(k(u1), k(u2))], u1$above_ul_added)
 })
+
+# Mutation S4 of the review v0.2: two registry forms of one UL category.
+# Invented conversions: retinol and a "retinyl" form, both in ug and both
+# counted against preformed vitamin A. Records per AFE: flour 100 g (C1:
+# retinol 5, retinyl 2 per 100 g) and milk 100 g (C2: retinol 3, retinyl
+# missing). Coverage by edible grams: retinol 200 / 200 = 1, retinyl
+# 100 / 200 = 0.5; the coverage of the UL is the smaller, 0.5. Total
+# 5 + 3 + 2 = 10 ug.
+test_that("the coverage of a UL with two diet forms is the smallest", {
+  r <- nutrient_registry(c(retinol = "ug", retinyl = "ug"))
+  a <- data.frame(record_id = 1:2, household_id = 1,
+                  food_code = c("flour", "milk"), quantity = 100, unit = "g",
+                  section = "diary", period_days = 1, include = TRUE)
+  f <- data.frame(unit = "g", factor = 1, factor_type = "mass_g",
+                  source = "test fixture")
+  cw <- data.frame(food_code = c("flour", "milk"),
+                   composition_id = c("C1", "C2"), match_type = "exact",
+                   validated = TRUE, edible_portion = 1)
+  comp <- data.frame(composition_id = c("C1", "C2"), retinol_ug = c(5, 3),
+                     retinyl_ug = c(2, NA), basis = "per_100g_edible",
+                     food_state = "raw", source = "test fixture")
+  comp <- unfortified_baseline(comp, no_rules(), r)
+  h <- data.frame(household_id = 1, weight = 1, stratum = 1, psu = 1)
+  afe <- new_hces_tbl(data.frame(household_id = 1, n_members = 1, afe = 1),
+                      "hces_afe", key = "household_id")
+  g <- convert_units(a, f, priority = "food")
+  intake <- apparent_intake(link_composition(g, cw, comp, r), afe, h)
+  cv <- ref_conversions[ref_conversions$from_form == "retinol", ]
+  cv <- rbind(cv, cv)
+  cv$from_form[2] <- "retinyl"
+  req <- data.frame(nutrient = "retinol", unit = "ug", ul = 9,
+                    ul_unit = "ug", ul_applies_to = "preformed_vitamin_a")
+  u <- above_ul(intake, req, conversions = cv, min_coverage = 0,
+                min_records_used = 0)
+  expect_identical(u$ul_scope, "form_diet_and_added")
+  expect_equal(u$coverage, 0.5)
+  expect_equal(u$amount_total, 10)
+  expect_true(u$above_ul_total)
+})
