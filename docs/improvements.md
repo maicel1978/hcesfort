@@ -905,3 +905,11 @@ numbering. Each question gives the recommended option first.
 11. **Upstream (P17).** May I draft issues for the original repository with
     the errors that affect published figures? *Recommended: yes, drafted here
     for you to post.*
+
+## Open items from the self-review of 12d.16 (2026-11-15)
+
+| # | Status | Item | Priority | Task |
+|---|---|---|---|---|
+| P149 | open | The chain of the vignette repeats that of `tests/testthat/test-golden-example.R` and of `inst/report/_chain.R`. A single exported wrapper would remove the duplication, but it changes the public interface: needs a design (Fable). | medium | 13 |
+| P150 | open | `docs/feedback/` has no round yet; the test passes with none. The first round should come from the maintainer's expert comments. | low | after Q4 |
+| P151 | open | The vignette has no Spanish version (planned with task 12). | low | 12 |
