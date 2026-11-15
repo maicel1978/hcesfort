@@ -6,7 +6,7 @@
 - `docs/specification.md`: purpose, architecture, principles.
 - `docs/analysis-map.md`: mapping from the ENGIH 2018 analysis to the package, with the errors found (E1–E26).
 - `docs/roadmap.md`: tasks in order; work only on the first open task.
-- `docs/improvements.md`: proposals, their status and the decisions taken.
+- `docs/improvements.md`: proposals, their status and the decisions taken. It is long: do not read it whole. Read the items and sections that `docs/handoff.md` names (`grep -n` for their ids), and search it before adding an id so that none is repeated.
 - `docs/model-routing.md`: which model does which work and when to stop and hand off; `docs/handoff.md` (if present): state left by the previous session, continue from it.
 
 ## Scope of the package
@@ -59,7 +59,8 @@ Before the last commit of a task, review the work as an rOpenSci reviewer would:
 - Standard package layout: `R/`, `tests/testthat/` (edition 3), roxygen2 with markdown, `data-raw/`, `vignettes/`.
 - Minimal dependencies. Imports: dplyr, tidyr, rlang, cli, survey, srvyr (plus base `stats`, `tools`, `utils`). Suggests: testthat, knitr, rmarkdown, withr, ggplot2 (vignettes only). Justify any other in the commit message.
 - Tests: each function with normal, edge and error cases (assert the error class). Coverage ≥ 90%.
-- Before each commit: `devtools::document()`, `devtools::test()` and lint of the changed files. Before each push and at the end of each task: `devtools::check()` with 0 errors, 0 warnings, 0 notes, and `lintr::lint_package()` clean. CI on Windows, macOS and Linux enforces the same.
+- While working: `devtools::test(filter = "<file>")` for the files touched. Before each commit: `devtools::document()`, the full `devtools::test()` and lint of the changed files. At the end of each task (once): `devtools::check()` with 0 errors, 0 warnings, 0 notes, and `lintr::lint_package()` clean. Commits that change only `docs/` need no test run. CI enforces the same and decides.
+- Long documents (`docs/review-*.md`, `docs/design-*.md`, `docs/improvements.md`): read only the sections the handoff names.
 - Style: tidyverse style guide; `snake_case`; exported functions prefixed only when needed to avoid clashes.
 
 ## Non-negotiable rules
