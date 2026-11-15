@@ -1,80 +1,78 @@
 # Handoff
 
 - **Date:** 2026-11-15
-- **Model:** Sonnet (12d.14).
-- **Branch:** `claude/ecstatic-dirac-hj8ya4` (this session's branch; the
-  previous one, `claude/elegant-cori-26i111`, ended at `7e516e9`, which
-  this branch contains). Confirm CI and merge into `main` before 12d.15.
-- **Environment:** Quarto 1.11.9 and `tinytable` were present in this
-  container. hcesfort itself was not installed, so the Quarto render test
-  failed until `R CMD INSTALL .` was run: the render test uses the
-  installed package. Install it at the start of a session.
+- **Model:** Opus (12d.15).
+- **Branch:** `claude/focused-hamilton-zb2n83`, from `main` at `df090d0`.
+  Confirm CI and merge into `main` before 12d.16.
+- **Environment:** run `R CMD INSTALL .` at the start: the Quarto render
+  test uses the installed package and the binary `quarto`.
 
-## What was done (12d.14, Sonnet)
+## What was done (12d.15, Opus)
 
-- P147: `ul_scope`, `ul_bias` and the headers `ul_compared`, `ul_bias`
-  removed from both `terms.csv` and from the vocabulary test (U10).
-- P145: instance labels in titles in lower case ("by region"); R3.4 reads
-  "Effect of each scenario on inadequate apparent intake of {nutrient}, by
-  {domain}" (new placeholders `{nutrient}`, `{domain}`; Spanish likewise);
-  R3.2 reads "... intake of {nutrient}".
-- P146 (V-D28): a suppressed row with n = 0 has its own note `empty`
-  ("No data: no household with an estimate"), not a suppression reason;
-  attribute `empty_cells` of `display()`; test added.
-- P144 (V-D27): note `cumulative` under R3.1.
-- Section 8: headers `inadequate` and axis `effect_level` now say
-  "inadequate apparent intake".
-- Maintainer answers V-D26 to V-D28 and statuses of P144 to P148 recorded
-  in `docs/improvements.md`; roadmap updated.
-- Both reports rendered (Quarto, `--to markdown`) and read; `lintr` clean;
-  report tests green. `devtools::check()` result: see the last line of
-  this file.
+- `a48333b` P148 (V-D26): `choices$energy_action` (`"keep"` or
+  `"exclude"`, checked; `"exclude"` needs `choices$energy`). `_chain.R`
+  now computes the energy flag for both reports. With `"exclude"`,
+  `drop_excluded()` removes the flagged households from the per-household
+  tables of the results (vehicle coverage, intake before the scenarios,
+  food groups) and writes an audit row; they stay in the design, outside
+  every domain. Note under D9, population sentence at the head of the
+  technical note, row in `decisions.csv`. Shipped as `"exclude"`. On
+  `hces_example`: 33 of 1,928 households left out; n becomes 1,895; no
+  household is then above the iron or vitamin A upper level (R3.3 shows
+  folate only).
+- `697c947` Q2: `tests/testthat/test-report-registry.R` (titles in both
+  languages, builders defined in the scripts each report sources,
+  appendix of every results figure, IDs called by their report only,
+  exhibits printed = registry on the example). Closes P137.
+- Q1: `exhibit_text()` in `_exhibits.R` (plain-text form of an exhibit)
+  and `tests/testthat/test-report-snapshots.R`: one snapshot per exhibit,
+  report and language, in `tests/testthat/_snaps/report-snapshots.md`.
+  A changed word or number shows as a diff: review it with
+  `testthat::snapshot_review("report-snapshots")`.
 
 ## Exact next step
 
-**12d.15 (Opus):** implement `energy_action` (P148, V-D26), then the
-snapshot and registry tests (Q1, Q2). Install the package first
-(`R CMD INSTALL .`); the Quarto render test uses the installed copy and
-the binary `quarto` (the R package `quarto` is not installed here).
+**12d.16:** feedback log (Q3, with its test), getting-started vignette
+(R23), specification, `NEWS.md` (include P148 and the new tests),
+self-review, and the handoff for the maintainer's render on ENGIH 2018
+(Q4).
 
 ## Open questions (for the maintainer)
 
-None new.
-
-## Before 12d.15 (advisor note, 2026-11-14)
-
-12d.14 was merged into `main` (f7d45dd). Two cosmetic edits came after the last local `check()`. First run `R CMD INSTALL .`, `devtools::test()` and look at CI on `main` (`gh run list`). If anything is red, fix it in its own commit before starting P148.
+1. **Where the results report states its population.** No population
+   note existed, so the sentence opens the technical note. *Recommended:*
+   leave it there; moving it under "Main findings" would place template
+   text inside the part the analyst writes.
+2. **Which exhibits the exclusion covers.** It applies to every result,
+   vehicle coverage included, so the results report covers a single
+   population. *Recommended:* keep it that way; the other option, coverage
+   on all households and intake on the plausible ones only, gives two
+   values of n in one report.
 
 ## Recommended model for the next session
 
-**Opus** (12d.15 is code). Fable only if the change touches a package
-function contract.
+**Sonnet**: 12d.16 is mostly documentation (vignette, specification,
+NEWS). Opus if the feedback-log test or the self-review calls for code
+changes.
 
 ## Maintainer review points
 
-1. **The English results report:**
+1. **The population sentence and the D9 note** (both reports, example):
 
    ```r
    dir <- file.path(tempdir(), "results")
    use_report_template(dir, "en")
+   quarto::quarto_render(file.path(dir, "readiness.qmd"))
    quarto::quarto_render(file.path(dir, "results.qmd"))
    ```
 
-2. **R1.4 has a small nonzero estimate** (V-D20), concentrated in the
-   lowest quintile:
+2. **The effect of `"keep"`**: iron returns to R3.3 and n to 1,928.
 
    ```r
-   a <- hces_example$acquisitions
-   buyers <- unique(a$household_id)
-   none <- setdiff(buyers, a$household_id[a$food_code %in%
-                                            hces_example$vehicles$food_code])
-   length(none)  # 26
-   table(hces_example$households$expenditure_group[
-     match(none, hces_example$households$household_id)])
+   cat('choices$energy_action <- "keep"\n',
+       file = file.path(dir, "_inputs.R"), append = TRUE)
+   quarto::quarto_render(file.path(dir, "results.qmd"))
    ```
 
-3. **The upper-level exhibit R3.3** (`figure/R3_3.png` in the folder of
-   point 1): zinc in the zero sentence, iron, folate and vitamin A in the
-   figure, and the four statements of the note (P148).
-
-`devtools::check()`: 0 errors, 0 warnings, 0 notes (run before the last two cosmetic edits: the axis term `effect_level` and a line wrap in a test; lint clean after them).
+3. **The snapshots** read as a proofreading copy of every exhibit:
+   `tests/testthat/_snaps/report-snapshots.md`.
