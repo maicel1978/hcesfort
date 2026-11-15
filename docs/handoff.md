@@ -44,6 +44,15 @@ notes on usual intake and on compliance with the upper level are code
 3, 7, 9, 10 and 16 of `docs/review-v0.2.md`. Then 12e.4 (Opus) and
 12e.5.1 to 12e.5.8 (Opus).
 
+**Decision of the advisor (2026-11-15):** 12e.3 is done whole in one Opus
+session (notes and text), to save a session start. Add to it the
+`surveytable` anchor left out in 12e.2: R2-D7 approved `surveytable` in
+`Suggests` for one test of the Korn-Graubard interval against
+`surveytable::svyciprop_adjusted()`, skipped when the package is absent.
+It is the only external reference for that interval; justify the new
+suggested package in the commit message. Also the AI statement of R2-D7 in
+the README and `CONTRIBUTING.md`.
+
 ## Open questions
 
 None.
