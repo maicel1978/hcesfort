@@ -91,6 +91,7 @@ show_exhibit("R4.1")
 ## Technical note
 
 ```{r technical-note}
+print_sentences(population_sentence())
 show_exhibit("RT1")
 show_exhibit("RT2")
 if ("iron" %in% choices$nutrients) show_exhibit("RT3")

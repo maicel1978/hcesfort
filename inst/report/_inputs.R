@@ -87,5 +87,10 @@ choices <- list(
   # source. Justify yours in decisions.csv.
   energy_lower = 500,
   energy_upper = 6000,
+  # What the results do with the households outside that range (P148):
+  # "keep" or "exclude". The readiness report counts them either way; the
+  # results report states the choice. "exclude" needs `energy`. Record the
+  # choice and its reason in decisions.csv.
+  energy_action = "exclude",
   lonely_psu = "adjust"
 )

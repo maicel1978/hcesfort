@@ -152,6 +152,8 @@ sentence,,no_domain_differs,"In the unlinked share, no value of these domain var
 sentence,,domain_absent,{domain}: the variable is absent from the households table.
 sentence,,energy,"Median apparent energy intake: {median} kcal per adult female equivalent per day ({level}% CI {low} to {high}), {pct}% of the energy of the reference person ({reference} kcal). Households outside the plausible range ({lower} to {upper} kcal): {outside}% ({level}% CI {outside_low} to {outside_high})."
 sentence,,no_energy,Energy is not assessed: `choices$energy` is empty.
+sentence,,population_exclude,"The results leave out the {n} households, of {total} with an estimated apparent energy, whose apparent energy is outside the plausible range of {lower} to {upper} kcal per adult female equivalent per day; they stay in the survey design, outside every estimate (data readiness report, section 7)."
+sentence,,population_keep,"The results include the {n} households, of {total} with an estimated apparent energy, whose apparent energy is outside the plausible range of {lower} to {upper} kcal per adult female equivalent per day (data readiness report, section 7)."
 sentence,,ul_zero,"In the sample (n = {n}), no household exceeds the upper level of {nutrients} under any scenario (upper limit of the {level}% CI: {limits} of households)."
 sentence,,s1,"Departure S1. Estimates other than proportions (medians, paired differences, shares of food groups) are judged only by their number of households and degrees of freedom, and their interval is always shown: the standard gives no thresholds for them (p. 5)."
 sentence,,s2,"Departure S2. Where inadequacy is a probability (iron), the proportion is the mean probability, and the standard is applied to it. Its variance is at most that of a yes-or-no outcome, so the judgement is conservative; zero events means a mean of exactly 0 or 1."
@@ -204,6 +206,8 @@ note,,queue,Dashed line: the share of the stopping rule.
 note,,differs,"A value differs when the {level}% CI of the difference excludes zero, without adjustment for multiple comparisons."
 note,,energy_lines,Dashed lines: the plausible range; solid line: the energy of the reference person.
 note,,energy_hidden,"{n} households above {upper} kcal, not shown."
+note,,energy_exclude,"The {n} households outside the plausible range are left out of the results report (choice `energy_action`, Table D10)."
+note,,energy_keep,"The {n} households outside the plausible range stay in the results report (choice `energy_action`, Table D10)."
 note,,method,Method: {methods}.
 note,,bioavailability,{nutrient} bioavailability
 note,,groups,Groups. {groups}.

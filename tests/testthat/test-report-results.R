@@ -165,7 +165,9 @@ test_that("no precision column; n in a note or a column (K21, R17)", {
         expect_true("n" %in% names(d), info = key)
       }
     }
-    expect_match(r$md, "n = 1,928", fixed = TRUE)
+    # 1,928 households with an estimate less the 33 outside the plausible
+    # energy range, left out by energy_action = "exclude".
+    expect_match(r$md, "n = 1,895", fixed = TRUE)
   }
 })
 
@@ -204,7 +206,8 @@ test_that("a group without content is in the note, not in a row (K23)", {
 test_that("the upper-level zeros are one sentence, not points (K24)", {
   skip_if_no_knit()
   # Independent count: households with an estimated intake above the UL
-  # of each nutrient, under the scenarios that add it.
+  # of each nutrient, under the scenarios that add it, among those inside
+  # the plausible energy range (energy_action = "exclude").
   e <- hces_example
   n <- nutrient_registry(e$nutrients)
   g <- convert_units(e$acquisitions, e$unit_factors, priority = "food")
@@ -215,7 +218,11 @@ test_that("the upper-level zeros are one sentence, not points (K24)", {
   )
   intake <- apparent_intake(link_composition(g, e$crosswalk, b, n), afe,
                             e$households)
+  plausible <- flag_energy_plausibility(intake, "energy_kcal", 500, 6000)
+  keep <- !plausible$energy_plausible %in% FALSE
+  intake <- restore_audit(intake[keep, ], intake)
   use <- vehicle_coverage(g, e$vehicles, afe, e$households)
+  use <- restore_audit(use[use$household_id %in% intake$household_id, ], use)
   s <- apply_scenario(intake, use, e$scenarios,
                       compliance_model = "average_content")
   ul <- above_ul(s, ref_requirements, min_coverage = 0.8,
@@ -225,7 +232,7 @@ test_that("the upper-level zeros are one sentence, not points (K24)", {
   above <- dplyr::coalesce(ul$above_ul_total, ul$above_ul_added)
   any_above <- tapply(above %in% TRUE, ul$nutrient, any)
   none <- names(any_above)[!any_above]
-  expect_identical(none, "zinc")
+  expect_setequal(none, c("iron", "zinc", "vitamin_a"))
   for (lang in results_langs) {
     r <- shipped_results(lang)
     nutrient <- labels_of_type(lang, "nutrient")
@@ -235,7 +242,7 @@ test_that("the upper-level zeros are one sentence, not points (K24)", {
     named <- names(nutrient)[vapply(nutrient, function(x) {
       grepl(paste0("\\b", tolower(x), "\\b"), tolower(sentence))
     }, logical(1))]
-    expect_identical(named, none, info = lang)
+    expect_setequal(named, none)
     expect_false(nutrient[["zinc"]] %in% r$tables$R3.3$nutrient)
     expect_true(all(r$figures$R3.3$data$above_ul > 0))
   }
@@ -383,4 +390,29 @@ test_that("a scenario may be compared with another scenario (K16)", {
                              append = paste("choices$comparator <-", bad)),
                  class = "hcesfort_error_argument")
   }
+})
+
+test_that("energy_action leaves out or keeps the implausible (P148)", {
+  skip_if_no_knit()
+  # 33 of the 1,928 households with an estimate are outside 500 to 6,000
+  # kcal (test of the readiness report); all the households above the
+  # iron upper level are among them.
+  r <- shipped_results("en")
+  expect_match(r$md, paste("The results leave out the 33 households, of",
+                           "1,928 with an estimated apparent energy"),
+               fixed = TRUE)
+  expect_false("Iron" %in% r$figures$R3.3$data$nutrient)
+  keep <- knit_report("es", "results",
+                      append = "choices$energy_action <- 'keep'")
+  expect_match(keep$md, paste("Los resultados incluyen los 33 hogares, de",
+                              "1,928 con energía aparente estimada"),
+               fixed = TRUE)
+  expect_match(keep$md, "n = 1,928", fixed = TRUE)
+  expect_true("Hierro" %in% keep$figures$R3.3$data$nutrient)
+  # Without energy there is nothing to leave out.
+  none <- knit_report("en", "results", append = c(
+    "choices['energy'] <- list(NULL)", "choices$energy_action <- 'keep'"
+  ))
+  expect_match(none$md, "Energy is not assessed", fixed = TRUE)
+  expect_match(none$md, "n = 1,928", fixed = TRUE)
 })

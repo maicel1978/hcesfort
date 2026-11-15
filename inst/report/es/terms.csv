@@ -152,6 +152,8 @@ sentence,,no_domain_differs,"En la proporción no vinculada, ningún valor de es
 sentence,,domain_absent,{domain}: la variable no está en la tabla de hogares.
 sentence,,energy,"Mediana de la ingesta aparente de energía: {median} kcal por equivalente de mujer adulta por día (IC {level}% {low} a {high}), el {pct}% de la energía de la persona de referencia ({reference} kcal). Hogares fuera del rango plausible ({lower} a {upper} kcal): {outside}% (IC {level}% {outside_low} a {outside_high})."
 sentence,,no_energy,La energía no se evalúa: `choices$energy` está vacío.
+sentence,,population_exclude,"Los resultados dejan fuera los {n} hogares, de {total} con energía aparente estimada, cuya energía aparente está fuera del rango plausible de {lower} a {upper} kcal por equivalente de mujer adulta por día; siguen en el diseño muestral, fuera de toda estimación (informe de preparación de los datos, sección 7)."
+sentence,,population_keep,"Los resultados incluyen los {n} hogares, de {total} con energía aparente estimada, cuya energía aparente está fuera del rango plausible de {lower} a {upper} kcal por equivalente de mujer adulta por día (informe de preparación de los datos, sección 7)."
 sentence,,ul_zero,"En la muestra (n = {n}), ningún hogar supera el nivel máximo de {nutrients} con ningún escenario (límite superior del IC {level}%: {limits} de los hogares)."
 sentence,,s1,"Desviación S1. Las estimaciones que no son proporciones (medianas, diferencias pareadas, aportes de los grupos de alimentos) se juzgan solo por su número de hogares y sus grados de libertad, y su intervalo se muestra siempre: la norma no da umbrales para ellas (p. 5)."
 sentence,,s2,"Desviación S2. Donde la inadecuación es una probabilidad (hierro), la proporción es la probabilidad media, y la norma se aplica a ella. Su varianza es a lo sumo la de un resultado de sí o no, de modo que el juicio es conservador; cero eventos significa una media de exactamente 0 o 1."
@@ -204,6 +206,8 @@ note,,queue,Línea discontinua: la proporción de la regla de parada.
 note,,differs,"Un valor difiere cuando el IC {level}% de la diferencia excluye el cero, sin ajuste por comparaciones múltiples."
 note,,energy_lines,Líneas discontinuas: el rango plausible; línea continua: la energía de la persona de referencia.
 note,,energy_hidden,"{n} hogares por encima de {upper} kcal, no representados."
+note,,energy_exclude,"Los {n} hogares fuera del rango plausible quedan fuera del informe de resultados (elección `energy_action`, tabla D10)."
+note,,energy_keep,"Los {n} hogares fuera del rango plausible siguen en el informe de resultados (elección `energy_action`, tabla D10)."
 note,,method,Método: {methods}.
 note,,bioavailability,biodisponibilidad del {nutrient}
 note,,groups,Grupos. {groups}.

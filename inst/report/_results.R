@@ -99,8 +99,10 @@ use <- NULL
 if (ready && !is.null(vehicles)) {
   all_vehicles <- unique(c(vehicles$vehicle,
                            stats::na.omit(vehicles$vehicle_group)))
-  use <- vehicle_coverage(grams, vehicles, afe, households,
-                          combine = list(any_vehicle = all_vehicles))
+  use <- drop_excluded(vehicle_coverage(
+    grams, vehicles, afe, households,
+    combine = list(any_vehicle = all_vehicles)
+  ))
 }
 labels <- read_labels("labels.csv", needed = list(
   domain = choices$domains,
@@ -120,9 +122,10 @@ labels <- read_labels("labels.csv", needed = list(
 risk <- NULL
 if (enabled("risk")) {
   s <- if (enabled("scenarios")) {
-    apply_scenario(intake, use, scenarios, compliance_model = compliance_model)
+    apply_scenario(drop_excluded(intake), use, scenarios,
+                   compliance_model = compliance_model)
   } else {
-    intake
+    drop_excluded(intake)
   }
   risk_args <- list(requirements,
                     distribution = list(iron = iron_distribution),
@@ -154,6 +157,19 @@ method_note <- function() {
   fill(term("method", "note"),
        methods = paste0(name, ": ", term(m$method, "method"), b,
                         collapse = "; "))
+}
+
+# The households the results cover (P148): those outside the plausible
+# energy range are kept or left out by `choices$energy_action`.
+population_sentence <- function() {
+  if (is.null(flagged)) {
+    return(term("no_energy", "sentence"))
+  }
+  fill(term(paste0("population_", choices$energy_action), "sentence"),
+       n = format_n(sum(flagged$energy_outside %in% TRUE)),
+       total = format_n(sum(!is.na(flagged$energy_outside))),
+       lower = format_n(choices$energy_lower),
+       upper = format_n(choices$energy_upper))
 }
 
 # ---- R0. Main findings -----------------------------------------------

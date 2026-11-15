@@ -199,7 +199,8 @@ ul_statements <- function(ul) {
 # A group with no content of a nutrient (share exactly 0) and the foods
 # without a group leave the figure for the note (R20).
 food_group_figure <- function(instance) {
-  groups <- food_group_intake(content, food_groups, afe, households)
+  groups <- drop_excluded(food_group_intake(content, food_groups, afe,
+                                            households))
   e <- as.data.frame(precision(food_group_shares(design, groups,
                                                  level = level)))
   cols <- nutrients$column[match(choices$nutrients, nutrients$nutrient)]

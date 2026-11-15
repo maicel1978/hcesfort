@@ -193,7 +193,7 @@ test_that("absent optional inputs leave one sentence each (P5)", {
     r <- knit_report(lang, "readiness", append = c(
       "households$region <- NULL", "enrichment <- NULL",
       "acquisitions$expenditure_lcu <- NULL",
-      "choices['energy'] <- list(NULL)"
+      "choices['energy'] <- list(NULL)", "choices$energy_action <- 'keep'"
     ))
     expect_false(any(grepl("region", names(r$tables))), info = lang)
     expect_match(r$md, say[[lang]]$region_absent, fixed = TRUE)
@@ -231,6 +231,29 @@ test_that("energy must be a registry nutrient in kcal", {
                              append = "choices$energy <- 'iron'"),
                  class = "hcesfort_error_argument")
   }
+})
+
+test_that("energy_action is checked and stated under D9 (P148, V-D26)", {
+  skip_if_no_knit()
+  for (lang in report_langs) {
+    for (bad in c("choices$energy_action <- NULL",
+                  "choices$energy_action <- 'drop'",
+                  "choices['energy'] <- list(NULL)")) {
+      expect_error(knit_report(lang, "readiness", append = bad),
+                   class = "hcesfort_error_argument", info = bad)
+    }
+  }
+  # 33 of the 1,928 households with an estimate are outside 500 to 6,000
+  # kcal (counted by hand with flag_energy_plausibility()).
+  r <- knit_report("en", "readiness")
+  expect_match(r$md, paste("The 33 households outside the plausible range",
+                           "are left out of the results report"),
+               fixed = TRUE)
+  keep <- knit_report("es", "readiness",
+                      append = "choices$energy_action <- 'keep'")
+  expect_match(keep$md, paste("Los 33 hogares fuera del rango plausible",
+                              "siguen en el informe de resultados"),
+               fixed = TRUE)
 })
 
 test_that("the report opens with the verdict and its summary (K17, DR9)", {

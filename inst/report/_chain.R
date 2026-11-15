@@ -16,7 +16,7 @@ check_choices <- function(choices) {
             "min_coverage", "min_records_used", "min_linked_share",
             "iron_bioavailability",
             "iron_bioavailability_sensitivity", "energy_lower",
-            "energy_upper", "lonely_psu")
+            "energy_upper", "energy_action", "lonely_psu")
   absent <- setdiff(need, names(choices))
   if (length(absent) > 0) {
     template_abort(paste0(
@@ -30,6 +30,16 @@ check_choices <- function(choices) {
   if (!identical(choices$review, "show") &&
         !identical(choices$review, "suppress")) {
     template_abort('`choices$review` must be "show" or "suppress".')
+  }
+  if (!identical(choices$energy_action, "keep") &&
+        !identical(choices$energy_action, "exclude")) {
+    template_abort('`choices$energy_action` must be "keep" or "exclude".')
+  }
+  if (identical(choices$energy_action, "exclude") && is.null(choices$energy)) {
+    template_abort(paste(
+      '`choices$energy_action = "exclude"` needs `choices$energy`:',
+      "without energy no household can be judged implausible."
+    ))
   }
   invisible(TRUE)
 }
@@ -64,6 +74,36 @@ keep_vehicles <- function(vehicles, scenarios, keep) {
   vehicles[vehicles$vehicle %in% keep, , drop = FALSE]
 }
 
+# The registry column of `choices$energy`, which must be in kcal: it is
+# compared with the energy of the reference person.
+energy_registry_column <- function(nutrients, energy) {
+  if (is.null(energy)) {
+    return(NULL)
+  }
+  if (!identical(nutrients$unit[nutrients$nutrient == energy], "kcal")) {
+    template_abort(paste(
+      "`choices$energy` must name a nutrient of the registry in kcal:",
+      "it is compared with the energy of the reference person."
+    ))
+  }
+  nutrients$column[nutrients$nutrient == energy]
+}
+
+# The rows of a household table of the results without the households of
+# `excluded` (choice `energy_action`), with the exclusion in its audit log.
+# Those households stay in the design, outside every domain of estimation.
+drop_excluded <- function(x) {
+  out <- x$household_id %in% excluded
+  if (!any(out)) {
+    return(x)
+  }
+  kept <- restore_audit(x[!out, , drop = FALSE], x)
+  audit_record(kept, "template::energy_action", "excluded",
+               "energy_outside_plausible_range", n_records = sum(out),
+               n_households = length(unique(x$household_id[out])),
+               detail = energy_range)
+}
+
 # An enrichment table with no rows: no enriched food is declared.
 no_enrichment <- function() {
   data.frame(composition_id = character(0), nutrient = character(0),
@@ -94,6 +134,10 @@ has_expenditure <- any(inventory$present[
 ])
 
 checks <- NULL
+energy_column <- NULL
+flagged <- NULL
+excluded <- character(0)
+energy_range <- paste(choices$energy_lower, "to", choices$energy_upper, "kcal")
 if (ready) {
   if (is.null(enrichment)) enrichment <- no_enrichment()
   design <- as_hces_design(households, lonely_psu = choices$lonely_psu)
@@ -111,6 +155,16 @@ if (ready) {
     households = households, domains = choices$domains,
     min_n = standard[["min_n"]], max_small_cells = choices$max_small_cells
   )
+  energy_column <- energy_registry_column(nutrients, choices$energy)
+  if (!is.null(energy_column)) {
+    flagged <- flag_energy_plausibility(intake, energy_column,
+                                        choices$energy_lower,
+                                        choices$energy_upper)
+    flagged$energy_outside <- !flagged$energy_plausible
+    if (choices$energy_action == "exclude") {
+      excluded <- flagged$household_id[flagged$energy_outside %in% TRUE]
+    }
+  }
 }
 verdict <- readiness_verdict(inventory, checks, choices$domains)
 terms <- read_labels("terms.csv")

@@ -248,7 +248,13 @@ energy_histogram <- function(instance) {
          upper = format_n(choices$energy_upper))
   }
   list(table = e, figure = g, rows = 10, lead = lead,
-       note = c(term("energy_lines", "note"), hidden))
+       note = c(term("energy_lines", "note"), hidden, energy_action_note()))
+}
+
+# What the results do with the households outside the range (P148).
+energy_action_note <- function() {
+  fill(term(paste0("energy_", choices$energy_action), "note"),
+       n = format_n(sum(flagged$energy_outside %in% TRUE)))
 }
 
 # ---- D10. Decisions --------------------------------------------------
@@ -259,19 +265,4 @@ decisions_table <- function(instance) {
 
 if (ready) {
   queue <- unmatched_foods(content, households)
-  energy_column <- NULL
-  if (!is.null(choices$energy)) {
-    energy_column <- nutrients$column[nutrients$nutrient == choices$energy]
-    if (!identical(nutrients$unit[nutrients$nutrient == choices$energy],
-                   "kcal")) {
-      template_abort(paste(
-        "`choices$energy` must name a nutrient of the registry in kcal:",
-        "it is compared with the energy of the reference person."
-      ))
-    }
-    flagged <- flag_energy_plausibility(intake, energy_column,
-                                        choices$energy_lower,
-                                        choices$energy_upper)
-    flagged$energy_outside <- !flagged$energy_plausible
-  }
 }

@@ -4,3 +4,4 @@ Composition table,"Composition of hces_example, invented; added nutrients of enr
 Outlier rule,No rule applied in this example,No acquisition was flagged or excluded
 Day divisor,"period_days of each record, the reference period of its module",Variable inventory: period_days present
 Imputation,None,"Records without quantity, unit or grams are left out and counted in the linkage ladder"
+Households with implausible apparent energy,"Left out of the results (energy_action = ""exclude""): an apparent energy outside the plausible range points to recording errors, such as stored purchases or food given away, and such households can drive an estimate above the upper level","Readiness report, section 7 (Figure D9): households outside the range"

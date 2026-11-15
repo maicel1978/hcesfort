@@ -4,3 +4,4 @@ Tabla de composición,"Composición de hces_example, inventada; se restan los nu
 Regla de valores extremos,No se aplica ninguna regla en este ejemplo,Ninguna adquisición se marcó ni se excluyó
 Divisor de días,"period_days de cada registro, el período de referencia de su módulo",Inventario de variables: period_days presente
 Imputación,Ninguna,"Los registros sin cantidad, unidad o gramos quedan fuera y se cuentan en la escalera de vinculación"
+Hogares con energía aparente implausible,"Fuera de los resultados (energy_action = ""exclude""): una energía aparente fuera del rango plausible apunta a errores de registro, como compras almacenadas o alimentos regalados, y esos hogares pueden determinar una estimación por encima del nivel superior","Informe de preparación, sección 7 (figura D9): hogares fuera del rango"
