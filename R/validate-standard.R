@@ -14,8 +14,11 @@
 #' one error: columns and types (`hcesfort_error_schema`), the key
 #' (`hcesfort_error_key`), and the values (`hcesfort_error_value`). Only
 #' impossible values are rejected: a negative quantity, a weight of zero, a
-#' sex outside `"female"` and `"male"`. Implausible values (an adult of 110
-#' years, a purchase of 400 kg) are left to the flags of later steps.
+#' sex outside `"female"` and `"male"`, an `age_months` whose whole years
+#' differ from `age_years` (`age_months` counts the total months since
+#' birth: 41 for a child of 3 years and 5 months, not 5). Implausible
+#' values (an adult of 110 years, a purchase of 400 kg) are left to the
+#' flags of later steps.
 #'
 #' Missing measurements are accepted and counted as `note` rows of the
 #' audit log, with these causes:

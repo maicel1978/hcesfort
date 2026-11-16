@@ -145,7 +145,8 @@ content <- link_composition(grams, hces_example$crosswalk, baseline)
 afe <- adult_equivalents(
   hces_example$members,
   reference_kcal = reference_energy("female", 25, 55, pal = 1.76),
-  weight_kg = c(female = 55, male = 65), pal = 1.76
+  weight_kg = c(female = 55, male = 65), pal = 1.76,
+  infant_food_share = 1
 )
 intake <- apparent_intake(content, afe, hces_example$households)
 iron <- subset(ref_iron_requirements,

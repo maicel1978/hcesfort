@@ -12,7 +12,11 @@
 #'   (`age_months`) in `energy`; when the month is not known, the mean of
 #'   the twelve months of their sex (counted in the log as
 #'   `infant_annual_mean`). With `infants = "annual_mean"` every infant gets
-#'   the mean, the rule of the original ENGIH 2018 analysis;
+#'   the mean, the rule of the original ENGIH 2018 analysis. The household
+#'   is charged \eqn{E (s + (1 - s) c)} of a requirement \eqn{E}: `s`
+#'   (`infant_food_share`) is eaten from the household's food and the rest
+#'   is breast milk, charged at `c` (`milk_energy_cost`) per unit of its
+#'   energy (see below);
 #' * children: the requirement of their year of age in `energy`, up to the
 #'   last tabulated year (18 in [ref_energy_requirements]);
 #' * adults: basal metabolic rate from `bmr` at the member's `weight_kg`
@@ -21,6 +25,22 @@
 #'
 #' Pregnancy and lactation add no energy; members flagged as pregnant or
 #' lactating are counted in the log (`pregnant_or_lactating_no_extra`).
+#'
+#' **Infants and breast milk.** A breastfed infant eats none of the food
+#' recorded, but its mother eats for it: the energy of the milk belongs in
+#' the household's AFE. With `infant_food_share = 1` (the rule of the
+#' original analysis) or `milk_energy_cost = 1`, the infant counts its full
+#' requirement: the milk is charged at par, and the infant requirements of
+#' the source are consistent with a healthy woman producing enough milk for
+#' an exclusively breastfed infant up to six months (FAO/WHO/UNU 2004,
+#' section 3.4). Making milk costs more than its energy: 1.25 per unit, the
+#' milk energy over an efficiency of 0.80 (section 7.2), so
+#' `milk_energy_cost = 1.25` with a share below 1 charges the full cost.
+#' `milk_energy_cost = 0` charges nothing for the milk, and the log flags it
+#' (`breast_milk_energy_not_counted`). No value of the share is shipped: it
+#' describes how infants are fed in the survey's population. The log notes
+#' the values given and the energy charged against the full requirement
+#' (`infant_energy`).
 #'
 #' A member without age or sex has no requirement. With
 #' `missing_members = "na"` the AFE of the household is `NA`: the household
@@ -42,6 +62,19 @@
 #'   meals taken at home (a missing share leaves the household without AFE,
 #'   flagged `missing_meal_share`); `FALSE` ignores the column. Must be
 #'   `NULL` or `FALSE` when the column is absent.
+#' @param infant_food_share Required when `members` has an infant
+#'   (`age_years` below 1): the share of an infant's energy requirement
+#'   eaten from the household's food (formula, complementary foods), the
+#'   rest being breast milk. One number in \[0, 1\], or a data frame with
+#'   `age_from` and `age_to` (months; intervals \[from, to) that cover 0 to
+#'   12 without gap or overlap) and `food_share` in \[0, 1\]; an infant whose
+#'   month is not known gets the mean over the months of the table of
+#'   `energy`, each at the share of its first month. `1` charges the full
+#'   requirement. Accepted and ignored when there are no infants.
+#' @param milk_energy_cost Required when an infant has a share below 1:
+#'   dietary energy charged to the household per unit of breast-milk
+#'   energy, one number, 0 or more. `1` charges the milk at par, `1.25` its
+#'   full cost, `0` nothing (see Details).
 #' @param energy Energy requirements by sex and age; default
 #'   [ref_energy_requirements]. Schema: `hces_schema("energy_requirements")`.
 #' @param bmr Equations for basal metabolic rate; default
@@ -59,13 +92,23 @@
 #' reference <- reference_energy("female", 25, weight_kg = 55, pal = 1.76)
 #' afe <- adult_equivalents(
 #'   hces_example$members, reference_kcal = reference,
-#'   weight_kg = c(female = 55, male = 65), pal = 1.76
+#'   weight_kg = c(female = 55, male = 65), pal = 1.76,
+#'   infant_food_share = 1
 #' )
 #' afe
 #' audit_log(afe)
+#' # Infants exclusively breastfed to six months, milk at its full cost.
+#' feeding <- data.frame(age_from = c(0, 6), age_to = c(6, 12),
+#'                       food_share = c(0, 1))
+#' adult_equivalents(
+#'   hces_example$members, reference_kcal = reference,
+#'   weight_kg = c(female = 55, male = 65), pal = 1.76,
+#'   infant_food_share = feeding, milk_energy_cost = 1.25
+#' )
 #' @export
 adult_equivalents <- function(members, reference_kcal, weight_kg, pal,
-                              meal_share = NULL,
+                              meal_share = NULL, infant_food_share = NULL,
+                              milk_energy_cost = NULL,
                               energy = hcesfort::ref_energy_requirements,
                               bmr = hcesfort::ref_bmr_equations,
                               infants = c("monthly", "annual_mean"),
@@ -79,7 +122,8 @@ adult_equivalents <- function(members, reference_kcal, weight_kg, pal,
   meal_share <- check_meal_share(meal_share, m)
   check_reference(energy, schema_energy_requirements(), c("sex", "age_unit"))
   check_reference(bmr, schema_bmr_equations(), "sex")
-  kcal <- member_energy(m, energy, bmr, weight_kg, pal, infants)
+  infant <- check_infant_args(infant_food_share, milk_energy_cost, m)
+  kcal <- member_energy(m, energy, bmr, weight_kg, pal, infants, infant)
   check_covered(m, kcal)
   afe <- kcal / reference_kcal
   share <- if (meal_share) m[["meals_home_share"]] else rep(1, nrow(m))
@@ -90,8 +134,7 @@ adult_equivalents <- function(members, reference_kcal, weight_kg, pal,
     kcal[unknown] <- 0
   }
   out <- household_afe(m$household_id, kcal, afe)
-  log <- afe_log(m, attr(kcal, "infant_mean"), unknown, share, missing_members,
-                 out)
+  log <- afe_log(m, kcal, infant, unknown, share, missing_members, out)
   new_hces_tbl(out, "hces_afe", dplyr::bind_rows(audit_get(m), log),
                "household_id")
 }
@@ -109,19 +152,20 @@ household_afe <- function(household_id, kcal, afe) {
   )
 }
 
-# Audit rows of adult_equivalents(): members received, infants given the
-# annual mean, pregnant or lactating members, members without age or sex
-# (flagged, or set to zero), members without meal share, and households
-# left without AFE.
-afe_log <- function(m, infant_mean, unknown, share, missing_members,
-                    out) {
+# Audit rows of adult_equivalents(): members received, the energy of
+# infants, infants given the annual mean, pregnant or lactating members,
+# members without age or sex (flagged, or set to zero), members without
+# meal share, and households left without AFE.
+afe_log <- function(m, kcal, infant, unknown, share, missing_members, out) {
   step <- "adult_equivalents"
   hh <- function(f) length(unique(m$household_id[f]))
   pregnant <- flag_or_false(m[["pregnant"]]) | flag_or_false(m[["lactating"]])
   no_share <- is.na(share) & !unknown
   rows <- list(
     audit_row(step, "members", "input", "all", nrow(m), hh(TRUE)),
-    afe_note(step, "note", "infant_annual_mean", infant_mean, hh),
+    infant_log(step, m, kcal, attr(kcal, "infant_full"), infant, hh),
+    afe_note(step, "note", "infant_annual_mean", attr(kcal, "infant_mean"),
+             hh),
     afe_note(step, "note", "pregnant_or_lactating_no_extra", pregnant, hh),
     if (missing_members == "na") {
       afe_note(step, "flagged", "missing_age_or_sex", unknown, hh)

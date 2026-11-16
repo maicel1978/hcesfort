@@ -502,6 +502,22 @@
   `low_precision = TRUE` (it said `ok`); `flag_presentation()` sends it to
   review for its degrees of freedom. On `hces_example` and the test
   fixture no figure changes.
+* `adult_equivalents()` takes `infant_food_share` and `milk_energy_cost`
+  (P158): an infant's requirement `E` is charged as
+  `E (s + (1 - s) c)`, with `s` the share eaten from the household's food
+  (one number or a table by month) and `c` the dietary energy charged per
+  unit of breast-milk energy (1 at par; 1.25 the full cost of FAO/WHO/UNU
+  2004, section 7.2). `infant_food_share` is required when the members
+  include an infant, and `milk_energy_cost` when a share is below 1; with
+  `infant_food_share = 1` the result is that of the previous version and
+  of the original analysis, exactly. **Breaking:** a call without
+  `infant_food_share` on members with infants is now an error; add
+  `infant_food_share = 1` to keep the previous result. The log notes the
+  energy charged (`infant_energy`) and flags milk not charged
+  (`breast_milk_energy_not_counted`). Every example, the vignette, the
+  README and the report template pass `infant_food_share = 1`.
+* The contract of `age_months` says what the validator checks since 12e.4:
+  the total months since birth (P206).
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is

@@ -11,7 +11,8 @@ example_chain <- function() {
   afe <- adult_equivalents(
     e$members,
     reference_kcal = reference_energy("female", 25, 55, pal = 1.76),
-    weight_kg = c(female = 55, male = 65), pal = 1.76
+    weight_kg = c(female = 55, male = 65), pal = 1.76,
+    infant_food_share = 1
   )
   intake <- apparent_intake(link_composition(g, e$crosswalk, b), afe,
                             e$households)

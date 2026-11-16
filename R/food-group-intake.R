@@ -50,7 +50,8 @@
 #' afe <- adult_equivalents(
 #'   e$members,
 #'   reference_kcal = reference_energy("female", 25, 55, pal = 1.76),
-#'   weight_kg = c(female = 55, male = 65), pal = 1.76
+#'   weight_kg = c(female = 55, male = 65), pal = 1.76,
+#'   infant_food_share = 1
 #' )
 #' groups <- food_group_intake(content, e$food_groups, afe, e$households)
 #' subset(groups, household_id == 1)

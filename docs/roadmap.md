@@ -101,10 +101,11 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
   - [x] 12e.2 Anchor tests from sources outside the package, five tests for the surviving mutations, optional columns in `hces_fixture()` and the golden script (P160, P169, P174). Opus. Before A3.
   - [x] 12e.3 Limits of the method in the help pages, README and vignette; tail citation; audit notes on usual intake and on compliance with the upper level; corrected sentences on the presentation of probabilities (P157, P161, P163, P164, P170). Sonnet for the text, Opus for the notes. Before the first expert round. Done 2026-11-15 (Opus, notes and text in one session). The `surveytable` anchor of R2-D7 is still open: the package could not be installed in that session.
   - [x] 12e.4 Zero-width intervals, `df = 0`, `exact`, the second option of `survey`, validator bounds, `zero_intake` (P165 to P168, P172). Opus. Done 2026-11-16 (Opus), with the effective size of P164 (R2-D6) and the report note P183. The `surveytable` anchor (R2-D7) is dropped: the install was refused again (decision of 2026-11-15).
+  - [x] 12e.4b Findings of the review of 12e.1 to 12e.4 (`docs/review-12e.md`): stacked estimates (P201), cells without degrees of freedom (P204). Done 2026-11-16 (Opus).
   - [ ] 12e.5 Infants and pregnancy in the AFE, the fortifiable vehicle, missing composition values, all-or-nothing compliance (P158 with P57, P159, P162, P163 with P69). Before A4; recommended before A2 (decision 8 of the design).
     - [x] 12e.5.0 Design note `docs/design-12e5.md` (Fable, 2026-11-15). No package code. Its nine decisions (section 7) approved on 2026-11-15 (R3-D1 to R3-D9); two of them amend the answers of 2026-11-15 (a second argument for infants; `fortifiable` used only when the call says so).
     - Implementation (Opus), after approval; each step at most 300 lines of code. Detail in section 6 of the design.
-    - [ ] 12e.5.1 `infant_food_share`, `milk_energy_cost` in `adult_equivalents()`.
+    - [x] 12e.5.1 `infant_food_share`, `milk_energy_cost` in `adult_equivalents()`. Done 2026-11-16 (Opus), with P206.
     - [ ] 12e.5.2 `pregnancy_kcal`, `lactation_kcal`; `ref_energy_additions` (P57).
     - [ ] 12e.5.3 Column `fortifiable`; argument and three columns of `vehicle_coverage()`.
     - [ ] 12e.5.4 `apply_scenario()` on fortifiable grams; `fortifiable` in `hces_example` and the fixture; golden values and snapshots.
