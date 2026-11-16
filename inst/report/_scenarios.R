@@ -99,7 +99,8 @@ effect_exhibit <- function(nutrient, by) {
   list(table = shown(FALSE), figure = g, rows = nrow(data),
        headers = if (!is.null(by)) value_header(by),
        note = c(fill(term("effect", "note"), comparators = cmp,
-                     level = 100 * level), term("not_proportion", "note")))
+                     level = 100 * level), term("not_proportion", "note"),
+                term("usual_intake", "note")))
 }
 
 effect_figure <- function(instance) {

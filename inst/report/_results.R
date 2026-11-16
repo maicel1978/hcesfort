@@ -145,7 +145,8 @@ adds <- function(x) {
 }
 
 # Method of each nutrient and its bioavailability, for the notes (R22:
-# "Iron: probability approach, iron bioavailability 10%").
+# "Iron: probability approach, iron bioavailability 10%"), followed by the
+# note that the shares are of apparent, not usual, intake (P183).
 method_note <- function() {
   m <- unique(risk[c("nutrient", "method", "bioavailability")])
   m <- m[match(choices$nutrients, m$nutrient), ]
@@ -154,9 +155,10 @@ method_note <- function() {
     ", ", fill(term("bioavailability", "note"), nutrient = lower_first(name)),
     " ", pct(m$bioavailability, 0), "%"
   ))
-  fill(term("method", "note"),
-       methods = paste0(name, ": ", term(m$method, "method"), b,
-                        collapse = "; "))
+  c(fill(term("method", "note"),
+         methods = paste0(name, ": ", term(m$method, "method"), b,
+                          collapse = "; ")),
+    term("usual_intake", "note"))
 }
 
 # The households the results cover (P148): those outside the plausible

@@ -677,6 +677,7 @@
       Vitamin A | Wheat and maize flour, rice, sugar, and oil with vitamin A | 1895 | 11.7 | 10.0 | 13.7 | NA
       n = 1,895 households
       Method: Iron: probability approach, iron bioavailability 10%; Zinc: EAR cut-point; Folate: EAR cut-point; Vitamin A: EAR cut-point.
+      Apparent intake, not usual intake: the share of households whose acquisitions over the recall period, per adult female equivalent, fall below the requirement. The cut-point and the probability approach are defined on usual intake (IOM 2000b, pp. 73 and 99; IOM 2001, p. 703); this is a figure for comparing scenarios on the same data, not a prevalence of inadequacy.
 
 ---
 
@@ -773,6 +774,7 @@
       Vitamin A | 1895 | 75.5 | 72.8 | 78.0 | NA
       n = 1,895 households
       Method: Iron: probability approach, iron bioavailability 10%; Zinc: EAR cut-point; Folate: EAR cut-point; Vitamin A: EAR cut-point.
+      Apparent intake, not usual intake: the share of households whose acquisitions over the recall period, per adult female equivalent, fall below the requirement. The cut-point and the probability approach are defined on usual intake (IOM 2000b, pp. 73 and 99; IOM 2001, p. 703); this is a figure for comparing scenarios on the same data, not a prevalence of inadequacy.
 
 ---
 
@@ -796,6 +798,7 @@
       South | Vitamin A | 569 | 79.8 | 75.4 | 83.7 | NA
       Dashed line: the national estimate.
       Method: Iron: probability approach, iron bioavailability 10%; Zinc: EAR cut-point; Folate: EAR cut-point; Vitamin A: EAR cut-point.
+      Apparent intake, not usual intake: the share of households whose acquisitions over the recall period, per adult female equivalent, fall below the requirement. The cut-point and the probability approach are defined on usual intake (IOM 2000b, pp. 73 and 99; IOM 2001, p. 703); this is a figure for comparing scenarios on the same data, not a prevalence of inadequacy.
 
 ---
 
@@ -815,6 +818,7 @@
       Rural | Vitamin A |  831 | 82.6 | 78.9 | 86.0 | NA
       Dashed line: the national estimate.
       Method: Iron: probability approach, iron bioavailability 10%; Zinc: EAR cut-point; Folate: EAR cut-point; Vitamin A: EAR cut-point.
+      Apparent intake, not usual intake: the share of households whose acquisitions over the recall period, per adult female equivalent, fall below the requirement. The cut-point and the probability approach are defined on usual intake (IOM 2000b, pp. 73 and 99; IOM 2001, p. 703); this is a figure for comparing scenarios on the same data, not a prevalence of inadequacy.
 
 ---
 
@@ -850,6 +854,7 @@
       — No data: no household with an estimate.
       Dashed line: the national estimate.
       Method: Iron: probability approach, iron bioavailability 10%; Zinc: EAR cut-point; Folate: EAR cut-point; Vitamin A: EAR cut-point.
+      Apparent intake, not usual intake: the share of households whose acquisitions over the recall period, per adult female equivalent, fall below the requirement. The cut-point and the probability approach are defined on usual intake (IOM 2000b, pp. 73 and 99; IOM 2001, p. 703); this is a figure for comparing scenarios on the same data, not a prevalence of inadequacy.
 
 ---
 
@@ -943,6 +948,7 @@
       n = 1,895 households
       Left panel: hollow point, the scenario compared with (Without fortification); filled point, the scenario. Right panel: paired difference in percentage points, with its 95% CI.
       Not a proportion: judged only by the number of households and the degrees of freedom (technical note, departure S1).
+      Apparent intake, not usual intake: the share of households whose acquisitions over the recall period, per adult female equivalent, fall below the requirement. The cut-point and the probability approach are defined on usual intake (IOM 2000b, pp. 73 and 99; IOM 2001, p. 703); this is a figure for comparing scenarios on the same data, not a prevalence of inadequacy.
 
 ---
 
@@ -960,6 +966,7 @@
       n = 1,895 households
       Left panel: hollow point, the scenario compared with (Without fortification); filled point, the scenario. Right panel: paired difference in percentage points, with its 95% CI.
       Not a proportion: judged only by the number of households and the degrees of freedom (technical note, departure S1).
+      Apparent intake, not usual intake: the share of households whose acquisitions over the recall period, per adult female equivalent, fall below the requirement. The cut-point and the probability approach are defined on usual intake (IOM 2000b, pp. 73 and 99; IOM 2001, p. 703); this is a figure for comparing scenarios on the same data, not a prevalence of inadequacy.
 
 ---
 
@@ -977,6 +984,7 @@
       n = 1,895 households
       Left panel: hollow point, the scenario compared with (Without fortification); filled point, the scenario. Right panel: paired difference in percentage points, with its 95% CI.
       Not a proportion: judged only by the number of households and the degrees of freedom (technical note, departure S1).
+      Apparent intake, not usual intake: the share of households whose acquisitions over the recall period, per adult female equivalent, fall below the requirement. The cut-point and the probability approach are defined on usual intake (IOM 2000b, pp. 73 and 99; IOM 2001, p. 703); this is a figure for comparing scenarios on the same data, not a prevalence of inadequacy.
 
 ---
 
@@ -991,6 +999,7 @@
       n = 1,895 households
       Left panel: hollow point, the scenario compared with (Without fortification); filled point, the scenario. Right panel: paired difference in percentage points, with its 95% CI.
       Not a proportion: judged only by the number of households and the degrees of freedom (technical note, departure S1).
+      Apparent intake, not usual intake: the share of households whose acquisitions over the recall period, per adult female equivalent, fall below the requirement. The cut-point and the probability approach are defined on usual intake (IOM 2000b, pp. 73 and 99; IOM 2001, p. 703); this is a figure for comparing scenarios on the same data, not a prevalence of inadequacy.
 
 ---
 
@@ -1053,6 +1062,7 @@
       — No data: no household with an estimate.
       Left panel: hollow point, the scenario compared with (Without fortification); filled point, the scenario. Right panel: paired difference in percentage points, with its 95% CI.
       Not a proportion: judged only by the number of households and the degrees of freedom (technical note, departure S1).
+      Apparent intake, not usual intake: the share of households whose acquisitions over the recall period, per adult female equivalent, fall below the requirement. The cut-point and the probability approach are defined on usual intake (IOM 2000b, pp. 73 and 99; IOM 2001, p. 703); this is a figure for comparing scenarios on the same data, not a prevalence of inadequacy.
 
 ---
 
@@ -1082,11 +1092,11 @@
       Q4 | Zinc | Wheat and maize flour, and rice with iron and folic acid | Without fortification | 398 |  6.6 |  1.6 |  -4.9 |  -7.1 |  -2.8 | NA
       Q4 | Zinc | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 398 |  6.6 |  1.6 |  -4.9 |  -7.1 |  -2.8 | NA
       Q4 | Zinc | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 398 |  6.6 |  1.6 |  -4.9 |  -7.1 |  -2.8 | NA
-      Q5 (highest expenditure) | Zinc | Wheat flour with iron, zinc and folic acid | Without fortification | 421 |  0.0 |  0.0 |   0.0 |   0.0 |   0.0 | NA
-      Q5 (highest expenditure) | Zinc | Wheat and maize flour with iron, zinc and folic acid | Without fortification | 421 |  0.0 |  0.0 |   0.0 |   0.0 |   0.0 | NA
-      Q5 (highest expenditure) | Zinc | Wheat and maize flour, and rice with iron and folic acid | Without fortification | 421 |  0.0 |  0.0 |   0.0 |   0.0 |   0.0 | NA
-      Q5 (highest expenditure) | Zinc | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 421 |  0.0 |  0.0 |   0.0 |   0.0 |   0.0 | NA
-      Q5 (highest expenditure) | Zinc | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 421 |  0.0 |  0.0 |   0.0 |   0.0 |   0.0 | NA
+      Q5 (highest expenditure) | Zinc | Wheat flour with iron, zinc and folic acid | Without fortification | 421 |  0.0 |  0.0 |   0.0 |    NA |    NA | NA
+      Q5 (highest expenditure) | Zinc | Wheat and maize flour with iron, zinc and folic acid | Without fortification | 421 |  0.0 |  0.0 |   0.0 |    NA |    NA | NA
+      Q5 (highest expenditure) | Zinc | Wheat and maize flour, and rice with iron and folic acid | Without fortification | 421 |  0.0 |  0.0 |   0.0 |    NA |    NA | NA
+      Q5 (highest expenditure) | Zinc | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 421 |  0.0 |  0.0 |   0.0 |    NA |    NA | NA
+      Q5 (highest expenditure) | Zinc | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 421 |  0.0 |  0.0 |   0.0 |    NA |    NA | NA
       No data | Zinc | Wheat flour with iron, zinc and folic acid | Without fortification |   0 |   NA |   NA |    NA |    NA |    NA | NA
       No data | Zinc | Wheat and maize flour with iron, zinc and folic acid | Without fortification |   0 |   NA |   NA |    NA |    NA |    NA | NA
       No data | Zinc | Wheat and maize flour, and rice with iron and folic acid | Without fortification |   0 |   NA |   NA |    NA |    NA |    NA | NA
@@ -1095,6 +1105,7 @@
       — No data: no household with an estimate.
       Left panel: hollow point, the scenario compared with (Without fortification); filled point, the scenario. Right panel: paired difference in percentage points, with its 95% CI.
       Not a proportion: judged only by the number of households and the degrees of freedom (technical note, departure S1).
+      Apparent intake, not usual intake: the share of households whose acquisitions over the recall period, per adult female equivalent, fall below the requirement. The cut-point and the probability approach are defined on usual intake (IOM 2000b, pp. 73 and 99; IOM 2001, p. 703); this is a figure for comparing scenarios on the same data, not a prevalence of inadequacy.
 
 ---
 
@@ -1137,6 +1148,7 @@
       — No data: no household with an estimate.
       Left panel: hollow point, the scenario compared with (Without fortification); filled point, the scenario. Right panel: paired difference in percentage points, with its 95% CI.
       Not a proportion: judged only by the number of households and the degrees of freedom (technical note, departure S1).
+      Apparent intake, not usual intake: the share of households whose acquisitions over the recall period, per adult female equivalent, fall below the requirement. The cut-point and the probability approach are defined on usual intake (IOM 2000b, pp. 73 and 99; IOM 2001, p. 703); this is a figure for comparing scenarios on the same data, not a prevalence of inadequacy.
 
 ---
 
@@ -1161,6 +1173,7 @@
       — No data: no household with an estimate.
       Left panel: hollow point, the scenario compared with (Without fortification); filled point, the scenario. Right panel: paired difference in percentage points, with its 95% CI.
       Not a proportion: judged only by the number of households and the degrees of freedom (technical note, departure S1).
+      Apparent intake, not usual intake: the share of households whose acquisitions over the recall period, per adult female equivalent, fall below the requirement. The cut-point and the probability approach are defined on usual intake (IOM 2000b, pp. 73 and 99; IOM 2001, p. 703); this is a figure for comparing scenarios on the same data, not a prevalence of inadequacy.
 
 ---
 
@@ -1244,7 +1257,7 @@
       Largest relative width of the interval (suppressed above, when the width lies between the two widths) |  1.30 | Parker JD, Talih M, Malec DJ, et al. 2017. National Center for Health Statistics Data Presentation Standards for Proportions. Vital Health Stat 2(175) | Table, p. 2 (absolute width between 0.05 and 0.30 and relative width more than 130%: suppress); p. 3 (relative width: absolute width divided by the proportion); p. 4
       Fewest degrees of freedom (flagged for review below) |  8.00 | Parker JD, Talih M, Malec DJ, et al. 2017. National Center for Health Statistics Data Presentation Standards for Proportions. Vital Health Stat 2(175) | Table, p. 2 (fewer than 8 degrees of freedom: flag for statistical review); p. 4 (degrees of freedom: PSUs minus strata as a rule of thumb, computed directly for a subgroup present in a subset of PSUs)
       Departure S1. Estimates other than proportions (medians, paired differences, shares of food groups) are judged only by their number of households and degrees of freedom, and their interval is always shown: the standard gives no thresholds for them (p. 5).
-      Departure S2. Where inadequacy is a probability (iron), the proportion is the mean probability, and the standard is applied to it. Its variance is at most that of a yes-or-no outcome, so the width criteria are conservative; its effective sample size is computed as for a yes-or-no outcome, which overstates it, so that criterion is in effect not applied. Zero events means a mean of exactly 0 or 1.
+      Departure S2. Where inadequacy is a probability (iron), the proportion is the mean probability, and the standard is applied to it. Its variance is at most that of a yes-or-no outcome, so the width criteria are conservative; its effective sample size is the number of households divided by the design effect, computed from the variance of the probabilities themselves, as the standard defines it. Zero events means a mean of exactly 0 or 1.
       Departure S3. In this report, estimates flagged for statistical review are printed with the mark † and the reason. The standard allows them to be shown after review or suppressed (pp. 2, 5).
       Departure S4. A proportion with no household, or every household, in the sample is reported in a sentence with its n and the limit of its Clopper-Pearson interval, not as a row of a table or a point of a figure.
       Strata with a single primary sampling unit: their contribution to the variance is centred at the overall mean.
@@ -1294,6 +1307,7 @@
       Vitamina A | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | 1895 | 11.7 | 10.0 | 13.7 | NA
       n = 1,895 hogares
       Método: Hierro: método probabilístico, biodisponibilidad del hierro 10%; Zinc: punto de corte del EAR; Folato: punto de corte del EAR; Vitamina A: punto de corte del EAR.
+      Ingesta aparente, no ingesta habitual: la proporción de hogares cuyas adquisiciones en el período de referencia, por equivalente de mujer adulta, quedan por debajo del requerimiento. El punto de corte y el enfoque probabilístico se definen sobre la ingesta habitual (IOM 2000b, pp. 73 y 99; IOM 2001, p. 703); es una cifra para comparar escenarios sobre los mismos datos, no una prevalencia de inadecuación.
 
 ---
 
@@ -1390,6 +1404,7 @@
       Vitamina A | 1895 | 75.5 | 72.8 | 78.0 | NA
       n = 1,895 hogares
       Método: Hierro: método probabilístico, biodisponibilidad del hierro 10%; Zinc: punto de corte del EAR; Folato: punto de corte del EAR; Vitamina A: punto de corte del EAR.
+      Ingesta aparente, no ingesta habitual: la proporción de hogares cuyas adquisiciones en el período de referencia, por equivalente de mujer adulta, quedan por debajo del requerimiento. El punto de corte y el enfoque probabilístico se definen sobre la ingesta habitual (IOM 2000b, pp. 73 y 99; IOM 2001, p. 703); es una cifra para comparar escenarios sobre los mismos datos, no una prevalencia de inadecuación.
 
 ---
 
@@ -1413,6 +1428,7 @@
       Sur | Vitamina A | 569 | 79.8 | 75.4 | 83.7 | NA
       Línea discontinua: la estimación nacional.
       Método: Hierro: método probabilístico, biodisponibilidad del hierro 10%; Zinc: punto de corte del EAR; Folato: punto de corte del EAR; Vitamina A: punto de corte del EAR.
+      Ingesta aparente, no ingesta habitual: la proporción de hogares cuyas adquisiciones en el período de referencia, por equivalente de mujer adulta, quedan por debajo del requerimiento. El punto de corte y el enfoque probabilístico se definen sobre la ingesta habitual (IOM 2000b, pp. 73 y 99; IOM 2001, p. 703); es una cifra para comparar escenarios sobre los mismos datos, no una prevalencia de inadecuación.
 
 ---
 
@@ -1432,6 +1448,7 @@
       Rural | Vitamina A |  831 | 82.6 | 78.9 | 86.0 | NA
       Línea discontinua: la estimación nacional.
       Método: Hierro: método probabilístico, biodisponibilidad del hierro 10%; Zinc: punto de corte del EAR; Folato: punto de corte del EAR; Vitamina A: punto de corte del EAR.
+      Ingesta aparente, no ingesta habitual: la proporción de hogares cuyas adquisiciones en el período de referencia, por equivalente de mujer adulta, quedan por debajo del requerimiento. El punto de corte y el enfoque probabilístico se definen sobre la ingesta habitual (IOM 2000b, pp. 73 y 99; IOM 2001, p. 703); es una cifra para comparar escenarios sobre los mismos datos, no una prevalencia de inadecuación.
 
 ---
 
@@ -1467,6 +1484,7 @@
       — Sin dato: ningún hogar con estimación.
       Línea discontinua: la estimación nacional.
       Método: Hierro: método probabilístico, biodisponibilidad del hierro 10%; Zinc: punto de corte del EAR; Folato: punto de corte del EAR; Vitamina A: punto de corte del EAR.
+      Ingesta aparente, no ingesta habitual: la proporción de hogares cuyas adquisiciones en el período de referencia, por equivalente de mujer adulta, quedan por debajo del requerimiento. El punto de corte y el enfoque probabilístico se definen sobre la ingesta habitual (IOM 2000b, pp. 73 y 99; IOM 2001, p. 703); es una cifra para comparar escenarios sobre los mismos datos, no una prevalencia de inadecuación.
 
 ---
 
@@ -1560,6 +1578,7 @@
       n = 1,895 hogares
       Panel izquierdo: punto hueco, el escenario de comparación (Sin fortificación); punto lleno, el escenario. Panel derecho: diferencia pareada en puntos porcentuales, con su IC 95%.
       No es una proporción: se juzga solo por el número de hogares y los grados de libertad (nota técnica, desviación S1).
+      Ingesta aparente, no ingesta habitual: la proporción de hogares cuyas adquisiciones en el período de referencia, por equivalente de mujer adulta, quedan por debajo del requerimiento. El punto de corte y el enfoque probabilístico se definen sobre la ingesta habitual (IOM 2000b, pp. 73 y 99; IOM 2001, p. 703); es una cifra para comparar escenarios sobre los mismos datos, no una prevalencia de inadecuación.
 
 ---
 
@@ -1577,6 +1596,7 @@
       n = 1,895 hogares
       Panel izquierdo: punto hueco, el escenario de comparación (Sin fortificación); punto lleno, el escenario. Panel derecho: diferencia pareada en puntos porcentuales, con su IC 95%.
       No es una proporción: se juzga solo por el número de hogares y los grados de libertad (nota técnica, desviación S1).
+      Ingesta aparente, no ingesta habitual: la proporción de hogares cuyas adquisiciones en el período de referencia, por equivalente de mujer adulta, quedan por debajo del requerimiento. El punto de corte y el enfoque probabilístico se definen sobre la ingesta habitual (IOM 2000b, pp. 73 y 99; IOM 2001, p. 703); es una cifra para comparar escenarios sobre los mismos datos, no una prevalencia de inadecuación.
 
 ---
 
@@ -1594,6 +1614,7 @@
       n = 1,895 hogares
       Panel izquierdo: punto hueco, el escenario de comparación (Sin fortificación); punto lleno, el escenario. Panel derecho: diferencia pareada en puntos porcentuales, con su IC 95%.
       No es una proporción: se juzga solo por el número de hogares y los grados de libertad (nota técnica, desviación S1).
+      Ingesta aparente, no ingesta habitual: la proporción de hogares cuyas adquisiciones en el período de referencia, por equivalente de mujer adulta, quedan por debajo del requerimiento. El punto de corte y el enfoque probabilístico se definen sobre la ingesta habitual (IOM 2000b, pp. 73 y 99; IOM 2001, p. 703); es una cifra para comparar escenarios sobre los mismos datos, no una prevalencia de inadecuación.
 
 ---
 
@@ -1608,6 +1629,7 @@
       n = 1,895 hogares
       Panel izquierdo: punto hueco, el escenario de comparación (Sin fortificación); punto lleno, el escenario. Panel derecho: diferencia pareada en puntos porcentuales, con su IC 95%.
       No es una proporción: se juzga solo por el número de hogares y los grados de libertad (nota técnica, desviación S1).
+      Ingesta aparente, no ingesta habitual: la proporción de hogares cuyas adquisiciones en el período de referencia, por equivalente de mujer adulta, quedan por debajo del requerimiento. El punto de corte y el enfoque probabilístico se definen sobre la ingesta habitual (IOM 2000b, pp. 73 y 99; IOM 2001, p. 703); es una cifra para comparar escenarios sobre los mismos datos, no una prevalencia de inadecuación.
 
 ---
 
@@ -1670,6 +1692,7 @@
       — Sin dato: ningún hogar con estimación.
       Panel izquierdo: punto hueco, el escenario de comparación (Sin fortificación); punto lleno, el escenario. Panel derecho: diferencia pareada en puntos porcentuales, con su IC 95%.
       No es una proporción: se juzga solo por el número de hogares y los grados de libertad (nota técnica, desviación S1).
+      Ingesta aparente, no ingesta habitual: la proporción de hogares cuyas adquisiciones en el período de referencia, por equivalente de mujer adulta, quedan por debajo del requerimiento. El punto de corte y el enfoque probabilístico se definen sobre la ingesta habitual (IOM 2000b, pp. 73 y 99; IOM 2001, p. 703); es una cifra para comparar escenarios sobre los mismos datos, no una prevalencia de inadecuación.
 
 ---
 
@@ -1699,11 +1722,11 @@
       Q4 | Zinc | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | Sin fortificación | 398 |  6.6 |  1.6 |  -4.9 |  -7.1 |  -2.8 | NA
       Q4 | Zinc | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 398 |  6.6 |  1.6 |  -4.9 |  -7.1 |  -2.8 | NA
       Q4 | Zinc | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 398 |  6.6 |  1.6 |  -4.9 |  -7.1 |  -2.8 | NA
-      Q5 (mayor gasto) | Zinc | Harina de trigo con hierro, zinc y ácido fólico | Sin fortificación | 421 |  0.0 |  0.0 |   0.0 |   0.0 |   0.0 | NA
-      Q5 (mayor gasto) | Zinc | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | Sin fortificación | 421 |  0.0 |  0.0 |   0.0 |   0.0 |   0.0 | NA
-      Q5 (mayor gasto) | Zinc | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | Sin fortificación | 421 |  0.0 |  0.0 |   0.0 |   0.0 |   0.0 | NA
-      Q5 (mayor gasto) | Zinc | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 421 |  0.0 |  0.0 |   0.0 |   0.0 |   0.0 | NA
-      Q5 (mayor gasto) | Zinc | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 421 |  0.0 |  0.0 |   0.0 |   0.0 |   0.0 | NA
+      Q5 (mayor gasto) | Zinc | Harina de trigo con hierro, zinc y ácido fólico | Sin fortificación | 421 |  0.0 |  0.0 |   0.0 |    NA |    NA | NA
+      Q5 (mayor gasto) | Zinc | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | Sin fortificación | 421 |  0.0 |  0.0 |   0.0 |    NA |    NA | NA
+      Q5 (mayor gasto) | Zinc | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | Sin fortificación | 421 |  0.0 |  0.0 |   0.0 |    NA |    NA | NA
+      Q5 (mayor gasto) | Zinc | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 421 |  0.0 |  0.0 |   0.0 |    NA |    NA | NA
+      Q5 (mayor gasto) | Zinc | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 421 |  0.0 |  0.0 |   0.0 |    NA |    NA | NA
       Sin dato | Zinc | Harina de trigo con hierro, zinc y ácido fólico | Sin fortificación |   0 |   NA |   NA |    NA |    NA |    NA | NA
       Sin dato | Zinc | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | Sin fortificación |   0 |   NA |   NA |    NA |    NA |    NA | NA
       Sin dato | Zinc | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | Sin fortificación |   0 |   NA |   NA |    NA |    NA |    NA | NA
@@ -1712,6 +1735,7 @@
       — Sin dato: ningún hogar con estimación.
       Panel izquierdo: punto hueco, el escenario de comparación (Sin fortificación); punto lleno, el escenario. Panel derecho: diferencia pareada en puntos porcentuales, con su IC 95%.
       No es una proporción: se juzga solo por el número de hogares y los grados de libertad (nota técnica, desviación S1).
+      Ingesta aparente, no ingesta habitual: la proporción de hogares cuyas adquisiciones en el período de referencia, por equivalente de mujer adulta, quedan por debajo del requerimiento. El punto de corte y el enfoque probabilístico se definen sobre la ingesta habitual (IOM 2000b, pp. 73 y 99; IOM 2001, p. 703); es una cifra para comparar escenarios sobre los mismos datos, no una prevalencia de inadecuación.
 
 ---
 
@@ -1754,6 +1778,7 @@
       — Sin dato: ningún hogar con estimación.
       Panel izquierdo: punto hueco, el escenario de comparación (Sin fortificación); punto lleno, el escenario. Panel derecho: diferencia pareada en puntos porcentuales, con su IC 95%.
       No es una proporción: se juzga solo por el número de hogares y los grados de libertad (nota técnica, desviación S1).
+      Ingesta aparente, no ingesta habitual: la proporción de hogares cuyas adquisiciones en el período de referencia, por equivalente de mujer adulta, quedan por debajo del requerimiento. El punto de corte y el enfoque probabilístico se definen sobre la ingesta habitual (IOM 2000b, pp. 73 y 99; IOM 2001, p. 703); es una cifra para comparar escenarios sobre los mismos datos, no una prevalencia de inadecuación.
 
 ---
 
@@ -1778,6 +1803,7 @@
       — Sin dato: ningún hogar con estimación.
       Panel izquierdo: punto hueco, el escenario de comparación (Sin fortificación); punto lleno, el escenario. Panel derecho: diferencia pareada en puntos porcentuales, con su IC 95%.
       No es una proporción: se juzga solo por el número de hogares y los grados de libertad (nota técnica, desviación S1).
+      Ingesta aparente, no ingesta habitual: la proporción de hogares cuyas adquisiciones en el período de referencia, por equivalente de mujer adulta, quedan por debajo del requerimiento. El punto de corte y el enfoque probabilístico se definen sobre la ingesta habitual (IOM 2000b, pp. 73 y 99; IOM 2001, p. 703); es una cifra para comparar escenarios sobre los mismos datos, no una prevalencia de inadecuación.
 
 ---
 
@@ -1861,7 +1887,7 @@
       Ancho relativo máximo del intervalo (se suprime por encima, cuando el ancho está entre los dos anchos) |  1.30 | Parker JD, Talih M, Malec DJ, et al. 2017. National Center for Health Statistics Data Presentation Standards for Proportions. Vital Health Stat 2(175) | Table, p. 2 (absolute width between 0.05 and 0.30 and relative width more than 130%: suppress); p. 3 (relative width: absolute width divided by the proportion); p. 4
       Mínimo de grados de libertad (se señala para revisión por debajo) |  8.00 | Parker JD, Talih M, Malec DJ, et al. 2017. National Center for Health Statistics Data Presentation Standards for Proportions. Vital Health Stat 2(175) | Table, p. 2 (fewer than 8 degrees of freedom: flag for statistical review); p. 4 (degrees of freedom: PSUs minus strata as a rule of thumb, computed directly for a subgroup present in a subset of PSUs)
       Desviación S1. Las estimaciones que no son proporciones (medianas, diferencias pareadas, aportes de los grupos de alimentos) se juzgan solo por su número de hogares y sus grados de libertad, y su intervalo se muestra siempre: la norma no da umbrales para ellas (p. 5).
-      Desviación S2. Donde la inadecuación es una probabilidad (hierro), la proporción es la probabilidad media, y la norma se aplica a ella. Su varianza es a lo sumo la de un resultado de sí o no, de modo que los criterios de amplitud son conservadores; su tamaño efectivo de muestra se calcula como para un resultado de sí o no, lo que lo sobrestima, de modo que ese criterio en la práctica no se aplica. Cero eventos significa una media de exactamente 0 o 1.
+      Desviación S2. Donde la inadecuación es una probabilidad (hierro), la proporción es la probabilidad media, y la norma se aplica a ella. Su varianza es a lo sumo la de un resultado de sí o no, de modo que los criterios de amplitud son conservadores; su tamaño efectivo de muestra es el número de hogares dividido por el efecto de diseño, calculado con la varianza de las propias probabilidades, como lo define la norma. Cero eventos significa una media de exactamente 0 o 1.
       Desviación S3. En este informe, las estimaciones señaladas para revisión estadística se muestran con la marca † y el motivo. La norma permite mostrarlas tras la revisión o suprimirlas (pp. 2, 5).
       Desviación S4. Una proporción con ningún hogar, o con todos los hogares, de la muestra se informa en una frase con su n y el límite de su intervalo de Clopper-Pearson, no como fila de una tabla ni como punto de una figura.
       Estratos con una sola unidad primaria de muestreo: su aporte a la varianza se centra en la media general.
