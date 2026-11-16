@@ -20,11 +20,12 @@
 #' Means of probabilities (the iron probability approach) are judged as
 #' proportions. The width criteria are then conservative, since the
 #' variance of a probability is at most that of a 0/1 outcome. The
-#' effective-sample-size criterion is not: the standards define the
-#' effective sample size as `n` divided by the design effect, and
-#' `p(1 - p) / se^2` (the formula used) is that only for a 0/1 outcome; for
-#' a mean of probabilities it overstates the effective size, so the
-#' criterion is in effect not applied to them.
+#' effective sample size is the one the standards define, `n` divided by
+#' the design effect: the column `n_effective` of [estimate_households()],
+#' computed from the variance of the values themselves, so a mean of
+#' probabilities is not credited with the size of a 0/1 outcome. A table
+#' without that column (built by hand) gets \eqn{p(1 - p) / se^2}, which
+#' is the same for a 0/1 outcome.
 #'
 #' The standards judge the 95% Korn-Graubard interval and no other, so
 #' every proportion must come from
@@ -46,8 +47,9 @@
 #' @param standard The thresholds: [ref_presentation_standard] or a
 #'   modified copy, with the columns `criterion` and `value` and one row
 #'   per criterion.
-#' @returns `estimates` with the columns `n_effective` (proportions:
-#'   \eqn{p(1 - p) / se^2}, capped at `n`; `n` when `se` is 0),
+#' @returns `estimates` with the columns `n_effective` (proportions: as
+#'   given by [estimate_households()], else \eqn{p(1 - p) / se^2}, capped
+#'   at `n`; `n` when `se` is 0; `NA` for other statistics),
 #'   `ci_width`, `ci_relative_width` (proportions: width divided by the
 #'   estimate), `presentation` (`"present"`, `"review"` or `"suppress"`),
 #'   `presentation_reason` (the first criterion that applies; `NA` when
@@ -81,7 +83,7 @@ flag_presentation <- function(estimates,
   check_presentation_input(x, s)
   prop <- x$statistic %in% "proportion"
   out <- dplyr::as_tibble(x)
-  out$n_effective <- effective_size(x$estimate, x$se, x$n, prop)
+  out$n_effective <- effective_size(x, prop)
   out$ci_width <- x$ci_high - x$ci_low
   out$ci_relative_width <- ifelse(prop, out$ci_width / x$estimate, NA_real_)
   reason <- presentation_reason(out, prop, s)
@@ -94,11 +96,15 @@ flag_presentation <- function(estimates,
   same_carrier(out, x, dplyr::bind_rows(audit_get(x), log))
 }
 
-# Effective sample size of the proportions: p (1 - p) / se^2 capped at n,
-# and n when se is 0 (0 or n events; NCHS 2017, p. 3). NA elsewhere.
-effective_size <- function(p, se, n, prop) {
-  n_e <- ifelse(se %in% 0, n, p * (1 - p) / se^2)
-  ifelse(prop, pmin(n_e, n), NA_real_)
+# Effective sample size of the proportions: the column n_effective of the
+# estimators when present (n over the design effect, P164); else
+# p (1 - p) / se^2 capped at n, and n when se is 0 (0 or n events; NCHS
+# 2017, p. 3). NA elsewhere.
+effective_size <- function(x, prop) {
+  p <- x$estimate
+  n_e <- if (!is.null(x[["n_effective"]])) x$n_effective else
+    ifelse(x$se %in% 0, x$n, p * (1 - p) / x$se^2)
+  ifelse(prop, pmin(n_e, x$n), NA_real_)
 }
 
 # TRUE where the width is above the small width and width / p above the

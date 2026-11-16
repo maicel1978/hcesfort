@@ -59,8 +59,14 @@ columns of \code{x}, the \code{by} columns, \code{statistic}, \code{variable}, \
 \code{se}, \code{ci_low}, \code{ci_high}, \code{ci_method} (the interval method: the
 \code{ci_method} given for a proportion, \code{"t"} for a mean, \code{"woodruff"} for
 a median), \code{conf_level}, \code{df}, \code{n} (households in the
-domain) and \code{n_missing} (households of the \code{by} domain whose value is
-missing). Its audit log continues the log of \code{x}.
+domain), \code{n_missing} (households of the \code{by} domain whose value is
+missing), \code{n_effective} (\code{n} divided by the design effect, computed as
+the weighted variance of the values over the squared standard error,
+capped at \code{n}; \code{n} when \code{se} is 0; \code{NA} for a median) and
+\code{interval_note} (why the interval is missing or exact:
+\code{"degenerate_proportion"}, \code{"no_variation"}, \code{"no_degrees_of_freedom"},
+\code{"undefined_quantile_interval"}; \code{NA} otherwise). Its audit log
+continues the log of \code{x}.
 }
 \description{
 Estimate, for each group of a result table (scenario, nutrient,
@@ -103,12 +109,24 @@ returned as that exact value with \code{se = 0} and counted in the log
 Clopper-Pearson interval on \code{n}, as the NCHS standards prescribe (p. 4).
 Under the other methods it has no interval (\code{ci_low}, \code{ci_high}
 missing): they give either a spurious estimate (\code{"logit"}) or no limits
-(\code{"beta"}) there, and a sample of few households is not certainty.
+(\code{"beta"}) there, and a sample of few households is not certainty. Any
+other cell whose households all have the same value (a mean, a median,
+a difference of zero) follows the same rule: the value, \code{se = 0}, no
+interval, counted in the log (\code{no_variation}).
 
 Degrees of freedom of the \emph{t} intervals: \code{"domain"} (by default) uses
 those of the domain, \code{survey::degf()} of the subset design, as the
 original analysis did and as \code{survey} does on a subset; \code{"design"} those
-of the full design; or a number (\code{Inf} for normal intervals).
+of the full design; or a number (\code{Inf} for normal intervals). A cell
+with no degrees of freedom (a domain inside one primary sampling unit)
+keeps its estimate and standard error, has no interval, and is counted
+in the log (\code{no_degrees_of_freedom}).
+
+The option \code{survey.adjust.domain.lonely} of \code{survey} is set to \code{FALSE}
+during the estimate, whatever its global value, and written in the log
+(\code{adjust_domain_lonely}). PSU codes found in more than one stratum are
+counted in the log (\code{psu_in_several_strata}): the design nests PSUs in
+strata, so each is a different PSU.
 }
 \examples{
 nutrients <- nutrient_registry(hces_example$nutrients)

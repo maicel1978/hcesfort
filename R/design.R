@@ -14,7 +14,8 @@
 #' survey package (see `?survey::svyCprod`): `"fail"`, `"remove"`,
 #' `"adjust"`, `"average"` or `"certainty"`. The choice is stored with the
 #' design and applied by [estimate_households()] and
-#' [estimate_difference()], so the global option is never left changed.
+#' [estimate_difference()], so the global option is never left changed;
+#' they also fix the option `survey.adjust.domain.lonely` at `FALSE`.
 #' Under `"fail"`, a domain with such a stratum is an
 #' `hcesfort_error_value`.
 #'
@@ -110,4 +111,28 @@ group_id <- function(x, key) {
   if (length(key) == 0) return(rep("", nrow(x)))
   do.call(paste, c(lapply(key, function(k) as.character(x[[k]])),
                    sep = "\r"))
+}
+
+# Evaluate `expr` with the option survey.lonely.psu set to the choice
+# stored on `design` and survey.adjust.domain.lonely fixed at FALSE (a
+# global TRUE changes the standard errors of other domains: P167),
+# restoring both options afterwards. The error of survey
+# for a stratum with one PSU (under "fail") becomes hcesfort_error_value.
+with_lonely_psu <- function(design, expr, call = rlang::caller_env()) {
+  old <- options(survey.lonely.psu = attr(design, "hces_lonely_psu"),
+                 survey.adjust.domain.lonely = FALSE)
+  on.exit(options(old), add = TRUE)
+  tryCatch(force(expr), error = function(e) {
+    msg <- conditionMessage(e)
+    if (!grepl("only one PSU", msg, fixed = TRUE)) stop(e)
+    abort_hcesfort("value", c(
+      "A stratum of the domain has a single primary sampling unit.",
+      "x" = cli_escape(msg),
+      "i" = paste(
+        "{.arg lonely_psu} of {.fn as_hces_design} is {.val fail}; choose",
+        "{.val adjust}, {.val average}, {.val remove} or {.val certainty}."
+      )
+    ), table = "households", columns = c("stratum", "psu"),
+    n = NA_integer_, call = call)
+  })
 }

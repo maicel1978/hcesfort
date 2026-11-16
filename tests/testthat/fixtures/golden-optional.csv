@@ -21,8 +21,8 @@ prev_iron_b010_baseline,0.926874227094016
 se_iron_b010_baseline,0.0252460002657866
 kg_low_iron_b010_baseline,0.786288928825093
 kg_high_iron_b010_baseline,0.987269906005276
-n_effective_iron_b010_baseline,35
-presentation_iron_b010_baseline,1
+n_effective_iron_b010_baseline,23.9538472117748
+presentation_iron_b010_baseline,2
 complement_unreliable_iron_b010_baseline,1
 diff_folate_one,-0.242932943608379
 se_diff_folate_one,0.0736854912149125

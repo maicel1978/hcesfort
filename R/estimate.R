@@ -37,12 +37,24 @@
 #' Clopper-Pearson interval on `n`, as the NCHS standards prescribe (p. 4).
 #' Under the other methods it has no interval (`ci_low`, `ci_high`
 #' missing): they give either a spurious estimate (`"logit"`) or no limits
-#' (`"beta"`) there, and a sample of few households is not certainty.
+#' (`"beta"`) there, and a sample of few households is not certainty. Any
+#' other cell whose households all have the same value (a mean, a median,
+#' a difference of zero) follows the same rule: the value, `se = 0`, no
+#' interval, counted in the log (`no_variation`).
 #'
 #' Degrees of freedom of the *t* intervals: `"domain"` (by default) uses
 #' those of the domain, `survey::degf()` of the subset design, as the
 #' original analysis did and as `survey` does on a subset; `"design"` those
-#' of the full design; or a number (`Inf` for normal intervals).
+#' of the full design; or a number (`Inf` for normal intervals). A cell
+#' with no degrees of freedom (a domain inside one primary sampling unit)
+#' keeps its estimate and standard error, has no interval, and is counted
+#' in the log (`no_degrees_of_freedom`).
+#'
+#' The option `survey.adjust.domain.lonely` of `survey` is set to `FALSE`
+#' during the estimate, whatever its global value, and written in the log
+#' (`adjust_domain_lonely`). PSU codes found in more than one stratum are
+#' counted in the log (`psu_in_several_strata`): the design nests PSUs in
+#' strata, so each is a different PSU.
 #'
 #' @param design A design built by [as_hces_design()].
 #' @param x A table returned by [inadequacy()], [above_ul()],
@@ -74,8 +86,14 @@
 #'   `se`, `ci_low`, `ci_high`, `ci_method` (the interval method: the
 #'   `ci_method` given for a proportion, `"t"` for a mean, `"woodruff"` for
 #'   a median), `conf_level`, `df`, `n` (households in the
-#'   domain) and `n_missing` (households of the `by` domain whose value is
-#'   missing). Its audit log continues the log of `x`.
+#'   domain), `n_missing` (households of the `by` domain whose value is
+#'   missing), `n_effective` (`n` divided by the design effect, computed as
+#'   the weighted variance of the values over the squared standard error,
+#'   capped at `n`; `n` when `se` is 0; `NA` for a median) and
+#'   `interval_note` (why the interval is missing or exact:
+#'   `"degenerate_proportion"`, `"no_variation"`, `"no_degrees_of_freedom"`,
+#'   `"undefined_quantile_interval"`; `NA` otherwise). Its audit log
+#'   continues the log of `x`.
 #' @seealso [estimate_difference()], [flag_precision()].
 #' @examples
 #' nutrients <- nutrient_registry(hces_example$nutrients)
@@ -133,20 +151,61 @@ estimate_cell <- function(design, y, mask, statistic, ci_method, level,
   n <- sum(inside)
   dfv <- if (identical(df, "domain")) survey::degf(sub) else
     if (identical(df, "design")) survey::degf(design) else df
-  na_row <- dplyr::tibble(statistic = statistic, estimate = NA_real_,
-                          se = NA_real_, ci_low = NA_real_,
-                          ci_high = NA_real_,
-                          ci_method = interval_name(statistic, ci_method),
-                          conf_level = level, df = dfv, n = n,
-                          n_missing = sum(mask & !inside))
-  if (n == 0) return(na_row)
-  r <- if (statistic == "proportion" && degenerate(y[inside])) {
-    degenerate_values(y[inside][[1]], n, ci_method, level)
-  } else {
-    cell_values(sub, statistic, ci_method, level, dfv, n)
+  row <- dplyr::tibble(statistic = statistic, estimate = NA_real_,
+                       se = NA_real_, ci_low = NA_real_, ci_high = NA_real_,
+                       ci_method = interval_name(statistic, ci_method),
+                       conf_level = level, df = dfv, n = n,
+                       n_missing = sum(mask & !inside),
+                       n_effective = NA_real_, interval_note = NA_character_)
+  if (n == 0) return(row)
+  r <- cell_result(sub, y[inside], statistic, ci_method, level, dfv, n)
+  row[c("estimate", "se", "ci_low", "ci_high")] <- as.list(unname(r$values))
+  row$interval_note <- r$note
+  if (statistic != "median") {
+    row$n_effective <- effective_n(sub, r$values[[2]], n)
   }
-  na_row[c("estimate", "se", "ci_low", "ci_high")] <- as.list(unname(r))
-  na_row
+  row
+}
+
+# Estimate, SE, limits and the note on the interval of one cell with
+# households: no interval without variation (P165) or without degrees of
+# freedom (P166); `undefined_quantile_interval` for a median whose
+# interval survey cannot compute.
+cell_result <- function(sub, v, statistic, ci_method, level, dfv, n) {
+  if (all(v == v[[1]])) {
+    if (statistic == "proportion" && v[[1]] %in% c(0, 1)) {
+      return(list(values = degenerate_values(v[[1]], n, ci_method, level),
+                  note = "degenerate_proportion"))
+    }
+    return(list(values = c(v[[1]], 0, NA_real_, NA_real_),
+                note = "no_variation"))
+  }
+  if (dfv <= 0) {
+    r <- cell_values(sub, statistic, ci_method, level, Inf, n)
+    r[3:4] <- NA_real_
+    return(list(values = r, note = "no_degrees_of_freedom"))
+  }
+  r <- cell_values(sub, statistic, ci_method, level, dfv, n)
+  undefined <- statistic == "median" && anyNA(r[2:4])
+  list(values = r,
+       note = if (undefined) "undefined_quantile_interval" else NA_character_)
+}
+
+# Effective sample size of a mean or a proportion: n divided by the design
+# effect (NCHS 2017, p. 3), computed as s^2 / se^2 with s^2 the weighted
+# variance of the values in the domain (divisor the sum of the weights),
+# capped at `n`; `n` when the standard error is 0. For a 0/1 outcome s^2 is
+# p (1 - p), the formula of the standards; for a probability it is the
+# variance of the values themselves (P164, finding 10 of the v0.2 review).
+effective_n <- function(sub, se, n) {
+  w <- stats::weights(sub)
+  keep <- w > 0
+  w <- w[keep]
+  y <- sub$variables$.y[keep]
+  s2 <- sum(w * (y - sum(w * y) / sum(w))^2) / sum(w)
+  if (is.na(se)) return(NA_real_)
+  if (se == 0) return(as.numeric(n))
+  min(s2 / se^2, n)
 }
 
 # Estimate, SE and interval limits of one cell with variation.
@@ -208,31 +267,4 @@ undefined_interval <- function(r) {
 domain_input_log <- function(x, domain_from) {
   if (is.null(domain_from)) return(audit_get(x))
   audit_combine(x, domain_from)
-}
-
-# TRUE when every value is 0 or every value is 1: the proportion is exact
-# in the sample and no interval method gives a usable interval.
-degenerate <- function(y) {
-  all(y == 0) || all(y == 1)
-}
-
-# Evaluate `expr` with the option survey.lonely.psu set to the choice
-# stored on `design`, restoring the option afterwards. The error of survey
-# for a stratum with one PSU (under "fail") becomes hcesfort_error_value.
-with_lonely_psu <- function(design, expr, call = rlang::caller_env()) {
-  old <- options(survey.lonely.psu = attr(design, "hces_lonely_psu"))
-  on.exit(options(old), add = TRUE)
-  tryCatch(force(expr), error = function(e) {
-    msg <- conditionMessage(e)
-    if (!grepl("only one PSU", msg, fixed = TRUE)) stop(e)
-    abort_hcesfort("value", c(
-      "A stratum of the domain has a single primary sampling unit.",
-      "x" = cli_escape(msg),
-      "i" = paste(
-        "{.arg lonely_psu} of {.fn as_hces_design} is {.val fail}; choose",
-        "{.val adjust}, {.val average}, {.val remove} or {.val certainty}."
-      )
-    ), table = "households", columns = c("stratum", "psu"),
-    n = NA_integer_, call = call)
-  })
 }

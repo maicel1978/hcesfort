@@ -19,8 +19,11 @@ the estimate.}
 \code{estimates} with two columns. \code{low_precision}: \code{TRUE} when \code{n}
 is below \code{min_n} or the half-width of the interval above
 \code{max_half_width}. \code{precision_status}: the first rule that applies, in
-this order: \code{"small_cell"} (\code{n < min_n}), \code{"exact"} (\code{se == 0}: every
-household of the cell has the same value, so there is no interval),
+this order: \code{"small_cell"} (\code{n < min_n}), \code{"exact"} (every household
+of the cell has the same value, so there is no interval: the
+\code{interval_note} \code{"no_variation"} or \code{"degenerate_proportion"}, or
+\code{se == 0} for a table without that column; a standard error of 0 under
+\code{lonely_psu = "certainty"} with values that vary is not exact),
 \code{"wide_interval"} (half-width above \code{max_half_width}) or \code{"ok"}; \code{NA}
 for a missing estimate with \code{n} at least \code{min_n}. Detection only: a
 report decides what each status does (suppress, a sentence, a mark).

@@ -52,8 +52,9 @@ A tibble of class \code{hces_estimate} (and \code{hces_tbl}): the group
 columns of \code{x}, \code{reference}, the \code{by} columns, \code{statistic}
 (\code{"mean_difference"}), \code{variable}, \code{estimate} (scenario minus
 reference), \code{se}, \code{ci_low}, \code{ci_high}, \code{ci_method} (\code{"t"}),
-\code{conf_level}, \code{df}, \code{n} and
-\code{n_missing}.
+\code{conf_level}, \code{df}, \code{n}, \code{n_missing}, \code{n_effective} and
+\code{interval_note}, as in \code{\link[=estimate_households]{estimate_households()}}: a difference without
+variation (two identical scenarios) has no interval.
 }
 \description{
 Estimate, for each scenario and each group of a result table, the mean

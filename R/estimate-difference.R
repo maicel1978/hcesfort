@@ -22,8 +22,9 @@
 #'   columns of `x`, `reference`, the `by` columns, `statistic`
 #'   (`"mean_difference"`), `variable`, `estimate` (scenario minus
 #'   reference), `se`, `ci_low`, `ci_high`, `ci_method` (`"t"`),
-#'   `conf_level`, `df`, `n` and
-#'   `n_missing`.
+#'   `conf_level`, `df`, `n`, `n_missing`, `n_effective` and
+#'   `interval_note`, as in [estimate_households()]: a difference without
+#'   variation (two identical scenarios) has no interval.
 #' @seealso [estimate_households()].
 #' @examples
 #' nutrients <- nutrient_registry(hces_example$nutrients)
@@ -121,8 +122,11 @@ check_reference_scenario <- function(x, reference, call = rlang::caller_env()) {
 #' @returns `estimates` with two columns. `low_precision`: `TRUE` when `n`
 #'   is below `min_n` or the half-width of the interval above
 #'   `max_half_width`. `precision_status`: the first rule that applies, in
-#'   this order: `"small_cell"` (`n < min_n`), `"exact"` (`se == 0`: every
-#'   household of the cell has the same value, so there is no interval),
+#'   this order: `"small_cell"` (`n < min_n`), `"exact"` (every household
+#'   of the cell has the same value, so there is no interval: the
+#'   `interval_note` `"no_variation"` or `"degenerate_proportion"`, or
+#'   `se == 0` for a table without that column; a standard error of 0 under
+#'   `lonely_psu = "certainty"` with values that vary is not exact),
 #'   `"wide_interval"` (half-width above `max_half_width`) or `"ok"`; `NA`
 #'   for a missing estimate with `n` at least `min_n`. Detection only: a
 #'   report decides what each status does (suppress, a sentence, a mark).
@@ -164,12 +168,21 @@ flag_precision <- function(estimates, min_n, max_half_width) {
 
 # The precision status of each estimate: the first rule that applies.
 precision_status <- function(x, half, min_n, max_half_width) {
-  se <- if (is.null(x[["se"]])) rep(NA_real_, nrow(x)) else x$se
   status <- ifelse(is.na(x$estimate), NA_character_, "ok")
   status[!is.na(half) & half > max_half_width] <- "wide_interval"
-  status[!is.na(se) & se == 0] <- "exact"
+  status[no_variation(x)] <- "exact"
   status[x$n < min_n] <- "small_cell"
   status
+}
+
+# TRUE for the estimates whose households all have the same value: the
+# note of the estimators when `x` has it (a standard error of 0 can also
+# come from `lonely_psu`, P166), else a standard error of 0 (the shares).
+no_variation <- function(x) {
+  if (!is.null(x[["interval_note"]])) {
+    return(x$interval_note %in% c("degenerate_proportion", "no_variation"))
+  }
+  x[["se"]] %in% 0
 }
 
 # Audit rows: one per precision status other than "ok" that occurs.

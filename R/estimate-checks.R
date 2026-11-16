@@ -94,17 +94,19 @@ by_cells <- function(design, by, inside = NULL) {
   list(levels = levels, masks = masks)
 }
 
-# Audit rows of an estimator.
+# Audit rows of an estimator: input, notes on the method, and one flagged
+# row per note on the intervals (`interval_note` of `out`).
 estimate_log <- function(step, design, x, value, statistic, ci_method, df,
                          out) {
   note <- function(cause, detail) {
     audit_row(step, "estimate", "note", cause, nrow(out), detail = detail)
   }
-  empty <- sum(out$n == 0)
-  degenerate <- sum(out$statistic %in% "proportion" & out$n > 0 &
-                      out$estimate %in% c(0, 1) & out$se %in% 0)
-  undefined <- sum(out$statistic %in% "median" & !is.na(out$estimate) &
-                     is.na(out$ci_low))
+  flag <- function(cause, n) {
+    if (n > 0) audit_row(step, "estimate", "flagged", cause, n)
+  }
+  causes <- c("degenerate_proportion", "no_variation",
+              "no_degrees_of_freedom", "undefined_quantile_interval")
+  shared <- psu_in_several_strata(design)
   dplyr::bind_rows(
     audit_row(step, "estimate", "input", "all", nrow(out),
               nrow(design$variables), detail = value),
@@ -112,16 +114,22 @@ estimate_log <- function(step, design, x, value, statistic, ci_method, df,
     if (statistic == "proportion") note("ci_method", ci_method),
     note("df", as.character(df)),
     note("lonely_psu", attr(design, "hces_lonely_psu", exact = TRUE)),
-    if (empty > 0) {
-      audit_row(step, "estimate", "flagged", "empty_domain", empty)
+    note("adjust_domain_lonely", "FALSE"),
+    if (shared > 0) {
+      audit_row(step, "estimate", "note", "psu_in_several_strata", shared,
+                detail = "PSU codes nested in strata (nest = TRUE)")
     },
-    if (degenerate > 0) {
-      audit_row(step, "estimate", "flagged", "degenerate_proportion",
-                degenerate)
-    },
-    if (undefined > 0) {
-      audit_row(step, "estimate", "flagged", "undefined_quantile_interval",
-                undefined)
-    }
+    flag("empty_domain", sum(out$n == 0)),
+    lapply(causes, function(k) flag(k, sum(out$interval_note %in% k)))
   )
+}
+
+# Number of PSU codes that appear in more than one stratum. The design
+# nests PSUs in strata, so each is a different PSU: right for codes that
+# restart in each stratum, wrong for a household filed in the wrong
+# stratum. Written in the log so the analyst sees it (P168).
+psu_in_several_strata <- function(design) {
+  v <- design$variables
+  pairs <- unique(data.frame(psu = v$psu, stratum = v$stratum))
+  sum(table(pairs$psu) > 1)
 }

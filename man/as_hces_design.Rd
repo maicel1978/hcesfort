@@ -35,7 +35,8 @@ no default; its values are those of the option \code{survey.lonely.psu} of the
 survey package (see \code{?survey::svyCprod}): \code{"fail"}, \code{"remove"},
 \code{"adjust"}, \code{"average"} or \code{"certainty"}. The choice is stored with the
 design and applied by \code{\link[=estimate_households]{estimate_households()}} and
-\code{\link[=estimate_difference]{estimate_difference()}}, so the global option is never left changed.
+\code{\link[=estimate_difference]{estimate_difference()}}, so the global option is never left changed;
+they also fix the option \code{survey.adjust.domain.lonely} at \code{FALSE}.
 Under \code{"fail"}, a domain with such a stratum is an
 \code{hcesfort_error_value}.
 

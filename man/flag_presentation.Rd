@@ -16,8 +16,9 @@ modified copy, with the columns \code{criterion} and \code{value} and one row
 per criterion.}
 }
 \value{
-\code{estimates} with the columns \code{n_effective} (proportions:
-\eqn{p(1 - p) / se^2}, capped at \code{n}; \code{n} when \code{se} is 0),
+\code{estimates} with the columns \code{n_effective} (proportions: as
+given by \code{\link[=estimate_households]{estimate_households()}}, else \eqn{p(1 - p) / se^2}, capped
+at \code{n}; \code{n} when \code{se} is 0; \code{NA} for other statistics),
 \code{ci_width}, \code{ci_relative_width} (proportions: width divided by the
 estimate), \code{presentation} (\code{"present"}, \code{"review"} or \code{"suppress"}),
 \code{presentation_reason} (the first criterion that applies; \code{NA} when
@@ -48,11 +49,12 @@ it is suppressed unless its interval is narrow, as the flow chart does.
 Means of probabilities (the iron probability approach) are judged as
 proportions. The width criteria are then conservative, since the
 variance of a probability is at most that of a 0/1 outcome. The
-effective-sample-size criterion is not: the standards define the
-effective sample size as \code{n} divided by the design effect, and
-\code{p(1 - p) / se^2} (the formula used) is that only for a 0/1 outcome; for
-a mean of probabilities it overstates the effective size, so the
-criterion is in effect not applied to them.
+effective sample size is the one the standards define, \code{n} divided by
+the design effect: the column \code{n_effective} of \code{\link[=estimate_households]{estimate_households()}},
+computed from the variance of the values themselves, so a mean of
+probabilities is not credited with the size of a 0/1 outcome. A table
+without that column (built by hand) gets \eqn{p(1 - p) / se^2}, which
+is the same for a 0/1 outcome.
 
 The standards judge the 95\% Korn-Graubard interval and no other, so
 every proportion must come from

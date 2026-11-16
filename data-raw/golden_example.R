@@ -38,10 +38,10 @@ hces_optional <- readRDS("tests/testthat/fixtures/hces-fixture-optional.rds")
 
 # 95% Korn-Graubard interval of a proportion on a domain design (section
 # 3.2, C2) and its presentation status (section 3.1). n is the number of
-# households of the domain; the effective sample size is p(1 - p) / var
-# (n when the variance is 0). The interval uses it times
-# (qt(0.025, n - 1) / qt(0.025, df))^2, capped at n; the status uses it
-# capped at n. Status: 0 present, 1
+# households of the domain; the interval uses the effective sample size
+# p(1 - p) / var (n when the variance is 0) times
+# (qt(0.025, n - 1) / qt(0.025, df))^2, capped at n; the status uses n over
+# the design effect, capped at n. Status: 0 present, 1
 # review, 2 suppress; complement 1 when one minus the proportion fails the
 # relative-width criterion.
 korn_graubard <- function(sub, formula) {
@@ -56,7 +56,14 @@ korn_graubard <- function(sub, formula) {
   n_raw <- if (v == 0) n else p * (1 - p) / v
   n_e <- min(n_raw * (stats::qt(alpha / 2, n - 1) /
                         stats::qt(alpha / 2, df))^2, n)
-  n_raw <- min(n_raw, n)
+  # The status uses n over the design effect: the weighted variance of
+  # the values (divisor the sum of the weights) over v, which is
+  # p (1 - p) / v for a 0/1 outcome (P164).
+  w <- stats::weights(sub)
+  y <- sub$variables[[all.vars(formula)]][w > 0]
+  w <- w[w > 0]
+  s2 <- sum(w * (y - sum(w * y) / sum(w))^2) / sum(w)
+  n_raw <- min(if (v == 0) n else s2 / v, n)
   x <- n_e * p
   lower <- if (x == 0) 0 else stats::qbeta(alpha / 2, x, n_e - x + 1)
   upper <- if (x == n_e) 1 else stats::qbeta(1 - alpha / 2, x + 1, n_e - x)
