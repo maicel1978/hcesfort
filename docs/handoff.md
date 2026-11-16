@@ -1,38 +1,44 @@
 # Handoff
 
 - **Date:** 2026-11-16
-- **Model:** Opus 5.5 (12e.5.5).
-- **Branch:** `claude/adoring-mccarthy-ki6i5p`, pushed.
+- **Model:** Opus 5.5 (12e.5.6 and 12e.5.7).
+- **Branch:** `claude/focused-goodall-shtiue`, pushed.
 - **Environment:** run `R CMD INSTALL .` at the start (the report tests use
   the installed package). The full `devtools::test()` runs in parallel,
   about 6 minutes: run it in the background, one at a time, and **do not
-  edit `R/` or `tests/` while it runs**. A single report test file needs
-  `NOT_CRAN=true` or it is skipped.
+  edit `R/`, `tests/` or `inst/` while it runs**. Delete the old log before
+  waiting on a new one. A single report test file needs `NOT_CRAN=true`
+  or it is skipped.
 
 ## What was done
 
-See the commit message and `NEWS.md`.
+See the commit messages.
 
-- **12e.5.5** (P162, R3-D6): `missing_values()` in `R/missing-values.R`,
-  the work queue of missing composition values by nutrient and food;
-  log row `foods_without_value` in `apparent_intake()`; the `coverage`
-  note of `inadequacy()` and `above_ul()` and the error of the gate name
-  `missing_values()`; one paragraph in the three help pages (section 3.1
-  of the design, with the example of finding 8). Readiness report: Table
-  **D3.1** after D3 (numbered so that D4 to D10 keep their ids; terms en
-  and es); two snapshot blocks accepted (the new table only). No figure
-  changes. Fixture of finding 8 in `tests/testthat/helper-missing-values.R`.
-- Self-review items P211 and P212.
+- **12e.5.6** (`89df9ec`): `apply_scenario(compliance_model =
+  "all_or_nothing")` returns `hces_scenario_states`, key `scenario` +
+  `state` + `household_id`, with `state` and `state_probability`; log
+  notes `states`, `vehicles_assumed_independent`. New `R/scenario-states.R`.
+- **12e.5.7** (`90bf099`, `4cc3e6c`): `inadequacy()` and `above_ul()`
+  accept the states table and collapse it by `state_probability`
+  (`R/risk-states.R`, log note `states_collapsed`); `above_ul_added` and
+  `above_ul_total` are numeric for every input; the estimators refuse the
+  states table; the report choice `compliance_model` takes both models and
+  exhibit R3.3 names the model (two snapshot lines, en and es).
+- Self-review items P213 to P216. A lint left by 12e.5.5 fixed (a test
+  helper moved to `helper-missing-values.R`).
 
 ## Exact next step
 
-**12e.5.6** (Opus), from `docs/design-12e5.md`, section 4 (P163, R3-D7):
-`compliance_model = "all_or_nothing"`, the states in `apply_scenario()`.
-New code in `R/scenario-states.R`. Then 12e.5.7 and 12e.5.8 (Opus); in
-12e.5.8, the coverage exhibit with both coverages, the column at
-compliance 1 (rule of the maintainer: no report leaves the project
-without it) and P210. `devtools::check()` and `lintr::lint_package()` once
-at the end of task 12e.
+**12e.5.8** (Opus), from `docs/design-12e5.md`, sections 2.4, 4.2 and 5:
+specification (`docs/specification.md`: the states table, numeric
+`above_ul_*`, `fortifiable`, `missing_values()`, the AFE arguments of
+12e.5.1 and 12e.5.2); `NEWS.md` (every change of 12e.5, the type change of
+`above_ul_*`); the coverage exhibit of the results report with both
+coverages (acquired and fortifiable); **the column at compliance 1 in the
+upper-level exhibit** (maintainer's rule: no report leaves the project
+without it); P210 with the coverage exhibit; then the self-review of
+12e.5. Then, once for task 12e: `devtools::check()` (0/0/0) and
+`lintr::lint_package()`.
 
 ## Open questions
 
@@ -40,59 +46,58 @@ None.
 
 ## Recommended model for the next session
 
-**Opus, high effort** (12e.5.6).
+**Opus, high effort** (12e.5.8).
 
 ## Maintainer review points
 
-1. **The case of finding 8** (one row: vitamin A, the liver, 10 g of
-   410 g), and the note that points to the list:
+1. **The hand example of the design** (folate: baseline 20, full dose
+   306, EAR 200, compliance 0.5): 1 under average content, 0.5 under all
+   or nothing.
+
+   ```r
+   devtools::load_all()
+   source("tests/testthat/helper-scenario.R")
+   a <- risk_of(as_run(folic(0.5), compliance_model = "average_content"))
+   r <- risk_of(aon(folic(0.5)))
+   a[a$nutrient == "folate", c("scenario", "household_id", "p_inadequate")]
+   r[r$nutrient == "folate", c("scenario", "household_id", "p_inadequate")]
+   ```
+
+2. **The share above the folic acid UL on the example, both models**
+   (average content understates it; all or nothing should lie between it
+   and the bound at compliance 1):
 
    ```r
    library(hcesfort)
-   a <- data.frame(record_id = 1:6, household_id = rep(1:3, each = 2),
-                   food_code = rep(c("rice", "liver"), 3),
-                   quantity = rep(c(400, 10), 3), unit = "g",
-                   section = "diary", period_days = 1, include = TRUE)
-   h <- data.frame(household_id = 1:3, weight = 1, stratum = "s", psu = 1:3)
-   cw <- data.frame(food_code = c("rice", "liver"),
-                    composition_id = c("R1", "L1"), match_type = "exact",
-                    validated = TRUE, edible_portion = 1)
-   comp <- data.frame(composition_id = c("R1", "L1"),
-                      vitamin_a_ug_rae = c(0, NA),
-                      basis = "per_100g_edible", food_state = "raw",
-                      source = "invented")
-   f <- data.frame(unit = "g", factor = 1, factor_type = "mass_g",
-                   source = "invented")
-   x <- link_composition(convert_units(a, f, priority = "food"), cw, comp,
-                         nutrient_registry(c(vitamin_a = "ug_rae")))
-   missing_values(x, h)
-   ```
-
-2. **The queue on the example** (folate of the biscuit, 0.5% of the
-   grams), and the row of the log:
-
-   ```r
-   g <- convert_units(hces_example$acquisitions, hces_example$unit_factors,
-                      priority = "food")
-   content <- link_composition(g, hces_example$crosswalk,
-                               hces_example$composition,
-                               nutrient_registry(hces_example$nutrients))
-   missing_values(content, hces_example$households)
-   afe <- adult_equivalents(hces_example$members,
+   e <- hces_example
+   n <- nutrient_registry(e$nutrients)
+   g <- convert_units(e$acquisitions, e$unit_factors, priority = "food")
+   b <- unfortified_baseline(e$composition, e$enrichment, n)
+   afe <- adult_equivalents(e$members,
      reference_energy("female", 25, 55, pal = 1.76),
      c(female = 55, male = 65), 1.76, infant_food_share = 1,
      pregnancy_kcal = 0, lactation_kcal = 0)
-   l <- audit_log(apparent_intake(content, afe, hces_example$households))
-   l[l$cause == "foods_without_value", ]
+   i <- apparent_intake(link_composition(g, e$crosswalk, b), afe,
+                        e$households)
+   u <- vehicle_coverage(g, e$vehicles, afe, e$households,
+                         fortifiable = "use")
+   ul <- function(m) {
+     x <- above_ul(apply_scenario(i, u, e$scenarios, compliance_model = m),
+                   ref_requirements, min_coverage = 0.8,
+                   min_records_used = 0.8)
+     x <- x[x$nutrient == "folate", ]
+     tapply(x$above_ul_added, x$scenario, mean, na.rm = TRUE)
+   }
+   rbind(average = ul("average_content"), aon = ul("all_or_nothing"))
    ```
 
-3. **Table D3.1 in the readiness report** (wording en and es):
+3. **The states table itself** (rows, states, probabilities):
 
    ```r
-   dir <- tempfile()
-   use_report_template(dir, lang = "es")
-   system2("quarto", c("render", file.path(dir, "readiness.qmd")))
-   # open readiness.html in `dir`: section 3, Cuadro D3.1
+   s <- apply_scenario(i, u, e$scenarios, compliance_model = "all_or_nothing")
+   unique(s[c("scenario", "state", "state_probability")])
+   audit_log(s)[audit_log(s)$cause %in% c("states",
+     "vehicles_assumed_independent"), c("cause", "n_records", "detail")]
    ```
 
 ## Design of the ENGIH adapter (2026-11-16, Fable; a separate session)
