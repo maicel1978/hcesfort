@@ -274,8 +274,9 @@ saveRDS(hces_fixture, "tests/testthat/fixtures/hces-fixture.rds",
 # hces_fixture(optional = TRUE). Every value is INVENTED and set without
 # the random generator, so the tables above do not change. By hand:
 # - members: the infant (household 36) has `age_months` 7, and an adult of
-#   household 1 has 30, which must be ignored (age >= 1); the first member
-#   of every fourth household, and the infant, have an own `weight_kg`
+#   household 1 has 450 (37 years and 6 months, consistent with its age),
+#   which must be ignored (age >= 1); the first member of every fourth
+#   household, and the infant, have an own `weight_kg`
 #   (used for adults only); `meals_home_share` is 0.75 for every second
 #   member and missing for the first member of household 7 (its AFE is
 #   then missing);
@@ -288,7 +289,7 @@ optional <- hces_fixture
 m <- optional$members
 m$age_months <- NA_real_
 m$age_months[m$household_id == 36 & m$age_years %in% 0] <- 7
-m$age_months[m$household_id == 1 & m$member_id == 2] <- 30
+m$age_months[m$household_id == 1 & m$member_id == 2] <- 450
 m$weight_kg <- ifelse(m$member_id == 1 & m$household_id %% 4 == 0,
                       48 + m$household_id / 2, NA_real_)
 m$weight_kg[m$household_id == 36 & m$age_years %in% 0] <- 8

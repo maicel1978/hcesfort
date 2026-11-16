@@ -34,7 +34,10 @@
 #' household did not answer the food module), `no_food_records` (no
 #' record in `content`), `all_records_lost` (records, none used), `no_afe`
 #' (no AFE, or an AFE of zero), `estimated`. Intake is `NA` unless the
-#' status is `estimated`.
+#' status is `estimated`. An estimated household whose used records add to
+#' zero edible grams (only zero quantities) keeps an intake of zero and is
+#' counted in the log (`zero_intake`): whether to keep it is the analyst's
+#' decision (see [flag_energy_plausibility()]).
 #'
 #' @param content Table returned by [link_composition()].
 #' @param afe Table returned by [adult_equivalents()].

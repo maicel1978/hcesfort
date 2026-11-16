@@ -58,7 +58,25 @@ validate_members <- function(x) {
   check_required()
   validate_table(x, schema_members(), "validate_members", function(x) {
     list(missing_age = is.na(x$age_years), missing_sex = is.na(x$sex))
-  })
+  }, extra = check_age_months)
+}
+
+# Abort when `age_months` contradicts `age_years`: the whole years of both
+# must agree (14 months is not an age of 0.5 years). A contradiction would
+# otherwise drop the month silently (P168).
+check_age_months <- function(x, call) {
+  if (is.null(x[["age_months"]])) return(invisible(TRUE))
+  rows <- which(!is.na(x$age_months) & !is.na(x$age_years) &
+                  floor(x$age_months / 12) != floor(x$age_years))
+  if (length(rows) == 0) return(invisible(TRUE))
+  abort_hcesfort("value", c(
+    "{.arg members} has {.field age_months} that contradict
+    {.field age_years}.",
+    "x" = cli_escape(problem_bullet("months and years disagree", rows)),
+    "i" = "The whole years of both must agree: {.code floor(age_months /
+    12) == floor(age_years)}."
+  ), table = "members", columns = c("age_years", "age_months"),
+  rows = rows, n = length(rows), call = call)
 }
 
 #' @rdname validate_households

@@ -74,8 +74,9 @@ check_household_ids <- function(tables, h, call = rlang::caller_env()) {
 }
 
 # Audit rows of apparent_intake(): records received; records left out by
-# cause, with their grams per day as acquired; households by status; and
-# per nutrient, estimated households whose coverage is below 1.
+# cause, with their grams per day as acquired; households by status;
+# estimated households with zero edible grams (P172); and per nutrient,
+# estimated households whose coverage is below 1.
 intake_log <- function(x, reasons, used, out, nutrients) {
   step <- "apparent_intake"
   rec <- function(kind, cause, f) {
@@ -100,6 +101,7 @@ intake_log <- function(x, reasons, used, out, nutrients) {
       hh("flagged", s, out$intake_status == s)
     }),
     hh("note", "estimated", est),
+    hh("flagged", "zero_intake", est & out$qty_edible_g_d %in% 0),
     lapply(nutrients$column, function(col) {
       cov <- out[[paste0(col, "_coverage")]]
       hh("flagged", "incomplete_nutrient_value", est & !is.na(cov) & cov < 1,

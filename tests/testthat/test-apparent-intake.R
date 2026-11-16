@@ -292,3 +292,21 @@ test_that("flag_energy_plausibility() names the bound that failed", {
                       class = "hcesfort_error_argument")
   expect_identical(err$arg, "upper")
 })
+
+test_that("a household with only zero quantities is flagged (P172)", {
+  # Household 2 keeps only its included rice record, set to 0 g.
+  x <- ai_content()
+  x$qty_g_d[x$record_id == 5] <- 0
+  x$qty_edible_g_d[x$record_id == 5] <- 0
+  x$energy_kcal[x$record_id == 5] <- 0
+  x$iron_mg[x$record_id == 5] <- 0
+  i <- apparent_intake(x, ai_afe(), ai_households())
+  expect_identical(i$intake_status[[2]], "estimated")
+  expect_identical(i$energy_kcal[[2]], 0)
+  l <- audit_log(i)
+  z <- l[l$cause == "zero_intake", ]
+  expect_identical(c(z$kind, z$n_records), c("flagged", "1"))
+  # Without it, no row.
+  l <- audit_log(apparent_intake(ai_content(), ai_afe(), ai_households()))
+  expect_false("zero_intake" %in% l$cause)
+})

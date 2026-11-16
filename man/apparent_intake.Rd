@@ -65,7 +65,10 @@ Status, in this order: \code{food_module_nonresponse} (\code{households} says th
 household did not answer the food module), \code{no_food_records} (no
 record in \code{content}), \code{all_records_lost} (records, none used), \code{no_afe}
 (no AFE, or an AFE of zero), \code{estimated}. Intake is \code{NA} unless the
-status is \code{estimated}.
+status is \code{estimated}. An estimated household whose used records add to
+zero edible grams (only zero quantities) keeps an intake of zero and is
+counted in the log (\code{zero_intake}): whether to keep it is the analyst's
+decision (see \code{\link[=flag_energy_plausibility]{flag_energy_plausibility()}}).
 }
 \examples{
 nutrients <- nutrient_registry(hces_example$nutrients)

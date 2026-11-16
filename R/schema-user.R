@@ -70,7 +70,7 @@ schema_composition <- function(nutrients = NULL) {
     "composition", "composition_id",
     schema_col("composition_id", "id", "composition food identifier"),
     schema_col(columns, "number", "content per 100 g edible portion",
-               na = TRUE, bounds = "[0, Inf)"),
+               na = TRUE, bounds = composition_bounds(nutrients)),
     schema_col("basis", "text", "basis of the values",
                values = "per_100g_edible"),
     schema_col("food_state", "text", "state the values refer to",
@@ -100,6 +100,15 @@ schema_composition_fills <- function(nutrients = NULL) {
   )
 }
 
+# Interval of each nutrient column of the composition: a mass in 100 g
+# cannot exceed 100 g (P168); energy and equivalents (DFE, RAE) have no
+# upper bound.
+composition_bounds <- function(nutrients) {
+  if (is.null(nutrients)) return("[0, Inf)")
+  top <- c(g = "100", mg = "1e5", ug = "1e8")[nutrients$unit]
+  unname(ifelse(is.na(top), "[0, Inf)", paste0("[0, ", top, "]")))
+}
+
 # Scenarios schema for a registry; without one, `nutrient` has no
 # vocabulary.
 schema_scenarios <- function(nutrients = NULL) {
@@ -110,7 +119,7 @@ schema_scenarios <- function(nutrients = NULL) {
     schema_col("nutrient", "text", "nutrient of the registry",
                values = nutrients$nutrient),
     schema_col("level_mg_kg", "number", "level added, mg per kg of vehicle",
-               bounds = "[0, Inf)"),
+               bounds = "[0, 1e6]"),
     schema_col("level_basis", "text", "what the level measures",
                values = c("nutrient", "compound")),
     schema_col("compound", "text", "name of the compound", required = FALSE,
