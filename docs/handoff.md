@@ -42,7 +42,14 @@ commit messages and `NEWS.md`:
 
 ## Exact next step
 
-**12e.5.1** (`infant_food_share`, `milk_energy_cost` in
+**First, P201 and P204** (one small session, Opus, high effort), as
+answered by the maintainer under "Review of 12e.1 to 12e.4" below: read
+sections "12e.1" (V1.1) and "12e.4" (V4.2, V4.3) of `docs/review-12e.md`
+and items P201 and P204 of `docs/improvements.md`. Each fix comes with a
+test that fails before it. Golden values and report snapshots must not
+change; if one does, stop and report it.
+
+**Then 12e.5.1** (`infant_food_share`, `milk_energy_cost` in
 `adult_equivalents()`), from `docs/design-12e5.md` (read its sections for
 12e.5.1 and decisions R3-D1 to R3-D9 in `docs/improvements.md`). Then
 12e.5.2 to 12e.5.8 (Opus). `devtools::check()` and `lintr::lint_package()`
@@ -54,7 +61,7 @@ None.
 
 ## Recommended model for the next session
 
-**Opus** (12e.5.1).
+**Opus, high effort** (P201 and P204, then 12e.5.1).
 
 ## Maintainer review points
 
@@ -185,6 +192,14 @@ This section does not change the next step above (12e.5.1, Opus).
    Recommended: one small Opus commit before 12e.5.1 continues, with P204
    in the same session. Why: about ten lines and a test; the adapter (A2)
    will stack estimates, and A3 runs with `df = "design"`.
+
+### Answers of the maintainer (2026-11-16)
+
+1. Approved as recommended. The column at compliance 1 enters the results
+   report in 12e.5.8. Rule: no report leaves the project without it.
+   P182 stays in task 12.
+2. Approved as recommended. P201 and P204 are fixed now, in one Opus
+   session before 12e.5.1 (see "Exact next step").
 
 ### Review points
 
