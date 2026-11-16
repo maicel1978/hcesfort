@@ -46,11 +46,17 @@ it. Then 12e.5.1 to 12e.5.8 (Opus). `devtools::check()` and
 
 ## Open questions
 
-1. **`surveytable`**: may the next session install it from CRAN
-   (`install.packages("surveytable")`) to write the Korn-Graubard anchor?
-   Recommended: yes, with the permission granted in the session settings;
-   otherwise drop the anchor (the published NCHS rows in `helper-nchs.R`
-   already anchor the interval) and close R2-D7 for the test part.
+None. **Answer of the maintainer (2026-11-15):** `surveytable` may be installed
+from CRAN in the 12e.4 session (`install.packages("surveytable", lib =
+Sys.getenv("R_LIBS_USER"))`); the maintainer approves the permission prompt.
+Check the call with `?surveytable::svyciprop_adjusted` and by running it, then
+write the anchor test of R2-D7 (Suggests, `skip_if_not_installed()`). If the
+install is still refused, record it and drop the test: the published NCHS rows
+remain the reference for the Korn-Graubard interval.
+
+**Also in 12e.4 (advisor):** try `Config/testthat/parallel: true` to shorten
+the full suite. Keep it only if the parallel run gives the same counts and
+no new failure or warning than the serial run; otherwise revert and record why.
 
 ## Recommended model for the next session
 
