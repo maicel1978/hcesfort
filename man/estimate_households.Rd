@@ -62,7 +62,8 @@ a median), \code{conf_level}, \code{df}, \code{n} (households in the
 domain), \code{n_missing} (households of the \code{by} domain whose value is
 missing), \code{n_effective} (\code{n} divided by the design effect, computed as
 the weighted variance of the values over the squared standard error,
-capped at \code{n}; \code{n} when \code{se} is 0; \code{NA} for a median) and
+capped at \code{n}; \code{n} when \code{se} is 0; \code{NA} for a median and for a cell
+without degrees of freedom) and
 \code{interval_note} (why the interval is missing or exact:
 \code{"degenerate_proportion"}, \code{"no_variation"}, \code{"no_degrees_of_freedom"},
 \code{"undefined_quantile_interval"}; \code{NA} otherwise). Its audit log
@@ -118,9 +119,11 @@ Degrees of freedom of the \emph{t} intervals: \code{"domain"} (by default) uses
 those of the domain, \code{survey::degf()} of the subset design, as the
 original analysis did and as \code{survey} does on a subset; \code{"design"} those
 of the full design; or a number (\code{Inf} for normal intervals). A cell
-with no degrees of freedom (a domain inside one primary sampling unit)
-keeps its estimate and standard error, has no interval, and is counted
-in the log (\code{no_degrees_of_freedom}).
+whose domain has no degrees of freedom (a domain inside one primary
+sampling unit), whatever \code{df} says, keeps its estimate and standard
+error, has no interval, \code{df} set to those of the domain (0) and
+\code{n_effective} missing (its standard error cannot be estimated), and is
+counted in the log (\code{no_degrees_of_freedom}).
 
 The option \code{survey.adjust.domain.lonely} of \code{survey} is set to \code{FALSE}
 during the estimate, whatever its global value, and written in the log

@@ -86,7 +86,7 @@ estimate_difference <- function(design, x, value, reference, by = NULL,
   log <- dplyr::bind_rows(domain_input_log(x, domain_from), log,
                           domain_log("estimate_difference", domain, d))
   new_hces_tbl(out, "hces_estimate", log,
-               c(names(a$keys), "reference", by))
+               c(names(a$keys), "reference", by, "statistic", "variable"))
 }
 
 # Abort unless `x` has scenarios and `reference` is one of them.
@@ -120,13 +120,17 @@ check_reference_scenario <- function(x, reference, call = rlang::caller_env()) {
 #' @param max_half_width Largest half-width of the interval, in the unit of
 #'   the estimate.
 #' @returns `estimates` with two columns. `low_precision`: `TRUE` when `n`
-#'   is below `min_n` or the half-width of the interval above
-#'   `max_half_width`. `precision_status`: the first rule that applies, in
+#'   is below `min_n`, the half-width of the interval above
+#'   `max_half_width`, or the status is `"no_interval"`.
+#'   `precision_status`: the first rule that applies, in
 #'   this order: `"small_cell"` (`n < min_n`), `"exact"` (every household
 #'   of the cell has the same value, so there is no interval: the
 #'   `interval_note` `"no_variation"` or `"degenerate_proportion"`, or
 #'   `se == 0` for a table without that column; a standard error of 0 under
 #'   `lonely_psu = "certainty"` with values that vary is not exact),
+#'   `"no_interval"` (the values vary but the interval cannot be computed:
+#'   the `interval_note` `"no_degrees_of_freedom"` or
+#'   `"undefined_quantile_interval"`),
 #'   `"wide_interval"` (half-width above `max_half_width`) or `"ok"`; `NA`
 #'   for a missing estimate with `n` at least `min_n`. Detection only: a
 #'   report decides what each status does (suppress, a sentence, a mark).
@@ -155,9 +159,11 @@ flag_precision <- function(estimates, min_n, max_half_width) {
   check_one_number(max_half_width, "max_half_width", lower = 0)
   half <- (x$ci_high - x$ci_low) / 2
   out <- dplyr::as_tibble(x)
-  out$low_precision <- x$n < min_n | (!is.na(half) & half > max_half_width)
   out$precision_status <- precision_status(x, half, min_n, max_half_width)
-  rule <- paste0("n < ", min_n, " or half-width > ", max_half_width)
+  out$low_precision <- x$n < min_n | (!is.na(half) & half > max_half_width) |
+    out$precision_status %in% "no_interval"
+  rule <- paste0("n < ", min_n, ", half-width > ", max_half_width,
+                 " or no interval")
   log <- dplyr::bind_rows(
     audit_row("flag_precision", "estimate", "flagged", "low_precision",
               sum(out$low_precision), detail = rule),
@@ -170,6 +176,7 @@ flag_precision <- function(estimates, min_n, max_half_width) {
 precision_status <- function(x, half, min_n, max_half_width) {
   status <- ifelse(is.na(x$estimate), NA_character_, "ok")
   status[!is.na(half) & half > max_half_width] <- "wide_interval"
+  status[no_interval(x)] <- "no_interval"
   status[no_variation(x)] <- "exact"
   status[x$n < min_n] <- "small_cell"
   status
@@ -185,9 +192,17 @@ no_variation <- function(x) {
   x[["se"]] %in% 0
 }
 
+# TRUE for the estimates without an interval for want of degrees of
+# freedom or of a quantile interval (`interval_note` of the estimators;
+# P204). FALSE for a table without that column.
+no_interval <- function(x) {
+  x[["interval_note"]] %in% c("no_degrees_of_freedom",
+                              "undefined_quantile_interval")
+}
+
 # Audit rows: one per precision status other than "ok" that occurs.
 precision_log <- function(status) {
-  causes <- c("small_cell", "exact", "wide_interval")
+  causes <- c("small_cell", "exact", "no_interval", "wide_interval")
   dplyr::bind_rows(lapply(causes, function(cause) {
     n <- sum(status %in% cause)
     if (n == 0) return(NULL)

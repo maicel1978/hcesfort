@@ -115,3 +115,28 @@ test_that("an estimate is unchanged when no row changed", {
   e <- estimate_households(d, es_result(), "intake", statistic = "mean")
   expect_false("external_change" %in% audit_log(e)$kind)
 })
+
+test_that("estimates of two variables or statistics can be stacked (P201)", {
+  # The key of an estimate holds `statistic` and `variable` (finding V1.1
+  # of the review of 12e): stacking is the ordinary way to build one table
+  # of results; a true repeat is still refused.
+  d <- es_design()
+  x <- es_result()
+  x$p2 <- x$p
+  ea <- estimate_households(d, x, "p", ci_method = "korn_graubard")
+  eb <- estimate_households(d, x, "p2", ci_method = "korn_graubard")
+  ec <- estimate_households(d, x, "p", statistic = "mean")
+  f <- flag_presentation(dplyr::bind_rows(ea, eb))
+  expect_identical(nrow(f), 4L)
+  expect_identical(f$variable, rep(c("p", "p2"), each = 2))
+  g <- flag_precision(dplyr::bind_rows(ea, ec), min_n = 1,
+                      max_half_width = 1)
+  expect_identical(g$statistic, rep(c("proportion", "mean"), each = 2))
+  da <- estimate_difference(d, x, "p", reference = "base")
+  db <- estimate_difference(d, x, "intake", reference = "base")
+  expect_identical(nrow(flag_precision(dplyr::bind_rows(da, db), 1, 1)), 2L)
+  err <- expect_error(flag_presentation(dplyr::bind_rows(ea, ea)),
+                      class = "hcesfort_error_key")
+  expect_identical(err$columns, c("scenario", "statistic", "variable"))
+  expect_identical(err$rows, 3:4)
+})

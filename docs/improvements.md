@@ -1009,10 +1009,26 @@ The maintainer approved the nine decisions of section 7 of
 | P186 | low | **Energy per 100 g has no upper bound** in the composition contract (finding 14 cited 2000 kcal per 100 g). An identity bound needs the largest energy factor of a food component, with its source. | `check_crosswalk()` with ranges of the caller is the only check. | v0.2, with a source |
 | P187 | low | **`food_group_shares()` and `estimate_unlinked()`** run under the same fixed `survey.adjust.domain.lonely = FALSE` (they use `with_lonely_psu()`), but their logs do not write the note `adjust_domain_lonely` nor count `psu_in_several_strata`, and their tables have no `interval_note` (`flag_precision()` falls back to `se == 0` for them, which there means a share of 0 or 1). | One log rule for every estimator. | 12 |
 
+## Decisions (2026-11-16, design of the ENGIH adapter)
+
+The maintainer answered the eight decisions of section 9 of
+`docs/design-adapter-engih.md`: all as recommended, except decision 2.
+
+| # | Decision |
+|---|---|
+| A-D1 | The companion repository is an R package. |
+| A-D2 | A1 is run now by the maintainer. The branch of the export script is **not** merged into `main` of `analisis_ENGIH2018` (the delivered consultancy work stays as delivered): the maintainer runs it from `claude/intelligent-cori-3aev98` and pushes the aggregated tables of `etapas/` to that branch. The script moves to the companion repository when it is created. |
+| A-D3 | Download addresses: the maintainer copies them once into the registry. |
+| A-D4 | `fortifiable` is `FALSE` only for own production (`QUIEN_PAGO1` = 2). |
+| A-D5 | `PORCENTAJE_HOGAR` is used in the corrected analysis (step 2), old and new figures in `NEWS.md`. |
+| A-D6 | Non-food codes are dropped by the adapter, with a count. |
+| A-D7 | The original outlier rule is kept; a sensitivity run is reported. |
+| A-D8 | Vehicle coverage in the corrected analysis is `acquired`; both figures in `NEWS.md`. |
+
 ## Open items from the design of the ENGIH adapter (2026-11-16)
 
-Design: `docs/design-adapter-engih.md`. Its eight decisions (section 9) wait
-for the maintainer. New errors of the original analysis are E27 to E29 of
+Design: `docs/design-adapter-engih.md`. Its eight decisions (section 9)
+were answered on 2026-11-16 (section above). New errors of the original analysis are E27 to E29 of
 `docs/analysis-map.md`, section 10.
 
 | Id | Priority | Item | Why | Task |
@@ -1041,9 +1057,9 @@ sensitivity by days (V3.2; P182). See the questions in `docs/handoff.md`.
 
 | Id | Priority | Item | Why | Task |
 |---|---|---|---|---|
-| P201 | high | **Stacked estimate tables are refused by `flag_presentation()` and `flag_precision()`** (V1.1): the key of an `hces_estimate` is the group columns and `by`, without `variable` and `statistic`, and since 12e.1 `require_hces()` checks it. `dplyr::bind_rows()` of the estimates of two variables or two statistics is an `hcesfort_error_key`; before 12e.1 it worked. Add `variable` and `statistic` to the key in `estimate_households()` and `estimate_difference()` (the keys of `estimate_unlinked()` and `food_group_shares()` already hold `variable`), with a test. | A change of behaviour that no approval covers; an adapter builds one table of results this way. | before A2 (Opus, one small commit) |
+| P201 | high | **Stacked estimate tables are refused by `flag_presentation()` and `flag_precision()`** (V1.1): the key of an `hces_estimate` is the group columns and `by`, without `variable` and `statistic`, and since 12e.1 `require_hces()` checks it. `dplyr::bind_rows()` of the estimates of two variables or two statistics is an `hcesfort_error_key`; before 12e.1 it worked. Add `variable` and `statistic` to the key in `estimate_households()` and `estimate_difference()` (the keys of `estimate_unlinked()` and `food_group_shares()` already hold `variable`), with a test. | A change of behaviour that no approval covers; an adapter builds one table of results this way. | before A2 (Opus, one small commit). **Done 2026-11-16**: `statistic` and `variable` in the key of both estimators; test in `test-carrier-key.R` (two variables, two statistics, two differences, and a true repeat still refused). |
 | P202 | low | **The range check of a proportion reads the rows outside `domain`** (V1.2): check the aligned values, not the whole column. | An error for rows that are not estimated. | 12 |
 | P203 | low | **Test gaps of 12e.1 and 12e.2** (V2.1 and the tests of 12e.1): the key test through `dplyr::bind_rows()` and a fanning `left_join()`, not only the helper that copies attributes; the 11 call sites of `require_hces()` not in the chain test; the FAO examples with the BMR rounded to 0.1 MJ, within 1 kcal (the 1% tolerance does not separate the two adult bands in the first example); `shipped_results()` leaves the working directory in the knit folder for the rest of `test-report-results.R`. | Each is a way for a later change to pass unseen. | 12 |
-| P204 | medium | **Cells without degrees of freedom** (V4.2, V4.3): `no_degrees_of_freedom` is decided on the argument `df`, so with `df = "design"` or a number a domain inside one PSU returns an interval of width zero and no note; decide it on `survey::degf()` of the domain. `flag_precision()` returns `ok` for a cell without an interval (`no_degrees_of_freedom`, `undefined_quantile_interval`): a status `no_interval`, low precision; `n_effective` missing where the standard error cannot be estimated. | Findings 11 and 12 of the review v0.2 remain open under the option the ENGIH acceptance uses. | before A3 (Opus), with P201 or P184 |
+| P204 | medium | **Cells without degrees of freedom** (V4.2, V4.3): `no_degrees_of_freedom` is decided on the argument `df`, so with `df = "design"` or a number a domain inside one PSU returns an interval of width zero and no note; decide it on `survey::degf()` of the domain. `flag_precision()` returns `ok` for a cell without an interval (`no_degrees_of_freedom`, `undefined_quantile_interval`): a status `no_interval`, low precision; `n_effective` missing where the standard error cannot be estimated. | Findings 11 and 12 of the review v0.2 remain open under the option the ENGIH acceptance uses. | before A3 (Opus), with P201 or P184. **Done 2026-11-16**: decided on `survey::degf()` of the domain whatever `df` says; such a cell reports the `df` of the domain (0) so that `flag_presentation()` sends it to review (`degrees_of_freedom`) under any `df`; `n_effective` missing; `flag_precision()` status `no_interval`, low precision, logged. Tests in `test-estimate-intervals.R`. P184 (a mean without variation is `present`) stays open. |
 | P205 | low | **An anchor for the effective size** (V4.1): `n / survey::deff(survey::svymean(~y, d, deff = "replace")) * (n - 1) / n`, which agreed in five cells in the review. Today the package, the golden script and the "by hand" test hold the same expression. | The only estimator of 12e.4 without a reference outside the project. | 12 |
 | P206 | low | **The contract of `age_months`** (V4.4): the schema says "age in months, for infants"; since 12e.4 the validator requires the total months since birth for every member (`age_years = 3` with `age_months = 5` is an error). Say so in `hces_schema("members")` and in `?validate_members`. | An adapter with "years and remaining months" meets the rule only as an error. | 12e.5.1 (the step touches `age_months`) or 12 |

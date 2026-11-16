@@ -487,6 +487,21 @@
 * The results report states under the risk exhibits (R0, section 2 and the
   effect of each scenario) that the shares are of apparent, not usual,
   intake, in English and Spanish.
+* Estimates of several variables or statistics can be stacked with
+  `dplyr::bind_rows()` and passed to `flag_presentation()` or
+  `flag_precision()` again: the key of the tables of
+  `estimate_households()` and `estimate_difference()` now holds
+  `statistic` and `variable` (since the key check of 12e.1 they were
+  refused as repeated keys).
+* A cell whose domain has no degrees of freedom (inside one primary
+  sampling unit) has no interval whatever `df` says; with `df = "design"`
+  or a number it had an interval of width zero and no note. Its `df` is
+  that of the domain (0) and its `n_effective` is missing: its standard
+  error cannot be estimated. `flag_precision()` gives such a cell, and a
+  median whose interval is undefined, the status `no_interval` and
+  `low_precision = TRUE` (it said `ok`); `flag_presentation()` sends it to
+  review for its degrees of freedom. On `hces_example` and the test
+  fixture no figure changes.
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is

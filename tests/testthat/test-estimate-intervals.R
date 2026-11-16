@@ -69,6 +69,77 @@ test_that("a domain inside one PSU: no interval, no warning (P166)", {
   expect_equal(e$estimate, c(26 / 4, 29 / 4), tolerance = 1e-12)
 })
 
+test_that("no degrees of freedom is decided on the domain (P204)", {
+  # Households 3 and 4 form PSU 2 of stratum 1: the domain has no degrees
+  # of freedom whatever `df` asks for (finding V4.2 of the review of 12e);
+  # its standard error cannot be estimated, so n_effective is missing.
+  r <- es_result()
+  r$one_psu <- rep(1:8 %in% 3:4, 2)
+  for (dfa in list("domain", "design", 30, Inf)) {
+    for (stat in c("proportion", "mean")) {
+      value <- if (stat == "proportion") "p" else "intake"
+      e <- estimate_households(es_design(), r, value, statistic = stat,
+                               domain = "one_psu", df = dfa,
+                               ci_method = "korn_graubard")
+      expect_true(all(is.na(c(e$ci_low, e$ci_high))))
+      expect_identical(e$interval_note, rep("no_degrees_of_freedom", 2))
+      expect_identical(log_n(e, "no_degrees_of_freedom"), 2L)
+      expect_equal(e$df, c(0, 0))
+      expect_identical(e$n_effective, c(NA_real_, NA_real_))
+    }
+  }
+  # The full design has 2 degrees of freedom (4 PSUs, 2 strata): `df`
+  # still chooses the quantile where the domain has degrees of freedom.
+  e <- estimate_households(es_design(), r, "intake", statistic = "mean",
+                           df = "design")
+  expect_equal(e$df, c(2, 2))
+  expect_identical(e$interval_note, c(NA_character_, NA_character_))
+})
+
+test_that("a cell without an interval is low precision (P204)", {
+  r <- es_result()
+  r$one_psu <- rep(1:8 %in% 3:4, 2)
+  e <- estimate_households(es_design(), r, "p", domain = "one_psu",
+                           df = "design", ci_method = "korn_graubard")
+  f <- flag_precision(e, min_n = 1, max_half_width = 1)
+  expect_identical(f$precision_status, rep("no_interval", 2))
+  expect_identical(f$low_precision, c(TRUE, TRUE))
+  expect_identical(log_n(f, "no_interval"), 2L)
+  # flag_presentation(): 40 households of PSU 1 of a design of 10 PSUs in
+  # one stratum (9 degrees of freedom, above the 8 of the standard),
+  # enough for the sample size; the cell goes to review for its 0 degrees
+  # of freedom, not presented.
+  h <- data.frame(household_id = 1:400, weight = 1, stratum = 1,
+                  psu = rep(1:10, each = 40))
+  x <- new_hces_tbl(
+    data.frame(household_id = 1:400, p = rep(c(0.2, 0.6), 200),
+               in_psu1 = h$psu == 1),
+    "hces_inadequacy", key = "household_id"
+  )
+  e <- estimate_households(as_hces_design(h, "adjust"), x, "p",
+                           domain = "in_psu1", df = "design",
+                           ci_method = "korn_graubard")
+  expect_identical(e$n, 40L)
+  p <- flag_presentation(e)
+  expect_identical(p$presentation_reason, "degrees_of_freedom")
+  expect_identical(p$presentation, "review")
+  # A small cell is small first; a median whose interval is undefined has
+  # no interval; a cell without variation is exact, not no_interval.
+  t <- new_hces_tbl(
+    data.frame(group = letters[1:4], n = c(2L, 6L, 6L, 6L),
+               estimate = c(0.5, 3, 4, 0.5), se = c(0.1, NA, 0, 0.1),
+               ci_low = c(NA, NA, NA, 0.3), ci_high = c(NA, NA, NA, 0.7),
+               interval_note = c("no_degrees_of_freedom",
+                                 "undefined_quantile_interval",
+                                 "no_variation", NA)),
+    "hces_estimate", key = "group"
+  )
+  f <- flag_precision(t, min_n = 4, max_half_width = 0.4)
+  expect_identical(f$precision_status,
+                   c("small_cell", "no_interval", "exact", "ok"))
+  expect_identical(f$low_precision, c(TRUE, TRUE, FALSE, FALSE))
+})
+
 test_that("se 0 under certainty with values that vary is not exact", {
   h <- es_households()
   h$psu <- h$stratum

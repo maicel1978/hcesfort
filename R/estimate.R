@@ -46,9 +46,11 @@
 #' those of the domain, `survey::degf()` of the subset design, as the
 #' original analysis did and as `survey` does on a subset; `"design"` those
 #' of the full design; or a number (`Inf` for normal intervals). A cell
-#' with no degrees of freedom (a domain inside one primary sampling unit)
-#' keeps its estimate and standard error, has no interval, and is counted
-#' in the log (`no_degrees_of_freedom`).
+#' whose domain has no degrees of freedom (a domain inside one primary
+#' sampling unit), whatever `df` says, keeps its estimate and standard
+#' error, has no interval, `df` set to those of the domain (0) and
+#' `n_effective` missing (its standard error cannot be estimated), and is
+#' counted in the log (`no_degrees_of_freedom`).
 #'
 #' The option `survey.adjust.domain.lonely` of `survey` is set to `FALSE`
 #' during the estimate, whatever its global value, and written in the log
@@ -89,7 +91,8 @@
 #'   domain), `n_missing` (households of the `by` domain whose value is
 #'   missing), `n_effective` (`n` divided by the design effect, computed as
 #'   the weighted variance of the values over the squared standard error,
-#'   capped at `n`; `n` when `se` is 0; `NA` for a median) and
+#'   capped at `n`; `n` when `se` is 0; `NA` for a median and for a cell
+#'   without degrees of freedom) and
 #'   `interval_note` (why the interval is missing or exact:
 #'   `"degenerate_proportion"`, `"no_variation"`, `"no_degrees_of_freedom"`,
 #'   `"undefined_quantile_interval"`; `NA` otherwise). Its audit log
@@ -137,7 +140,8 @@ estimate_households <- function(design, x, value, statistic = "proportion",
                       ci_method, df, out)
   log <- dplyr::bind_rows(domain_input_log(x, domain_from), log,
                           domain_log("estimate_households", domain, d))
-  new_hces_tbl(out, "hces_estimate", log, c(names(a$keys), by))
+  new_hces_tbl(out, "hces_estimate", log,
+               c(names(a$keys), by, "statistic", "variable"))
 }
 
 # One estimate on the design: `y` the values of the households (NA outside
@@ -158,10 +162,13 @@ estimate_cell <- function(design, y, mask, statistic, ci_method, level,
                        n_missing = sum(mask & !inside),
                        n_effective = NA_real_, interval_note = NA_character_)
   if (n == 0) return(row)
-  r <- cell_result(sub, y[inside], statistic, ci_method, level, dfv, n)
+  dom <- if (identical(df, "domain")) dfv else survey::degf(sub)
+  r <- cell_result(sub, y[inside], statistic, ci_method, level, dfv, dom, n)
   row[c("estimate", "se", "ci_low", "ci_high")] <- as.list(unname(r$values))
   row$interval_note <- r$note
-  if (statistic != "median") {
+  if (identical(r$note, "no_degrees_of_freedom")) {
+    row$df <- dom
+  } else if (statistic != "median") {
     row$n_effective <- effective_n(sub, r$values[[2]], n)
   }
   row
@@ -169,9 +176,10 @@ estimate_cell <- function(design, y, mask, statistic, ci_method, level,
 
 # Estimate, SE, limits and the note on the interval of one cell with
 # households: no interval without variation (P165) or without degrees of
-# freedom (P166); `undefined_quantile_interval` for a median whose
-# interval survey cannot compute.
-cell_result <- function(sub, v, statistic, ci_method, level, dfv, n) {
+# freedom in the domain (`dom`, whatever `dfv` says; P166, P204);
+# `undefined_quantile_interval` for a median whose interval survey cannot
+# compute.
+cell_result <- function(sub, v, statistic, ci_method, level, dfv, dom, n) {
   if (all(v == v[[1]])) {
     if (statistic == "proportion" && v[[1]] %in% c(0, 1)) {
       return(list(values = degenerate_values(v[[1]], n, ci_method, level),
@@ -180,7 +188,7 @@ cell_result <- function(sub, v, statistic, ci_method, level, dfv, n) {
     return(list(values = c(v[[1]], 0, NA_real_, NA_real_),
                 note = "no_variation"))
   }
-  if (dfv <= 0) {
+  if (dom <= 0) {
     r <- cell_values(sub, statistic, ci_method, level, Inf, n)
     r[3:4] <- NA_real_
     return(list(values = r, note = "no_degrees_of_freedom"))
