@@ -44,6 +44,12 @@ without it); P210 with the coverage exhibit; then the self-review of
 
 None.
 
+**Maintainer decision on P213 (2026-11-16):** no limit on the number of
+states for now; a fixed threshold would be a hidden default. The question
+goes to the short review `docs/review-12e5-states-brief.md` (Fable, a
+separate session), which recommends whether the audit log reporting the
+number of states is enough.
+
 ## Recommended model for the next session
 
 **Opus, high effort** (12e.5.8).
