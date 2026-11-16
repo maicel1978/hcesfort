@@ -433,3 +433,48 @@ of the original:
 
 The presentations and `_mapas_cobertura.qmd` repeat the figures and caveats of
 the reports and add no method.
+
+## 10. Third reading: the design of the adapter (2026-11-16)
+
+From `docs/design-adapter-engih.md`, which read the scripts again against
+the parameter workbooks and the control files (same commit). Sizes below
+come from those files; none needed the microdata.
+
+New:
+
+- **E27 (A, confirmed in the parameter files). Vehicle foods without a
+  composition match are missing from coverage and from every scenario.**
+  `06:74-78` takes its records from `data_gramos_por_ema.csv`, which holds
+  only records with an edible portion, that is, with a validated match.
+  The patterns of `vehiculos_escenarios.csv` select 75 foods; 37 have no
+  validated match: 1,284 of the 36,352 records of wheat products (3.5%),
+  and 653 of the 1,338 of pastry. Rice and sugar are complete.
+- **E28 (B). A household is a consumer of a vehicle when its grams are
+  above zero** (`06:104`, `anexo_harina_maiz.R`): a record without unit
+  factor, or a Section 2 row with nothing consumed from the stock, is
+  non-consumption. **[needs microdata]** for the size.
+- **E29 (B, declared in the manual of the original).** `PORCENTAJE_HOGAR`,
+  the destination columns and `QUIEN_PAGO1` of Section 3A are read and
+  discarded (`01:406-418`): a shared acquisition, or one destined to a
+  business, enters whole, and own production cannot be told from a
+  purchase. **[needs microdata]**
+
+Amended:
+
+- **E24.** The intervals do not use "the degrees of freedom of the
+  corresponding subdesign", as the feasibility report says: every one of
+  the 800 rows of `riesgo_inadecuacion.csv` has the 925 of the whole
+  design (`srvyr` takes them from the design, not from the group).
+- **E2.** The parameter workbook counts the records in dozens: 12 in
+  Section 3A and 1 in Section 2.
+- **E3.** "Usually none" is exactly none: the Section 3A edible-portion
+  table has the 407 foods with a validated match and no other.
+- **E17.** The Section 2 join by composition id cannot fan out with the
+  versioned tables (30 ids, all different).
+- Section 3, unit priority: no record has both a generic and a food
+  factor in the versioned workbook, so the priority decides nothing.
+- Section 6, hard-coded values: the title row of the FNDDS workbook reads
+  "2017-2018".
+- Step 9 of section 2: `n_distinct()` counts a missing day as a day
+  (`01:437`). **[needs microdata]** for whether any day is missing.
+

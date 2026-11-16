@@ -114,7 +114,8 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
     - [ ] 12e.5.8 Specification, `NEWS.md`, coverage exhibit with both coverages, self-review.
 
 ## v0.1, companion repository `hcesfort.engih2018`: ENGIH 2018 adapter (needs the microdata)
-- [ ] A1. Stage-level control figures exported from the original pipeline (record counts by section and drop cause, grams by section, AFE distribution, median intake per nutrient), md5 of the microdata, and the three checks left open on E4 (energy of Sec 3A alone by days with a record, upper tail by days, the eighth day) plus the number of records in dozens (E2). Run by the maintainer when the microdata are at hand.
+- [ ] A0. Design of the adapter and of the acceptance test: `docs/design-adapter-engih.md` (Fable, 2026-11-16), from `docs/adapter-design-brief.md`. Written; its eight decisions (section 9) wait for approval. No package code.
+- [ ] A1. Stage-level control figures exported from the original pipeline (record counts by section and drop cause, grams by section, AFE distribution, median intake per nutrient), md5 of the microdata, and the three checks left open on E4 (energy of Sec 3A alone by days with a record, upper tail by days, the eighth day) plus the number of records in dozens (E2). Run by the maintainer when the microdata are at hand: first the md5 and a rerun of the original chain, then `scripts/exportar_cifras_etapas.R` of `analisis_ENGIH2018` (design, section 2).
 - [ ] A2. Thin adapter: ENGIH files → standard tables that pass the contracts of task 2. Start right after task 2 so the contracts meet a real survey early.
 - [ ] A3. Acceptance step 1: reproduce the control figures with the original choices as explicit options (tolerance 1e-6).
 - [ ] A4. Acceptance step 2: correct each erroneous default, one per commit, old and new figures in `NEWS.md`.

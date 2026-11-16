@@ -88,3 +88,50 @@ None.
    read.csv(system.file("report/es/terms.csv", package = "hcesfort"))[
      c(159, 217), "label"]
    ```
+
+## Design of the ENGIH adapter (2026-11-16, Fable; a separate session)
+
+This section does not change the next step above (12e.5.1, Opus).
+
+- **Done:** `docs/design-adapter-engih.md` (mapping, A1 export, step 1
+  options and tolerances, step 2 with expected directions, download,
+  companion repository, external anchor); items P188 to P200; errors E27
+  to E29 and amendments in `docs/analysis-map.md`, section 10; A0 in the
+  roadmap. In `analisis_ENGIH2018`, branch `claude/intelligent-cori-3aev98`:
+  `scripts/exportar_cifras_etapas.R` (run only on invented stand-ins).
+- **Waiting for the maintainer:** the eight decisions of section 9 of the
+  design; A1 (decision 2), which needs the microdata and nothing from the
+  package.
+- **Next for the adapter, after approval and after 12e.5.3:** A2 in the
+  companion repository (Opus), from sections 1, 6 and 7 of the design.
+  P188 (one sentence of help, Sonnet) before A3.
+- **Network:** `www.bancentral.gov.do` is outside the environment; the
+  page of the microdata was not opened.
+
+Review points of the design:
+
+1. **Every interval of the control figures has 925 degrees of freedom**
+   (in `analisis_ENGIH2018`):
+
+   ```r
+   r <- read.csv2("data/auditoria/cifras_control/riesgo_inadecuacion.csv",
+                  dec = ".")
+   t <- r$semiamplitud_ic / (r$cv * r$pct_inadecuado)
+   range(t); qt(0.975, 925)
+   ```
+
+2. **The 37 vehicle foods without a validated match (E27)**: the table of
+   section 0, finding 3. In `analisis_ENGIH2018`:
+
+   ```r
+   x <- readxl::read_excel("data/raw/crosswalk_tablas_composicion.xlsx",
+                           sheet = "Cuest. B Sec 3A")
+   d <- iconv(tolower(x$descripcion_engih), to = "ASCII//TRANSLIT")
+   pastry <- grepl("^bizcocho|^pan dulce|^donas?|^masitas", d)
+   tapply(x$freq_registros[pastry], as.logical(x$validado[pastry]), sum)
+   ```
+
+3. **The expected directions of step 2** (design, section 5): read the
+   column "A surprise is" before any corrected figure exists; say now if
+   one of them is wrong.
+
