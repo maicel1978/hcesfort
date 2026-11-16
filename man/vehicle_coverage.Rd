@@ -129,7 +129,7 @@ afe <- adult_equivalents(
   infant_food_share = 1, pregnancy_kcal = 0, lactation_kcal = 0
 )
 use <- vehicle_coverage(grams, hces_example$vehicles, afe,
-                        hces_example$households,
+                        hces_example$households, fortifiable = "use",
                         combine = list(any = c("wheat_flour", "sugar")))
 table(use$vehicle, use$acquired, useNA = "ifany")
 }

@@ -23,13 +23,16 @@ as_registry <- function() {
                       vitamin_a = "ug_rae"))
 }
 
-as_pipeline <- function(scale = 1, baseline = TRUE) {
+# `fortifiable`: NULL, or the column `fortifiable` of the three records
+# (then vehicle_coverage(fortifiable = "use")).
+as_pipeline <- function(scale = 1, baseline = TRUE, fortifiable = NULL) {
   a <- data.frame(
     record_id = 1:3, household_id = c(1, 1, 2),
     food_code = c("flour", "sugar", "flour"),
     quantity = c(200, 40, 50) * scale, unit = "g", section = "diary",
     period_days = 1, include = TRUE
   )
+  a$fortifiable <- fortifiable
   f <- data.frame(unit = "g", factor = 1, factor_type = "mass_g",
                   source = "test fixture")
   cw <- data.frame(food_code = c("flour", "sugar"),
@@ -53,7 +56,8 @@ as_pipeline <- function(scale = 1, baseline = TRUE) {
   g <- convert_units(a, f, priority = "food")
   content <- link_composition(g, cw, comp, as_registry())
   list(intake = apparent_intake(content, afe, h),
-       use = vehicle_coverage(g, v, afe, h))
+       use = vehicle_coverage(g, v, afe, h,
+                              fortifiable = if (!is.null(fortifiable)) "use"))
 }
 
 as_scenarios <- function() {

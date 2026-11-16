@@ -16,7 +16,8 @@ example_chain <- function() {
   )
   intake <- apparent_intake(link_composition(g, e$crosswalk, b), afe,
                             e$households)
-  use <- vehicle_coverage(g, e$vehicles, afe, e$households)
+  use <- vehicle_coverage(g, e$vehicles, afe, e$households,
+                          fortifiable = "use")
   s <- apply_scenario(intake, use, e$scenarios,
                       compliance_model = "average_content")
   iron <- ref_iron_requirements

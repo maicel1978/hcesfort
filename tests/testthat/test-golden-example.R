@@ -18,7 +18,10 @@ golden_chain <- function(ex = hces_fixture()) {
   )
   intake <- apparent_intake(link_composition(g, ex$crosswalk, b), afe,
                             ex$households)
-  use <- vehicle_coverage(g, ex$vehicles, afe, ex$households)
+  use <- vehicle_coverage(
+    g, ex$vehicles, afe, ex$households,
+    fortifiable = if (!is.null(ex$acquisitions$fortifiable)) "use"
+  )
   s <- apply_scenario(intake, use, ex$scenarios,
                       compliance_model = "average_content")
   iron <- hcesfort::ref_iron_requirements
@@ -78,6 +81,7 @@ golden_got <- function(ch, cfg) {
       sum(ch$intake$n_records_included),
     stats::setNames(colMeans(est[ch$cols]), paste0("mean_", ch$cols)),
     mean_vehicle_g_d = mean(vehicle$qty_vehicle_g_d),
+    mean_fortifiable_g_d = mean(vehicle$qty_fortifiable_g_d),
     mean_folate_added_two = mean(two$folate_ug_dfe_added),
     mean_vitamin_a_two = mean(two$vitamin_a_ug_rae),
     n_above_folic_acid_ul_two = sum(folic$above_ul_added, na.rm = TRUE),
@@ -117,7 +121,7 @@ test_that("the chain reaches the optional columns (P169)", {
   plain <- read("golden-fixture.csv")
   opt <- read("golden-optional.csv")
   for (nm in c("afe_sum", "mean_iron_mg", "mean_vehicle_g_d",
-               "se_folate_baseline")) {
+               "mean_fortifiable_g_d", "se_folate_baseline")) {
     expect_false(isTRUE(all.equal(plain$value[plain$name == nm],
                                   opt$value[opt$name == nm])), label = nm)
   }

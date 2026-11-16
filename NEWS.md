@@ -539,6 +539,31 @@
   (`fortifiable_unknown`); the log counts the records not fortifiable and
   the households that acquired a vehicle only in a form that is not. On
   tables without the column the new columns equal the old ones.
+* `apply_scenario()` adds the fortificant only to the fortifiable grams
+  (`qty_fortifiable_g_d` of `vehicle_coverage()`): a vehicle of own
+  production or home processing gets nothing (P159, R3-D5). `compliance`
+  is now the share of the fortifiable vehicle that is fortified. The log
+  notes, per vehicle, the fortifiable share of the grams of the estimated
+  households (`fortifiable_share`). A `use` table built before this
+  version is an `hcesfort_error_schema`. `who2009_levels()` uses the
+  fortifiable flour (`qty_fortifiable_g_d_pc`), as WHO (2009) sets its
+  levels on fortifiable flour.
+* `hces_example$acquisitions` gains `fortifiable` (`FALSE` for own
+  production, 2,544 of 44,942 records); the optional test fixture gains it
+  for the wheat flour of every third household. Every call of
+  `vehicle_coverage()` on them passes `fortifiable = "use"`; the report
+  template has the choice `fortifiable_choice`. The baseline does not
+  move; the scenarios do. Golden values of `hces_example`, before and
+  after: folate added by `plus_oil`, mean 729.85 to 690.14 ug DFE per AFE;
+  vitamin A under `plus_oil` 867.79 to 841.47 ug RAE; the difference in
+  the share below the folate EAR under `wheat_flour` -0.2247 (SE 0.0094)
+  to -0.2101 (SE 0.0095); households above the folic acid UL unchanged.
+  New golden value: mean fortifiable wheat flour 21.17 g per AFE per day.
+  In the results report on `hces_example`, the share below the
+  requirement under the wheat flour scenario becomes 67.2% (was 66.3%)
+  for iron, 25.5% (24.1%) for zinc and 13.1% (11.6%) for folate; with
+  every vehicle, folate 1.8% (0.4%) and vitamin A 15.9% (11.7%). The
+  shares without fortification do not change.
 * The contract of `age_months` says what the validator checks since 12e.4:
   the total months since birth (P206).
 * Corrections to the original ENGIH 2018 analysis will be recorded in this

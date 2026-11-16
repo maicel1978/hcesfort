@@ -24,10 +24,16 @@
 #' total is updated too. Losses in storage and cooking are not applied.
 #'
 #' Added per household, scenario and nutrient: the sum over the scenario's
-#' vehicles of `qty_vehicle_g_d` (from [vehicle_coverage()]) times the
-#' amount per 100 g, divided by 100. `compliance` enters under the model
-#' named by `compliance_model`; v0.1 offers `"average_content"`: every gram
-#' of vehicle carries `compliance` times the level. The argument has no
+#' vehicles of `qty_fortifiable_g_d` (from [vehicle_coverage()]: the grams
+#' of the vehicle that could have been fortified, all of them unless the
+#' acquisitions say otherwise) times the amount per 100 g, divided by 100.
+#' A vehicle of own production or home processing gets nothing. The log
+#' notes, per vehicle, the fortifiable grams over the vehicle grams of the
+#' estimated households (`fortifiable_share`, unweighted). `compliance`
+#' is the share of the fortifiable vehicle that is fortified; it enters
+#' under the model named by `compliance_model`; v0.1 offers
+#' `"average_content"`: every fortifiable gram carries `compliance` times
+#' the level. The argument has no
 #' default and is required whenever a compliance is below 1. Average
 #' content gives the right mean but understates the share of households
 #' above an upper level, since no household receives the full level:
@@ -42,7 +48,8 @@
 #' @param intake Table returned by [apparent_intake()] on a baseline
 #'   composition.
 #' @param use Table returned by [vehicle_coverage()] for the same
-#'   households.
+#'   households (by this version: a table without `qty_fortifiable_g_d` is
+#'   an `hcesfort_error_schema`).
 #' @param scenarios Scenarios table ([hces_schema()]`("scenarios")`),
 #'   validated or not. Every `vehicle` must be a vehicle of `use`.
 #' @param conversions Conversions table, by default [ref_conversions].
@@ -71,7 +78,7 @@
 #' )
 #' intake <- apparent_intake(content, afe, hces_example$households)
 #' use <- vehicle_coverage(grams, hces_example$vehicles, afe,
-#'                         hces_example$households)
+#'                         hces_example$households, fortifiable = "use")
 #' s <- apply_scenario(intake, use, hces_example$scenarios,
 #'                     compliance_model = "average_content")
 #' tapply(s$iron_mg, s$scenario, mean, na.rm = TRUE)
@@ -90,6 +97,7 @@ apply_scenario <- function(intake, use, scenarios,
   check_conversions(conversions)
   check_scenario_args(s, compliance_model, baseline_label)
   check_scenario_use(x, use, s)
+  check_use_fortifiable(use)
   targets <- scenario_targets(s, nutrients, conversions)
   names_s <- c(baseline_label, unique(s$scenario))
   added_cols <- unique(targets$column)
@@ -98,7 +106,8 @@ apply_scenario <- function(intake, use, scenarios,
                   added_cols)
   }))
   log <- scenario_log(x, use, s, out, names_s, added_cols, compliance_model)
-  log <- dplyr::bind_rows(audit_combine(x, use, s), log)
+  log <- dplyr::bind_rows(audit_combine(x, use, s), log,
+                          fortifiable_share_log(use, s))
   new_hces_tbl(out, "hces_scenario_intake", log,
                c("scenario", "household_id"), nutrients)
 }
@@ -109,8 +118,9 @@ apply_scenario <- function(intake, use, scenarios,
 scenario_rows <- function(x, use, rows, name, added_cols) {
   vu <- use[use$level == "vehicle", ]
   qty <- function(vehicle) {
-    vu$qty_vehicle_g_d[match(paste(x$household_id, vehicle, sep = "\r"),
-                             paste(vu$household_id, vu$vehicle, sep = "\r"))]
+    key <- paste(vu$household_id, vu$vehicle, sep = "\r")
+    vu$qty_fortifiable_g_d[match(paste(x$household_id, vehicle, sep = "\r"),
+                                 key)]
   }
   ok <- x$intake_status == "estimated"
   one <- dplyr::bind_cols(dplyr::tibble(scenario = rep(name, nrow(x))),

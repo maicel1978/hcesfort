@@ -15,9 +15,10 @@ did not answer the food module).}
 \item{members}{Members of the households, with age, sex and pregnancy
 and lactation flags.}
 \item{acquisitions}{Food acquisitions in survey units, with the
-origin and an expenditure (\code{expenditure_lcu}, the value imputed to
+origin, an expenditure (\code{expenditure_lcu}, the value imputed to
 own production and gifts) for every record, also those without
-quantity or unit factor.}
+quantity or unit factor, and \code{fortifiable} (\code{FALSE} for own
+production, the rule of the invented adapter).}
 \item{unit_factors}{Factors from survey units to grams, millilitres
 or pieces.}
 \item{crosswalk}{The 46 survey foods matched to the composition

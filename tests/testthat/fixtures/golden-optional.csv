@@ -7,7 +7,8 @@ mean_iron_mg,7.28810864260936
 mean_folate_ug_dfe,317.335968654297
 mean_vitamin_a_ug_rae,326.579490676321
 mean_vehicle_g_d,67.2182728161861
-mean_folate_added_two,819.313272983177
+mean_fortifiable_g_d,52.5934449543245
+mean_folate_added_two,729.809326468584
 mean_vitamin_a_two,519.305928301309
 n_above_folic_acid_ul_two,3
 prev_folate_baseline,0.419059657582902
@@ -24,8 +25,8 @@ kg_high_iron_b010_baseline,0.987269906005276
 n_effective_iron_b010_baseline,23.9538472117748
 presentation_iron_b010_baseline,2
 complement_unreliable_iron_b010_baseline,1
-diff_folate_one,-0.242932943608379
-se_diff_folate_one,0.0736854912149125
+diff_folate_one,-0.196969098497716
+se_diff_folate_one,0.0635903959160002
 share_cereals_folate,0.276150869662959
 se_share_cereals_folate,0.024465542130589
 share_cereals_iron,0.482930658415463

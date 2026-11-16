@@ -80,7 +80,7 @@ afe <- adult_equivalents(
   infant_food_share = 1, pregnancy_kcal = 0, lactation_kcal = 0
 )
 use <- vehicle_coverage(grams, hces_example$vehicles, afe,
-                        hces_example$households)
+                        hces_example$households, fortifiable = "use")
 design <- as_hces_design(hces_example$households, lonely_psu = "adjust")
 est <- estimate_households(design, use, "acquired", by = "region",
                            ci_method = "korn_graubard")

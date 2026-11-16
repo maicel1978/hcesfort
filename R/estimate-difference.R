@@ -41,7 +41,7 @@
 #' )
 #' intake <- apparent_intake(content, afe, hces_example$households)
 #' use <- vehicle_coverage(grams, hces_example$vehicles, afe,
-#'                         hces_example$households)
+#'                         hces_example$households, fortifiable = "use")
 #' s <- apply_scenario(intake, use, hces_example$scenarios,
 #'                     compliance_model = "average_content")
 #' iron <- subset(ref_iron_requirements,
@@ -148,7 +148,7 @@ check_reference_scenario <- function(x, reference, call = rlang::caller_env()) {
 #'   infant_food_share = 1, pregnancy_kcal = 0, lactation_kcal = 0
 #' )
 #' use <- vehicle_coverage(grams, hces_example$vehicles, afe,
-#'                         hces_example$households)
+#'                         hces_example$households, fortifiable = "use")
 #' design <- as_hces_design(hces_example$households, lonely_psu = "adjust")
 #' est <- estimate_households(design, use, "acquired", by = "region")
 #' flag_precision(est, min_n = 10, max_half_width = 0.10)

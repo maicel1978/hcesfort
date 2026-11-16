@@ -267,3 +267,88 @@ test_that("different households: counts on each side and the usual cause", {
   expect_match(conditionMessage(err), "only in `use`: 1", fixed = TRUE)
   expect_match(conditionMessage(err), "filter")
 })
+
+# The fortifiable vehicle (12e.5.4, P159; docs/design-12e5.md, section
+# 2.5). as_pipeline(): h1 flour 200 g and sugar 40 g, h2 flour 50 g; AFE
+# h1 2, h2 1.
+test_that("scenarios add only to fortifiable grams, by hand", {
+  # h1's flour is own production: nothing added to h1 by flour; h2 + 2.75
+  # mg iron as before; h1's sugar still gets 100 ug RAE.
+  s <- as_run(p = as_pipeline(fortifiable = c(FALSE, TRUE, TRUE)))
+  expect_equal(val(s, "s1", 1, "iron_mg_added"), 0)
+  expect_equal(val(s, "s1", 1, "iron_mg"), 1)
+  expect_equal(val(s, "s1", 2, "iron_mg_added"), 2.75)
+  expect_equal(val(s, "s2", 1, "vitamin_a_ug_rae_added"), 100)
+  # A missing value counts as fortifiable.
+  s <- as_run(p = as_pipeline(fortifiable = c(NA, TRUE, TRUE)))
+  expect_equal(val(s, "s1", 1, "iron_mg_added"), 5.5)
+  log <- audit_log(s)
+  share <- log[log$cause == "fortifiable_share", ]
+  expect_identical(share$detail, c("flour: 1.0000", "sugar: 1.0000"))
+})
+
+test_that("300 g bought and 200 g own flour: added from 300 g", {
+  a <- data.frame(
+    record_id = 1:2, household_id = 1, food_code = "flour",
+    quantity = c(300, 200), unit = "g", section = "diary", period_days = 1,
+    include = TRUE, fortifiable = c(TRUE, FALSE)
+  )
+  f <- data.frame(unit = "g", factor = 1, factor_type = "mass_g",
+                  source = "test fixture")
+  g <- convert_units(a, f, priority = "food")
+  h <- data.frame(household_id = 1, weight = 1, stratum = 1, psu = 1)
+  afe <- new_hces_tbl(data.frame(household_id = 1, n_members = 1, afe = 1),
+                      "hces_afe", key = "household_id")
+  v <- data.frame(food_code = "flour", vehicle = "flour",
+                  vehicle_fraction = 1, source = "test fixture")
+  u <- vehicle_coverage(g, v, afe, h, fortifiable = "use")
+  expect_equal(u$qty_vehicle_g_d, 500)
+  expect_equal(u$qty_fortifiable_g_d, 300)
+  cw <- data.frame(food_code = "flour", composition_id = "C1",
+                   match_type = "exact", validated = TRUE, edible_portion = 1)
+  comp <- data.frame(composition_id = "C1", iron_mg = 1,
+                     basis = "per_100g_edible", food_state = "raw",
+                     source = "test fixture")
+  r <- nutrient_registry(c(iron = "mg"))
+  comp <- unfortified_baseline(comp, no_rules(), r)
+  intake <- apparent_intake(link_composition(g, cw, comp, r), afe, h)
+  sc <- data.frame(scenario = "s", vehicle = "flour", nutrient = "iron",
+                   level_mg_kg = 55, level_basis = "nutrient",
+                   source = "test fixture")
+  s <- apply_scenario(intake, u, sc)
+  # 55 mg/kg = 5.5 mg per 100 g; 300 g -> 16.5 mg; baseline 5 mg.
+  expect_equal(val(s, "s", 1, "iron_mg_added"), 16.5)
+  expect_equal(val(s, "s", 1, "iron_mg"), 5 + 16.5)
+  log <- audit_log(s)
+  expect_identical(log$detail[log$cause == "fortifiable_share"],
+                   "flour: 0.6000")
+})
+
+test_that("all FALSE: every scenario equals the baseline", {
+  s <- as_run(p = as_pipeline(fortifiable = c(FALSE, FALSE, FALSE)))
+  for (col in c("iron_mg", "folate_ug_dfe", "vitamin_a_ug_rae")) {
+    base <- s[[col]][s$scenario == "baseline"]
+    for (sc in c("s1", "s2")) {
+      expect_identical(s[[col]][s$scenario == sc], base)
+    }
+  }
+})
+
+test_that("turning a record to FALSE never raises an added amount", {
+  a <- as_run(p = as_pipeline(fortifiable = c(TRUE, TRUE, TRUE)))
+  b <- as_run(p = as_pipeline(fortifiable = c(TRUE, FALSE, TRUE)))
+  added <- grep("_added$", names(a), value = TRUE)
+  for (col in added) {
+    ok <- !is.na(a[[col]])
+    expect_true(all(b[[col]][ok] <= a[[col]][ok]), label = col)
+  }
+})
+
+test_that("a use table without fortifiable grams is a schema error", {
+  p <- as_pipeline()
+  old <- p$use
+  old$qty_fortifiable_g_d <- NULL
+  err <- expect_error(apply_scenario(p$intake, old, as_scenarios()),
+                      class = "hcesfort_error_schema")
+  expect_identical(err$columns, "qty_fortifiable_g_d")
+})

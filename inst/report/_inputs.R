@@ -59,6 +59,11 @@ make_grams <- function(acquisitions, unit_factors) {
   convert_units(acquisitions, unit_factors, priority = "food")
 }
 compliance_model <- "average_content"
+# Records of a vehicle with `fortifiable` FALSE in `acquisitions` (own
+# production, home processing) get nothing in the scenarios: "use". With
+# "ignore" every gram of a vehicle is fortified. Read only when
+# `acquisitions` has the column.
+fortifiable_choice <- "use"
 
 # ---- Choices shared by both reports ----------------------------------
 choices <- list(

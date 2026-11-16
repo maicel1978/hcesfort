@@ -105,7 +105,7 @@ afe <- adult_equivalents(
 )
 intake <- apparent_intake(content, afe, hces_example$households)
 use <- vehicle_coverage(grams, hces_example$vehicles, afe,
-                        hces_example$households)
+                        hces_example$households, fortifiable = "use")
 s <- apply_scenario(intake, use, hces_example$scenarios,
                     compliance_model = "average_content")
 ul <- above_ul(s, ref_requirements, min_coverage = 0.8,

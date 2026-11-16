@@ -44,7 +44,6 @@
       acquisitions | period_days | essential | yes | 0.0 | all sections
       acquisitions | include | essential | yes | 0.0 | all sections
       acquisitions | household_share | optional | no |  NA | quantities of each household
-      acquisitions | fortifiable | optional | no |  NA | coverage of the fortifiable vehicle
       households | expenditure_group | optional | yes | 1.6 | analysis by expenditure quintile
       unit_factors | NA | essential | yes |  NA | all sections
       crosswalk | NA | essential | yes |  NA | all sections
@@ -311,7 +310,7 @@
       acquisitions | include | essential | yes | 0.0 | all sections
       acquisitions | origin | optional | yes | 0.0 | none
       acquisitions | household_share | optional | no |  NA | quantities of each household
-      acquisitions | fortifiable | optional | no |  NA | coverage of the fortifiable vehicle
+      acquisitions | fortifiable | optional | yes | 0.0 | coverage of the fortifiable vehicle
       acquisitions | expenditure_lcu | optional | yes | 0.0 | linkage by expenditure
       households | region | optional | yes | 0.0 | analysis by region
       households | area | optional | yes | 0.0 | analysis by area
@@ -370,7 +369,6 @@
       acquisitions | period_days | esencial | sí | 0.0 | todas las secciones
       acquisitions | include | esencial | sí | 0.0 | todas las secciones
       acquisitions | household_share | opcional | no |  NA | cantidades de cada hogar
-      acquisitions | fortifiable | opcional | no |  NA | cobertura del vehículo fortificable
       households | expenditure_group | opcional | sí | 1.6 | análisis por quintil de gasto
       unit_factors | NA | esencial | sí |  NA | todas las secciones
       crosswalk | NA | esencial | sí |  NA | todas las secciones
@@ -637,7 +635,7 @@
       acquisitions | include | esencial | sí | 0.0 | todas las secciones
       acquisitions | origin | opcional | sí | 0.0 | ninguna
       acquisitions | household_share | opcional | no |  NA | cantidades de cada hogar
-      acquisitions | fortifiable | opcional | no |  NA | cobertura del vehículo fortificable
+      acquisitions | fortifiable | opcional | sí | 0.0 | cobertura del vehículo fortificable
       acquisitions | expenditure_lcu | opcional | sí | 0.0 | vinculación por gasto
       households | region | opcional | sí | 0.0 | análisis por región
       households | area | opcional | sí | 0.0 | análisis por área
@@ -659,26 +657,26 @@
       
       nutrient | scenario | n | inadequate | ci_low | ci_high | mark
       Iron | Without fortification | 1895 | 79.4 | 77.6 | 81.2 | NA
-      Iron | Wheat flour with iron, zinc and folic acid | 1895 | 66.3 | 64.1 | 68.4 | NA
-      Iron | Wheat and maize flour with iron, zinc and folic acid | 1895 | 64.3 | 62.1 | 66.5 | NA
-      Iron | Wheat and maize flour, and rice with iron and folic acid | 1895 | 47.3 | 45.1 | 49.6 | NA
-      Iron | Wheat and maize flour, rice, and sugar with vitamin A | 1895 | 47.3 | 45.1 | 49.6 | NA
-      Iron | Wheat and maize flour, rice, sugar, and oil with vitamin A | 1895 | 47.3 | 45.1 | 49.6 | NA
+      Iron | Wheat flour with iron, zinc and folic acid | 1895 | 67.2 | 65.0 | 69.3 | NA
+      Iron | Wheat and maize flour with iron, zinc and folic acid | 1895 | 65.4 | 63.2 | 67.5 | NA
+      Iron | Wheat and maize flour, and rice with iron and folic acid | 1895 | 49.4 | 47.1 | 51.7 | NA
+      Iron | Wheat and maize flour, rice, and sugar with vitamin A | 1895 | 49.4 | 47.1 | 51.7 | NA
+      Iron | Wheat and maize flour, rice, sugar, and oil with vitamin A | 1895 | 49.4 | 47.1 | 51.7 | NA
       Zinc | Without fortification | 1895 | 36.9 | 34.0 | 39.9 | NA
-      Zinc | Wheat flour with iron, zinc and folic acid | 1895 | 24.1 | 21.5 | 26.8 | NA
-      Zinc | Wheat and maize flour with iron, zinc and folic acid | 1895 | 21.9 | 19.4 | 24.5 | NA
-      Zinc | Wheat and maize flour, and rice with iron and folic acid | 1895 | 21.9 | 19.4 | 24.5 | NA
-      Zinc | Wheat and maize flour, rice, and sugar with vitamin A | 1895 | 21.9 | 19.4 | 24.5 | NA
-      Zinc | Wheat and maize flour, rice, sugar, and oil with vitamin A | 1895 | 21.9 | 19.4 | 24.5 | NA
+      Zinc | Wheat flour with iron, zinc and folic acid | 1895 | 25.5 | 22.8 | 28.4 | NA
+      Zinc | Wheat and maize flour with iron, zinc and folic acid | 1895 | 23.2 | 20.7 | 25.9 | NA
+      Zinc | Wheat and maize flour, and rice with iron and folic acid | 1895 | 23.2 | 20.7 | 25.9 | NA
+      Zinc | Wheat and maize flour, rice, and sugar with vitamin A | 1895 | 23.2 | 20.7 | 25.9 | NA
+      Zinc | Wheat and maize flour, rice, sugar, and oil with vitamin A | 1895 | 23.2 | 20.7 | 25.9 | NA
       Folate | Without fortification | 1895 | 34.5 | 32.1 | 37.0 | NA
-      Folate | Wheat flour with iron, zinc and folic acid | 1895 | 11.6 |  9.8 | 13.6 | NA
-      Folate | Wheat and maize flour with iron, zinc and folic acid | 1895 |  9.0 |  7.5 | 10.7 | NA
-      Folate | Wheat and maize flour, and rice with iron and folic acid | 1895 |  0.4 |  0.1 |  0.8 | NA
-      Folate | Wheat and maize flour, rice, and sugar with vitamin A | 1895 |  0.4 |  0.1 |  0.8 | NA
-      Folate | Wheat and maize flour, rice, sugar, and oil with vitamin A | 1895 |  0.4 |  0.1 |  0.8 | NA
+      Folate | Wheat flour with iron, zinc and folic acid | 1895 | 13.1 | 11.1 | 15.3 | NA
+      Folate | Wheat and maize flour with iron, zinc and folic acid | 1895 | 10.4 |  8.8 | 12.2 | NA
+      Folate | Wheat and maize flour, and rice with iron and folic acid | 1895 |  1.8 |  1.2 |  2.6 | NA
+      Folate | Wheat and maize flour, rice, and sugar with vitamin A | 1895 |  1.8 |  1.2 |  2.6 | NA
+      Folate | Wheat and maize flour, rice, sugar, and oil with vitamin A | 1895 |  1.8 |  1.2 |  2.6 | NA
       Vitamin A | Without fortification | 1895 | 75.5 | 72.8 | 78.0 | NA
-      Vitamin A | Wheat and maize flour, rice, and sugar with vitamin A | 1895 | 37.0 | 34.1 | 40.0 | NA
-      Vitamin A | Wheat and maize flour, rice, sugar, and oil with vitamin A | 1895 | 11.7 | 10.0 | 13.7 | NA
+      Vitamin A | Wheat and maize flour, rice, and sugar with vitamin A | 1895 | 39.1 | 36.2 | 42.1 | NA
+      Vitamin A | Wheat and maize flour, rice, sugar, and oil with vitamin A | 1895 | 15.9 | 13.9 | 18.2 | NA
       n = 1,895 households
       Method: Iron: probability approach, iron bioavailability 10%; Zinc: EAR cut-point; Folate: EAR cut-point; Vitamin A: EAR cut-point.
       Apparent intake, not usual intake: the share of households whose acquisitions over the recall period, per adult female equivalent, fall below the requirement. The cut-point and the probability approach are defined on usual intake (IOM 2000b, pp. 73 and 99; IOM 2001, p. 703); this is a figure for comparing scenarios on the same data, not a prevalence of inadequacy.
@@ -944,11 +942,11 @@
       [R3.2_iron] Figure R3.2. Effect of each scenario on inadequate apparent intake of iron, % and percentage points (95% CI)
       
       nutrient | scenario | comparator | n | from | to | difference | difference_ci_low | difference_ci_high | mark
-      Iron | Wheat flour with iron, zinc and folic acid | Without fortification | 1895 | 79.4 | 66.3 | -13.1 | -13.7 | -12.6 | NA
-      Iron | Wheat and maize flour with iron, zinc and folic acid | Without fortification | 1895 | 79.4 | 64.3 | -15.1 | -15.7 | -14.5 | NA
-      Iron | Wheat and maize flour, and rice with iron and folic acid | Without fortification | 1895 | 79.4 | 47.3 | -32.1 | -33.0 | -31.3 | NA
-      Iron | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 1895 | 79.4 | 47.3 | -32.1 | -33.0 | -31.3 | NA
-      Iron | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 1895 | 79.4 | 47.3 | -32.1 | -33.0 | -31.3 | NA
+      Iron | Wheat flour with iron, zinc and folic acid | Without fortification | 1895 | 79.4 | 67.2 | -12.2 | -12.8 | -11.7 | NA
+      Iron | Wheat and maize flour with iron, zinc and folic acid | Without fortification | 1895 | 79.4 | 65.4 | -14.1 | -14.7 | -13.5 | NA
+      Iron | Wheat and maize flour, and rice with iron and folic acid | Without fortification | 1895 | 79.4 | 49.4 | -30.1 | -30.9 | -29.2 | NA
+      Iron | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 1895 | 79.4 | 49.4 | -30.1 | -30.9 | -29.2 | NA
+      Iron | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 1895 | 79.4 | 49.4 | -30.1 | -30.9 | -29.2 | NA
       n = 1,895 households
       Left panel: hollow point, the scenario compared with (Without fortification); filled point, the scenario. Right panel: paired difference in percentage points, with its 95% CI.
       Not a proportion: judged only by the number of households and the degrees of freedom (technical note, departure S1).
@@ -962,11 +960,11 @@
       [R3.2_zinc] Figure R3.2. Effect of each scenario on inadequate apparent intake of zinc, % and percentage points (95% CI)
       
       nutrient | scenario | comparator | n | from | to | difference | difference_ci_low | difference_ci_high | mark
-      Zinc | Wheat flour with iron, zinc and folic acid | Without fortification | 1895 | 36.9 | 24.1 | -12.8 | -14.5 | -11.1 | NA
-      Zinc | Wheat and maize flour with iron, zinc and folic acid | Without fortification | 1895 | 36.9 | 21.9 | -15.0 | -16.8 | -13.2 | NA
-      Zinc | Wheat and maize flour, and rice with iron and folic acid | Without fortification | 1895 | 36.9 | 21.9 | -15.0 | -16.8 | -13.2 | NA
-      Zinc | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 1895 | 36.9 | 21.9 | -15.0 | -16.8 | -13.2 | NA
-      Zinc | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 1895 | 36.9 | 21.9 | -15.0 | -16.8 | -13.2 | NA
+      Zinc | Wheat flour with iron, zinc and folic acid | Without fortification | 1895 | 36.9 | 25.5 | -11.4 | -12.9 |  -9.8 | NA
+      Zinc | Wheat and maize flour with iron, zinc and folic acid | Without fortification | 1895 | 36.9 | 23.2 | -13.7 | -15.3 | -12.1 | NA
+      Zinc | Wheat and maize flour, and rice with iron and folic acid | Without fortification | 1895 | 36.9 | 23.2 | -13.7 | -15.3 | -12.1 | NA
+      Zinc | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 1895 | 36.9 | 23.2 | -13.7 | -15.3 | -12.1 | NA
+      Zinc | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 1895 | 36.9 | 23.2 | -13.7 | -15.3 | -12.1 | NA
       n = 1,895 households
       Left panel: hollow point, the scenario compared with (Without fortification); filled point, the scenario. Right panel: paired difference in percentage points, with its 95% CI.
       Not a proportion: judged only by the number of households and the degrees of freedom (technical note, departure S1).
@@ -980,11 +978,11 @@
       [R3.2_folate] Figure R3.2. Effect of each scenario on inadequate apparent intake of folate, % and percentage points (95% CI)
       
       nutrient | scenario | comparator | n | from | to | difference | difference_ci_low | difference_ci_high | mark
-      Folate | Wheat flour with iron, zinc and folic acid | Without fortification | 1895 | 34.5 | 11.6 | -22.9 | -24.8 | -21.0 | NA
-      Folate | Wheat and maize flour with iron, zinc and folic acid | Without fortification | 1895 | 34.5 |  9.0 | -25.5 | -27.4 | -23.6 | NA
-      Folate | Wheat and maize flour, and rice with iron and folic acid | Without fortification | 1895 | 34.5 |  0.4 | -34.1 | -36.5 | -31.7 | NA
-      Folate | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 1895 | 34.5 |  0.4 | -34.1 | -36.5 | -31.7 | NA
-      Folate | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 1895 | 34.5 |  0.4 | -34.1 | -36.5 | -31.7 | NA
+      Folate | Wheat flour with iron, zinc and folic acid | Without fortification | 1895 | 34.5 | 13.1 | -21.4 | -23.3 | -19.5 | NA
+      Folate | Wheat and maize flour with iron, zinc and folic acid | Without fortification | 1895 | 34.5 | 10.4 | -24.1 | -26.0 | -22.3 | NA
+      Folate | Wheat and maize flour, and rice with iron and folic acid | Without fortification | 1895 | 34.5 |  1.8 | -32.7 | -35.0 | -30.4 | NA
+      Folate | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 1895 | 34.5 |  1.8 | -32.7 | -35.0 | -30.4 | NA
+      Folate | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 1895 | 34.5 |  1.8 | -32.7 | -35.0 | -30.4 | NA
       n = 1,895 households
       Left panel: hollow point, the scenario compared with (Without fortification); filled point, the scenario. Right panel: paired difference in percentage points, with its 95% CI.
       Not a proportion: judged only by the number of households and the degrees of freedom (technical note, departure S1).
@@ -998,8 +996,8 @@
       [R3.2_vitamin_a] Figure R3.2. Effect of each scenario on inadequate apparent intake of vitamin A, % and percentage points (95% CI)
       
       nutrient | scenario | comparator | n | from | to | difference | difference_ci_low | difference_ci_high | mark
-      Vitamin A | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 1895 | 75.5 | 37.0 | -38.5 | -40.9 | -36.1 | NA
-      Vitamin A | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 1895 | 75.5 | 11.7 | -63.7 | -66.2 | -61.2 | NA
+      Vitamin A | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 1895 | 75.5 | 39.1 | -36.4 | -38.8 | -34 | NA
+      Vitamin A | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 1895 | 75.5 | 15.9 | -59.5 | -62.1 | -57 | NA
       n = 1,895 households
       Left panel: hollow point, the scenario compared with (Without fortification); filled point, the scenario. Right panel: paired difference in percentage points, with its 95% CI.
       Not a proportion: judged only by the number of households and the degrees of freedom (technical note, departure S1).
@@ -1033,31 +1031,31 @@
       [R3.4_iron_expenditure_group] Figure R3.4. Effect of each scenario on inadequate apparent intake of iron, by expenditure quintile, % and percentage points (95% CI)
       
       domain_value | nutrient | scenario | comparator | n | from | to | difference | difference_ci_low | difference_ci_high | mark
-      Q1 (lowest expenditure) | Iron | Wheat flour with iron, zinc and folic acid | Without fortification | 318 | 96.7 | 91.4 |  -5.3 |  -6.2 |  -4.3 | NA
-      Q1 (lowest expenditure) | Iron | Wheat and maize flour with iron, zinc and folic acid | Without fortification | 318 | 96.7 | 89.5 |  -7.2 |  -8.3 |  -6.1 | NA
-      Q1 (lowest expenditure) | Iron | Wheat and maize flour, and rice with iron and folic acid | Without fortification | 318 | 96.7 | 76.8 | -19.9 | -21.8 | -18.0 | NA
-      Q1 (lowest expenditure) | Iron | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 318 | 96.7 | 76.8 | -19.9 | -21.8 | -18.0 | NA
-      Q1 (lowest expenditure) | Iron | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 318 | 96.7 | 76.8 | -19.9 | -21.8 | -18.0 | NA
-      Q2 | Iron | Wheat flour with iron, zinc and folic acid | Without fortification | 369 | 91.4 | 80.9 | -10.5 | -11.5 |  -9.6 | NA
-      Q2 | Iron | Wheat and maize flour with iron, zinc and folic acid | Without fortification | 369 | 91.4 | 78.3 | -13.2 | -14.2 | -12.1 | NA
-      Q2 | Iron | Wheat and maize flour, and rice with iron and folic acid | Without fortification | 369 | 91.4 | 58.7 | -32.8 | -34.4 | -31.2 | NA
-      Q2 | Iron | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 369 | 91.4 | 58.7 | -32.8 | -34.4 | -31.2 | NA
-      Q2 | Iron | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 369 | 91.4 | 58.7 | -32.8 | -34.4 | -31.2 | NA
-      Q3 | Iron | Wheat flour with iron, zinc and folic acid | Without fortification | 389 | 84.1 | 69.5 | -14.6 | -15.7 | -13.5 | NA
-      Q3 | Iron | Wheat and maize flour with iron, zinc and folic acid | Without fortification | 389 | 84.1 | 67.4 | -16.7 | -18.0 | -15.5 | NA
-      Q3 | Iron | Wheat and maize flour, and rice with iron and folic acid | Without fortification | 389 | 84.1 | 47.3 | -36.8 | -38.3 | -35.2 | NA
-      Q3 | Iron | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 389 | 84.1 | 47.3 | -36.8 | -38.3 | -35.2 | NA
-      Q3 | Iron | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 389 | 84.1 | 47.3 | -36.8 | -38.3 | -35.2 | NA
-      Q4 | Iron | Wheat flour with iron, zinc and folic acid | Without fortification | 398 | 75.1 | 58.3 | -16.8 | -17.8 | -15.7 | NA
-      Q4 | Iron | Wheat and maize flour with iron, zinc and folic acid | Without fortification | 398 | 75.1 | 56.3 | -18.8 | -19.9 | -17.7 | NA
-      Q4 | Iron | Wheat and maize flour, and rice with iron and folic acid | Without fortification | 398 | 75.1 | 37.1 | -38.0 | -39.3 | -36.7 | NA
-      Q4 | Iron | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 398 | 75.1 | 37.1 | -38.0 | -39.3 | -36.7 | NA
-      Q4 | Iron | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 398 | 75.1 | 37.1 | -38.0 | -39.3 | -36.7 | NA
-      Q5 (highest expenditure) | Iron | Wheat flour with iron, zinc and folic acid | Without fortification | 421 | 51.3 | 33.5 | -17.9 | -18.7 | -17.0 | NA
-      Q5 (highest expenditure) | Iron | Wheat and maize flour with iron, zinc and folic acid | Without fortification | 421 | 51.3 | 32.3 | -19.0 | -19.9 | -18.1 | NA
-      Q5 (highest expenditure) | Iron | Wheat and maize flour, and rice with iron and folic acid | Without fortification | 421 | 51.3 | 19.2 | -32.1 | -33.4 | -30.8 | NA
-      Q5 (highest expenditure) | Iron | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 421 | 51.3 | 19.2 | -32.1 | -33.4 | -30.8 | NA
-      Q5 (highest expenditure) | Iron | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 421 | 51.3 | 19.2 | -32.1 | -33.4 | -30.8 | NA
+      Q1 (lowest expenditure) | Iron | Wheat flour with iron, zinc and folic acid | Without fortification | 318 | 96.7 | 92.0 |  -4.7 |  -5.6 |  -3.8 | NA
+      Q1 (lowest expenditure) | Iron | Wheat and maize flour with iron, zinc and folic acid | Without fortification | 318 | 96.7 | 90.2 |  -6.5 |  -7.6 |  -5.4 | NA
+      Q1 (lowest expenditure) | Iron | Wheat and maize flour, and rice with iron and folic acid | Without fortification | 318 | 96.7 | 79.6 | -17.1 | -19.0 | -15.2 | NA
+      Q1 (lowest expenditure) | Iron | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 318 | 96.7 | 79.6 | -17.1 | -19.0 | -15.2 | NA
+      Q1 (lowest expenditure) | Iron | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 318 | 96.7 | 79.6 | -17.1 | -19.0 | -15.2 | NA
+      Q2 | Iron | Wheat flour with iron, zinc and folic acid | Without fortification | 369 | 91.4 | 81.8 |  -9.6 | -10.4 |  -8.7 | NA
+      Q2 | Iron | Wheat and maize flour with iron, zinc and folic acid | Without fortification | 369 | 91.4 | 79.6 | -11.8 | -12.8 | -10.9 | NA
+      Q2 | Iron | Wheat and maize flour, and rice with iron and folic acid | Without fortification | 369 | 91.4 | 61.5 | -29.9 | -31.5 | -28.3 | NA
+      Q2 | Iron | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 369 | 91.4 | 61.5 | -29.9 | -31.5 | -28.3 | NA
+      Q2 | Iron | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 369 | 91.4 | 61.5 | -29.9 | -31.5 | -28.3 | NA
+      Q3 | Iron | Wheat flour with iron, zinc and folic acid | Without fortification | 389 | 84.1 | 70.6 | -13.5 | -14.6 | -12.4 | NA
+      Q3 | Iron | Wheat and maize flour with iron, zinc and folic acid | Without fortification | 389 | 84.1 | 68.5 | -15.6 | -16.8 | -14.4 | NA
+      Q3 | Iron | Wheat and maize flour, and rice with iron and folic acid | Without fortification | 389 | 84.1 | 49.8 | -34.3 | -36.0 | -32.6 | NA
+      Q3 | Iron | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 389 | 84.1 | 49.8 | -34.3 | -36.0 | -32.6 | NA
+      Q3 | Iron | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 389 | 84.1 | 49.8 | -34.3 | -36.0 | -32.6 | NA
+      Q4 | Iron | Wheat flour with iron, zinc and folic acid | Without fortification | 398 | 75.1 | 59.7 | -15.4 | -16.5 | -14.4 | NA
+      Q4 | Iron | Wheat and maize flour with iron, zinc and folic acid | Without fortification | 398 | 75.1 | 57.8 | -17.3 | -18.4 | -16.2 | NA
+      Q4 | Iron | Wheat and maize flour, and rice with iron and folic acid | Without fortification | 398 | 75.1 | 38.8 | -36.3 | -37.6 | -35.0 | NA
+      Q4 | Iron | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 398 | 75.1 | 38.8 | -36.3 | -37.6 | -35.0 | NA
+      Q4 | Iron | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 398 | 75.1 | 38.8 | -36.3 | -37.6 | -35.0 | NA
+      Q5 (highest expenditure) | Iron | Wheat flour with iron, zinc and folic acid | Without fortification | 421 | 51.3 | 34.1 | -17.3 | -18.1 | -16.4 | NA
+      Q5 (highest expenditure) | Iron | Wheat and maize flour with iron, zinc and folic acid | Without fortification | 421 | 51.3 | 32.9 | -18.5 | -19.3 | -17.6 | NA
+      Q5 (highest expenditure) | Iron | Wheat and maize flour, and rice with iron and folic acid | Without fortification | 421 | 51.3 | 19.8 | -31.6 | -32.8 | -30.3 | NA
+      Q5 (highest expenditure) | Iron | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 421 | 51.3 | 19.8 | -31.6 | -32.8 | -30.3 | NA
+      Q5 (highest expenditure) | Iron | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 421 | 51.3 | 19.8 | -31.6 | -32.8 | -30.3 | NA
       No data | Iron | Wheat flour with iron, zinc and folic acid | Without fortification |   0 |   NA |   NA |    NA |    NA |    NA | NA
       No data | Iron | Wheat and maize flour with iron, zinc and folic acid | Without fortification |   0 |   NA |   NA |    NA |    NA |    NA | NA
       No data | Iron | Wheat and maize flour, and rice with iron and folic acid | Without fortification |   0 |   NA |   NA |    NA |    NA |    NA | NA
@@ -1076,26 +1074,26 @@
       [R3.4_zinc_expenditure_group] Figure R3.4. Effect of each scenario on inadequate apparent intake of zinc, by expenditure quintile, % and percentage points (95% CI)
       
       domain_value | nutrient | scenario | comparator | n | from | to | difference | difference_ci_low | difference_ci_high | mark
-      Q1 (lowest expenditure) | Zinc | Wheat flour with iron, zinc and folic acid | Without fortification | 318 | 90.9 | 77.8 | -13.1 | -16.7 |  -9.4 | NA
-      Q1 (lowest expenditure) | Zinc | Wheat and maize flour with iron, zinc and folic acid | Without fortification | 318 | 90.9 | 72.4 | -18.5 | -22.9 | -14.2 | NA
-      Q1 (lowest expenditure) | Zinc | Wheat and maize flour, and rice with iron and folic acid | Without fortification | 318 | 90.9 | 72.4 | -18.5 | -22.9 | -14.2 | NA
-      Q1 (lowest expenditure) | Zinc | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 318 | 90.9 | 72.4 | -18.5 | -22.9 | -14.2 | NA
-      Q1 (lowest expenditure) | Zinc | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 318 | 90.9 | 72.4 | -18.5 | -22.9 | -14.2 | NA
-      Q2 | Zinc | Wheat flour with iron, zinc and folic acid | Without fortification | 369 | 60.3 | 34.5 | -25.8 | -30.1 | -21.5 | NA
-      Q2 | Zinc | Wheat and maize flour with iron, zinc and folic acid | Without fortification | 369 | 60.3 | 29.4 | -30.9 | -35.6 | -26.2 | NA
-      Q2 | Zinc | Wheat and maize flour, and rice with iron and folic acid | Without fortification | 369 | 60.3 | 29.4 | -30.9 | -35.6 | -26.2 | NA
-      Q2 | Zinc | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 369 | 60.3 | 29.4 | -30.9 | -35.6 | -26.2 | NA
-      Q2 | Zinc | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 369 | 60.3 | 29.4 | -30.9 | -35.6 | -26.2 | NA
-      Q3 | Zinc | Wheat flour with iron, zinc and folic acid | Without fortification | 389 | 31.7 | 10.7 | -21.0 | -25.2 | -16.8 | NA
-      Q3 | Zinc | Wheat and maize flour with iron, zinc and folic acid | Without fortification | 389 | 31.7 | 10.5 | -21.3 | -25.5 | -17.0 | NA
-      Q3 | Zinc | Wheat and maize flour, and rice with iron and folic acid | Without fortification | 389 | 31.7 | 10.5 | -21.3 | -25.5 | -17.0 | NA
-      Q3 | Zinc | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 389 | 31.7 | 10.5 | -21.3 | -25.5 | -17.0 | NA
-      Q3 | Zinc | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 389 | 31.7 | 10.5 | -21.3 | -25.5 | -17.0 | NA
-      Q4 | Zinc | Wheat flour with iron, zinc and folic acid | Without fortification | 398 |  6.6 |  2.0 |  -4.5 |  -6.5 |  -2.5 | NA
-      Q4 | Zinc | Wheat and maize flour with iron, zinc and folic acid | Without fortification | 398 |  6.6 |  1.6 |  -4.9 |  -7.1 |  -2.8 | NA
-      Q4 | Zinc | Wheat and maize flour, and rice with iron and folic acid | Without fortification | 398 |  6.6 |  1.6 |  -4.9 |  -7.1 |  -2.8 | NA
-      Q4 | Zinc | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 398 |  6.6 |  1.6 |  -4.9 |  -7.1 |  -2.8 | NA
-      Q4 | Zinc | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 398 |  6.6 |  1.6 |  -4.9 |  -7.1 |  -2.8 | NA
+      Q1 (lowest expenditure) | Zinc | Wheat flour with iron, zinc and folic acid | Without fortification | 318 | 90.9 | 80.4 | -10.5 | -13.8 |  -7.2 | NA
+      Q1 (lowest expenditure) | Zinc | Wheat and maize flour with iron, zinc and folic acid | Without fortification | 318 | 90.9 | 74.4 | -16.5 | -20.4 | -12.6 | NA
+      Q1 (lowest expenditure) | Zinc | Wheat and maize flour, and rice with iron and folic acid | Without fortification | 318 | 90.9 | 74.4 | -16.5 | -20.4 | -12.6 | NA
+      Q1 (lowest expenditure) | Zinc | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 318 | 90.9 | 74.4 | -16.5 | -20.4 | -12.6 | NA
+      Q1 (lowest expenditure) | Zinc | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 318 | 90.9 | 74.4 | -16.5 | -20.4 | -12.6 | NA
+      Q2 | Zinc | Wheat flour with iron, zinc and folic acid | Without fortification | 369 | 60.3 | 38.1 | -22.2 | -26.2 | -18.1 | NA
+      Q2 | Zinc | Wheat and maize flour with iron, zinc and folic acid | Without fortification | 369 | 60.3 | 33.2 | -27.1 | -31.5 | -22.7 | NA
+      Q2 | Zinc | Wheat and maize flour, and rice with iron and folic acid | Without fortification | 369 | 60.3 | 33.2 | -27.1 | -31.5 | -22.7 | NA
+      Q2 | Zinc | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 369 | 60.3 | 33.2 | -27.1 | -31.5 | -22.7 | NA
+      Q2 | Zinc | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 369 | 60.3 | 33.2 | -27.1 | -31.5 | -22.7 | NA
+      Q3 | Zinc | Wheat flour with iron, zinc and folic acid | Without fortification | 389 | 31.7 | 11.7 | -20.0 | -24.0 | -16.0 | NA
+      Q3 | Zinc | Wheat and maize flour with iron, zinc and folic acid | Without fortification | 389 | 31.7 | 11.1 | -20.6 | -24.7 | -16.5 | NA
+      Q3 | Zinc | Wheat and maize flour, and rice with iron and folic acid | Without fortification | 389 | 31.7 | 11.1 | -20.6 | -24.7 | -16.5 | NA
+      Q3 | Zinc | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 389 | 31.7 | 11.1 | -20.6 | -24.7 | -16.5 | NA
+      Q3 | Zinc | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 389 | 31.7 | 11.1 | -20.6 | -24.7 | -16.5 | NA
+      Q4 | Zinc | Wheat flour with iron, zinc and folic acid | Without fortification | 398 |  6.6 |  2.4 |  -4.2 |  -6.2 |  -2.2 | NA
+      Q4 | Zinc | Wheat and maize flour with iron, zinc and folic acid | Without fortification | 398 |  6.6 |  2.0 |  -4.6 |  -6.7 |  -2.5 | NA
+      Q4 | Zinc | Wheat and maize flour, and rice with iron and folic acid | Without fortification | 398 |  6.6 |  2.0 |  -4.6 |  -6.7 |  -2.5 | NA
+      Q4 | Zinc | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 398 |  6.6 |  2.0 |  -4.6 |  -6.7 |  -2.5 | NA
+      Q4 | Zinc | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 398 |  6.6 |  2.0 |  -4.6 |  -6.7 |  -2.5 | NA
       Q5 (highest expenditure) | Zinc | Wheat flour with iron, zinc and folic acid | Without fortification | 421 |  0.0 |  0.0 |   0.0 |    NA |    NA | NA
       Q5 (highest expenditure) | Zinc | Wheat and maize flour with iron, zinc and folic acid | Without fortification | 421 |  0.0 |  0.0 |   0.0 |    NA |    NA | NA
       Q5 (highest expenditure) | Zinc | Wheat and maize flour, and rice with iron and folic acid | Without fortification | 421 |  0.0 |  0.0 |   0.0 |    NA |    NA | NA
@@ -1119,28 +1117,28 @@
       [R3.4_folate_expenditure_group] Figure R3.4. Effect of each scenario on inadequate apparent intake of folate, by expenditure quintile, % and percentage points (95% CI)
       
       domain_value | nutrient | scenario | comparator | n | from | to | difference | difference_ci_low | difference_ci_high | mark
-      Q1 (lowest expenditure) | Folate | Wheat flour with iron, zinc and folic acid | Without fortification | 318 | 65.1 | 33.2 | -31.8 | -37.3 | -26.4 | NA
-      Q1 (lowest expenditure) | Folate | Wheat and maize flour with iron, zinc and folic acid | Without fortification | 318 | 65.1 | 24.5 | -40.5 | -45.6 | -35.4 | NA
-      Q1 (lowest expenditure) | Folate | Wheat and maize flour, and rice with iron and folic acid | Without fortification | 318 | 65.1 |  1.0 | -64.1 | -69.3 | -58.9 | NA
-      Q1 (lowest expenditure) | Folate | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 318 | 65.1 |  1.0 | -64.1 | -69.3 | -58.9 | NA
-      Q1 (lowest expenditure) | Folate | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 318 | 65.1 |  1.0 | -64.1 | -69.3 | -58.9 | NA
-      Q2 | Folate | Wheat flour with iron, zinc and folic acid | Without fortification | 369 | 43.9 | 13.9 | -30.0 | -35.2 | -24.9 | NA
-      Q2 | Folate | Wheat and maize flour with iron, zinc and folic acid | Without fortification | 369 | 43.9 | 10.7 | -33.2 | -38.4 | -28.0 | NA
-      Q2 | Folate | Wheat and maize flour, and rice with iron and folic acid | Without fortification | 369 | 43.9 |  0.7 | -43.2 | -48.2 | -38.2 | NA
-      Q2 | Folate | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 369 | 43.9 |  0.7 | -43.2 | -48.2 | -38.2 | NA
-      Q2 | Folate | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 369 | 43.9 |  0.7 | -43.2 | -48.2 | -38.2 | NA
-      Q3 | Folate | Wheat flour with iron, zinc and folic acid | Without fortification | 389 | 32.9 |  8.6 | -24.3 | -28.3 | -20.3 | NA
-      Q3 | Folate | Wheat and maize flour with iron, zinc and folic acid | Without fortification | 389 | 32.9 |  7.4 | -25.5 | -29.5 | -21.6 | NA
-      Q3 | Folate | Wheat and maize flour, and rice with iron and folic acid | Without fortification | 389 | 32.9 |  0.3 | -32.6 | -37.6 | -27.7 | NA
-      Q3 | Folate | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 389 | 32.9 |  0.3 | -32.6 | -37.6 | -27.7 | NA
-      Q3 | Folate | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 389 | 32.9 |  0.3 | -32.6 | -37.6 | -27.7 | NA
-      Q4 | Folate | Wheat flour with iron, zinc and folic acid | Without fortification | 398 | 22.6 |  3.1 | -19.5 | -23.3 | -15.7 | NA
-      Q4 | Folate | Wheat and maize flour with iron, zinc and folic acid | Without fortification | 398 | 22.6 |  2.6 | -20.1 | -23.9 | -16.2 | NA
-      Q4 | Folate | Wheat and maize flour, and rice with iron and folic acid | Without fortification | 398 | 22.6 |  0.0 | -22.6 | -26.5 | -18.7 | NA
-      Q4 | Folate | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 398 | 22.6 |  0.0 | -22.6 | -26.5 | -18.7 | NA
-      Q4 | Folate | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 398 | 22.6 |  0.0 | -22.6 | -26.5 | -18.7 | NA
-      Q5 (highest expenditure) | Folate | Wheat flour with iron, zinc and folic acid | Without fortification | 421 | 10.7 |  1.2 |  -9.5 | -12.3 |  -6.7 | NA
-      Q5 (highest expenditure) | Folate | Wheat and maize flour with iron, zinc and folic acid | Without fortification | 421 | 10.7 |  1.2 |  -9.5 | -12.3 |  -6.7 | NA
+      Q1 (lowest expenditure) | Folate | Wheat flour with iron, zinc and folic acid | Without fortification | 318 | 65.1 | 36.8 | -28.3 | -34.0 | -22.6 | NA
+      Q1 (lowest expenditure) | Folate | Wheat and maize flour with iron, zinc and folic acid | Without fortification | 318 | 65.1 | 27.9 | -37.2 | -41.9 | -32.4 | NA
+      Q1 (lowest expenditure) | Folate | Wheat and maize flour, and rice with iron and folic acid | Without fortification | 318 | 65.1 |  5.5 | -59.5 | -65.2 | -53.9 | NA
+      Q1 (lowest expenditure) | Folate | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 318 | 65.1 |  5.5 | -59.5 | -65.2 | -53.9 | NA
+      Q1 (lowest expenditure) | Folate | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 318 | 65.1 |  5.5 | -59.5 | -65.2 | -53.9 | NA
+      Q2 | Folate | Wheat flour with iron, zinc and folic acid | Without fortification | 369 | 43.9 | 15.8 | -28.1 | -33.1 | -23.2 | NA
+      Q2 | Folate | Wheat and maize flour with iron, zinc and folic acid | Without fortification | 369 | 43.9 | 12.1 | -31.9 | -36.9 | -26.8 | NA
+      Q2 | Folate | Wheat and maize flour, and rice with iron and folic acid | Without fortification | 369 | 43.9 |  1.9 | -42.0 | -47.0 | -37.0 | NA
+      Q2 | Folate | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 369 | 43.9 |  1.9 | -42.0 | -47.0 | -37.0 | NA
+      Q2 | Folate | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 369 | 43.9 |  1.9 | -42.0 | -47.0 | -37.0 | NA
+      Q3 | Folate | Wheat flour with iron, zinc and folic acid | Without fortification | 389 | 32.9 |  9.9 | -23.1 | -27.0 | -19.2 | NA
+      Q3 | Folate | Wheat and maize flour with iron, zinc and folic acid | Without fortification | 389 | 32.9 |  8.7 | -24.3 | -28.1 | -20.4 | NA
+      Q3 | Folate | Wheat and maize flour, and rice with iron and folic acid | Without fortification | 389 | 32.9 |  1.3 | -31.6 | -36.2 | -27.1 | NA
+      Q3 | Folate | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 389 | 32.9 |  1.3 | -31.6 | -36.2 | -27.1 | NA
+      Q3 | Folate | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 389 | 32.9 |  1.3 | -31.6 | -36.2 | -27.1 | NA
+      Q4 | Folate | Wheat flour with iron, zinc and folic acid | Without fortification | 398 | 22.6 |  3.8 | -18.8 | -22.4 | -15.2 | NA
+      Q4 | Folate | Wheat and maize flour with iron, zinc and folic acid | Without fortification | 398 | 22.6 |  3.4 | -19.2 | -22.9 | -15.5 | NA
+      Q4 | Folate | Wheat and maize flour, and rice with iron and folic acid | Without fortification | 398 | 22.6 |  0.5 | -22.1 | -25.9 | -18.2 | NA
+      Q4 | Folate | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 398 | 22.6 |  0.5 | -22.1 | -25.9 | -18.2 | NA
+      Q4 | Folate | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 398 | 22.6 |  0.5 | -22.1 | -25.9 | -18.2 | NA
+      Q5 (highest expenditure) | Folate | Wheat flour with iron, zinc and folic acid | Without fortification | 421 | 10.7 |  1.4 |  -9.3 | -12.1 |  -6.5 | NA
+      Q5 (highest expenditure) | Folate | Wheat and maize flour with iron, zinc and folic acid | Without fortification | 421 | 10.7 |  1.4 |  -9.3 | -12.1 |  -6.5 | NA
       Q5 (highest expenditure) | Folate | Wheat and maize flour, and rice with iron and folic acid | Without fortification | 421 | 10.7 |  0.0 | -10.7 | -13.8 |  -7.5 | NA
       Q5 (highest expenditure) | Folate | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 421 | 10.7 |  0.0 | -10.7 | -13.8 |  -7.5 | NA
       Q5 (highest expenditure) | Folate | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 421 | 10.7 |  0.0 | -10.7 | -13.8 |  -7.5 | NA
@@ -1162,16 +1160,16 @@
       [R3.4_vitamin_a_expenditure_group] Figure R3.4. Effect of each scenario on inadequate apparent intake of vitamin A, by expenditure quintile, % and percentage points (95% CI)
       
       domain_value | nutrient | scenario | comparator | n | from | to | difference | difference_ci_low | difference_ci_high | mark
-      Q1 (lowest expenditure) | Vitamin A | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 318 | 97.2 | 76.5 | -20.7 | -25.2 | -16.3 | NA
-      Q1 (lowest expenditure) | Vitamin A | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 318 | 97.2 | 39.4 | -57.8 | -63.9 | -51.6 | NA
-      Q2 | Vitamin A | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 369 | 93.0 | 53.1 | -40.0 | -45.2 | -34.7 | NA
-      Q2 | Vitamin A | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 369 | 93.0 | 14.8 | -78.2 | -82.4 | -74.0 | NA
-      Q3 | Vitamin A | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 389 | 84.3 | 34.8 | -49.5 | -54.9 | -44.1 | NA
-      Q3 | Vitamin A | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 389 | 84.3 |  5.1 | -79.2 | -83.5 | -74.9 | NA
-      Q4 | Vitamin A | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 398 | 67.2 | 17.5 | -49.7 | -54.3 | -45.1 | NA
-      Q4 | Vitamin A | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 398 | 67.2 |  1.0 | -66.2 | -70.9 | -61.4 | NA
-      Q5 (highest expenditure) | Vitamin A | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 421 | 37.5 |  6.6 | -30.9 | -35.6 | -26.1 | NA
-      Q5 (highest expenditure) | Vitamin A | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 421 | 37.5 |  0.7 | -36.8 | -41.7 | -31.9 | NA
+      Q1 (lowest expenditure) | Vitamin A | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 318 | 97.2 | 78.0 | -19.2 | -23.4 | -15.1 | NA
+      Q1 (lowest expenditure) | Vitamin A | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 318 | 97.2 | 44.7 | -52.5 | -58.6 | -46.3 | NA
+      Q2 | Vitamin A | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 369 | 93.0 | 56.2 | -36.9 | -42.0 | -31.8 | NA
+      Q2 | Vitamin A | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 369 | 93.0 | 21.7 | -71.3 | -76.2 | -66.4 | NA
+      Q3 | Vitamin A | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 389 | 84.3 | 37.7 | -46.7 | -52.2 | -41.2 | NA
+      Q3 | Vitamin A | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 389 | 84.3 | 10.5 | -73.9 | -78.3 | -69.4 | NA
+      Q4 | Vitamin A | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 398 | 67.2 | 20.1 | -47.1 | -51.7 | -42.4 | NA
+      Q4 | Vitamin A | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 398 | 67.2 |  3.8 | -63.4 | -68.3 | -58.4 | NA
+      Q5 (highest expenditure) | Vitamin A | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification | 421 | 37.5 |  7.1 | -30.4 | -35.2 | -25.7 | NA
+      Q5 (highest expenditure) | Vitamin A | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification | 421 | 37.5 |  1.5 | -36.0 | -40.9 | -31.2 | NA
       No data | Vitamin A | Wheat and maize flour, rice, and sugar with vitamin A | Without fortification |   0 |   NA |   NA |    NA |    NA |    NA | NA
       No data | Vitamin A | Wheat and maize flour, rice, sugar, and oil with vitamin A | Without fortification |   0 |   NA |   NA |    NA |    NA |    NA | NA
       — No data: no household with an estimate.
@@ -1289,26 +1287,26 @@
       
       nutrient | scenario | n | inadequate | ci_low | ci_high | mark
       Hierro | Sin fortificación | 1895 | 79.4 | 77.6 | 81.2 | NA
-      Hierro | Harina de trigo con hierro, zinc y ácido fólico | 1895 | 66.3 | 64.1 | 68.4 | NA
-      Hierro | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | 1895 | 64.3 | 62.1 | 66.5 | NA
-      Hierro | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | 1895 | 47.3 | 45.1 | 49.6 | NA
-      Hierro | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | 1895 | 47.3 | 45.1 | 49.6 | NA
-      Hierro | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | 1895 | 47.3 | 45.1 | 49.6 | NA
+      Hierro | Harina de trigo con hierro, zinc y ácido fólico | 1895 | 67.2 | 65.0 | 69.3 | NA
+      Hierro | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | 1895 | 65.4 | 63.2 | 67.5 | NA
+      Hierro | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | 1895 | 49.4 | 47.1 | 51.7 | NA
+      Hierro | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | 1895 | 49.4 | 47.1 | 51.7 | NA
+      Hierro | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | 1895 | 49.4 | 47.1 | 51.7 | NA
       Zinc | Sin fortificación | 1895 | 36.9 | 34.0 | 39.9 | NA
-      Zinc | Harina de trigo con hierro, zinc y ácido fólico | 1895 | 24.1 | 21.5 | 26.8 | NA
-      Zinc | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | 1895 | 21.9 | 19.4 | 24.5 | NA
-      Zinc | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | 1895 | 21.9 | 19.4 | 24.5 | NA
-      Zinc | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | 1895 | 21.9 | 19.4 | 24.5 | NA
-      Zinc | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | 1895 | 21.9 | 19.4 | 24.5 | NA
+      Zinc | Harina de trigo con hierro, zinc y ácido fólico | 1895 | 25.5 | 22.8 | 28.4 | NA
+      Zinc | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | 1895 | 23.2 | 20.7 | 25.9 | NA
+      Zinc | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | 1895 | 23.2 | 20.7 | 25.9 | NA
+      Zinc | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | 1895 | 23.2 | 20.7 | 25.9 | NA
+      Zinc | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | 1895 | 23.2 | 20.7 | 25.9 | NA
       Folato | Sin fortificación | 1895 | 34.5 | 32.1 | 37.0 | NA
-      Folato | Harina de trigo con hierro, zinc y ácido fólico | 1895 | 11.6 |  9.8 | 13.6 | NA
-      Folato | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | 1895 |  9.0 |  7.5 | 10.7 | NA
-      Folato | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | 1895 |  0.4 |  0.1 |  0.8 | NA
-      Folato | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | 1895 |  0.4 |  0.1 |  0.8 | NA
-      Folato | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | 1895 |  0.4 |  0.1 |  0.8 | NA
+      Folato | Harina de trigo con hierro, zinc y ácido fólico | 1895 | 13.1 | 11.1 | 15.3 | NA
+      Folato | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | 1895 | 10.4 |  8.8 | 12.2 | NA
+      Folato | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | 1895 |  1.8 |  1.2 |  2.6 | NA
+      Folato | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | 1895 |  1.8 |  1.2 |  2.6 | NA
+      Folato | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | 1895 |  1.8 |  1.2 |  2.6 | NA
       Vitamina A | Sin fortificación | 1895 | 75.5 | 72.8 | 78.0 | NA
-      Vitamina A | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | 1895 | 37.0 | 34.1 | 40.0 | NA
-      Vitamina A | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | 1895 | 11.7 | 10.0 | 13.7 | NA
+      Vitamina A | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | 1895 | 39.1 | 36.2 | 42.1 | NA
+      Vitamina A | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | 1895 | 15.9 | 13.9 | 18.2 | NA
       n = 1,895 hogares
       Método: Hierro: método probabilístico, biodisponibilidad del hierro 10%; Zinc: punto de corte del EAR; Folato: punto de corte del EAR; Vitamina A: punto de corte del EAR.
       Ingesta aparente, no ingesta habitual: la proporción de hogares cuyas adquisiciones en el período de referencia, por equivalente de mujer adulta, quedan por debajo del requerimiento. El punto de corte y el enfoque probabilístico se definen sobre la ingesta habitual (IOM 2000b, pp. 73 y 99; IOM 2001, p. 703); es una cifra para comparar escenarios sobre los mismos datos, no una prevalencia de inadecuación.
@@ -1574,11 +1572,11 @@
       [R3.2_iron] Figura R3.2. Efecto de cada escenario en la ingesta aparente inadecuada de hierro, % y puntos porcentuales (IC 95%)
       
       nutrient | scenario | comparator | n | from | to | difference | difference_ci_low | difference_ci_high | mark
-      Hierro | Harina de trigo con hierro, zinc y ácido fólico | Sin fortificación | 1895 | 79.4 | 66.3 | -13.1 | -13.7 | -12.6 | NA
-      Hierro | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | Sin fortificación | 1895 | 79.4 | 64.3 | -15.1 | -15.7 | -14.5 | NA
-      Hierro | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | Sin fortificación | 1895 | 79.4 | 47.3 | -32.1 | -33.0 | -31.3 | NA
-      Hierro | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 1895 | 79.4 | 47.3 | -32.1 | -33.0 | -31.3 | NA
-      Hierro | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 1895 | 79.4 | 47.3 | -32.1 | -33.0 | -31.3 | NA
+      Hierro | Harina de trigo con hierro, zinc y ácido fólico | Sin fortificación | 1895 | 79.4 | 67.2 | -12.2 | -12.8 | -11.7 | NA
+      Hierro | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | Sin fortificación | 1895 | 79.4 | 65.4 | -14.1 | -14.7 | -13.5 | NA
+      Hierro | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | Sin fortificación | 1895 | 79.4 | 49.4 | -30.1 | -30.9 | -29.2 | NA
+      Hierro | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 1895 | 79.4 | 49.4 | -30.1 | -30.9 | -29.2 | NA
+      Hierro | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 1895 | 79.4 | 49.4 | -30.1 | -30.9 | -29.2 | NA
       n = 1,895 hogares
       Panel izquierdo: punto hueco, el escenario de comparación (Sin fortificación); punto lleno, el escenario. Panel derecho: diferencia pareada en puntos porcentuales, con su IC 95%.
       No es una proporción: se juzga solo por el número de hogares y los grados de libertad (nota técnica, desviación S1).
@@ -1592,11 +1590,11 @@
       [R3.2_zinc] Figura R3.2. Efecto de cada escenario en la ingesta aparente inadecuada de zinc, % y puntos porcentuales (IC 95%)
       
       nutrient | scenario | comparator | n | from | to | difference | difference_ci_low | difference_ci_high | mark
-      Zinc | Harina de trigo con hierro, zinc y ácido fólico | Sin fortificación | 1895 | 36.9 | 24.1 | -12.8 | -14.5 | -11.1 | NA
-      Zinc | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | Sin fortificación | 1895 | 36.9 | 21.9 | -15.0 | -16.8 | -13.2 | NA
-      Zinc | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | Sin fortificación | 1895 | 36.9 | 21.9 | -15.0 | -16.8 | -13.2 | NA
-      Zinc | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 1895 | 36.9 | 21.9 | -15.0 | -16.8 | -13.2 | NA
-      Zinc | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 1895 | 36.9 | 21.9 | -15.0 | -16.8 | -13.2 | NA
+      Zinc | Harina de trigo con hierro, zinc y ácido fólico | Sin fortificación | 1895 | 36.9 | 25.5 | -11.4 | -12.9 |  -9.8 | NA
+      Zinc | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | Sin fortificación | 1895 | 36.9 | 23.2 | -13.7 | -15.3 | -12.1 | NA
+      Zinc | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | Sin fortificación | 1895 | 36.9 | 23.2 | -13.7 | -15.3 | -12.1 | NA
+      Zinc | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 1895 | 36.9 | 23.2 | -13.7 | -15.3 | -12.1 | NA
+      Zinc | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 1895 | 36.9 | 23.2 | -13.7 | -15.3 | -12.1 | NA
       n = 1,895 hogares
       Panel izquierdo: punto hueco, el escenario de comparación (Sin fortificación); punto lleno, el escenario. Panel derecho: diferencia pareada en puntos porcentuales, con su IC 95%.
       No es una proporción: se juzga solo por el número de hogares y los grados de libertad (nota técnica, desviación S1).
@@ -1610,11 +1608,11 @@
       [R3.2_folate] Figura R3.2. Efecto de cada escenario en la ingesta aparente inadecuada de folato, % y puntos porcentuales (IC 95%)
       
       nutrient | scenario | comparator | n | from | to | difference | difference_ci_low | difference_ci_high | mark
-      Folato | Harina de trigo con hierro, zinc y ácido fólico | Sin fortificación | 1895 | 34.5 | 11.6 | -22.9 | -24.8 | -21.0 | NA
-      Folato | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | Sin fortificación | 1895 | 34.5 |  9.0 | -25.5 | -27.4 | -23.6 | NA
-      Folato | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | Sin fortificación | 1895 | 34.5 |  0.4 | -34.1 | -36.5 | -31.7 | NA
-      Folato | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 1895 | 34.5 |  0.4 | -34.1 | -36.5 | -31.7 | NA
-      Folato | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 1895 | 34.5 |  0.4 | -34.1 | -36.5 | -31.7 | NA
+      Folato | Harina de trigo con hierro, zinc y ácido fólico | Sin fortificación | 1895 | 34.5 | 13.1 | -21.4 | -23.3 | -19.5 | NA
+      Folato | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | Sin fortificación | 1895 | 34.5 | 10.4 | -24.1 | -26.0 | -22.3 | NA
+      Folato | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | Sin fortificación | 1895 | 34.5 |  1.8 | -32.7 | -35.0 | -30.4 | NA
+      Folato | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 1895 | 34.5 |  1.8 | -32.7 | -35.0 | -30.4 | NA
+      Folato | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 1895 | 34.5 |  1.8 | -32.7 | -35.0 | -30.4 | NA
       n = 1,895 hogares
       Panel izquierdo: punto hueco, el escenario de comparación (Sin fortificación); punto lleno, el escenario. Panel derecho: diferencia pareada en puntos porcentuales, con su IC 95%.
       No es una proporción: se juzga solo por el número de hogares y los grados de libertad (nota técnica, desviación S1).
@@ -1628,8 +1626,8 @@
       [R3.2_vitamin_a] Figura R3.2. Efecto de cada escenario en la ingesta aparente inadecuada de vitamina A, % y puntos porcentuales (IC 95%)
       
       nutrient | scenario | comparator | n | from | to | difference | difference_ci_low | difference_ci_high | mark
-      Vitamina A | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 1895 | 75.5 | 37.0 | -38.5 | -40.9 | -36.1 | NA
-      Vitamina A | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 1895 | 75.5 | 11.7 | -63.7 | -66.2 | -61.2 | NA
+      Vitamina A | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 1895 | 75.5 | 39.1 | -36.4 | -38.8 | -34 | NA
+      Vitamina A | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 1895 | 75.5 | 15.9 | -59.5 | -62.1 | -57 | NA
       n = 1,895 hogares
       Panel izquierdo: punto hueco, el escenario de comparación (Sin fortificación); punto lleno, el escenario. Panel derecho: diferencia pareada en puntos porcentuales, con su IC 95%.
       No es una proporción: se juzga solo por el número de hogares y los grados de libertad (nota técnica, desviación S1).
@@ -1663,31 +1661,31 @@
       [R3.4_iron_expenditure_group] Figura R3.4. Efecto de cada escenario en la ingesta aparente inadecuada de hierro, por quintil de gasto, % y puntos porcentuales (IC 95%)
       
       domain_value | nutrient | scenario | comparator | n | from | to | difference | difference_ci_low | difference_ci_high | mark
-      Q1 (menor gasto) | Hierro | Harina de trigo con hierro, zinc y ácido fólico | Sin fortificación | 318 | 96.7 | 91.4 |  -5.3 |  -6.2 |  -4.3 | NA
-      Q1 (menor gasto) | Hierro | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | Sin fortificación | 318 | 96.7 | 89.5 |  -7.2 |  -8.3 |  -6.1 | NA
-      Q1 (menor gasto) | Hierro | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | Sin fortificación | 318 | 96.7 | 76.8 | -19.9 | -21.8 | -18.0 | NA
-      Q1 (menor gasto) | Hierro | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 318 | 96.7 | 76.8 | -19.9 | -21.8 | -18.0 | NA
-      Q1 (menor gasto) | Hierro | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 318 | 96.7 | 76.8 | -19.9 | -21.8 | -18.0 | NA
-      Q2 | Hierro | Harina de trigo con hierro, zinc y ácido fólico | Sin fortificación | 369 | 91.4 | 80.9 | -10.5 | -11.5 |  -9.6 | NA
-      Q2 | Hierro | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | Sin fortificación | 369 | 91.4 | 78.3 | -13.2 | -14.2 | -12.1 | NA
-      Q2 | Hierro | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | Sin fortificación | 369 | 91.4 | 58.7 | -32.8 | -34.4 | -31.2 | NA
-      Q2 | Hierro | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 369 | 91.4 | 58.7 | -32.8 | -34.4 | -31.2 | NA
-      Q2 | Hierro | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 369 | 91.4 | 58.7 | -32.8 | -34.4 | -31.2 | NA
-      Q3 | Hierro | Harina de trigo con hierro, zinc y ácido fólico | Sin fortificación | 389 | 84.1 | 69.5 | -14.6 | -15.7 | -13.5 | NA
-      Q3 | Hierro | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | Sin fortificación | 389 | 84.1 | 67.4 | -16.7 | -18.0 | -15.5 | NA
-      Q3 | Hierro | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | Sin fortificación | 389 | 84.1 | 47.3 | -36.8 | -38.3 | -35.2 | NA
-      Q3 | Hierro | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 389 | 84.1 | 47.3 | -36.8 | -38.3 | -35.2 | NA
-      Q3 | Hierro | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 389 | 84.1 | 47.3 | -36.8 | -38.3 | -35.2 | NA
-      Q4 | Hierro | Harina de trigo con hierro, zinc y ácido fólico | Sin fortificación | 398 | 75.1 | 58.3 | -16.8 | -17.8 | -15.7 | NA
-      Q4 | Hierro | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | Sin fortificación | 398 | 75.1 | 56.3 | -18.8 | -19.9 | -17.7 | NA
-      Q4 | Hierro | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | Sin fortificación | 398 | 75.1 | 37.1 | -38.0 | -39.3 | -36.7 | NA
-      Q4 | Hierro | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 398 | 75.1 | 37.1 | -38.0 | -39.3 | -36.7 | NA
-      Q4 | Hierro | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 398 | 75.1 | 37.1 | -38.0 | -39.3 | -36.7 | NA
-      Q5 (mayor gasto) | Hierro | Harina de trigo con hierro, zinc y ácido fólico | Sin fortificación | 421 | 51.3 | 33.5 | -17.9 | -18.7 | -17.0 | NA
-      Q5 (mayor gasto) | Hierro | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | Sin fortificación | 421 | 51.3 | 32.3 | -19.0 | -19.9 | -18.1 | NA
-      Q5 (mayor gasto) | Hierro | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | Sin fortificación | 421 | 51.3 | 19.2 | -32.1 | -33.4 | -30.8 | NA
-      Q5 (mayor gasto) | Hierro | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 421 | 51.3 | 19.2 | -32.1 | -33.4 | -30.8 | NA
-      Q5 (mayor gasto) | Hierro | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 421 | 51.3 | 19.2 | -32.1 | -33.4 | -30.8 | NA
+      Q1 (menor gasto) | Hierro | Harina de trigo con hierro, zinc y ácido fólico | Sin fortificación | 318 | 96.7 | 92.0 |  -4.7 |  -5.6 |  -3.8 | NA
+      Q1 (menor gasto) | Hierro | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | Sin fortificación | 318 | 96.7 | 90.2 |  -6.5 |  -7.6 |  -5.4 | NA
+      Q1 (menor gasto) | Hierro | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | Sin fortificación | 318 | 96.7 | 79.6 | -17.1 | -19.0 | -15.2 | NA
+      Q1 (menor gasto) | Hierro | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 318 | 96.7 | 79.6 | -17.1 | -19.0 | -15.2 | NA
+      Q1 (menor gasto) | Hierro | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 318 | 96.7 | 79.6 | -17.1 | -19.0 | -15.2 | NA
+      Q2 | Hierro | Harina de trigo con hierro, zinc y ácido fólico | Sin fortificación | 369 | 91.4 | 81.8 |  -9.6 | -10.4 |  -8.7 | NA
+      Q2 | Hierro | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | Sin fortificación | 369 | 91.4 | 79.6 | -11.8 | -12.8 | -10.9 | NA
+      Q2 | Hierro | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | Sin fortificación | 369 | 91.4 | 61.5 | -29.9 | -31.5 | -28.3 | NA
+      Q2 | Hierro | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 369 | 91.4 | 61.5 | -29.9 | -31.5 | -28.3 | NA
+      Q2 | Hierro | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 369 | 91.4 | 61.5 | -29.9 | -31.5 | -28.3 | NA
+      Q3 | Hierro | Harina de trigo con hierro, zinc y ácido fólico | Sin fortificación | 389 | 84.1 | 70.6 | -13.5 | -14.6 | -12.4 | NA
+      Q3 | Hierro | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | Sin fortificación | 389 | 84.1 | 68.5 | -15.6 | -16.8 | -14.4 | NA
+      Q3 | Hierro | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | Sin fortificación | 389 | 84.1 | 49.8 | -34.3 | -36.0 | -32.6 | NA
+      Q3 | Hierro | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 389 | 84.1 | 49.8 | -34.3 | -36.0 | -32.6 | NA
+      Q3 | Hierro | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 389 | 84.1 | 49.8 | -34.3 | -36.0 | -32.6 | NA
+      Q4 | Hierro | Harina de trigo con hierro, zinc y ácido fólico | Sin fortificación | 398 | 75.1 | 59.7 | -15.4 | -16.5 | -14.4 | NA
+      Q4 | Hierro | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | Sin fortificación | 398 | 75.1 | 57.8 | -17.3 | -18.4 | -16.2 | NA
+      Q4 | Hierro | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | Sin fortificación | 398 | 75.1 | 38.8 | -36.3 | -37.6 | -35.0 | NA
+      Q4 | Hierro | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 398 | 75.1 | 38.8 | -36.3 | -37.6 | -35.0 | NA
+      Q4 | Hierro | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 398 | 75.1 | 38.8 | -36.3 | -37.6 | -35.0 | NA
+      Q5 (mayor gasto) | Hierro | Harina de trigo con hierro, zinc y ácido fólico | Sin fortificación | 421 | 51.3 | 34.1 | -17.3 | -18.1 | -16.4 | NA
+      Q5 (mayor gasto) | Hierro | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | Sin fortificación | 421 | 51.3 | 32.9 | -18.5 | -19.3 | -17.6 | NA
+      Q5 (mayor gasto) | Hierro | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | Sin fortificación | 421 | 51.3 | 19.8 | -31.6 | -32.8 | -30.3 | NA
+      Q5 (mayor gasto) | Hierro | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 421 | 51.3 | 19.8 | -31.6 | -32.8 | -30.3 | NA
+      Q5 (mayor gasto) | Hierro | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 421 | 51.3 | 19.8 | -31.6 | -32.8 | -30.3 | NA
       Sin dato | Hierro | Harina de trigo con hierro, zinc y ácido fólico | Sin fortificación |   0 |   NA |   NA |    NA |    NA |    NA | NA
       Sin dato | Hierro | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | Sin fortificación |   0 |   NA |   NA |    NA |    NA |    NA | NA
       Sin dato | Hierro | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | Sin fortificación |   0 |   NA |   NA |    NA |    NA |    NA | NA
@@ -1706,26 +1704,26 @@
       [R3.4_zinc_expenditure_group] Figura R3.4. Efecto de cada escenario en la ingesta aparente inadecuada de zinc, por quintil de gasto, % y puntos porcentuales (IC 95%)
       
       domain_value | nutrient | scenario | comparator | n | from | to | difference | difference_ci_low | difference_ci_high | mark
-      Q1 (menor gasto) | Zinc | Harina de trigo con hierro, zinc y ácido fólico | Sin fortificación | 318 | 90.9 | 77.8 | -13.1 | -16.7 |  -9.4 | NA
-      Q1 (menor gasto) | Zinc | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | Sin fortificación | 318 | 90.9 | 72.4 | -18.5 | -22.9 | -14.2 | NA
-      Q1 (menor gasto) | Zinc | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | Sin fortificación | 318 | 90.9 | 72.4 | -18.5 | -22.9 | -14.2 | NA
-      Q1 (menor gasto) | Zinc | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 318 | 90.9 | 72.4 | -18.5 | -22.9 | -14.2 | NA
-      Q1 (menor gasto) | Zinc | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 318 | 90.9 | 72.4 | -18.5 | -22.9 | -14.2 | NA
-      Q2 | Zinc | Harina de trigo con hierro, zinc y ácido fólico | Sin fortificación | 369 | 60.3 | 34.5 | -25.8 | -30.1 | -21.5 | NA
-      Q2 | Zinc | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | Sin fortificación | 369 | 60.3 | 29.4 | -30.9 | -35.6 | -26.2 | NA
-      Q2 | Zinc | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | Sin fortificación | 369 | 60.3 | 29.4 | -30.9 | -35.6 | -26.2 | NA
-      Q2 | Zinc | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 369 | 60.3 | 29.4 | -30.9 | -35.6 | -26.2 | NA
-      Q2 | Zinc | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 369 | 60.3 | 29.4 | -30.9 | -35.6 | -26.2 | NA
-      Q3 | Zinc | Harina de trigo con hierro, zinc y ácido fólico | Sin fortificación | 389 | 31.7 | 10.7 | -21.0 | -25.2 | -16.8 | NA
-      Q3 | Zinc | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | Sin fortificación | 389 | 31.7 | 10.5 | -21.3 | -25.5 | -17.0 | NA
-      Q3 | Zinc | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | Sin fortificación | 389 | 31.7 | 10.5 | -21.3 | -25.5 | -17.0 | NA
-      Q3 | Zinc | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 389 | 31.7 | 10.5 | -21.3 | -25.5 | -17.0 | NA
-      Q3 | Zinc | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 389 | 31.7 | 10.5 | -21.3 | -25.5 | -17.0 | NA
-      Q4 | Zinc | Harina de trigo con hierro, zinc y ácido fólico | Sin fortificación | 398 |  6.6 |  2.0 |  -4.5 |  -6.5 |  -2.5 | NA
-      Q4 | Zinc | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | Sin fortificación | 398 |  6.6 |  1.6 |  -4.9 |  -7.1 |  -2.8 | NA
-      Q4 | Zinc | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | Sin fortificación | 398 |  6.6 |  1.6 |  -4.9 |  -7.1 |  -2.8 | NA
-      Q4 | Zinc | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 398 |  6.6 |  1.6 |  -4.9 |  -7.1 |  -2.8 | NA
-      Q4 | Zinc | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 398 |  6.6 |  1.6 |  -4.9 |  -7.1 |  -2.8 | NA
+      Q1 (menor gasto) | Zinc | Harina de trigo con hierro, zinc y ácido fólico | Sin fortificación | 318 | 90.9 | 80.4 | -10.5 | -13.8 |  -7.2 | NA
+      Q1 (menor gasto) | Zinc | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | Sin fortificación | 318 | 90.9 | 74.4 | -16.5 | -20.4 | -12.6 | NA
+      Q1 (menor gasto) | Zinc | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | Sin fortificación | 318 | 90.9 | 74.4 | -16.5 | -20.4 | -12.6 | NA
+      Q1 (menor gasto) | Zinc | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 318 | 90.9 | 74.4 | -16.5 | -20.4 | -12.6 | NA
+      Q1 (menor gasto) | Zinc | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 318 | 90.9 | 74.4 | -16.5 | -20.4 | -12.6 | NA
+      Q2 | Zinc | Harina de trigo con hierro, zinc y ácido fólico | Sin fortificación | 369 | 60.3 | 38.1 | -22.2 | -26.2 | -18.1 | NA
+      Q2 | Zinc | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | Sin fortificación | 369 | 60.3 | 33.2 | -27.1 | -31.5 | -22.7 | NA
+      Q2 | Zinc | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | Sin fortificación | 369 | 60.3 | 33.2 | -27.1 | -31.5 | -22.7 | NA
+      Q2 | Zinc | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 369 | 60.3 | 33.2 | -27.1 | -31.5 | -22.7 | NA
+      Q2 | Zinc | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 369 | 60.3 | 33.2 | -27.1 | -31.5 | -22.7 | NA
+      Q3 | Zinc | Harina de trigo con hierro, zinc y ácido fólico | Sin fortificación | 389 | 31.7 | 11.7 | -20.0 | -24.0 | -16.0 | NA
+      Q3 | Zinc | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | Sin fortificación | 389 | 31.7 | 11.1 | -20.6 | -24.7 | -16.5 | NA
+      Q3 | Zinc | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | Sin fortificación | 389 | 31.7 | 11.1 | -20.6 | -24.7 | -16.5 | NA
+      Q3 | Zinc | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 389 | 31.7 | 11.1 | -20.6 | -24.7 | -16.5 | NA
+      Q3 | Zinc | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 389 | 31.7 | 11.1 | -20.6 | -24.7 | -16.5 | NA
+      Q4 | Zinc | Harina de trigo con hierro, zinc y ácido fólico | Sin fortificación | 398 |  6.6 |  2.4 |  -4.2 |  -6.2 |  -2.2 | NA
+      Q4 | Zinc | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | Sin fortificación | 398 |  6.6 |  2.0 |  -4.6 |  -6.7 |  -2.5 | NA
+      Q4 | Zinc | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | Sin fortificación | 398 |  6.6 |  2.0 |  -4.6 |  -6.7 |  -2.5 | NA
+      Q4 | Zinc | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 398 |  6.6 |  2.0 |  -4.6 |  -6.7 |  -2.5 | NA
+      Q4 | Zinc | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 398 |  6.6 |  2.0 |  -4.6 |  -6.7 |  -2.5 | NA
       Q5 (mayor gasto) | Zinc | Harina de trigo con hierro, zinc y ácido fólico | Sin fortificación | 421 |  0.0 |  0.0 |   0.0 |    NA |    NA | NA
       Q5 (mayor gasto) | Zinc | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | Sin fortificación | 421 |  0.0 |  0.0 |   0.0 |    NA |    NA | NA
       Q5 (mayor gasto) | Zinc | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | Sin fortificación | 421 |  0.0 |  0.0 |   0.0 |    NA |    NA | NA
@@ -1749,28 +1747,28 @@
       [R3.4_folate_expenditure_group] Figura R3.4. Efecto de cada escenario en la ingesta aparente inadecuada de folato, por quintil de gasto, % y puntos porcentuales (IC 95%)
       
       domain_value | nutrient | scenario | comparator | n | from | to | difference | difference_ci_low | difference_ci_high | mark
-      Q1 (menor gasto) | Folato | Harina de trigo con hierro, zinc y ácido fólico | Sin fortificación | 318 | 65.1 | 33.2 | -31.8 | -37.3 | -26.4 | NA
-      Q1 (menor gasto) | Folato | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | Sin fortificación | 318 | 65.1 | 24.5 | -40.5 | -45.6 | -35.4 | NA
-      Q1 (menor gasto) | Folato | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | Sin fortificación | 318 | 65.1 |  1.0 | -64.1 | -69.3 | -58.9 | NA
-      Q1 (menor gasto) | Folato | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 318 | 65.1 |  1.0 | -64.1 | -69.3 | -58.9 | NA
-      Q1 (menor gasto) | Folato | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 318 | 65.1 |  1.0 | -64.1 | -69.3 | -58.9 | NA
-      Q2 | Folato | Harina de trigo con hierro, zinc y ácido fólico | Sin fortificación | 369 | 43.9 | 13.9 | -30.0 | -35.2 | -24.9 | NA
-      Q2 | Folato | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | Sin fortificación | 369 | 43.9 | 10.7 | -33.2 | -38.4 | -28.0 | NA
-      Q2 | Folato | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | Sin fortificación | 369 | 43.9 |  0.7 | -43.2 | -48.2 | -38.2 | NA
-      Q2 | Folato | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 369 | 43.9 |  0.7 | -43.2 | -48.2 | -38.2 | NA
-      Q2 | Folato | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 369 | 43.9 |  0.7 | -43.2 | -48.2 | -38.2 | NA
-      Q3 | Folato | Harina de trigo con hierro, zinc y ácido fólico | Sin fortificación | 389 | 32.9 |  8.6 | -24.3 | -28.3 | -20.3 | NA
-      Q3 | Folato | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | Sin fortificación | 389 | 32.9 |  7.4 | -25.5 | -29.5 | -21.6 | NA
-      Q3 | Folato | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | Sin fortificación | 389 | 32.9 |  0.3 | -32.6 | -37.6 | -27.7 | NA
-      Q3 | Folato | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 389 | 32.9 |  0.3 | -32.6 | -37.6 | -27.7 | NA
-      Q3 | Folato | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 389 | 32.9 |  0.3 | -32.6 | -37.6 | -27.7 | NA
-      Q4 | Folato | Harina de trigo con hierro, zinc y ácido fólico | Sin fortificación | 398 | 22.6 |  3.1 | -19.5 | -23.3 | -15.7 | NA
-      Q4 | Folato | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | Sin fortificación | 398 | 22.6 |  2.6 | -20.1 | -23.9 | -16.2 | NA
-      Q4 | Folato | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | Sin fortificación | 398 | 22.6 |  0.0 | -22.6 | -26.5 | -18.7 | NA
-      Q4 | Folato | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 398 | 22.6 |  0.0 | -22.6 | -26.5 | -18.7 | NA
-      Q4 | Folato | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 398 | 22.6 |  0.0 | -22.6 | -26.5 | -18.7 | NA
-      Q5 (mayor gasto) | Folato | Harina de trigo con hierro, zinc y ácido fólico | Sin fortificación | 421 | 10.7 |  1.2 |  -9.5 | -12.3 |  -6.7 | NA
-      Q5 (mayor gasto) | Folato | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | Sin fortificación | 421 | 10.7 |  1.2 |  -9.5 | -12.3 |  -6.7 | NA
+      Q1 (menor gasto) | Folato | Harina de trigo con hierro, zinc y ácido fólico | Sin fortificación | 318 | 65.1 | 36.8 | -28.3 | -34.0 | -22.6 | NA
+      Q1 (menor gasto) | Folato | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | Sin fortificación | 318 | 65.1 | 27.9 | -37.2 | -41.9 | -32.4 | NA
+      Q1 (menor gasto) | Folato | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | Sin fortificación | 318 | 65.1 |  5.5 | -59.5 | -65.2 | -53.9 | NA
+      Q1 (menor gasto) | Folato | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 318 | 65.1 |  5.5 | -59.5 | -65.2 | -53.9 | NA
+      Q1 (menor gasto) | Folato | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 318 | 65.1 |  5.5 | -59.5 | -65.2 | -53.9 | NA
+      Q2 | Folato | Harina de trigo con hierro, zinc y ácido fólico | Sin fortificación | 369 | 43.9 | 15.8 | -28.1 | -33.1 | -23.2 | NA
+      Q2 | Folato | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | Sin fortificación | 369 | 43.9 | 12.1 | -31.9 | -36.9 | -26.8 | NA
+      Q2 | Folato | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | Sin fortificación | 369 | 43.9 |  1.9 | -42.0 | -47.0 | -37.0 | NA
+      Q2 | Folato | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 369 | 43.9 |  1.9 | -42.0 | -47.0 | -37.0 | NA
+      Q2 | Folato | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 369 | 43.9 |  1.9 | -42.0 | -47.0 | -37.0 | NA
+      Q3 | Folato | Harina de trigo con hierro, zinc y ácido fólico | Sin fortificación | 389 | 32.9 |  9.9 | -23.1 | -27.0 | -19.2 | NA
+      Q3 | Folato | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | Sin fortificación | 389 | 32.9 |  8.7 | -24.3 | -28.1 | -20.4 | NA
+      Q3 | Folato | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | Sin fortificación | 389 | 32.9 |  1.3 | -31.6 | -36.2 | -27.1 | NA
+      Q3 | Folato | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 389 | 32.9 |  1.3 | -31.6 | -36.2 | -27.1 | NA
+      Q3 | Folato | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 389 | 32.9 |  1.3 | -31.6 | -36.2 | -27.1 | NA
+      Q4 | Folato | Harina de trigo con hierro, zinc y ácido fólico | Sin fortificación | 398 | 22.6 |  3.8 | -18.8 | -22.4 | -15.2 | NA
+      Q4 | Folato | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | Sin fortificación | 398 | 22.6 |  3.4 | -19.2 | -22.9 | -15.5 | NA
+      Q4 | Folato | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | Sin fortificación | 398 | 22.6 |  0.5 | -22.1 | -25.9 | -18.2 | NA
+      Q4 | Folato | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 398 | 22.6 |  0.5 | -22.1 | -25.9 | -18.2 | NA
+      Q4 | Folato | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 398 | 22.6 |  0.5 | -22.1 | -25.9 | -18.2 | NA
+      Q5 (mayor gasto) | Folato | Harina de trigo con hierro, zinc y ácido fólico | Sin fortificación | 421 | 10.7 |  1.4 |  -9.3 | -12.1 |  -6.5 | NA
+      Q5 (mayor gasto) | Folato | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | Sin fortificación | 421 | 10.7 |  1.4 |  -9.3 | -12.1 |  -6.5 | NA
       Q5 (mayor gasto) | Folato | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | Sin fortificación | 421 | 10.7 |  0.0 | -10.7 | -13.8 |  -7.5 | NA
       Q5 (mayor gasto) | Folato | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 421 | 10.7 |  0.0 | -10.7 | -13.8 |  -7.5 | NA
       Q5 (mayor gasto) | Folato | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 421 | 10.7 |  0.0 | -10.7 | -13.8 |  -7.5 | NA
@@ -1792,16 +1790,16 @@
       [R3.4_vitamin_a_expenditure_group] Figura R3.4. Efecto de cada escenario en la ingesta aparente inadecuada de vitamina A, por quintil de gasto, % y puntos porcentuales (IC 95%)
       
       domain_value | nutrient | scenario | comparator | n | from | to | difference | difference_ci_low | difference_ci_high | mark
-      Q1 (menor gasto) | Vitamina A | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 318 | 97.2 | 76.5 | -20.7 | -25.2 | -16.3 | NA
-      Q1 (menor gasto) | Vitamina A | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 318 | 97.2 | 39.4 | -57.8 | -63.9 | -51.6 | NA
-      Q2 | Vitamina A | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 369 | 93.0 | 53.1 | -40.0 | -45.2 | -34.7 | NA
-      Q2 | Vitamina A | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 369 | 93.0 | 14.8 | -78.2 | -82.4 | -74.0 | NA
-      Q3 | Vitamina A | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 389 | 84.3 | 34.8 | -49.5 | -54.9 | -44.1 | NA
-      Q3 | Vitamina A | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 389 | 84.3 |  5.1 | -79.2 | -83.5 | -74.9 | NA
-      Q4 | Vitamina A | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 398 | 67.2 | 17.5 | -49.7 | -54.3 | -45.1 | NA
-      Q4 | Vitamina A | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 398 | 67.2 |  1.0 | -66.2 | -70.9 | -61.4 | NA
-      Q5 (mayor gasto) | Vitamina A | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 421 | 37.5 |  6.6 | -30.9 | -35.6 | -26.1 | NA
-      Q5 (mayor gasto) | Vitamina A | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 421 | 37.5 |  0.7 | -36.8 | -41.7 | -31.9 | NA
+      Q1 (menor gasto) | Vitamina A | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 318 | 97.2 | 78.0 | -19.2 | -23.4 | -15.1 | NA
+      Q1 (menor gasto) | Vitamina A | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 318 | 97.2 | 44.7 | -52.5 | -58.6 | -46.3 | NA
+      Q2 | Vitamina A | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 369 | 93.0 | 56.2 | -36.9 | -42.0 | -31.8 | NA
+      Q2 | Vitamina A | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 369 | 93.0 | 21.7 | -71.3 | -76.2 | -66.4 | NA
+      Q3 | Vitamina A | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 389 | 84.3 | 37.7 | -46.7 | -52.2 | -41.2 | NA
+      Q3 | Vitamina A | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 389 | 84.3 | 10.5 | -73.9 | -78.3 | -69.4 | NA
+      Q4 | Vitamina A | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 398 | 67.2 | 20.1 | -47.1 | -51.7 | -42.4 | NA
+      Q4 | Vitamina A | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 398 | 67.2 |  3.8 | -63.4 | -68.3 | -58.4 | NA
+      Q5 (mayor gasto) | Vitamina A | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación | 421 | 37.5 |  7.1 | -30.4 | -35.2 | -25.7 | NA
+      Q5 (mayor gasto) | Vitamina A | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación | 421 | 37.5 |  1.5 | -36.0 | -40.9 | -31.2 | NA
       Sin dato | Vitamina A | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | Sin fortificación |   0 |   NA |   NA |    NA |    NA |    NA | NA
       Sin dato | Vitamina A | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | Sin fortificación |   0 |   NA |   NA |    NA |    NA |    NA | NA
       — Sin dato: ningún hogar con estimación.

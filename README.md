@@ -33,7 +33,8 @@ afe <- adult_equivalents(ex$members,
   weight_kg = c(female = 55, male = 65), pal = 1.76,
   infant_food_share = 1, pregnancy_kcal = 0, lactation_kcal = 0)
 intake <- apparent_intake(content, afe, ex$households)
-use <- vehicle_coverage(grams, ex$vehicles, afe, ex$households)
+use <- vehicle_coverage(grams, ex$vehicles, afe, ex$households,
+                        fortifiable = "use")
 scenarios <- apply_scenario(intake, use, ex$scenarios,
                             compliance_model = "average_content")
 folate <- ref_requirements[ref_requirements$nutrient == "folate", ]

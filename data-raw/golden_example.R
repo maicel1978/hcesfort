@@ -16,7 +16,10 @@
 # Choices of the chain: reference woman 18-30 years, 55 kg, PAL 1.76; men
 # 65 kg; infants by the mean of their months; a member without age or sex
 # leaves the household without AFE; unit factors by food first; no outlier
-# rule; average-content compliance; iron by the probability approach for
+# rule; average-content compliance on the fortifiable grams (a record
+# whose `fortifiable` is FALSE gets nothing; a missing value counts as
+# fortifiable; all records when the column is absent); iron by the
+# probability approach for
 # menstruating adult women; food-group shares with the grouping of each
 # dataset. Each dataset names a vehicle and two scenarios: `one` (compared
 # with the baseline) and `two` (added folate and vitamin A, folic acid
@@ -187,12 +190,16 @@ golden_values <- function(ex, cfg) {
   inc <- a$include
   records_share <- sum(used & a$household_id %in% ids) / sum(inc)
 
-  # 5. Vehicle grams per AFE and the scenarios.
+  # 5. Vehicle grams per AFE and the scenarios: all grams of the vehicle,
+  # or only those that count as fortifiable.
   v <- ex$vehicles
-  vehicle_g <- function(vehicle) {
+  fortifiable <- if (is.null(a$fortifiable)) rep(TRUE, nrow(a)) else
+    !a$fortifiable %in% FALSE
+  vehicle_g <- function(vehicle, fortifiable_only = FALSE) {
     vv <- v[v$vehicle == vehicle, ]
     fr <- vv$vehicle_fraction[match(a$food_code, vv$food_code)]
     keep <- inc & !is.na(fr) & !is.na(a$qty_g_d)
+    if (fortifiable_only) keep <- keep & fortifiable
     sum_by(a$qty_g_d * ifelse(is.na(fr), 0, fr), keep) / hh$afe
   }
   sc <- ex$scenarios
@@ -212,7 +219,8 @@ golden_values <- function(ex, cfg) {
       } else {
         mg_kg / 10 * 1000 * conv$factor[conv$from_form == x$form]
       }
-      out <- out + vehicle_g(x$vehicle) * per_100g * x$compliance / 100
+      out <- out + vehicle_g(x$vehicle, fortifiable_only = TRUE) *
+        per_100g * x$compliance / 100
     }
     out[!estimated] <- NA
     out
@@ -276,6 +284,7 @@ golden_values <- function(ex, cfg) {
   data.frame(
     name = c("afe_sum", "n_estimated", "share_records_used",
              paste0("mean_", cols), "mean_vehicle_g_d",
+             "mean_fortifiable_g_d",
              "mean_folate_added_two", "mean_vitamin_a_two",
              "n_above_folic_acid_ul_two",
              "prev_folate_baseline", "se_folate_baseline",
@@ -288,6 +297,7 @@ golden_values <- function(ex, cfg) {
     value = c(sum(hh$afe, na.rm = TRUE), sum(estimated), records_share,
               colMeans(intake[estimated, ]),
               mean(vehicle_g(cfg$vehicle)[estimated]),
+              mean(vehicle_g(cfg$vehicle, fortifiable_only = TRUE)[estimated]),
               mean(added(cfg$two, "folate")[estimated]),
               mean(vita_fs[estimated]), sum(folic_fs > ul_folic, na.rm = TRUE),
               stats::coef(pf), survey::SE(pf), kg_folate,

@@ -134,7 +134,8 @@ schema_scenarios <- function(nutrients = NULL) {
       "is compound, missing when it is nutrient"
     ), required = FALSE, na = TRUE, bounds = "(0, 1]"),
     schema_col("compliance", "number", paste(
-      "share of the vehicle actually fortified; added as 1 when absent"
+      "share of the fortifiable vehicle actually fortified (its grams",
+      "with `fortifiable` not FALSE); added as 1 when absent"
     ), required = FALSE, bounds = "[0, 1]"),
     schema_col("source", "text", "standard or document")
   )

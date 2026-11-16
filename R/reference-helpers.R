@@ -63,9 +63,10 @@ reference_energy <- function(sex, age_years, weight_kg, pal,
 #' The availability is per person: the ratio of the weighted totals of
 #' flour grams and household members over the households with an estimate
 #' (`survey::svyratio()`), not the mean of the households' grams per
-#' member, which weights households. The example computes it from
-#' [vehicle_coverage()]; see there for how household acquisitions differ
-#' from the figure WHO used.
+#' member, which weights households. WHO (2009, p. 1) sets its levels on
+#' "fortifiable" flour, so the example uses the fortifiable grams of
+#' [vehicle_coverage()] (`qty_fortifiable_g_d_pc`); see there for how
+#' household acquisitions differ from the figure WHO used.
 #'
 #' @param availability_g_d Estimated average per capita wheat flour
 #'   availability, g per day: one number >= 0.
@@ -87,11 +88,12 @@ reference_energy <- function(sex, age_years, weight_kg, pal,
 #'   weight_kg = c(female = 55, male = 65), pal = 1.76,
 #'   infant_food_share = 1, pregnancy_kcal = 0, lactation_kcal = 0
 #' )
-#' use <- vehicle_coverage(grams, ex$vehicles, afe, ex$households)
-#' # Wheat flour in any form: the vehicle group, flour in bread and pasta
-#' # included.
+#' use <- vehicle_coverage(grams, ex$vehicles, afe, ex$households,
+#'                         fortifiable = "use")
+#' # Fortifiable wheat flour in any form: the vehicle group, flour in bread
+#' # and pasta included.
 #' flour <- use[use$vehicle == "wheat_flour" & use$level == "group", ]
-#' flour$flour_g_d <- flour$qty_vehicle_g_d_pc * flour$n_members
+#' flour$flour_g_d <- flour$qty_fortifiable_g_d_pc * flour$n_members
 #' h <- merge(ex$households,
 #'            flour[c("household_id", "use_status", "flour_g_d", "n_members")],
 #'            by = "household_id", all.x = TRUE)

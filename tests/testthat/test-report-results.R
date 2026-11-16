@@ -222,7 +222,8 @@ test_that("the upper-level zeros are one sentence, not points (K24)", {
   plausible <- flag_energy_plausibility(intake, "energy_kcal", 500, 6000)
   keep <- !plausible$energy_plausible %in% FALSE
   intake <- restore_audit(intake[keep, ], intake)
-  use <- vehicle_coverage(g, e$vehicles, afe, e$households)
+  use <- vehicle_coverage(g, e$vehicles, afe, e$households,
+                          fortifiable = "use")
   use <- restore_audit(use[use$household_id %in% intake$household_id, ], use)
   s <- apply_scenario(intake, use, e$scenarios,
                       compliance_model = "average_content")

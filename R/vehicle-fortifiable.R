@@ -94,3 +94,33 @@ fortifiable_log <- function(x, used, decision, v, items, out) {
     )
   }))
 }
+
+# Abort with `hcesfort_error_schema` when `use` has no fortifiable grams
+# (a table built by a version before 12e.5.3).
+check_use_fortifiable <- function(use, call = rlang::caller_env()) {
+  if (!is.null(use[["qty_fortifiable_g_d"]])) return(invisible(TRUE))
+  abort_hcesfort("schema", c(
+    "{.arg use} lacks the column {.field qty_fortifiable_g_d}.",
+    "i" = "It was built by an older version of hcesfort: build it again
+    with {.fn vehicle_coverage}."
+  ), table = "use", columns = "qty_fortifiable_g_d", call = call)
+}
+
+# Audit rows of apply_scenario(): per vehicle of the scenarios, the
+# fortifiable grams over the vehicle grams of the estimated households
+# (household grams, qty x AFE; not weighted by the survey weights).
+fortifiable_share_log <- function(use, s) {
+  vu <- use[use$level == "vehicle" & use$use_status == "estimated", ]
+  dplyr::bind_rows(lapply(unique(s$vehicle), function(name) {
+    r <- vu[vu$vehicle == name, ]
+    total <- sum(r$qty_vehicle_g_d * r$afe)
+    share <- if (total > 0) {
+      format(round(sum(r$qty_fortifiable_g_d * r$afe) / total, 4),
+             nsmall = 4)
+    } else {
+      "no grams"
+    }
+    audit_row("apply_scenario", "vehicle_use", "note", "fortifiable_share",
+              nrow(r), nrow(r), detail = paste0(name, ": ", share))
+  }))
+}

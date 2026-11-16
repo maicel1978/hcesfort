@@ -56,7 +56,8 @@ audit_summary(intake)
 `apply_scenario()` adds the nutrients that a scenario would put in it.
 
 ```{r scenario}
-use <- vehicle_coverage(grams, ex$vehicles, afe, ex$households)
+use <- vehicle_coverage(grams, ex$vehicles, afe, ex$households,
+                        fortifiable = "use")
 scenarios <- apply_scenario(intake, use, ex$scenarios,
                             compliance_model = "average_content")
 unique(scenarios$scenario)

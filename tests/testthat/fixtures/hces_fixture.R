@@ -281,7 +281,10 @@ saveRDS(hces_fixture, "tests/testthat/fixtures/hces-fixture.rds",
 #   member and missing for the first member of household 7 (its AFE is
 #   then missing);
 # - acquisitions: `household_share` 0.5 for every seventh record and
-#   missing for record 13 (its grams are then missing);
+#   missing for record 13 (its grams are then missing); `fortifiable`
+#   FALSE for the wheat flour of every third household (milled at home),
+#   missing for the first bread record (counted as fortifiable, flagged),
+#   TRUE otherwise;
 # - crosswalk: `yield_factor` 0.75 for chicken and 0.9 for pumpkin, missing
 #   (taken as 1) for the other foods;
 # - households: household 3 alone in stratum "town", one PSU.
@@ -299,6 +302,8 @@ optional$members <- m
 a <- optional$acquisitions
 a$household_share <- ifelse(a$record_id %% 7 == 0, 0.5, 1)
 a$household_share[a$record_id == 13] <- NA
+a$fortifiable <- !(a$food_code == "wheat_flour" & a$household_id %% 3 == 0)
+a$fortifiable[which(a$food_code == "bread")[[1]]] <- NA
 optional$acquisitions <- a
 optional$crosswalk$yield_factor <- c(
   chicken = 0.75, pumpkin = 0.9

@@ -240,6 +240,11 @@ acquisitions$quantity[pick(0.003)] <- NA
 acquisitions$unit[pick(0.002)] <- NA
 acquisitions$include[pick(0.005)] <- FALSE
 
+# Fortifiable vehicle (docs/design-12e5.md, section 2.4): a food of own
+# production could not have been fortified by industry; the rule of this
+# invented adapter. Set without the random generator.
+acquisitions$fortifiable <- !acquisitions$origin %in% "own_production"
+
 # The short food lists.
 acquisitions <- acquisitions[acquisitions$food_code %in% short_foods |
                                !acquisitions$household_id %in% short_list, ]

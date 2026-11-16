@@ -101,6 +101,7 @@ if (ready && !is.null(vehicles)) {
                            stats::na.omit(vehicles$vehicle_group)))
   use <- drop_excluded(vehicle_coverage(
     grams, vehicles, afe, households,
+    fortifiable = if (!is.null(grams[["fortifiable"]])) fortifiable_choice,
     combine = list(any_vehicle = all_vehicles)
   ))
 }

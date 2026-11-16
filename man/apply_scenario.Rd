@@ -18,7 +18,8 @@ apply_scenario(
 composition.}
 
 \item{use}{Table returned by \code{\link[=vehicle_coverage]{vehicle_coverage()}} for the same
-households.}
+households (by this version: a table without \code{qty_fortifiable_g_d} is
+an \code{hcesfort_error_schema}).}
 
 \item{scenarios}{Scenarios table (\code{\link[=hces_schema]{hces_schema()}}\code{("scenarios")}),
 validated or not. Every \code{vehicle} must be a vehicle of \code{use}.}
@@ -64,10 +65,16 @@ levels apply to the form; if the form is itself a registry nutrient, its
 total is updated too. Losses in storage and cooking are not applied.
 
 Added per household, scenario and nutrient: the sum over the scenario's
-vehicles of \code{qty_vehicle_g_d} (from \code{\link[=vehicle_coverage]{vehicle_coverage()}}) times the
-amount per 100 g, divided by 100. \code{compliance} enters under the model
-named by \code{compliance_model}; v0.1 offers \code{"average_content"}: every gram
-of vehicle carries \code{compliance} times the level. The argument has no
+vehicles of \code{qty_fortifiable_g_d} (from \code{\link[=vehicle_coverage]{vehicle_coverage()}}: the grams
+of the vehicle that could have been fortified, all of them unless the
+acquisitions say otherwise) times the amount per 100 g, divided by 100.
+A vehicle of own production or home processing gets nothing. The log
+notes, per vehicle, the fortifiable grams over the vehicle grams of the
+estimated households (\code{fortifiable_share}, unweighted). \code{compliance}
+is the share of the fortifiable vehicle that is fortified; it enters
+under the model named by \code{compliance_model}; v0.1 offers
+\code{"average_content"}: every fortifiable gram carries \code{compliance} times
+the level. The argument has no
 default and is required whenever a compliance is below 1. Average
 content gives the right mean but understates the share of households
 above an upper level, since no household receives the full level:
@@ -94,7 +101,7 @@ afe <- adult_equivalents(
 )
 intake <- apparent_intake(content, afe, hces_example$households)
 use <- vehicle_coverage(grams, hces_example$vehicles, afe,
-                        hces_example$households)
+                        hces_example$households, fortifiable = "use")
 s <- apply_scenario(intake, use, hces_example$scenarios,
                     compliance_model = "average_content")
 tapply(s$iron_mg, s$scenario, mean, na.rm = TRUE)
