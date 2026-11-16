@@ -135,3 +135,25 @@ Review points of the design:
    column "A surprise is" before any corrected figure exists; say now if
    one of them is wrong.
 
+
+### Answers of the maintainer to section 9 of `docs/design-adapter-engih.md` (2026-11-16)
+
+Approved, all as recommended, except decision 2:
+
+1. The companion repository is an R package. Approved.
+2. A1 is run now by the maintainer. **The branch of the export script is not
+   merged into `main` of `analisis_ENGIH2018`**: that repository is the
+   delivered consultancy work and stays as delivered. The maintainer runs the
+   script from the branch `claude/intelligent-cori-3aev98` and pushes the
+   aggregated tables of `etapas/` to that branch. The script moves to the
+   companion repository when it is created.
+3. Download addresses: the maintainer copies them once into the registry.
+4. `fortifiable` is `FALSE` only for own production (`QUIEN_PAGO1` = 2).
+5. `PORCENTAJE_HOGAR` is used in the corrected analysis (step 2), old and new
+   figures in `NEWS.md`.
+6. Non-food codes are dropped by the adapter, with a count.
+7. The original outlier rule is kept; a sensitivity run is reported.
+8. Vehicle coverage in the corrected analysis is `acquired`; both figures in
+   `NEWS.md`.
+
+Record these in `docs/improvements.md` with the first commit of the next step.
