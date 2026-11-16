@@ -1031,3 +1031,19 @@ for the maintainer. New errors of the original analysis are E27 to E29 of
 | P199 | low | **Densities of liquids** (E18) need a cited table before the corrected analysis leaves water's density: `# SOURCE PENDING`. | Oil is declared by volume in most of its Section 2 rows. | A4, with a source |
 | P200 | low | **The export script of A1 has run only on invented stand-ins.** Its first run on the microdata is by the maintainer; an error there is most likely a column name. | It could not be run here. | A1 |
 
+
+## Open items from the review of 12e.1 to 12e.4 (2026-11-16)
+
+Review: `docs/review-12e.md` (findings `V<step>.<n>`). Two approved parts
+were deferred by the working sessions and wait for a decision of the
+maintainer: the bound at compliance 1 in the report (V3.1; P179) and the
+sensitivity by days (V3.2; P182). See the questions in `docs/handoff.md`.
+
+| Id | Priority | Item | Why | Task |
+|---|---|---|---|---|
+| P201 | high | **Stacked estimate tables are refused by `flag_presentation()` and `flag_precision()`** (V1.1): the key of an `hces_estimate` is the group columns and `by`, without `variable` and `statistic`, and since 12e.1 `require_hces()` checks it. `dplyr::bind_rows()` of the estimates of two variables or two statistics is an `hcesfort_error_key`; before 12e.1 it worked. Add `variable` and `statistic` to the key in `estimate_households()` and `estimate_difference()` (the keys of `estimate_unlinked()` and `food_group_shares()` already hold `variable`), with a test. | A change of behaviour that no approval covers; an adapter builds one table of results this way. | before A2 (Opus, one small commit) |
+| P202 | low | **The range check of a proportion reads the rows outside `domain`** (V1.2): check the aligned values, not the whole column. | An error for rows that are not estimated. | 12 |
+| P203 | low | **Test gaps of 12e.1 and 12e.2** (V2.1 and the tests of 12e.1): the key test through `dplyr::bind_rows()` and a fanning `left_join()`, not only the helper that copies attributes; the 11 call sites of `require_hces()` not in the chain test; the FAO examples with the BMR rounded to 0.1 MJ, within 1 kcal (the 1% tolerance does not separate the two adult bands in the first example); `shipped_results()` leaves the working directory in the knit folder for the rest of `test-report-results.R`. | Each is a way for a later change to pass unseen. | 12 |
+| P204 | medium | **Cells without degrees of freedom** (V4.2, V4.3): `no_degrees_of_freedom` is decided on the argument `df`, so with `df = "design"` or a number a domain inside one PSU returns an interval of width zero and no note; decide it on `survey::degf()` of the domain. `flag_precision()` returns `ok` for a cell without an interval (`no_degrees_of_freedom`, `undefined_quantile_interval`): a status `no_interval`, low precision; `n_effective` missing where the standard error cannot be estimated. | Findings 11 and 12 of the review v0.2 remain open under the option the ENGIH acceptance uses. | before A3 (Opus), with P201 or P184 |
+| P205 | low | **An anchor for the effective size** (V4.1): `n / survey::deff(survey::svymean(~y, d, deff = "replace")) * (n - 1) / n`, which agreed in five cells in the review. Today the package, the golden script and the "by hand" test hold the same expression. | The only estimator of 12e.4 without a reference outside the project. | 12 |
+| P206 | low | **The contract of `age_months`** (V4.4): the schema says "age in months, for infants"; since 12e.4 the validator requires the total months since birth for every member (`age_years = 3` with `age_months = 5` is an error). Say so in `hces_schema("members")` and in `?validate_members`. | An adapter with "years and remaining months" meets the rule only as an error. | 12e.5.1 (the step touches `age_months`) or 12 |

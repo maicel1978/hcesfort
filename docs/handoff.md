@@ -157,3 +157,76 @@ Approved, all as recommended, except decision 2:
    `NEWS.md`.
 
 Record these in `docs/improvements.md` with the first commit of the next step.
+
+## Review of 12e.1 to 12e.4 (2026-11-16, Fable; a separate session)
+
+This section does not change the next step above (12e.5.1, Opus).
+
+- **Done:** `docs/review-12e.md`, from `docs/review-12e-brief.md`: the
+  five questions answered, findings V1.1 to V4.4, 17 mutations run; items
+  P201 to P206 in `docs/improvements.md`. No package code changed.
+- **Result:** the figures of the chain and of the estimators are
+  unchanged outside the approved rules; no blocker for A3; no shared
+  state in the parallel tests. Two major findings: V1.1 (P201) and V3.1.
+- **For the session that takes them (Opus):** read sections "12e.1"
+  (V1.1) and "12e.4" (V4.2, V4.3) of the review; P201 before A2, P204
+  before A3.
+
+### Questions for the maintainer
+
+1. **The bound at compliance 1 in the results report** (V3.1). R2-D4 put
+   it in 12e.3; the session left a sentence under the exhibit and moved
+   the figure to P179 (task 12). Recommended: the column at compliance 1
+   is added in 12e.5.8, when the exhibit is touched for the all-or-nothing
+   model, and in any case before a report leaves the project; the
+   sensitivity by days (V3.2, P182) stays in task 12. Why: the report
+   still prints 0.59% as its safety figure where the bound is 19.7%.
+2. **P201 (stacked estimate tables) now or with the adapter?**
+   Recommended: one small Opus commit before 12e.5.1 continues, with P204
+   in the same session. Why: about ten lines and a test; the adapter (A2)
+   will stack estimates, and A3 runs with `df = "design"`.
+
+### Review points
+
+1. **Stacked estimates are refused** (V1.1):
+
+   ```r
+   library(hcesfort)
+   example(flag_presentation)  # builds design and use
+   ea <- estimate_households(design, use, "acquired",
+                             ci_method = "korn_graubard")
+   use$acq2 <- use$acquired
+   eb <- estimate_households(design, use, "acq2",
+                             ci_method = "korn_graubard")
+   flag_presentation(dplyr::bind_rows(ea, eb))  # hcesfort_error_key
+   ```
+
+2. **A domain inside one PSU under `df = "design"`** has an interval of
+   width zero and no note (V4.2):
+
+   ```r
+   h <- hces_example$households
+   d <- as_hces_design(h, lonely_psu = "adjust")
+   one <- h$psu == h$psu[[1]] & h$stratum == h$stratum[[1]]
+   x <- hcesfort:::new_hces_tbl(
+     data.frame(household_id = h$household_id,
+                y = ifelse(one, seq_along(one) / 10, NA)),
+     "hces_intake", key = "household_id")
+   estimate_households(d, x, "y", statistic = "mean", df = "design")[
+     c("estimate", "se", "ci_low", "ci_high", "df", "interval_note")]
+   ```
+
+3. **The effective size against `survey`** (question 3 of the brief):
+
+   ```r
+   h <- data.frame(household_id = 1:200, weight = 1, stratum = 1,
+                   psu = rep(1:10, each = 20))
+   h$p <- rep(seq(0.30, 0.70, length.out = 10), each = 20)
+   x <- hcesfort:::new_hces_tbl(h[c("household_id", "p")],
+                                "hces_inadequacy", key = "household_id")
+   e <- estimate_households(as_hces_design(h, "adjust"), x, "p")
+   s <- survey::svydesign(ids = ~psu, strata = ~stratum,
+                          weights = ~weight, data = h)
+   m <- survey::svymean(~p, s, deff = "replace")
+   c(e$n_effective, 200 / survey::deff(m) * 199 / 200)  # 9 and 9
+   ```
