@@ -1,89 +1,90 @@
 # Handoff
 
-- **Date:** 2026-11-15
-- **Model:** Opus 5.5 (step 12e.3, notes and text in one session).
-- **Branch:** `claude/intelligent-lovelace-jj6ijo`, pushed.
-- **Environment:** run `R CMD INSTALL .` at the start (the Quarto render
-  test uses the installed package). The full `devtools::test()` takes
-  about 13 minutes here: run it in the background, one at a time.
+- **Date:** 2026-11-16
+- **Model:** Opus 5.5 (step 12e.4).
+- **Branch:** `claude/docs-routing-handoff-9dlnd0`, pushed.
+- **Environment:** run `R CMD INSTALL .` at the start (the report tests use
+  the installed package). The full `devtools::test()` now runs in
+  parallel (`Config/testthat/parallel: true`), about 5.5 minutes here:
+  run it in the background, one at a time.
 
 ## What was done
 
-12e.3 (P157, P161, P163, P164 sentences, P170), see the commit messages:
+12e.4 (P164 effective size under R2-D6, P165 to P168, P172, P183), see the
+commit messages and `NEWS.md`:
 
-- Audit notes: `apparent_intake()` writes `period_days` (range of the
-  records used); `inadequacy()` and `above_ul()` write
-  `apparent_intake_not_usual_intake` with that range; `above_ul()` flags
-  `average_content_understates_ul`, one row per scenario with a compliance
-  below 1 under average content; the note `compliance_below_one` of
-  `apply_scenario()` now has one row per scenario (detail = its name).
-- Text: "What the figures are and are not" in `?inadequacy` (four IOM
-  quotations), `?above_ul`, `?apply_scenario`; tail rule cited (IOM 2001,
-  Table I-7, p. 703, footnote d); `?flag_presentation` and departure S2
-  (en, es) corrected; README rewritten (status, chain, limits, AI
-  statement); `CONTRIBUTING.md` AI statement; vignette section 5 (the
-  audit note, and the folic acid share as shipped 0.59% against 19.7% at
-  compliance 1); results report: note `ul_average_content` under the
-  upper-level exhibit; `data-raw/SOURCES.md` new section with the quotations.
-- New items: P182 (sensitivity by days observed, task 12), P183 (the limit
-  of finding 3 stated in the reports, high, before the first expert round).
+- Estimators: a cell without variation has no interval (`no_variation`);
+  a cell without degrees of freedom has no interval and no warning
+  (`no_degrees_of_freedom`); new columns `interval_note` and
+  `n_effective` (`n` over the design effect, from the variance of the
+  values); `flag_precision()` decides `exact` on the values;
+  `flag_presentation()` uses `n_effective`; `survey.adjust.domain.lonely`
+  fixed at `FALSE` and logged; note `psu_in_several_strata`.
+- Validators: `level_mg_kg <= 1e6`; mass per 100 g at most 100 g;
+  `age_months` against `age_years`. The optional fixture's adult month
+  (30) became 450, consistent with the age (it is still ignored).
+- `apparent_intake()`: flagged row `zero_intake`.
+- Report: note `usual_intake` under the risk exhibits (en, es); departure
+  S2 rewritten. Golden values regenerated (iron `n_effective`; the fixture
+  iron estimate now suppressed); report snapshots accepted (zinc cells of
+  zero prevalence lose their interval; the new note).
+- New items P184 to P187 (self-review).
+- Parallel tests kept: `Config/testthat/parallel: true` in `DESCRIPTION`.
+  Serial and parallel runs of the same tree gave the same counts (52
+  files, 529 tests, 3415 expectations, 0 failures, 0 warnings, 0 skips)
+  in 10 min 45 s and 5 min 29 s.
 
 ## Not done
 
-- **`surveytable` anchor (R2-D7).** Installing `surveytable` from CRAN was
-  refused by the session's permission classifier, so the call
-  `surveytable::svyciprop_adjusted()` could not be checked, and an unrun test
-  is not written (CLAUDE.md: never call a function without checking it).
-  See open question 1.
+- **`surveytable` anchor (R2-D7):** the install was refused again by the
+  session's permission classifier. As decided on 2026-11-15, the test is
+  dropped; recorded under R2-D7 in `docs/improvements.md`.
 
 ## Exact next step
 
-**12e.4 (P165 to P168, P172; the effective size of P164 under R2-D6).**
-Read only those ids in `docs/improvements.md` and findings 10 to 14 and 18
-of `docs/review-v0.2.md`. P183 (report note on usual intake) can go with
-it. Then 12e.5.1 to 12e.5.8 (Opus). `devtools::check()` and
-`lintr::lint_package()` once at the end of task 12e.
+**12e.5.1** (`infant_food_share`, `milk_energy_cost` in
+`adult_equivalents()`), from `docs/design-12e5.md` (read its sections for
+12e.5.1 and decisions R3-D1 to R3-D9 in `docs/improvements.md`). Then
+12e.5.2 to 12e.5.8 (Opus). `devtools::check()` and `lintr::lint_package()`
+once at the end of task 12e.
 
 ## Open questions
 
-None. **Answer of the maintainer (2026-11-15):** `surveytable` may be installed
-from CRAN in the 12e.4 session (`install.packages("surveytable", lib =
-Sys.getenv("R_LIBS_USER"))`); the maintainer approves the permission prompt.
-Check the call with `?surveytable::svyciprop_adjusted` and by running it, then
-write the anchor test of R2-D7 (Suggests, `skip_if_not_installed()`). If the
-install is still refused, record it and drop the test: the published NCHS rows
-remain the reference for the Korn-Graubard interval.
-
-**Also in 12e.4 (advisor):** try `Config/testthat/parallel: true` to shorten
-the full suite. Keep it only if the parallel run gives the same counts and
-no new failure or warning than the serial run; otherwise revert and record why.
+None.
 
 ## Recommended model for the next session
 
-**Opus** (12e.4).
+**Opus** (12e.5.1).
 
 ## Maintainer review points
 
-1. **The two new audit notes on `hces_example`:**
+1. **The effective size of the iron estimate** (`n` over the design effect,
+   no longer the number of households):
 
    ```r
    library(hcesfort)
-   example(above_ul)
-   l <- audit_log(ul)
-   l[l$cause %in% c("apparent_intake_not_usual_intake",
-                    "average_content_understates_ul"), c("cause", "detail")]
+   example(flag_presentation)  # builds the chain objects
+   e <- estimate_households(design, use, "acquired", by = "region",
+                            ci_method = "korn_graubard")
+   e[c("region", "estimate", "se", "n", "n_effective", "interval_note")]
    ```
 
-2. **The quotations in `?inadequacy`** against IOM 2000b pp. 73, 81 (Box
-   4-1), 99 and IOM 2001 p. 703 (footnotes a and d); they were read in the
-   review session, not reopened in 12e.3:
+2. **A cell without degrees of freedom** has no interval and no warning:
 
    ```r
-   ?hcesfort::inadequacy   # section "What the figures are and are not"
+   d <- as_hces_design(hces_example$households, lonely_psu = "adjust")
+   h <- hces_example$households
+   one <- h$psu == h$psu[[1]] & h$stratum == h$stratum[[1]]
+   x <- hcesfort:::new_hces_tbl(
+     data.frame(household_id = h$household_id,
+                y = ifelse(one, seq_along(one), NA)),
+     "hces_intake", key = "household_id")
+   estimate_households(d, x, "y", statistic = "mean")
    ```
 
-3. **The README reads as the package is** (render it and run its chain):
+3. **The new report note** reads well in both languages:
 
    ```r
-   rmarkdown::render("README.md", output_dir = tempdir())
+   read.csv(system.file("report/es/terms.csv", package = "hcesfort"))[
+     c(159, 217), "label"]
    ```

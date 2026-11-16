@@ -451,6 +451,42 @@
   Table I-7, p. 703, footnote d) instead of calling the rule a convention.
 * The README describes the package as it is, with the chain on
   `hces_example`; README and `CONTRIBUTING.md` state the use of AI tools.
+* An estimate whose households all have the same value (a mean, a median,
+  a difference between identical scenarios, a constant probability) is
+  returned with `se = 0` and no interval, and counted in the log
+  (`no_variation`), as a proportion of 0 or 1 already was. A cell with no
+  degrees of freedom (a domain inside one PSU) keeps its estimate and
+  standard error, has no interval and no base warning, and is counted
+  (`no_degrees_of_freedom`). New columns of the estimates: `interval_note`
+  (why an interval is missing) and `n_effective`. `flag_precision()`
+  calls a cell `exact` only when its values do not vary, not whenever
+  `se == 0` (a standard error of 0 under `lonely_psu = "certainty"` with
+  values that vary is not exact). In the results report, the zinc cells of
+  zero prevalence lose their interval of width zero.
+* The effective sample size of the NCHS standards is `n` divided by the
+  design effect. `estimate_households()` now computes it from the variance
+  of the values themselves (`n_effective`), which for a 0/1 outcome is the
+  former `p(1 - p) / se^2`; for a mean of probabilities (iron) the
+  former formula overstated it. `flag_presentation()` uses it. On
+  `hces_example`, iron at 10% bioavailability, baseline: 1,242.6 instead of
+  1,928 (the number of households, the cap); on the test fixture the
+  national iron estimate moves from review to suppress (15.0 instead of
+  36). Departure S2 of the report says so.
+* The estimators fix the option `survey.adjust.domain.lonely` of `survey`
+  at `FALSE` during the estimate and write it in the log
+  (`adjust_domain_lonely`); a global `TRUE` changed the standard errors.
+  PSU codes found in more than one stratum are counted in the log
+  (`psu_in_several_strata`).
+* Impossible values are refused: `level_mg_kg` above 1e6 mg per kg; a
+  nutrient mass above 100 g per 100 g (columns in g, mg or ug; energy and
+  equivalents have no upper bound); an `age_months` whose whole years
+  differ from `age_years` (`hcesfort_error_value`; it was dropped
+  silently).
+* `apparent_intake()` counts the estimated households with zero edible
+  grams (`zero_intake`); they keep an intake of zero.
+* The results report states under the risk exhibits (R0, section 2 and the
+  effect of each scenario) that the shares are of apparent, not usual,
+  intake, in English and Spanish.
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is
