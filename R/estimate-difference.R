@@ -15,7 +15,8 @@
 #'
 #' @inheritParams estimate_households
 #' @param x A table with the column `scenario`, returned by [inadequacy()],
-#'   [above_ul()] or [apply_scenario()].
+#'   [above_ul()] or [apply_scenario()] (not its table of states: see
+#'   [estimate_households()]).
 #' @param reference Name of the reference scenario (for example
 #'   `"baseline"`); required.
 #' @returns A tibble of class `hces_estimate` (and `hces_tbl`): the group
@@ -58,6 +59,7 @@ estimate_difference <- function(design, x, value, reference, by = NULL,
   check_required()
   require_design(design)
   require_hces(x, "hces_tbl")
+  refuse_states(x)
   x <- audit_check_rows(x, "estimate_difference")
   check_reference_scenario(x, reference)
   check_estimate_args(design, x, "mean", by, "logit", level, df)

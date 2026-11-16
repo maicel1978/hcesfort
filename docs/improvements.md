@@ -1088,10 +1088,13 @@ Self-review of `missing_values()`, its log row and Table D3.1.
 
 ## Open items from 12e.5.6 (2026-11-16)
 
-Self-review of the states table of `apply_scenario()` under
+Self-review of the states table of `apply_scenario()` (12e.5.6) and of its
+collapse in `inadequacy()` and `above_ul()` (12e.5.7), under
 `compliance_model = "all_or_nothing"`.
 
 | Id | Priority | Item | Why | Task |
 |---|---|---|---|---|
 | P213 | medium | **No bound on the number of states.** A scenario with `k` vehicles of partial compliance gives `2^k` copies of the households; with 15 vehicles and 10 000 households that is 330 million rows. A check before the rows are built (households times the sum of `2^k` above a stated limit, or `k` above a limit) with an error that names the scenarios and suggests average content or splitting the scenario. No threshold without a decision of the maintainer. | Real scenarios have one to four vehicles; a typo in `compliance` (0.99 for 1) over many vehicles would exhaust memory with no message. | 12e.5.8 or 12 |
 | P214 | low | **Each state recomputes the vehicle lookup.** `states_rows()` calls `scenario_rows()` once per state, which rebuilds the match of households to vehicle grams each time. Computing the added amount per vehicle once and summing the vehicles of each state would be linear in vehicles, not in states. | Only matters with many states (P213). | 12 |
+| P215 | low | **Counts of the logs of `inadequacy()` and `above_ul()` on the table of states are in state rows.** The rows `all`, `method`, `coverage`, `tails_fixed` and `ear_assumes_bioavailability` count the rows of `x`, which under all or nothing are households times states; the households are right (`n_households`). Counting one row per scenario and household (the first state) would make the logs of both models comparable. | The note `states_collapsed` says the input was a table of states, so the numbers are not wrong, only larger. | 12 |
+| P216 | low | **The gates read the first scenario of `x`.** `check_records_used()` and `check_coverage()` take the rows of `x$scenario[1]`; `apply_scenario()` puts the baseline first, with one state. A table reordered by the user with a scenario of several states first gives the same shares (every household repeated the same number of times) but log counts multiplied by the states. Selecting the baseline by `baseline_label` (recorded in the log) would remove the dependence on order. | Older than 12e.5.7; the states make it visible. | 12 |

@@ -102,6 +102,12 @@
 #' with it. `0` accepts any loss and says so in the log.
 #'
 #' @param x Table returned by [apply_scenario()] or [apparent_intake()].
+#'   Under `compliance_model = "all_or_nothing"` of [apply_scenario()], the
+#'   table of states: each state is assessed as a scenario, and
+#'   `p_inadequate`, `intake` and `added` are the expectations over the
+#'   states with the weights `state_probability` (the intake and the added
+#'   amount equal those of average content); the log notes
+#'   `states_collapsed`. The gates read the baseline, as always.
 #' @param requirements A table with one row per nutrient: `nutrient`, `unit`
 #'   (the registry unit), `ear` and `cutpoint_valid` (optionally
 #'   `ear_bioavailability`), such as one group of
@@ -150,7 +156,8 @@ inadequacy <- function(x, requirements, distribution = NULL,
                        bioavailability = NULL, min_coverage,
                        min_records_used) {
   check_required()
-  require_hces(x, c("hces_intake", "hces_scenario_intake"))
+  require_hces(x, c("hces_intake", "hces_scenario_intake",
+                    "hces_scenario_states"))
   x <- audit_check_rows(x, "inadequacy")
   nutrients <- attr(x, "nutrients", exact = TRUE)
   min_coverage <- check_min_coverage(min_coverage)
@@ -163,6 +170,26 @@ inadequacy <- function(x, requirements, distribution = NULL,
   assessed <- c(cut, names(dist))
   used <- check_records_used(x, min_used)
   cov <- check_coverage(x, nutrients, assessed, min_coverage)
+  key <- c("scenario", "household_id", "nutrient", "bioavailability")
+  out <- collapse_states(
+    inadequacy_rows(x, nutrients, req, cut, dist, bioavailability), key,
+    c("intake", "added", "p_inadequate")
+  )
+  log <- inadequacy_log(x, req, dist, bioavailability, cov, out, nutrients,
+                        min_coverage)
+  log <- dplyr::bind_rows(log, records_used_row("inadequacy", x, used,
+                                                min_used),
+                          ear_bioavailability_rows(x, req, cut),
+                          usual_intake_row("inadequacy", x),
+                          states_collapsed_row("inadequacy", x))
+  new_hces_tbl(out, "hces_inadequacy", dplyr::bind_rows(audit_get(x), log),
+               key, nutrients)
+}
+
+# The rows of every nutrient assessed, by the cut-point (`cut`) or the
+# probability approach (`dist`); an empty table of the same columns when
+# none is assessed.
+inadequacy_rows <- function(x, nutrients, req, cut, dist, bioavailability) {
   rows <- c(
     lapply(cut, function(n) {
       cutpoint_rows(x, nutrients, n, req$ear[req$nutrient == n])
@@ -175,16 +202,7 @@ inadequacy <- function(x, requirements, distribution = NULL,
     rows <- list(cutpoint_rows(x[0, ], nutrients, nutrients$nutrient[[1]],
                                NA_real_))
   }
-  out <- dplyr::bind_rows(rows)
-  log <- inadequacy_log(x, req, dist, bioavailability, cov, out, nutrients,
-                        min_coverage)
-  log <- dplyr::bind_rows(log, records_used_row("inadequacy", x, used,
-                                                min_used),
-                          ear_bioavailability_rows(x, req, cut),
-                          usual_intake_row("inadequacy", x))
-  new_hces_tbl(out, "hces_inadequacy", dplyr::bind_rows(audit_get(x), log),
-               c("scenario", "household_id", "nutrient", "bioavailability"),
-               nutrients)
+  dplyr::bind_rows(rows)
 }
 
 # The columns every row of the result shares, for nutrient `n` of `x`.
@@ -200,7 +218,8 @@ risk_base <- function(x, nutrients, n) {
     intake_status = x$intake_status, nutrient = n,
     unit = nutrients$unit[nutrients$nutrient == n], intake = x[[col]],
     added = added, coverage = x[[paste0(col, "_coverage")]],
-    share_records_used = x$share_records_used
+    share_records_used = x$share_records_used,
+    state_probability = state_weights(x)
   )
 }
 

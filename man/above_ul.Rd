@@ -13,7 +13,13 @@ above_ul(
 )
 }
 \arguments{
-\item{x}{Table returned by \code{\link[=apply_scenario]{apply_scenario()}} or \code{\link[=apparent_intake]{apparent_intake()}}.}
+\item{x}{Table returned by \code{\link[=apply_scenario]{apply_scenario()}} or \code{\link[=apparent_intake]{apparent_intake()}}.
+Under \code{compliance_model = "all_or_nothing"} of \code{\link[=apply_scenario]{apply_scenario()}}, the
+table of states: each state is assessed as a scenario, and
+\code{p_inadequate}, \code{intake} and \code{added} are the expectations over the
+states with the weights \code{state_probability} (the intake and the added
+amount equal those of average content); the log notes
+\code{states_collapsed}. The gates read the baseline, as always.}
 
 \item{requirements}{A table with one row per nutrient: \code{nutrient},
 \code{unit}, \code{ul}, \code{ul_unit} and \code{ul_applies_to}, such as one group of
@@ -33,8 +39,11 @@ A tibble of class \code{hces_above_ul} (and \code{hces_tbl}), long, key
 \code{scenario} + \code{household_id} + \code{nutrient}: \code{scenario}, \code{household_id},
 \code{intake_status}, \code{nutrient}, \code{ul}, \code{ul_unit}, \code{ul_applies_to},
 \code{ul_scope}, \code{amount_added}, \code{amount_total}, \code{above_ul_added} (missing
-for \code{total_intake}), \code{above_ul_total} (missing without a diet part) and
-\code{coverage} (of the diet part) and \code{share_records_used}.
+for \code{total_intake}), \code{above_ul_total} (missing without a diet part),
+\code{coverage} (of the diet part) and \code{share_records_used}. \code{above_ul_added}
+and \code{above_ul_total} are numbers in \verb{[0, 1]}, as \code{p_inadequate} of
+\code{\link[=inadequacy]{inadequacy()}}: 0 or 1 for one intake, the probability of being above
+the UL under all-or-nothing compliance.
 }
 \description{
 For each household, scenario and nutrient with an upper level (UL),
@@ -99,7 +108,12 @@ fortified at the full level and the rest is not, the share above the UL
 is near \code{c} times the share at compliance 1, which can be far above the
 average-content figure. Each such scenario is flagged in the log
 (\code{average_content_understates_ul}); the same levels at compliance 1
-give the upper bound to report with it.
+give the upper bound to report with it. Under
+\code{compliance_model = "all_or_nothing"} the table of states is accepted:
+each state is compared with the UL, and \code{above_ul_added},
+\code{above_ul_total}, \code{amount_added} and \code{amount_total} are the expectations
+over the states with the weights \code{state_probability} (the amounts equal
+those of average content); the log notes \code{states_collapsed}.
 }
 \examples{
 nutrients <- nutrient_registry(hces_example$nutrients)

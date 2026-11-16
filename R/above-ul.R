@@ -60,7 +60,12 @@
 #' is near `c` times the share at compliance 1, which can be far above the
 #' average-content figure. Each such scenario is flagged in the log
 #' (`average_content_understates_ul`); the same levels at compliance 1
-#' give the upper bound to report with it.
+#' give the upper bound to report with it. Under
+#' `compliance_model = "all_or_nothing"` the table of states is accepted:
+#' each state is compared with the UL, and `above_ul_added`,
+#' `above_ul_total`, `amount_added` and `amount_total` are the expectations
+#' over the states with the weights `state_probability` (the amounts equal
+#' those of average content); the log notes `states_collapsed`.
 #'
 #' @inheritParams inadequacy
 #' @param requirements A table with one row per nutrient: `nutrient`,
@@ -72,8 +77,11 @@
 #'   `scenario` + `household_id` + `nutrient`: `scenario`, `household_id`,
 #'   `intake_status`, `nutrient`, `ul`, `ul_unit`, `ul_applies_to`,
 #'   `ul_scope`, `amount_added`, `amount_total`, `above_ul_added` (missing
-#'   for `total_intake`), `above_ul_total` (missing without a diet part) and
-#'   `coverage` (of the diet part) and `share_records_used`.
+#'   for `total_intake`), `above_ul_total` (missing without a diet part),
+#'   `coverage` (of the diet part) and `share_records_used`. `above_ul_added`
+#'   and `above_ul_total` are numbers in `[0, 1]`, as `p_inadequate` of
+#'   [inadequacy()]: 0 or 1 for one intake, the probability of being above
+#'   the UL under all-or-nothing compliance.
 #' @seealso [inadequacy()], [apply_scenario()].
 #' @examples
 #' nutrients <- nutrient_registry(hces_example$nutrients)
@@ -100,7 +108,8 @@
 above_ul <- function(x, requirements, conversions = hcesfort::ref_conversions,
                      min_coverage, min_records_used) {
   check_required()
-  require_hces(x, c("hces_intake", "hces_scenario_intake"))
+  require_hces(x, c("hces_intake", "hces_scenario_intake",
+                    "hces_scenario_states"))
   x <- audit_check_rows(x, "above_ul")
   nutrients <- attr(x, "nutrients", exact = TRUE)
   min_coverage <- check_min_coverage(min_coverage)
@@ -124,8 +133,12 @@ above_ul <- function(x, requirements, conversions = hcesfort::ref_conversions,
     ul_rows(x, nutrients, req[i, ], parts[[i]])
   })
   out <- if (length(rows) == 0) ul_rows_empty(x) else dplyr::bind_rows(rows)
+  out <- collapse_states(out, c("scenario", "household_id", "nutrient"),
+                         c("amount_added", "amount_total", "above_ul_added",
+                           "above_ul_total"))
   log <- dplyr::bind_rows(above_ul_log(x, req, parts, cov, min_coverage),
-                          records_used_row("above_ul", x, used, min_used))
+                          records_used_row("above_ul", x, used, min_used),
+                          states_collapsed_row("above_ul", x))
   new_hces_tbl(out, "hces_above_ul", dplyr::bind_rows(audit_get(x), log),
                c("scenario", "household_id", "nutrient"), nutrients)
 }
@@ -157,9 +170,10 @@ ul_rows <- function(x, nutrients, r, p) {
     ul_scope = p$scope,
     amount_added = if (p$scope == "not_assessable") NA_real_ else added,
     amount_total = total,
-    above_ul_added = if (form_scope) added > r$ul else NA,
-    above_ul_total = total > r$ul, coverage = coverage,
-    share_records_used = x$share_records_used
+    above_ul_added = if (form_scope) as.numeric(added > r$ul) else NA_real_,
+    above_ul_total = as.numeric(total > r$ul), coverage = coverage,
+    share_records_used = x$share_records_used,
+    state_probability = state_weights(x)
   )
 }
 

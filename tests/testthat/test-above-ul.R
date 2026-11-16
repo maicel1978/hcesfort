@@ -23,33 +23,33 @@ test_that("total intake and a form with the added part only, by hand", {
   u <- above_ul(as_run(), ul_req(), min_coverage = 0.9, min_records_used = 0)
   expect_s3_class(u, c("hces_above_ul", "hces_tbl"))
   expect_setequal(unique(u$nutrient), c("iron", "folate", "vitamin_a"))
-  expect_true(ul_val(u, "s1", 1, "iron", "above_ul_total"))
-  expect_false(ul_val(u, "s1", 2, "iron", "above_ul_total"))
-  expect_identical(ul_val(u, "s1", 1, "iron", "above_ul_added"), NA)
+  expect_identical(ul_val(u, "s1", 1, "iron", "above_ul_total"), 1)
+  expect_identical(ul_val(u, "s1", 2, "iron", "above_ul_total"), 0)
+  expect_identical(ul_val(u, "s1", 1, "iron", "above_ul_added"), NA_real_)
   expect_identical(ul_val(u, "s1", 1, "iron", "ul_scope"), "total_intake")
   expect_equal(ul_val(u, "s1", 1, "folate", "amount_added"), 180)
-  expect_true(ul_val(u, "s1", 1, "folate", "above_ul_added"))
-  expect_false(ul_val(u, "s1", 2, "folate", "above_ul_added"))
-  expect_identical(ul_val(u, "s1", 1, "folate", "above_ul_total"), NA)
+  expect_identical(ul_val(u, "s1", 1, "folate", "above_ul_added"), 1)
+  expect_identical(ul_val(u, "s1", 2, "folate", "above_ul_added"), 0)
+  expect_identical(ul_val(u, "s1", 1, "folate", "above_ul_total"), NA_real_)
   expect_identical(ul_val(u, "s1", 1, "folate", "ul_scope"),
                    "form_added_only")
-  expect_true(ul_val(u, "s2", 1, "vitamin_a", "above_ul_added"))
-  expect_identical(ul_val(u, "s1", 3, "iron", "above_ul_total"), NA)
+  expect_identical(ul_val(u, "s2", 1, "vitamin_a", "above_ul_added"), 1)
+  expect_identical(ul_val(u, "s1", 3, "iron", "above_ul_total"), NA_real_)
 })
 
 test_that("baseline rows: nothing added, not above", {
   u <- above_ul(as_run(), ul_req(), min_coverage = 0, min_records_used = 0)
   b <- u[u$scenario == "baseline" & u$intake_status == "estimated", ]
   expect_true(all(b$amount_added == 0))
-  expect_false(any(b$above_ul_added, na.rm = TRUE))
-  expect_false(any(b$above_ul_total, na.rm = TRUE))
+  expect_false(any(b$above_ul_added > 0, na.rm = TRUE))
+  expect_false(any(b$above_ul_total > 0, na.rm = TRUE))
 })
 
 test_that("an amount exactly at the UL is not above it", {
   u <- above_ul(as_run(), ul_req(iron = 6.5, folate = 180), min_coverage = 0,
                 min_records_used = 0)
-  expect_false(ul_val(u, "s1", 1, "iron", "above_ul_total"))
-  expect_false(ul_val(u, "s1", 1, "folate", "above_ul_added"))
+  expect_identical(ul_val(u, "s1", 1, "iron", "above_ul_total"), 0)
+  expect_identical(ul_val(u, "s1", 1, "folate", "above_ul_added"), 0)
 })
 
 test_that("a form without either part is not assessable", {
@@ -103,8 +103,8 @@ test_that("a form with both parts: added only is a lower bound", {
                    "form_diet_and_added")
   expect_equal(ul_val(u, "s", 1, "folate", "amount_added"), 100)
   expect_equal(ul_val(u, "s", 1, "folate", "amount_total"), 150)
-  expect_false(ul_val(u, "s", 1, "folate", "above_ul_added"))
-  expect_true(ul_val(u, "s", 1, "folate", "above_ul_total"))
+  expect_identical(ul_val(u, "s", 1, "folate", "above_ul_added"), 0)
+  expect_identical(ul_val(u, "s", 1, "folate", "above_ul_total"), 1)
   expect_equal(ul_val(u, "baseline", 1, "folate", "amount_total"), 50)
 })
 
@@ -148,8 +148,8 @@ test_that("average content below compliance 1 is flagged, with its bound", {
                    ul_req(), min_coverage = 0, min_records_used = 0)
   full <- above_ul(as_run(), ul_req(), min_coverage = 0,
                    min_records_used = 0)
-  expect_false(ul_val(part, "s1", 1, "folate", "above_ul_added"))
-  expect_true(ul_val(full, "s1", 1, "folate", "above_ul_added"))
+  expect_identical(ul_val(part, "s1", 1, "folate", "above_ul_added"), 0)
+  expect_identical(ul_val(full, "s1", 1, "folate", "above_ul_added"), 1)
   log <- audit_log(part)
   f <- log[log$cause == "average_content_understates_ul", ]
   expect_identical(f$kind, "flagged")
@@ -269,5 +269,5 @@ test_that("the coverage of a UL with two diet forms is the smallest", {
   expect_identical(u$ul_scope, "form_diet_and_added")
   expect_equal(u$coverage, 0.5)
   expect_equal(u$amount_total, 10)
-  expect_true(u$above_ul_total)
+  expect_identical(u$above_ul_total, 1)
 })

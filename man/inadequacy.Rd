@@ -14,7 +14,13 @@ inadequacy(
 )
 }
 \arguments{
-\item{x}{Table returned by \code{\link[=apply_scenario]{apply_scenario()}} or \code{\link[=apparent_intake]{apparent_intake()}}.}
+\item{x}{Table returned by \code{\link[=apply_scenario]{apply_scenario()}} or \code{\link[=apparent_intake]{apparent_intake()}}.
+Under \code{compliance_model = "all_or_nothing"} of \code{\link[=apply_scenario]{apply_scenario()}}, the
+table of states: each state is assessed as a scenario, and
+\code{p_inadequate}, \code{intake} and \code{added} are the expectations over the
+states with the weights \code{state_probability} (the intake and the added
+amount equal those of average content); the log notes
+\code{states_collapsed}. The gates read the baseline, as always.}
 
 \item{requirements}{A table with one row per nutrient: \code{nutrient}, \code{unit}
 (the registry unit), \code{ear} and \code{cutpoint_valid} (optionally

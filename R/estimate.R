@@ -60,7 +60,10 @@
 #'
 #' @param design A design built by [as_hces_design()].
 #' @param x A table returned by [inadequacy()], [above_ul()],
-#'   [apply_scenario()], [apparent_intake()] or [vehicle_coverage()].
+#'   [apply_scenario()], [apparent_intake()] or [vehicle_coverage()]. The
+#'   table of states of `apply_scenario(compliance_model =
+#'   "all_or_nothing")` is refused (`hcesfort_error_audit`): pass it to
+#'   [inadequacy()] or [above_ul()] first.
 #' @param value Name of the column of `x` to estimate.
 #' @param statistic `"proportion"`, `"mean"` or `"median"`. A proportion
 #'   needs a logical column or values in \[0, 1\], such as `p_inadequate`;
@@ -120,6 +123,7 @@ estimate_households <- function(design, x, value, statistic = "proportion",
   check_required()
   require_design(design)
   require_hces(x, "hces_tbl")
+  refuse_states(x)
   x <- audit_check_rows(x, "estimate_households")
   check_estimate_args(design, x, statistic, by, ci_method, level, df)
   d <- resolve_domain(design, x, domain, domain_from)

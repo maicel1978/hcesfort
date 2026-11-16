@@ -93,3 +93,35 @@ aon <- function(sc, ...) as_run(sc, compliance_model = "all_or_nothing", ...)
 state_val <- function(s, state, h, col) {
   s[[col]][s$scenario == "both" & s$state == state & s$household_id == h]
 }
+
+# Invented requirements for the states tests: EAR iron 5 mg, folate 200 ug
+# DFE (cut-point); UL of folic acid 150 ug.
+states_ear <- function() {
+  data.frame(nutrient = c("iron", "folate"), unit = c("mg", "ug_dfe"),
+             ear = c(5, 200), cutpoint_valid = TRUE)
+}
+
+states_ul <- function() {
+  data.frame(nutrient = "folate", unit = "ug_dfe", ul = 150, ul_unit = "ug",
+             ul_applies_to = "folic_acid")
+}
+
+risk_of <- function(s, fun = "inadequacy") {
+  if (fun == "inadequacy") {
+    inadequacy(s, states_ear(), min_coverage = 0.9, min_records_used = 0)
+  } else {
+    above_ul(s, states_ul(), min_coverage = 0.9, min_records_used = 0)
+  }
+}
+
+risk_val <- function(r, scenario, h, nutrient, col) {
+  r[[col]][r$scenario == scenario & r$household_id == h &
+             r$nutrient == nutrient]
+}
+
+# Scenario s1 reduced to its folic acid row, at `compliance`.
+folic <- function(compliance) {
+  sc <- as_scenarios()[2, ]
+  sc$compliance <- compliance
+  sc
+}

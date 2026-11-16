@@ -21,7 +21,9 @@ estimate_households(
 \item{design}{A design built by \code{\link[=as_hces_design]{as_hces_design()}}.}
 
 \item{x}{A table returned by \code{\link[=inadequacy]{inadequacy()}}, \code{\link[=above_ul]{above_ul()}},
-\code{\link[=apply_scenario]{apply_scenario()}}, \code{\link[=apparent_intake]{apparent_intake()}} or \code{\link[=vehicle_coverage]{vehicle_coverage()}}.}
+\code{\link[=apply_scenario]{apply_scenario()}}, \code{\link[=apparent_intake]{apparent_intake()}} or \code{\link[=vehicle_coverage]{vehicle_coverage()}}. The
+table of states of \code{apply_scenario(compliance_model = "all_or_nothing")} is refused (\code{hcesfort_error_audit}): pass it to
+\code{\link[=inadequacy]{inadequacy()}} or \code{\link[=above_ul]{above_ul()}} first.}
 
 \item{value}{Name of the column of \code{x} to estimate.}
 

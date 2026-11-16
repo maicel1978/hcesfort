@@ -146,7 +146,7 @@ test_that("the recalibrated example reads like a survey (H6)", {
     p <- mean(base$p_inadequate[base$nutrient == n])
     expect_true(p > 0.05 && p < 0.99, label = n)
   }
-  above <- ch$ul$above_ul_added %in% TRUE | ch$ul$above_ul_total %in% TRUE
+  above <- ch$ul$above_ul_added %in% 1 | ch$ul$above_ul_total %in% 1
   expect_true(any(above))
   expect_false(all(above[ch$ul$intake_status == "estimated"]))
 })

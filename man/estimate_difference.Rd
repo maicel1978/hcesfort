@@ -20,7 +20,8 @@ estimate_difference(
 \item{design}{A design built by \code{\link[=as_hces_design]{as_hces_design()}}.}
 
 \item{x}{A table with the column \code{scenario}, returned by \code{\link[=inadequacy]{inadequacy()}},
-\code{\link[=above_ul]{above_ul()}} or \code{\link[=apply_scenario]{apply_scenario()}}.}
+\code{\link[=above_ul]{above_ul()}} or \code{\link[=apply_scenario]{apply_scenario()}} (not its table of states: see
+\code{\link[=estimate_households]{estimate_households()}}).}
 
 \item{value}{Name of the column of \code{x} to estimate.}
 
