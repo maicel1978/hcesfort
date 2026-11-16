@@ -96,3 +96,63 @@ package's output. Two gaps, both minor:
   `flag_precision()`, `flag_presentation()`. The check lives in
   `require_hces()` itself, so the risk is only a call site that stops
   calling it. P203.
+
+## 12e.2 (commits `9d12d3b`, `c6fbcc7`, `5887473`): anchors, optional columns
+
+Tests only, no package code: nothing to compare with an approval except
+the list of section 8 of the review v0.2, which is covered (FAO examples,
+IOM Table I-7, conservation, `svycontrast`, full-design ratio, logit
+interval, optional columns; the round trip of the review's list is the
+conservation test). The `surveytable` anchor was dropped as R2-D7 records.
+
+**No expected value of the anchors comes from the package's output.** The
+published values are typed in the test; the three reference tests build
+their own `survey::svydesign()`; `golden-optional.csv` is written by
+`data-raw/golden_example.R` in base R and `survey`.
+
+Mutations run in this session on a copy of `1605a94` (file filter
+`golden`, tolerance of the test 1e-8):
+
+| Mutation | Result |
+|---|---|
+| `household_share` ignored (`R/units.R:87`) | the optional golden test fails |
+| `yield_factor` ignored (`R/composition.R:68`) | fails |
+| `age_months` ignored (`R/afe-energy.R:35`) | fails |
+| `meals_home_share` ignored (`R/afe.R:85`) | fails |
+| own `weight_kg` of a member ignored (`R/afe-energy.R:69`) | fails |
+| single-PSU stratum treated as `certainty` (`R/design.R:122`) | fails |
+| bioavailability ignored in the iron probability (`R/inadequacy-probability.R:124`) | `test-anchors.R` passes; `test-inadequacy.R` fails (3 tests) |
+
+### V2.1 (minor). The first FAO example cannot tell the two adult bands apart
+
+- **Where:** `tests/testthat/test-anchors.R:11-23` (tolerance 1%).
+- **Run:** the package gives 1977.6, 2343.0 and 3928.9 kcal against 1975,
+  2355 and 3925 (+0.13%, -0.51%, +0.10%). With the equation of the other
+  adult band the first example gives 1991.4 (+0.83%): inside the
+  tolerance. The second and third (-2.2%, -3.9%) do fail.
+- **Fix proposed:** round the BMR to 0.1 MJ as the report does and compare
+  within 1 kcal (by hand here: 5.4 × 1.53, 5.6 × 1.76 and 7.3 × 2.25 MJ are
+  1974.7, 2355.6 and 3925.7 kcal). It needs the BMR as an intermediate
+  value. P203.
+
+### V2.2 (minor). The Table I-7 anchor does not reach the bioavailability
+
+- **Where:** `tests/testthat/test-anchors.R:44-53`: the probability is
+  asked at 0.18, the bioavailability of the table itself, so the factor
+  `b / b0` is 1. The band limits typed in the test are the percentiles of
+  Table I-4 that the package ships (`ref_iron_requirements`: 4.42, 4.88,
+  5.45, …); what the test adds is the 12 probabilities and the two tails.
+- **Run:** the mutation of the last row of the table above.
+- No change proposed: the published table has one bioavailability, and
+  the hand tests of `test-inadequacy.R` catch the mutation. Recorded so
+  that the comment of the test is not read as an anchor of the scaling.
+
+### V2.3 (minor). The adult `age_months` of the optional fixture tests nothing
+
+- **Where:** `tests/testthat/fixtures/hces_fixture.R` (household 1, member
+  2, `age_months = 450`, "which must be ignored").
+- **Run:** with `months >= 12` no longer discarded
+  (`R/afe-energy.R:39`), the golden tests pass: the monthly table is
+  looked up only for an age below 1, so the value never reaches a result.
+  The fixture row documents a rule that no golden value can break.
+  No change needed; the validator of 12e.4 (V4.x) is the real guard.
