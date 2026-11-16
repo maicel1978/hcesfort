@@ -31,7 +31,8 @@
 #'   `food_module_response`; `"adult_equivalents"` for `age_months`,
 #'   `pregnant`, `lactating`, `meals_home_share` and `weight_kg`;
 #'   `"quantities"` for `household_share`; `"linkage_expenditure"` for
-#'   `expenditure_lcu`; `"baseline"` for the table `enrichment`; the
+#'   `expenditure_lcu`; `"baseline"` for the table `enrichment`;
+#'   `"fortifiable_vehicle"` for `fortifiable`; the
 #'   sections of the results report that need it, separated by `", "`, for
 #'   `vehicles`, `scenarios` and `food_groups`; `"none"` for `origin`.
 #' @seealso [readiness_checks()], [readiness_verdict()].

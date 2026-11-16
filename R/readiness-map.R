@@ -34,7 +34,7 @@ readiness_needs <- function() {
     lactating = "adult_equivalents", meals_home_share = "adult_equivalents",
     weight_kg = "adult_equivalents", household_share = "quantities",
     expenditure_lcu = "linkage_expenditure", enrichment = "baseline",
-    origin = "none")
+    fortifiable = "fortifiable_vehicle", origin = "none")
 }
 
 # What an optional input is needed for: its entry of readiness_needs(),

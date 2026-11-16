@@ -33,6 +33,20 @@
 #' vehicle all lack grams has `acquired = TRUE` and a quantity that
 #' understates its use; it is counted (`acquired_without_grams`).
 #'
+#' **The fortifiable vehicle.** Coverage has two levels in the literature
+#' (Aaron et al. 2017, J Nutr 147(5), "Indicators of coverage"):
+#' consumption of the vehicle in any form, and consumption of the
+#' fortifiable vehicle: "the food vehicle used by the household is
+#' processed industrially and hence is well suited to large-scale
+#' fortification". `acquired` and `qty_vehicle_g_d` are the
+#' first; `acquired_fortifiable` and `qty_fortifiable_g_d` the second,
+#' from the records that count as fortifiable: every record unless
+#' `fortifiable = "use"`; then every record but those whose column
+#' `fortifiable` is `FALSE` (own production, home processing, as the
+#' adapter sets it). A missing value counts as fortifiable, as a record not
+#' assessed for outliers is kept, and is flagged (`fortifiable_unknown`).
+#' The fortified vehicle, the third level, is `compliance` in a scenario.
+#'
 #' `qty_vehicle_g_d_pc` is the household's grams divided by its number of
 #' members, not by its AFE. It is the basis of the bands of
 #' [ref_who2009_flour] (see [who2009_levels()]): WHO (2009, Table 1) gives
@@ -54,18 +68,26 @@
 #' @inheritParams apparent_intake
 #' @param outliers Required when `grams` has the column `outlier`:
 #'   `"exclude"` or `"keep"`. Must be `NULL` otherwise.
+#' @param fortifiable Required when `grams` has the column `fortifiable`:
+#'   `"use"` (records with `FALSE` are not fortifiable) or `"ignore"`
+#'   (every record is). Must be `NULL` otherwise, and then every record is
+#'   fortifiable (noted in the log, `all_vehicle_assumed_fortifiable`).
 #' @param combine `NULL`, or a named list of character vectors, each a set
 #'   of vehicle or group names, for example
 #'   `list(any_staple = c("wheat_flour", "sugar"))`.
 #' @returns A tibble of class `hces_vehicle_use` (and `hces_tbl`), key
 #'   `household_id` + `level` + `vehicle`, in the order of `households`:
 #'   `household_id`, `use_status`, `afe` and `n_members` (of the household,
-#'   from `afe`), `level`, `vehicle`, `acquired`,
+#'   from `afe`), `level`, `vehicle`, `acquired`, `acquired_fortifiable`
+#'   (the same for the records that count as fortifiable; implies
+#'   `acquired`),
 #'   `n_records` (included records of the vehicle's foods),
 #'   `n_records_no_grams`, `qty_vehicle_g_d` (grams of vehicle per AFE
 #'   per day; missing unless `use_status` is `estimated`, and for
 #'   `combined` rows) and `qty_vehicle_g_d_pc` (grams of vehicle per
-#'   member per day, under the same rule). The audit log continues the
+#'   member per day, under the same rule), `qty_fortifiable_g_d` and
+#'   `qty_fortifiable_g_d_pc` (the same for the fortifiable records; at
+#'   most the vehicle columns). The audit log continues the
 #'   logs of `grams`, `vehicles`, `afe` and `households`; the outlier
 #'   decision travels as in [apparent_intake()].
 #' @seealso [apply_scenario()], [apparent_intake()].
@@ -86,7 +108,8 @@
 #' table(use$vehicle, use$acquired, useNA = "ifany")
 #' @export
 vehicle_coverage <- function(grams, vehicles, afe, households,
-                             outliers = NULL, combine = NULL) {
+                             outliers = NULL, fortifiable = NULL,
+                             combine = NULL) {
   check_required()
   require_hces(grams, c("hces_grams", "hces_nutrient_content"))
   require_hces(afe, "hces_afe")
@@ -94,6 +117,7 @@ vehicle_coverage <- function(grams, vehicles, afe, households,
   v <- validate_vehicles(vehicles)
   h <- validate_households(households)
   outliers <- check_outlier_decision(outliers, x, arg = "grams")
+  fortifiable <- check_fortifiable_decision(fortifiable, x)
   check_intake_ids(x, afe, h, arg = "grams")
   check_vehicle_food_type(x, v)
   items <- vehicle_items(v, combine)
@@ -109,10 +133,15 @@ vehicle_coverage <- function(grams, vehicles, afe, households,
     no_food_records = !h$household_id %in% x$household_id,
     no_afe = is.na(afe_h) | afe_h <= 0
   ), none = "estimated")
-  out <- use_rows(x[used, ], items, h$household_id, status, afe_h,
-                  household_members(afe, h$household_id))
+  out <- use_rows_fortifiable(
+    x, used, used & fortifiable_records(x, fortifiable), items,
+    h$household_id, status, afe_h, household_members(afe, h$household_id)
+  )
   out <- household_afe_columns(out, afe)
-  log <- vehicle_log(x, reasons, used, v, items, out, status)
+  log <- dplyr::bind_rows(
+    vehicle_log(x, reasons, used, v, items, out, status),
+    fortifiable_log(x, used, fortifiable, v, items, out)
+  )
   log <- dplyr::bind_rows(audit_combine(x, v, afe, h), log)
   out <- new_hces_tbl(out, "hces_vehicle_use", log,
                       c("household_id", "level", "vehicle"))

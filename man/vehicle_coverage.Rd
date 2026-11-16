@@ -10,6 +10,7 @@ vehicle_coverage(
   afe,
   households,
   outliers = NULL,
+  fortifiable = NULL,
   combine = NULL
 )
 }
@@ -28,6 +29,11 @@ validated or not: the households the result must cover.}
 \item{outliers}{Required when \code{grams} has the column \code{outlier}:
 \code{"exclude"} or \code{"keep"}. Must be \code{NULL} otherwise.}
 
+\item{fortifiable}{Required when \code{grams} has the column \code{fortifiable}:
+\code{"use"} (records with \code{FALSE} are not fortifiable) or \code{"ignore"}
+(every record is). Must be \code{NULL} otherwise, and then every record is
+fortifiable (noted in the log, \code{all_vehicle_assumed_fortifiable}).}
+
 \item{combine}{\code{NULL}, or a named list of character vectors, each a set
 of vehicle or group names, for example
 \code{list(any_staple = c("wheat_flour", "sugar"))}.}
@@ -36,12 +42,16 @@ of vehicle or group names, for example
 A tibble of class \code{hces_vehicle_use} (and \code{hces_tbl}), key
 \code{household_id} + \code{level} + \code{vehicle}, in the order of \code{households}:
 \code{household_id}, \code{use_status}, \code{afe} and \code{n_members} (of the household,
-from \code{afe}), \code{level}, \code{vehicle}, \code{acquired},
+from \code{afe}), \code{level}, \code{vehicle}, \code{acquired}, \code{acquired_fortifiable}
+(the same for the records that count as fortifiable; implies
+\code{acquired}),
 \code{n_records} (included records of the vehicle's foods),
 \code{n_records_no_grams}, \code{qty_vehicle_g_d} (grams of vehicle per AFE
 per day; missing unless \code{use_status} is \code{estimated}, and for
 \code{combined} rows) and \code{qty_vehicle_g_d_pc} (grams of vehicle per
-member per day, under the same rule). The audit log continues the
+member per day, under the same rule), \code{qty_fortifiable_g_d} and
+\code{qty_fortifiable_g_d_pc} (the same for the fortifiable records; at
+most the vehicle columns). The audit log continues the
 logs of \code{grams}, \code{vehicles}, \code{afe} and \code{households}; the outlier
 decision travels as in \code{\link[=apparent_intake]{apparent_intake()}}.
 }
@@ -79,6 +89,20 @@ counted them as non-consumers; an adapter that wants that sets the
 missing values to \code{FALSE} explicitly. A household whose records of a
 vehicle all lack grams has \code{acquired = TRUE} and a quantity that
 understates its use; it is counted (\code{acquired_without_grams}).
+
+\strong{The fortifiable vehicle.} Coverage has two levels in the literature
+(Aaron et al. 2017, J Nutr 147(5), "Indicators of coverage"):
+consumption of the vehicle in any form, and consumption of the
+fortifiable vehicle: "the food vehicle used by the household is
+processed industrially and hence is well suited to large-scale
+fortification". \code{acquired} and \code{qty_vehicle_g_d} are the
+first; \code{acquired_fortifiable} and \code{qty_fortifiable_g_d} the second,
+from the records that count as fortifiable: every record unless
+\code{fortifiable = "use"}; then every record but those whose column
+\code{fortifiable} is \code{FALSE} (own production, home processing, as the
+adapter sets it). A missing value counts as fortifiable, as a record not
+assessed for outliers is kept, and is flagged (\code{fortifiable_unknown}).
+The fortified vehicle, the third level, is \code{compliance} in a scenario.
 
 \code{qty_vehicle_g_d_pc} is the household's grams divided by its number of
 members, not by its AFE. It is the basis of the bands of

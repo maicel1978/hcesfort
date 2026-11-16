@@ -79,6 +79,7 @@ needed_by,,adult_equivalents,adult female equivalents
 needed_by,,quantities,quantities of each household
 needed_by,,linkage_expenditure,linkage by expenditure
 needed_by,,baseline,unfortified baseline
+needed_by,,fortifiable_vehicle,coverage of the fortifiable vehicle
 section,,coverage,Coverage of the vehicles
 section,,quantity,Quantity among acquirers
 section,,risk,Risk of inadequate apparent intake

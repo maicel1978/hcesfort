@@ -73,6 +73,12 @@ schema_acquisitions <- function() {
     schema_col("household_share", "number", paste(
       "share of the acquisition destined to the household"
     ), required = FALSE, na = TRUE, bounds = "[0, 1]"),
+    schema_col("fortifiable", "flag", paste(
+      "`TRUE` when the food of a vehicle could have been fortified",
+      "(processed industrially), `FALSE` when not (own production, home or",
+      "small-scale processing); set by the adapter, with its rule; read",
+      "only for records of vehicle foods"
+    ), required = FALSE, na = TRUE),
     schema_col("expenditure_lcu", "number", paste(
       "amount paid for the record, or its imputed value, in local currency",
       "units, for the period of `period_days`"

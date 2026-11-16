@@ -527,6 +527,18 @@
   `pregnancy_kcal = 0, lactation_kcal = 0`. New reference table
   `ref_energy_additions`: the seven values of FAO/WHO/UNU 2004, sections
   6.3 and 7.2, to choose from.
+* The acquisitions contract gains an optional flag `fortifiable` (P159):
+  `FALSE` for a vehicle food that could not have been fortified (own
+  production, home processing), set by the adapter. `vehicle_coverage()`
+  takes `fortifiable` (`"use"` or `"ignore"`, required when the column is
+  present, refused otherwise) and always returns three new columns,
+  `acquired_fortifiable`, `qty_fortifiable_g_d` and
+  `qty_fortifiable_g_d_pc`: the coverage of the fortifiable vehicle of
+  Aaron et al. (2017) next to the coverage of the vehicle in any form. A
+  missing value counts as fortifiable and is flagged
+  (`fortifiable_unknown`); the log counts the records not fortifiable and
+  the households that acquired a vehicle only in a form that is not. On
+  tables without the column the new columns equal the old ones.
 * The contract of `age_months` says what the validator checks since 12e.4:
   the total months since birth (P206).
 * Corrections to the original ENGIH 2018 analysis will be recorded in this

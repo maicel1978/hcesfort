@@ -1,59 +1,57 @@
 # Handoff
 
 - **Date:** 2026-11-16
-- **Model:** Opus 5.5 (step 12e.4).
-- **Branch:** `claude/docs-routing-handoff-9dlnd0`, pushed.
+- **Model:** Opus 5.5, high effort (P201, P204, 12e.5.1 to 12e.5.3).
+- **Branch:** `claude/beautiful-heisenberg-bulugk`, pushed.
 - **Environment:** run `R CMD INSTALL .` at the start (the report tests use
-  the installed package). The full `devtools::test()` now runs in
-  parallel (`Config/testthat/parallel: true`), about 5.5 minutes here:
-  run it in the background, one at a time.
+  the installed package). The full `devtools::test()` runs in parallel,
+  about 5.5 minutes: run it in the background, one at a time, and **do not
+  edit `R/` or `tests/` while it runs** (a test file sourced after an edit
+  runs against the package loaded before it; this happened once here).
 
 ## What was done
 
-12e.4 (P164 effective size under R2-D6, P165 to P168, P172, P183), see the
-commit messages and `NEWS.md`:
+See the commit messages and `NEWS.md`.
 
-- Estimators: a cell without variation has no interval (`no_variation`);
-  a cell without degrees of freedom has no interval and no warning
-  (`no_degrees_of_freedom`); new columns `interval_note` and
-  `n_effective` (`n` over the design effect, from the variance of the
-  values); `flag_precision()` decides `exact` on the values;
-  `flag_presentation()` uses `n_effective`; `survey.adjust.domain.lonely`
-  fixed at `FALSE` and logged; note `psu_in_several_strata`.
-- Validators: `level_mg_kg <= 1e6`; mass per 100 g at most 100 g;
-  `age_months` against `age_years`. The optional fixture's adult month
-  (30) became 450, consistent with the age (it is still ignored).
-- `apparent_intake()`: flagged row `zero_intake`.
-- Report: note `usual_intake` under the risk exhibits (en, es); departure
-  S2 rewritten. Golden values regenerated (iron `n_effective`; the fixture
-  iron estimate now suppressed); report snapshots accepted (zinc cells of
-  zero prevalence lose their interval; the new note).
-- New items P184 to P187 (self-review).
-- Parallel tests kept: `Config/testthat/parallel: true` in `DESCRIPTION`.
-  Serial and parallel runs of the same tree gave the same counts (52
-  files, 529 tests, 3415 expectations, 0 failures, 0 warnings, 0 skips)
-  in 10 min 45 s and 5 min 29 s.
-
-## Not done
-
-- **`surveytable` anchor (R2-D7):** the install was refused again by the
-  session's permission classifier. As decided on 2026-11-15, the test is
-  dropped; recorded under R2-D7 in `docs/improvements.md`.
+- **P201** (`96c241e`): `statistic` and `variable` in the key of the
+  tables of `estimate_households()` and `estimate_difference()`; stacked
+  estimates are judged again. Golden values and snapshots unchanged
+  (verified on a clean worktree).
+- **P204** (`96c241e`): `no_degrees_of_freedom` decided on the degrees of
+  freedom of the domain whatever `df` says; such a cell reports the `df`
+  of the domain (0), so `flag_presentation()` sends it to review under any
+  `df`, and a missing `n_effective`; `flag_precision()` status
+  `no_interval` (low precision). Decision taken here, within P204: the
+  `df` column of that cell is the domain's, not the argument's.
+- **Maintainer answers to the adapter design** recorded as A-D1 to A-D8
+  in `docs/improvements.md`.
+- **12e.5.1** (`2d75079`): `infant_food_share`, `milk_energy_cost`; P206.
+- **12e.5.2** (`b310fc4`): `pregnancy_kcal`, `lactation_kcal`, the rule
+  against charging milk twice; `ref_energy_additions` (seven values re-read
+  in FAO/WHO/UNU 2004, sections 6.3 and 7.2). Every call on `hces_example`
+  passes `infant_food_share = 1, pregnancy_kcal = 0, lactation_kcal = 0`.
+- **12e.5.3** (this commit): optional column `fortifiable` in the
+  acquisitions contract; `vehicle_coverage(fortifiable = )` and the three
+  columns `acquired_fortifiable`, `qty_fortifiable_g_d`,
+  `qty_fortifiable_g_d_pc`; its log. The readiness inventory names the
+  column (`needed_by` `fortifiable_vehicle`, en and es); four report
+  snapshot rows added and accepted (the inventory row only).
+- Self-review items P207 to P209.
 
 ## Exact next step
 
-**First, P201 and P204** (one small session, Opus, high effort), as
-answered by the maintainer under "Review of 12e.1 to 12e.4" below: read
-sections "12e.1" (V1.1) and "12e.4" (V4.2, V4.3) of `docs/review-12e.md`
-and items P201 and P204 of `docs/improvements.md`. Each fix comes with a
-test that fails before it. Golden values and report snapshots must not
-change; if one does, stop and report it.
-
-**Then 12e.5.1** (`infant_food_share`, `milk_energy_cost` in
-`adult_equivalents()`), from `docs/design-12e5.md` (read its sections for
-12e.5.1 and decisions R3-D1 to R3-D9 in `docs/improvements.md`). Then
-12e.5.2 to 12e.5.8 (Opus). `devtools::check()` and `lintr::lint_package()`
-once at the end of task 12e.
+**12e.5.4** (Opus), from `docs/design-12e5.md`, sections 2.3 to 2.5:
+`apply_scenario()` reads `qty_fortifiable_g_d` (a `use` table without it
+is an `hcesfort_error_schema`), note `fortifiable_share`; the help of
+`apply_scenario()`, `vehicle_coverage()`, `hces_schema("scenarios")` and
+`who2009_levels()` (`qty_fortifiable_g_d_pc`); `fortifiable` in
+`hces_example` (`FALSE` where `origin` is own production, by
+`data-raw/hces_example.R`) and in `hces_fixture()`; every call of
+`vehicle_coverage()` on them gains `fortifiable = "use"`; golden values
+(`data-raw/golden_example.R`) and scenario snapshots change, the baseline
+does not (R3-D5): record old and new figures in `NEWS.md`. Then 12e.5.5 to
+12e.5.8 (Opus). `devtools::check()` and `lintr::lint_package()` once at
+the end of task 12e.
 
 ## Open questions
 
@@ -61,44 +59,63 @@ None.
 
 ## Recommended model for the next session
 
-**Opus, high effort** (P201 and P204, then 12e.5.1).
+**Opus, high effort** (12e.5.4).
 
 ## Maintainer review points
 
-1. **The effective size of the iron estimate** (`n` over the design effect,
-   no longer the number of households):
+1. **A cell without degrees of freedom under `df = "design"`** now has no
+   interval, `df` 0 and goes to review (P204):
 
    ```r
    library(hcesfort)
-   example(flag_presentation)  # builds the chain objects
-   e <- estimate_households(design, use, "acquired", by = "region",
-                            ci_method = "korn_graubard")
-   e[c("region", "estimate", "se", "n", "n_effective", "interval_note")]
-   ```
-
-2. **A cell without degrees of freedom** has no interval and no warning:
-
-   ```r
-   d <- as_hces_design(hces_example$households, lonely_psu = "adjust")
    h <- hces_example$households
+   d <- as_hces_design(h, lonely_psu = "adjust")
    one <- h$psu == h$psu[[1]] & h$stratum == h$stratum[[1]]
    x <- hcesfort:::new_hces_tbl(
      data.frame(household_id = h$household_id,
-                y = ifelse(one, seq_along(one), NA)),
+                y = ifelse(one, seq_along(one) / 10, NA)),
      "hces_intake", key = "household_id")
-   estimate_households(d, x, "y", statistic = "mean")
+   e <- estimate_households(d, x, "y", statistic = "mean", df = "design")
+   e[c("estimate", "se", "ci_low", "ci_high", "df", "n_effective",
+       "interval_note")]
+   flag_precision(e, min_n = 5, max_half_width = 0.1)$precision_status
    ```
 
-3. **The new report note** reads well in both languages:
+2. **The infant and lactation energy** of one household (12e.5.1, 12e.5.2):
+   a woman of 25 years, 55 kg, and a girl of 2 months (550 kcal), share 0;
+   the milk charged through the infant (1.25) or to the mother (505):
 
    ```r
-   read.csv(system.file("report/es/terms.csv", package = "hcesfort"))[
-     c(159, 217), "label"]
+   ref <- reference_energy("female", 25, 55, pal = 1.76)
+   m <- data.frame(household_id = 1, member_id = 1:2, age_years = c(25, 0),
+                   sex = "female", age_months = c(NA, 2),
+                   lactating = c(TRUE, NA))
+   a <- function(...) adult_equivalents(m, ref, c(female = 55, male = 65),
+                                        1.76, infant_food_share = 0, ...)
+   a(milk_energy_cost = 1.25, lactation_kcal = 0)$afe  # 1 + 687.5 / ref
+   a(milk_energy_cost = 0, lactation_kcal = 505)$afe   # 1 + 505 / ref
+   ```
+
+3. **The two coverages** on the vehicle fixture of the tests (12e.5.3):
+   `hces_example` has no `fortifiable` until 12e.5.4, so:
+
+   ```r
+   g <- convert_units(hces_example$acquisitions, hces_example$unit_factors,
+                      priority = "food")
+   g$fortifiable <- g$origin != "own_production"
+   afe <- adult_equivalents(hces_example$members,
+     reference_energy("female", 25, 55, pal = 1.76),
+     c(female = 55, male = 65), 1.76, infant_food_share = 1,
+     pregnancy_kcal = 0, lactation_kcal = 0)
+   u <- vehicle_coverage(g, hces_example$vehicles, afe,
+                         hces_example$households, fortifiable = "use")
+   with(u[u$level == "vehicle", ],
+        tapply(acquired & !acquired_fortifiable, vehicle, mean, na.rm = TRUE))
    ```
 
 ## Design of the ENGIH adapter (2026-11-16, Fable; a separate session)
 
-This section does not change the next step above (12e.5.1, Opus).
+This section does not change the next step above.
 
 - **Done:** `docs/design-adapter-engih.md` (mapping, A1 export, step 1
   options and tolerances, step 2 with expected directions, download,
@@ -163,11 +180,12 @@ Approved, all as recommended, except decision 2:
 8. Vehicle coverage in the corrected analysis is `acquired`; both figures in
    `NEWS.md`.
 
-Record these in `docs/improvements.md` with the first commit of the next step.
+Record these in `docs/improvements.md` with the first commit of the next step
+(done 2026-11-16: A-D1 to A-D8).
 
 ## Review of 12e.1 to 12e.4 (2026-11-16, Fable; a separate session)
 
-This section does not change the next step above (12e.5.1, Opus).
+This section does not change the next step above.
 
 - **Done:** `docs/review-12e.md`, from `docs/review-12e-brief.md`: the
   five questions answered, findings V1.1 to V4.4, 17 mutations run; items
@@ -177,7 +195,7 @@ This section does not change the next step above (12e.5.1, Opus).
   state in the parallel tests. Two major findings: V1.1 (P201) and V3.1.
 - **For the session that takes them (Opus):** read sections "12e.1"
   (V1.1) and "12e.4" (V4.2, V4.3) of the review; P201 before A2, P204
-  before A3.
+  before A3. **Both done 2026-11-16** (`96c241e`).
 
 ### Questions for the maintainer
 

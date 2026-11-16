@@ -25,7 +25,8 @@ is needed for. \code{"all"} for the essential ones; \code{"domain"} for a domain
 \code{food_module_response}; \code{"adult_equivalents"} for \code{age_months},
 \code{pregnant}, \code{lactating}, \code{meals_home_share} and \code{weight_kg};
 \code{"quantities"} for \code{household_share}; \code{"linkage_expenditure"} for
-\code{expenditure_lcu}; \code{"baseline"} for the table \code{enrichment}; the
+\code{expenditure_lcu}; \code{"baseline"} for the table \code{enrichment};
+\code{"fortifiable_vehicle"} for \code{fortifiable}; the
 sections of the results report that need it, separated by \code{", "}, for
 \code{vehicles}, \code{scenarios} and \code{food_groups}; \code{"none"} for \code{origin}.
 }

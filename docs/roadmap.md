@@ -107,7 +107,7 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
     - Implementation (Opus), after approval; each step at most 300 lines of code. Detail in section 6 of the design.
     - [x] 12e.5.1 `infant_food_share`, `milk_energy_cost` in `adult_equivalents()`. Done 2026-11-16 (Opus), with P206.
     - [x] 12e.5.2 `pregnancy_kcal`, `lactation_kcal`; `ref_energy_additions` (P57). Done 2026-11-16 (Opus).
-    - [ ] 12e.5.3 Column `fortifiable`; argument and three columns of `vehicle_coverage()`.
+    - [x] 12e.5.3 Column `fortifiable`; argument and three columns of `vehicle_coverage()`. Done 2026-11-16 (Opus).
     - [ ] 12e.5.4 `apply_scenario()` on fortifiable grams; `fortifiable` in `hces_example` and the fixture; golden values and snapshots.
     - [ ] 12e.5.5 `missing_values()`; log row, note and messages; readiness exhibit.
     - [ ] 12e.5.6 `compliance_model = "all_or_nothing"`: states in `apply_scenario()`.

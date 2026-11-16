@@ -23,7 +23,7 @@ test_that("the inventory has one row per schema column, domain, table", {
   # Absent optional columns of the example.
   absent <- inv$variable[!inv$present & !is.na(inv$variable)]
   expect_setequal(absent, c("age_months", "meals_home_share", "weight_kg",
-                            "household_share"))
+                            "household_share", "fortifiable"))
 })
 
 # U16 (docs/design-reports-v3.md, section 4.2, C4): every row of the map,
@@ -39,6 +39,7 @@ test_that("needed_by follows the dependency map row by row", {
     lactating = "adult_equivalents", meals_home_share = "adult_equivalents",
     weight_kg = "adult_equivalents", household_share = "quantities",
     expenditure_lcu = "linkage_expenditure", origin = "none",
+    fortifiable = "fortifiable_vehicle",
     region = "domain", enrichment = "baseline",
     vehicles = "coverage, quantity, scenarios", scenarios = "scenarios",
     food_groups = "food_groups", unit_factors = "all", crosswalk = "all",

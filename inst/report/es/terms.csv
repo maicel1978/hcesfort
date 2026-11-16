@@ -79,6 +79,7 @@ needed_by,,adult_equivalents,equivalentes de mujer adulta
 needed_by,,quantities,cantidades de cada hogar
 needed_by,,linkage_expenditure,vinculación por gasto
 needed_by,,baseline,línea de base sin fortificar
+needed_by,,fortifiable_vehicle,cobertura del vehículo fortificable
 section,,coverage,Cobertura de los vehículos
 section,,quantity,Cantidad entre quienes adquieren
 section,,risk,Riesgo de ingesta aparente inadecuada

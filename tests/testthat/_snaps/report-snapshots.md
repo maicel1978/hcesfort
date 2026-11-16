@@ -44,6 +44,7 @@
       acquisitions | period_days | essential | yes | 0.0 | all sections
       acquisitions | include | essential | yes | 0.0 | all sections
       acquisitions | household_share | optional | no |  NA | quantities of each household
+      acquisitions | fortifiable | optional | no |  NA | coverage of the fortifiable vehicle
       households | expenditure_group | optional | yes | 1.6 | analysis by expenditure quintile
       unit_factors | NA | essential | yes |  NA | all sections
       crosswalk | NA | essential | yes |  NA | all sections
@@ -310,6 +311,7 @@
       acquisitions | include | essential | yes | 0.0 | all sections
       acquisitions | origin | optional | yes | 0.0 | none
       acquisitions | household_share | optional | no |  NA | quantities of each household
+      acquisitions | fortifiable | optional | no |  NA | coverage of the fortifiable vehicle
       acquisitions | expenditure_lcu | optional | yes | 0.0 | linkage by expenditure
       households | region | optional | yes | 0.0 | analysis by region
       households | area | optional | yes | 0.0 | analysis by area
@@ -368,6 +370,7 @@
       acquisitions | period_days | esencial | sí | 0.0 | todas las secciones
       acquisitions | include | esencial | sí | 0.0 | todas las secciones
       acquisitions | household_share | opcional | no |  NA | cantidades de cada hogar
+      acquisitions | fortifiable | opcional | no |  NA | cobertura del vehículo fortificable
       households | expenditure_group | opcional | sí | 1.6 | análisis por quintil de gasto
       unit_factors | NA | esencial | sí |  NA | todas las secciones
       crosswalk | NA | esencial | sí |  NA | todas las secciones
@@ -634,6 +637,7 @@
       acquisitions | include | esencial | sí | 0.0 | todas las secciones
       acquisitions | origin | opcional | sí | 0.0 | ninguna
       acquisitions | household_share | opcional | no |  NA | cantidades de cada hogar
+      acquisitions | fortifiable | opcional | no |  NA | cobertura del vehículo fortificable
       acquisitions | expenditure_lcu | opcional | sí | 0.0 | vinculación por gasto
       households | region | opcional | sí | 0.0 | análisis por región
       households | area | opcional | sí | 0.0 | análisis por área

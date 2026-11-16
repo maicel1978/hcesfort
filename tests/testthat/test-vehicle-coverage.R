@@ -235,3 +235,99 @@ test_that("an afe table without n_members is a schema error", {
   )
   expect_identical(err$columns, "n_members")
 })
+
+# The fortifiable vehicle (12e.5.3, P159). vc_grams() with a column
+# `fortifiable`: h1's flour (200 g) bought, its bread (100 g) own
+# production (FALSE), its bread without quantity unknown (NA); h2's
+# biscuit (100 g) FALSE.
+vc_fort <- function(values = c(TRUE, FALSE, NA, TRUE, FALSE, TRUE, TRUE,
+                               TRUE, TRUE)) {
+  g <- vc_grams()
+  g$fortifiable <- values
+  g
+}
+
+test_that("fortifiable columns by hand", {
+  u <- vc_run(vc_fort(), fortifiable = "use",
+              combine = list(any = c("wheat", "sugar")))
+  # h1: flour 200 / 2 = 100 fortifiable; bread 60 / 2 = 30 of which the
+  # FALSE record (60 g) is out and the NA record (no grams) counts.
+  expect_equal(pick(u, 1, "flour", "qty_fortifiable_g_d"), 100)
+  expect_equal(pick(u, 1, "bread", "qty_fortifiable_g_d"), 0)
+  expect_true(pick(u, 1, "bread", "acquired_fortifiable"))
+  expect_equal(pick(u, 1, "wheat", "qty_fortifiable_g_d"), 100)
+  expect_equal(pick(u, 1, "bread", "qty_vehicle_g_d"), 30)
+  # h2: its only bread and sugar record (biscuit) is not fortifiable.
+  expect_true(pick(u, 2, "bread", "acquired"))
+  expect_false(pick(u, 2, "bread", "acquired_fortifiable"))
+  expect_equal(pick(u, 2, "sugar", "qty_fortifiable_g_d"), 0)
+  expect_equal(pick(u, 2, "sugar", "qty_fortifiable_g_d_pc"), 0)
+  expect_false(pick(u, 2, "any", "acquired_fortifiable"))
+  expect_true(pick(u, 1, "any", "acquired_fortifiable"))
+  # Missing where acquired is missing (h4 no records, h5 non-response).
+  expect_identical(is.na(u$acquired_fortifiable), is.na(u$acquired))
+  expect_identical(is.na(u$qty_fortifiable_g_d), is.na(u$qty_vehicle_g_d))
+  expect_identical(names(u)[names(u) %in% c("acquired",
+                                            "acquired_fortifiable")],
+                   c("acquired", "acquired_fortifiable"))
+})
+
+test_that("absent, all TRUE and 'ignore' give the same table", {
+  cols <- c("acquired", "acquired_fortifiable", "qty_vehicle_g_d",
+            "qty_fortifiable_g_d", "qty_fortifiable_g_d_pc")
+  a <- vc_run()
+  b <- vc_run(vc_fort(rep(TRUE, 9)), fortifiable = "use")
+  c <- vc_run(vc_fort(), fortifiable = "ignore")
+  # Columns only: the logs differ.
+  columns <- function(u) lapply(cols, function(k) u[[k]])
+  expect_identical(columns(a), columns(b))
+  expect_identical(columns(a), columns(c))
+  expect_identical(a$acquired_fortifiable, a$acquired)
+  expect_identical(a$qty_fortifiable_g_d, a$qty_vehicle_g_d)
+  expect_true("all_vehicle_assumed_fortifiable" %in% audit_log(a)$cause)
+  expect_true("fortifiable_ignored" %in% audit_log(c)$cause)
+})
+
+test_that("invariants: bounded by the vehicle, monotone in each record", {
+  all_false <- vc_run(vc_fort(rep(FALSE, 9)), fortifiable = "use")
+  expect_identical(all_false$acquired, vc_run()$acquired)
+  known <- !is.na(all_false$acquired)
+  expect_false(any(all_false$acquired_fortifiable[known]))
+  u <- vc_run(vc_fort(), fortifiable = "use")
+  ok <- !is.na(u$qty_vehicle_g_d)
+  expect_true(all(u$qty_fortifiable_g_d[ok] <= u$qty_vehicle_g_d[ok]))
+  expect_false(any(u$acquired_fortifiable & !u$acquired, na.rm = TRUE))
+  # Turning record 1 (h1's flour) to FALSE never raises an amount.
+  values <- c(FALSE, FALSE, NA, TRUE, FALSE, TRUE, TRUE, TRUE, TRUE)
+  w <- vc_run(vc_fort(values), fortifiable = "use")
+  expect_lt(pick(w, 1, "flour", "qty_fortifiable_g_d"),
+            pick(u, 1, "flour", "qty_fortifiable_g_d"))
+  expect_true(all(w$qty_fortifiable_g_d[ok] <= u$qty_fortifiable_g_d[ok]))
+})
+
+test_that("the log counts records not fortifiable, unknown and households", {
+  log <- audit_log(vc_run(vc_fort(), fortifiable = "use"))
+  nf <- log[log$cause == "not_fortifiable", ]
+  # bread: h1's bread (100 g) and h2's biscuit (100 g); sugar: the biscuit.
+  expect_identical(nf$detail, c("bread", "sugar"))
+  expect_identical(nf$n_records, c(2L, 1L))
+  expect_identical(nf$n_households, c(2L, 1L))
+  expect_equal(nf$qty_g, c(200, 100))
+  unk <- log[log$cause == "fortifiable_unknown", ]
+  expect_identical(unk$detail, "bread")
+  expect_identical(unk$kind, "flagged")
+  expect_identical(unk$n_records, 1L)
+  only <- log[log$cause == "acquired_not_fortifiable", ]
+  # h2 acquired bread and sugar only as the biscuit.
+  expect_identical(only$detail, c("bread", "sugar"))
+  expect_identical(only$n_households, c(1L, 1L))
+})
+
+test_that("the decision is required with the column, refused without it", {
+  err <- expect_error(vc_run(vc_fort()), class = "hcesfort_error_argument")
+  expect_identical(err$arg, "fortifiable")
+  expect_error(vc_run(vc_fort(), fortifiable = "yes"),
+               class = "hcesfort_error_argument")
+  expect_error(vc_run(fortifiable = "use"),
+               class = "hcesfort_error_argument")
+})

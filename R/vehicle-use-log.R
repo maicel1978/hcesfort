@@ -42,12 +42,7 @@ check_combine <- function(combine, known, call = rlang::caller_env()) {
 vehicle_log <- function(x, reasons, used, v, items, out, status) {
   step <- "vehicle_coverage"
   rec <- function(kind, cause, f, detail = NA_character_) {
-    if (!any(f)) return(NULL)
-    g <- x$qty_g_d[f & !is.na(x$qty_g_d)]
-    audit_row(step, carrier_table(x), kind, cause, sum(f),
-              length(unique(x$household_id[f])),
-              qty_g = if (length(g) > 0) sum(g) else NA_real_,
-              detail = detail)
+    use_record_row(step, x, kind, cause, f, detail)
   }
   hh <- function(kind, cause, f, detail = NA_character_) {
     if (!any(f)) return(NULL)
