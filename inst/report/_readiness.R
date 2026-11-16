@@ -49,7 +49,7 @@ inventory_table <- function(instance) {
   list(table = format_inventory(inventory))
 }
 
-# ---- D3 to D6. Checks, ladder and work queue -------------------------
+# ---- D3 to D6. Checks, missing values, ladder and work queue ---------
 
 # The detail of a check is a household status, a nutrient or a domain.
 format_checks <- function(ch) {
@@ -67,6 +67,20 @@ format_checks <- function(ch) {
 
 checks_table <- function(instance) {
   list(table = format_checks(checks))
+}
+
+# The foods without a composition value for the nutrients assessed, in
+# rank order within each nutrient (P162).
+missing_table <- function(instance) {
+  m <- no_value
+  out <- data.frame(nutrient = as.character(lab(m$nutrient, "nutrient")),
+                    rank = m$rank, food_code = m$food_code,
+                    composition_id = m$composition_id,
+                    n_records = m$n_records, n_households = m$n_households,
+                    share_grams_no_value = pct(m$share_grams),
+                    cum_share_grams_value = pct(m$cum_share_grams))
+  list(table = out, note = term("missing_values", "note"),
+       after = if (nrow(out) == 0) term("missing_empty", "sentence"))
 }
 
 # Without expenditure its column is dropped and a sentence says why.
@@ -265,4 +279,5 @@ decisions_table <- function(instance) {
 
 if (ready) {
   queue <- unmatched_foods(content, households)
+  no_value <- missing_values(content, households, choices$nutrients)
 }

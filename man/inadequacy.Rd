@@ -127,6 +127,17 @@ coverage and says so in the log. The coverage of each household is
 returned, so a domain can be defined on it. Coverage is measured on the
 records used: it does not see the records that never reached the sum.
 
+\strong{What the coverage gate cannot see.} A linked record without a value
+for a nutrient adds zero, so intake is understated: the share below a
+requirement is overstated and the share above an upper level
+understated. The size of the error is not known. The gate measures
+grams, and for a nutrient concentrated in few foods (vitamin A, vitamin
+B12) grams say little: three households with 400 g of rice a day (no
+vitamin A) and 10 g of liver without a vitamin A value pass a gate of
+0.95 at 0.976, and every household is inadequate. \code{\link[=missing_values]{missing_values()}}
+lists, by nutrient, the foods without a value and their grams; read it
+before any figure.
+
 \strong{Record loss.} \code{min_records_used} is required. The share of the
 included records that were used (\code{\link[=apparent_intake]{apparent_intake()}},
 \code{share_records_used}), over all households with at least one included

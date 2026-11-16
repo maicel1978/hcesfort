@@ -81,6 +81,17 @@
     Code
       cat(r$env$exhibit_text(key), sep = "\n")
     Output
+      [D3.1] Table D3.1. Work queue: foods without a composition value, by nutrient assessed
+      
+      nutrient | rank | food_code | composition_id | n_records | n_households | share_grams_no_value | cum_share_grams_value
+      Folate | 1 | biscuit | C08 | 698 | 698 | 0.5 | 100
+      A linked record without a value adds zero to the intake of the nutrient. Shares of the weighted edible grams of the included linked records. The coverage threshold of the results counts grams and cannot see a nutrient concentrated in few foods: fill these values with `fill_composition()` before reading any figure.
+
+---
+
+    Code
+      cat(r$env$exhibit_text(key), sep = "\n")
+    Output
       [D4] Table D4. Linkage ladder
       
       step | n_records | n_households | share_records | share_grams | share_expenditure
@@ -400,6 +411,17 @@
       Valores del dominio con pocos hogares | Región |     3 |   0.0 | 50 | sí
       Valores del dominio con pocos hogares | Área |     2 |   0.0 | 50 | sí
       Valores del dominio con pocos hogares | Quintil de gasto |     6 |  16.7 | 50 | sí
+
+---
+
+    Code
+      cat(r$env$exhibit_text(key), sep = "\n")
+    Output
+      [D3.1] Cuadro D3.1. Cola de trabajo: alimentos sin valor de composición, por nutriente evaluado
+      
+      nutrient | rank | food_code | composition_id | n_records | n_households | share_grams_no_value | cum_share_grams_value
+      Folato | 1 | biscuit | C08 | 698 | 698 | 0.5 | 100
+      Un registro vinculado sin valor suma cero a la ingesta del nutriente. Proporciones de los gramos comestibles ponderados de los registros incluidos y vinculados. El umbral de cobertura de los resultados cuenta gramos y no ve un nutriente concentrado en pocos alimentos: complete estos valores con `fill_composition()` antes de leer cualquier cifra.
 
 ---
 

@@ -66,8 +66,7 @@ above_ul_log <- function(x, req, parts, cov, min_coverage) {
     if (length(cov) > 0) {
       audit_row(step, "above_ul", "note", "coverage",
                 sum(x$intake_status == "estimated"),
-                detail = paste0(names(cov), ": ", format(round(cov, 4)),
-                                " (min_coverage ", min_coverage, ")"))
+                detail = coverage_detail(cov, min_coverage))
     },
     not_estimated_rows(step, "above_ul", x),
     usual_intake_row(step, x),

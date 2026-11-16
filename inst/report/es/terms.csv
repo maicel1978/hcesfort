@@ -24,6 +24,9 @@ header,,units_no_grams,Unidades sin gramos
 header,,n_not_linked,Registros no vinculados
 header,,cum_share_grams,Gramos vinculados al resolverlo (%)
 header,,cum_share_expenditure,Gasto vinculado al resolverlo (%)
+header,,composition_id,Filas de composición
+header,,share_grams_no_value,Gramos sin el valor (%)
+header,,cum_share_grams_value,Gramos con valor al completarlo (%)
 header,,measure,Medida
 header,,unlinked,No vinculado (%)
 header,,ci,IC {level}%
@@ -145,6 +148,7 @@ sentence,,not_included,Registros excluidos por la regla de inclusión del adapta
 sentence,,no_expenditure_records,"Registros incluidos sin gasto, excluidos de las proporciones de gasto: {n}."
 sentence,,no_expenditure,La tabla de adquisiciones no tiene gasto: no se informan proporciones de gasto.
 sentence,,queue_empty,Todos los registros incluidos están vinculados: no queda ningún alimento pendiente.
+sentence,,missing_empty,Todos los registros vinculados tienen valor para cada nutriente evaluado: no queda ningún valor pendiente.
 sentence,,rule,Regla: vincular al menos el {threshold}% de los gramos incluidos{expenditure}. La regla {status}.
 sentence,,rule_expenditure,y del gasto incluido
 sentence,,met,se cumple
@@ -173,6 +177,7 @@ kind,,table,Cuadro
 title,,D1,Veredicto: secciones y dominios que los datos permiten
 title,,D2,"Variables: esenciales, y opcionales ausentes o con faltantes"
 title,,D3,Cantidad y calidad mínimas de los datos
+title,,D3.1,"Cola de trabajo: alimentos sin valor de composición, por nutriente evaluado"
 title,,D4,Escalera de vinculación
 title,,D5,"Cola de trabajo: alimentos por resolver, según la proporción que representan"
 title,,D6,"Proporción vinculada a medida que se resuelven los alimentos de la cola, %"
@@ -204,6 +209,7 @@ note,,review,† Señalada para revisión estadística
 note,,complement,‡ El complemento de la estimación puede no ser fiable.
 note,,inventory,Las variables opcionales presentes y completas solo aparecen en el Cuadro DA1.
 note,,queue,Línea discontinua: la proporción de la regla de parada.
+note,,missing_values,"Un registro vinculado sin valor suma cero a la ingesta del nutriente. Proporciones de los gramos comestibles ponderados de los registros incluidos y vinculados. El umbral de cobertura de los resultados cuenta gramos y no ve un nutriente concentrado en pocos alimentos: complete estos valores con `fill_composition()` antes de leer cualquier cifra."
 note,,differs,"Un valor difiere cuando el IC {level}% de la diferencia excluye el cero, sin ajuste por comparaciones múltiples."
 note,,energy_lines,Líneas discontinuas: el rango plausible; línea continua: la energía de la persona de referencia.
 note,,energy_hidden,"{n} hogares por encima de {upper} kcal, no representados."

@@ -130,9 +130,10 @@ check_coverage <- function(x, nutrients, assessed, min_coverage,
     ),
     "x" = cli_escape(paste0("Below: ", paste(shown, collapse = ", "), ".")),
     "i" = paste(
-      "Fill the gaps with {.fn fill_composition}, or leave these",
-      "nutrients out of {.arg requirements}. Records that never reached",
-      "the sum are gated by {.arg min_records_used}."
+      "{.fn missing_values} lists the foods without a value; fill them",
+      "with {.fn fill_composition}, or leave these nutrients out of",
+      "{.arg requirements}. Records that never reached the sum are gated",
+      "by {.arg min_records_used}."
     )
   ), measure = "composition_value", nutrients = names(cov)[low],
   coverage = unname(cov[low]), min_coverage = min_coverage, call = call)

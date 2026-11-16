@@ -2,6 +2,7 @@ id,report,section,body,builder,verdict_section,repeats,appendix
 D1,readiness,verdict,table,verdict_matrix,,none,FALSE
 D2,readiness,variables,table,variables_table,,none,FALSE
 D3,readiness,checks,table,checks_table,,none,FALSE
+D3.1,readiness,checks,table,missing_table,,none,FALSE
 D4,readiness,ladder,table,ladder_table,,none,FALSE
 D5,readiness,queue,table,queue_table,,none,FALSE
 D6,readiness,queue,figure,queue_curve,,none,FALSE

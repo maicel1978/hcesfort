@@ -106,7 +106,7 @@ test_that("the readiness report knits on hces_example (K1, K3, K10)", {
     # Area and expenditure quintile differ from the rest in the unlinked
     # share; region does not (D8 only for the first two, DR10).
     expect_identical(names(r$tables), c(
-      "D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8_area",
+      "D1", "D2", "D3", "D3.1", "D4", "D5", "D6", "D7", "D8_area",
       "D8_expenditure_group", "D9", "D10", "DA1"
     ))
     expect_false(grepl("Analyst|Analista", strip_comments(r$md),
@@ -119,6 +119,15 @@ test_that("the readiness report knits on hces_example (K1, K3, K10)", {
       expect_true(all(diff(v) <= 0), info = paste(lang, col))
     }
     expect_true(all(r$tables$D1$national == say[[lang]]$enabled))
+    # The example lacks folate in some linked foods (P162): each nutrient
+    # of the queue ranks from 1 and its cumulative share ends at 100%.
+    mv <- r$tables[["D3.1"]]
+    expect_gt(nrow(mv), 0)
+    for (n in unique(mv$nutrient)) {
+      one <- mv[mv$nutrient == n, ]
+      expect_identical(as.integer(one$rank), seq_len(nrow(one)), info = n)
+      expect_equal(one$cum_share_grams_value[[nrow(one)]], 100, info = n)
+    }
   }
 })
 

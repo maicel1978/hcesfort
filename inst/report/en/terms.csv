@@ -24,6 +24,9 @@ header,,units_no_grams,Units without grams
 header,,n_not_linked,Records not linked
 header,,cum_share_grams,Grams linked once resolved (%)
 header,,cum_share_expenditure,Expenditure linked once resolved (%)
+header,,composition_id,Composition rows
+header,,share_grams_no_value,Grams without the value (%)
+header,,cum_share_grams_value,Grams with a value once filled (%)
 header,,measure,Measure
 header,,unlinked,Not linked (%)
 header,,ci,{level}% CI
@@ -145,6 +148,7 @@ sentence,,not_included,Records left out by the inclusion rule of the adapter: {n
 sentence,,no_expenditure_records,"Included records without expenditure, left out of the expenditure shares: {n}."
 sentence,,no_expenditure,The acquisitions table has no expenditure: shares of expenditure are not reported.
 sentence,,queue_empty,Every included record is linked: no food is pending.
+sentence,,missing_empty,Every linked record has a value for each nutrient assessed: no value is pending.
 sentence,,rule,Rule: link at least {threshold}% of the included grams{expenditure}. The rule is {status}.
 sentence,,rule_expenditure,and of the included expenditure
 sentence,,met,met
@@ -173,6 +177,7 @@ kind,,table,Table
 title,,D1,Verdict: sections and domains the data support
 title,,D2,"Variables: essential, and optional ones absent or partly missing"
 title,,D3,Minimum quantity and quality of the data
+title,,D3.1,"Work queue: foods without a composition value, by nutrient assessed"
 title,,D4,Linkage ladder
 title,,D5,"Work queue: foods to resolve, by the share they hold"
 title,,D6,"Share linked as the foods of the queue are resolved, %"
@@ -204,6 +209,7 @@ note,,review,† Flagged for statistical review
 note,,complement,‡ The complement of the estimate may be unreliable.
 note,,inventory,Optional variables present and complete are listed only in Table DA1.
 note,,queue,Dashed line: the share of the stopping rule.
+note,,missing_values,"A linked record without a value adds zero to the intake of the nutrient. Shares of the weighted edible grams of the included linked records. The coverage threshold of the results counts grams and cannot see a nutrient concentrated in few foods: fill these values with `fill_composition()` before reading any figure."
 note,,differs,"A value differs when the {level}% CI of the difference excludes zero, without adjustment for multiple comparisons."
 note,,energy_lines,Dashed lines: the plausible range; solid line: the energy of the reference person.
 note,,energy_hidden,"{n} households above {upper} kcal, not shown."

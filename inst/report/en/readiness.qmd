@@ -57,6 +57,7 @@ if (!ready) {
 
 ```{r checks}
 show_exhibit("D3")
+show_exhibit("D3.1")
 ```
 
 ## 4. Linkage ladder

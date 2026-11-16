@@ -30,14 +30,23 @@ inadequacy_log <- function(x, req, dist, bioavailability, cov, out,
                       paste0(", b = ", methods$bioavailability)))),
     row("note", "coverage", rep(sum(x$intake_status == "estimated"),
                                 length(cov)),
-        paste0(assessed, ": ", format(round(cov, 4)), " (min_coverage ",
-               min_coverage, ")")),
+        coverage_detail(cov, min_coverage)),
     row("note", "tails_fixed", unlist(tails),
         unlist(lapply(names(dist), function(n) {
           paste0(n, ", b = ", bioavailability[[n]])
         }))),
     not_estimated_rows(step, "inadequacy", x)
   )
+}
+
+# The detail of the note `coverage`, one per nutrient of `cov`: the
+# coverage and the threshold, and for a coverage below 1 where to find the
+# foods without a value (P162).
+coverage_detail <- function(cov, min_coverage) {
+  see <- ifelse(!is.na(cov) & cov < 1,
+                "; foods without a value: see missing_values()", "")
+  paste0(names(cov), ": ", format(round(cov, 4)), " (min_coverage ",
+         min_coverage, ")", see)
 }
 
 # Flagged rows: households without a result, by status.

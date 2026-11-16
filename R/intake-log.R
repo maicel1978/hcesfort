@@ -76,15 +76,16 @@ check_household_ids <- function(tables, h, call = rlang::caller_env()) {
 # Audit rows of apparent_intake(): records received; records left out by
 # cause, with their grams per day as acquired; households by status;
 # estimated households with zero edible grams (P172); and per nutrient,
-# estimated households whose coverage is below 1.
+# estimated households whose coverage is below 1 and the used records
+# without a value, with the number of their foods (P162).
 intake_log <- function(x, reasons, used, out, nutrients) {
   step <- "apparent_intake"
-  rec <- function(kind, cause, f) {
+  rec <- function(kind, cause, f, detail = NA_character_) {
     if (!any(f)) return(NULL)
     g <- x$qty_g_d[f & !is.na(x$qty_g_d)]
     audit_row(step, "nutrient_content", kind, cause, sum(f),
               length(unique(x$household_id[f])),
-              qty_g = if (length(g) > 0) sum(g) else NA_real_)
+              qty_g = if (length(g) > 0) sum(g) else NA_real_, detail = detail)
   }
   hh <- function(kind, cause, f, detail = NA_character_) {
     if (!any(f)) return(NULL)
@@ -106,6 +107,11 @@ intake_log <- function(x, reasons, used, out, nutrients) {
       cov <- out[[paste0(col, "_coverage")]]
       hh("flagged", "incomplete_nutrient_value", est & !is.na(cov) & cov < 1,
          col)
+    }),
+    lapply(nutrients$column, function(col) {
+      f <- used & is.na(x[[col]])
+      rec("flagged", "foods_without_value", f,
+          paste0(col, ": ", length(unique(x$food_code[f])), " foods"))
     })
   )
 }

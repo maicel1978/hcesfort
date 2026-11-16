@@ -566,6 +566,19 @@
   shares without fortification do not change.
 * The contract of `age_months` says what the validator checks since 12e.4:
   the total months since birth (P206).
+* `missing_values()`: the work queue of missing composition values (P162,
+  finding 8 of the review v0.2). Per nutrient, the foods with a linked
+  record without a value, ranked by their weighted edible grams, with the
+  share of grams that would carry a value once each is filled. The
+  coverage gate of `inadequacy()` and `above_ul()` counts grams and cannot
+  see a nutrient concentrated in few foods (10 g of liver without vitamin A
+  among 400 g of rice passes a gate of 0.95); the list makes the foods
+  visible. No threshold is added. `apparent_intake()` logs, per nutrient,
+  the used records without a value and the number of their foods
+  (`foods_without_value`); the `coverage` note of `inadequacy()` and
+  `above_ul()` points to `missing_values()` for a nutrient below 1, and so
+  does the error of the gate. The readiness report gains Table D3.1, the
+  queue for the nutrients assessed. No figure changes.
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is
