@@ -26,6 +26,11 @@ can be placed in the [roadmap](docs/roadmap.md).
 
 Code follows the [tidyverse style guide](https://style.tidyverse.org).
 
+## Use of AI tools
+
+Developed with the help of AI tools under the author's supervision;
+methodological decisions and validation are the author's.
+
 ## Code of conduct
 
 This project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md).

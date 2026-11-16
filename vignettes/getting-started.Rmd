@@ -63,9 +63,12 @@ unique(scenarios$scenario)
 
 ## 3. Inadequacy and its uncertainty
 
-The probability of inadequacy of each household is averaged with the survey
-design. Estimates come with an interval and are judged by the presentation
-standard before they are shown.
+`inadequacy()` gives each household a value between 0 and 1: for folate
+(EAR cut-point) 1 when its apparent intake is below the EAR and 0 otherwise;
+for iron, whose requirement is skewed, a probability. The mean of that value
+over households, with the survey design, is the share of households below
+the requirement. Estimates come with an interval and are judged by the
+presentation standard before they are shown.
 
 ```{r risk}
 iron <- ref_iron_requirements
@@ -99,9 +102,51 @@ shown <- by_group[by_group$presentation != "suppress" &
 ggplot(shown, aes(expenditure_group, estimate, colour = scenario)) +
   geom_pointrange(aes(ymin = ci_low, ymax = ci_high),
                   position = position_dodge(width = 0.4)) +
-  labs(x = "Expenditure group", y = "Probability of inadequacy (folate)",
+  labs(x = "Expenditure group", y = "Households below the EAR (folate)",
        colour = "Scenario") +
   theme_minimal()
+```
+
+## 5. What the figures are and are not
+
+The EAR cut-point and the iron probability approach are defined on the
+*usual* intake of persons (IOM 2000b, pp. 73 and 81; IOM 2001, Table I-7,
+p. 703). `hcesfort` applies them to what a household acquired over the
+period of the survey, per adult equivalent, with no adjustment. Purchase
+frequency and stocks add variance that usual intake does not have, so the
+share below a fixed requirement moves towards 50% and the share above an
+upper level goes up (IOM 2000b, p. 99). The figures are shares of
+households by their *apparent* intake: screening figures to compare
+scenarios on the same data, not prevalences of inadequacy. Every call of
+`inadequacy()` and `above_ul()` writes this in the audit log, with the
+period of the records used:
+
+```{r usual-intake}
+log <- audit_log(risk)
+log[log$cause == "apparent_intake_not_usual_intake", c("cause", "detail")]
+```
+
+The scenarios of `hces_example` have a compliance below 1 under the
+average-content model: every gram of the vehicle carries part of the level,
+so no household receives the full level, and the share above the upper
+level is understated. `above_ul()` flags each such scenario; the same
+levels at compliance 1 give the upper bound to report with it.
+
+```{r upper-level}
+ul <- above_ul(scenarios, ref_requirements, min_coverage = 0.8,
+               min_records_used = 0.8)
+full <- ex$scenarios
+full$compliance <- 1
+ul_full <- above_ul(apply_scenario(intake, use, full), ref_requirements,
+                    min_coverage = 0.8, min_records_used = 0.8)
+folic_acid <- function(u) {
+  u <- u[u$nutrient == "folate" & u$scenario == "plus_rice", ]
+  estimate_households(design, u, "above_ul_added",
+                      ci_method = "korn_graubard")
+}
+both <- dplyr::bind_rows(as_shipped = folic_acid(ul),
+                         compliance_1 = folic_acid(ul_full), .id = "levels")
+both[c("levels", "scenario", "estimate", "ci_low", "ci_high")]
 ```
 
 Reports in the shape of the results of an analysis (readiness and results)

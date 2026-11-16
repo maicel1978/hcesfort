@@ -46,9 +46,13 @@ the degrees of freedom are below \code{min_df} (\code{"degrees_of_freedom"}).
 Otherwise present. A proportion of 0 has an infinite relative width, so
 it is suppressed unless its interval is narrow, as the flow chart does.
 Means of probabilities (the iron probability approach) are judged as
-proportions: their variance is at most that of a 0/1 outcome, so the
-effective sample size reaches \code{n} sooner and the judgement errs on the
-side of caution.
+proportions. The width criteria are then conservative, since the
+variance of a probability is at most that of a 0/1 outcome. The
+effective-sample-size criterion is not: the standards define the
+effective sample size as \code{n} divided by the design effect, and
+\code{p(1 - p) / se^2} (the formula used) is that only for a 0/1 outcome; for
+a mean of probabilities it overstates the effective size, so the
+criterion is in effect not applied to them.
 
 The standards judge the 95\% Korn-Graubard interval and no other, so
 every proportion must come from

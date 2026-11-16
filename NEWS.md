@@ -427,6 +427,30 @@
   optional columns (`household_share`, `yield_factor`, `age_months`,
   `meals_home_share`, member `weight_kg`) and a single-PSU stratum. No
   result of the package changed.
+* The limits of the method are written where a user reads them: a section
+  "What the figures are and are not" in `?inadequacy` and `?above_ul`, the
+  README and the vignette. The EAR cut-point and the iron probability
+  approach are defined on usual intake (IOM 2000b, pp. 73, 81 and 99; IOM
+  2001, Table I-7, p. 703); the package applies them to apparent intake over
+  `period_days`, so the results are shares of households to compare
+  scenarios, not prevalences of inadequacy. `inadequacy()` and `above_ul()`
+  write the note `apparent_intake_not_usual_intake` in the log, with the
+  range of `period_days` of the records used (new note `period_days` of
+  `apparent_intake()`).
+* Under the average-content compliance model with a compliance below 1, the
+  share above an upper level is understated. `above_ul()` flags each such
+  scenario (`average_content_understates_ul`); the same levels at
+  compliance 1 give the upper bound (on `hces_example`, folic acid: 0.59%
+  as shipped, 19.7% at compliance 1). The note `compliance_below_one` of
+  `apply_scenario()` now has one row per scenario, named in `detail`. The
+  results report adds the note under the upper-level exhibit.
+* `?flag_presentation` and departure S2 of the results report no longer
+  call the standard conservative for a mean of probabilities: the width
+  criteria are, the effective-sample-size criterion is in effect not
+  applied. The tails of the iron probability cite their source (IOM 2001,
+  Table I-7, p. 703, footnote d) instead of calling the rule a convention.
+* The README describes the package as it is, with the chain on
+  `hces_example`; README and `CONTRIBUTING.md` state the use of AI tools.
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is

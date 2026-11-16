@@ -156,7 +156,7 @@ sentence,,population_exclude,"The results leave out the {n} households, of {tota
 sentence,,population_keep,"The results include the {n} households, of {total} with an estimated apparent energy, whose apparent energy is outside the plausible range of {lower} to {upper} kcal per adult female equivalent per day (data readiness report, section 7)."
 sentence,,ul_zero,"In the sample (n = {n}), no household exceeds the upper level of {nutrients} under any scenario (upper limit of the {level}% CI: {limits} of households)."
 sentence,,s1,"Departure S1. Estimates other than proportions (medians, paired differences, shares of food groups) are judged only by their number of households and degrees of freedom, and their interval is always shown: the standard gives no thresholds for them (p. 5)."
-sentence,,s2,"Departure S2. Where inadequacy is a probability (iron), the proportion is the mean probability, and the standard is applied to it. Its variance is at most that of a yes-or-no outcome, so the judgement is conservative; zero events means a mean of exactly 0 or 1."
+sentence,,s2,"Departure S2. Where inadequacy is a probability (iron), the proportion is the mean probability, and the standard is applied to it. Its variance is at most that of a yes-or-no outcome, so the width criteria are conservative; its effective sample size is computed as for a yes-or-no outcome, which overstates it, so that criterion is in effect not applied. Zero events means a mean of exactly 0 or 1."
 sentence,,s3,"Departure S3. In this report, estimates flagged for statistical review are {review}. The standard allows them to be shown after review or suppressed (pp. 2, 5)."
 sentence,,s4,"Departure S4. A proportion with no household, or every household, in the sample is reported in a sentence with its n and the limit of its Clopper-Pearson interval, not as a row of a table or a point of a figure."
 sentence,,lonely_psu,Strata with a single primary sampling unit: {choice}.
@@ -215,6 +215,7 @@ note,,not_proportion,"Not a proportion: judged only by the number of households 
 note,,national_line,Dashed line: the national estimate.
 note,,effect,"Left panel: hollow point, the scenario compared with ({comparators}); filled point, the scenario. Right panel: paired difference in percentage points, with its {level}% CI."
 note,,ul_adult,The adult upper level is applied to intake per adult female equivalent; children have lower upper levels.
+note,,ul_average_content,"Under average content with a compliance below 1, every gram of the vehicle carries part of the level and no household receives the full level, so the share above the upper level is understated; the same levels at compliance 1 give its upper bound."
 note,,no_content,No {nutrient} from: {groups}.
 note,,unclassified,Share of foods with no group assigned: {shares}.
 note,,sensitivity,The other exhibits use an iron bioavailability of {pct}%.

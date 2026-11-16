@@ -85,6 +85,22 @@ inadequacy cannot be defined using the … cut-point method due to the
 nonnormal distribution of iron requirements". A secondary source, cited in
 `docs/review-v0.1.md`, section 9.1; not needed for any value.
 
+## Limits of the method and the tails of the iron probability (added 2026-11-15, task 12e.3)
+
+Quoted in `?inadequacy`, `?above_ul`, the README and the vignette. Read in
+the session of the review v0.2 (2026-11-15; `docs/review-v0.2.md`,
+findings 3 and 16); Table I-7 was also opened in task 12e.2
+(`nap.nationalacademies.org/books/10026/gif/703.gif`). Not reopened in
+task 12e.3. No value of a reference table depends on them.
+
+| Statement | Place |
+|---|---|
+| "To accurately determine the proportion of a group that has a usual intake of a nutrient less than the requirement, information on both usual intakes and nutrient requirements for each individual in the group is needed." | IOM 2000b, chapter 4, p. 73 |
+| The cut-point "works well when: intakes are accurately measured; actual prevalence in the group is neither very low nor very high; estimated usual intakes of individuals are independent of each individual's requirement; the distribution of requirements is approximately symmetrical; variability in intakes among individuals in the group is greater than the variability in requirements" | IOM 2000b, chapter 4, p. 81, Box 4-1 |
+| "the variance of the estimated distribution will contain an unwanted day-to-day variability component. Therefore, estimates of the prevalence of nutrient inadequacy will be biased." | IOM 2000b, chapter 4, p. 99 |
+| The probabilities "may be used … to evaluate adjusted distributions of usual intakes … Not to be applied in the assessment of individuals." | IOM 2001, Appendix I, Table I-7, p. 703, footnote a |
+| "a probability of 1 has been assigned to all usual intakes falling below the two and one-half percentile of requirement and a probability of 0 has been assigned to all usual intakes falling above the ninety-seven and one-half percentile": the rule of `inadequacy()` beyond the percentiles of `ref_iron_requirements` | IOM 2001, Appendix I, Table I-7, p. 703, footnote d |
+
 ## Page citations re-read (2026-11-14, task 12d.1, P124)
 
 Every page citation of the IOM reports in `requirements.csv`,

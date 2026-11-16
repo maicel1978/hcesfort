@@ -1,93 +1,83 @@
 # Handoff
 
 - **Date:** 2026-11-15
-- **Model:** Opus 5.5 (step 12e.2).
-- **Branch:** `claude/peaceful-davinci-yjsc14`, pushed.
+- **Model:** Opus 5.5 (step 12e.3, notes and text in one session).
+- **Branch:** `claude/intelligent-lovelace-jj6ijo`, pushed.
 - **Environment:** run `R CMD INSTALL .` at the start (the Quarto render
   test uses the installed package). The full `devtools::test()` takes
   about 13 minutes here: run it in the background, one at a time.
 
 ## What was done
 
-12e.2 (P160, P169, P174), three commits, no package code changed:
+12e.3 (P157, P161, P163, P164 sentences, P170), see the commit messages:
 
-- "Tests for the five mutations that survived the review v0.2": S1 to S5
-  in `test-estimate.R`, `test-adult-equivalents.R`, `test-above-ul.R`,
-  `test-apparent-intake.R`. Each mutation was re-applied to `R/` and its
-  test fails on it.
-- "Anchor tests from sources outside the package": `test-anchors.R`.
-  Sources opened this session: FAO/WHO/UNU 2004, examples under Table 5.1
-  (`fao.org/4/y5686e/y5686e07.htm`); IOM 2001 Table I-7, p. 703
-  (`nap.nationalacademies.org/books/10026/gif/703.gif`, non-OC column
-  typed from the page; largest difference at the middle of a band
-  0.0054). Plus conservation of nutrients, `svycontrast()`, `svyratio()`
-  on the full design, `svyciprop(method = "logit")`. `surveytable` was
-  left out (not a dependency; recorded in P160).
-- "Golden chain on the fixture with the optional columns":
-  `hces_fixture(optional = TRUE)` (built by `fixtures/hces_fixture.R`,
-  file `hces-fixture-optional.rds`; the plain fixture is byte-identical),
-  `data-raw/golden_example.R` handles `household_share`, `yield_factor`,
-  `age_months`, `meals_home_share`, member `weight_kg`;
-  `golden-optional.csv`; the two existing golden files did not change.
-  `NEWS.md`, roadmap (12e.2 ticked), P160/P169/P174 marked done.
+- Audit notes: `apparent_intake()` writes `period_days` (range of the
+  records used); `inadequacy()` and `above_ul()` write
+  `apparent_intake_not_usual_intake` with that range; `above_ul()` flags
+  `average_content_understates_ul`, one row per scenario with a compliance
+  below 1 under average content; the note `compliance_below_one` of
+  `apply_scenario()` now has one row per scenario (detail = its name).
+- Text: "What the figures are and are not" in `?inadequacy` (four IOM
+  quotations), `?above_ul`, `?apply_scenario`; tail rule cited (IOM 2001,
+  Table I-7, p. 703, footnote d); `?flag_presentation` and departure S2
+  (en, es) corrected; README rewritten (status, chain, limits, AI
+  statement); `CONTRIBUTING.md` AI statement; vignette section 5 (the
+  audit note, and the folic acid share as shipped 0.59% against 19.7% at
+  compliance 1); results report: note `ul_average_content` under the
+  upper-level exhibit; `data-raw/SOURCES.md` new section with the quotations.
+- New items: P182 (sensitivity by days observed, task 12), P183 (the limit
+  of finding 3 stated in the reports, high, before the first expert round).
 
-Full `devtools::test()` and lint of the changed files: see the last
-commit message. `devtools::check()` and `lintr::lint_package()` run once
-at the end of task 12e.
+## Not done
+
+- **`surveytable` anchor (R2-D7).** Installing `surveytable` from CRAN was
+  refused by the session's permission classifier, so the call
+  `surveytable::svyciprop_adjusted()` could not be checked, and an unrun test
+  is not written (CLAUDE.md: never call a function without checking it).
+  See open question 1.
 
 ## Exact next step
 
-**12e.3 (P157, P161, P163, P164, P170).** The roadmap splits it: the audit
-notes on usual intake and on compliance with the upper level are code
-(Opus); the sentences in help pages, README and vignette are text
-(Sonnet). Read only the ids above in `docs/improvements.md` and findings
-3, 7, 9, 10 and 16 of `docs/review-v0.2.md`. Then 12e.4 (Opus) and
-12e.5.1 to 12e.5.8 (Opus).
-
-**Decision of the advisor (2026-11-15):** 12e.3 is done whole in one Opus
-session (notes and text), to save a session start. Add to it the
-`surveytable` anchor left out in 12e.2: R2-D7 approved `surveytable` in
-`Suggests` for one test of the Korn-Graubard interval against
-`surveytable::svyciprop_adjusted()`, skipped when the package is absent.
-It is the only external reference for that interval; justify the new
-suggested package in the commit message. Also the AI statement of R2-D7 in
-the README and `CONTRIBUTING.md`.
+**12e.4 (P165 to P168, P172; the effective size of P164 under R2-D6).**
+Read only those ids in `docs/improvements.md` and findings 10 to 14 and 18
+of `docs/review-v0.2.md`. P183 (report note on usual intake) can go with
+it. Then 12e.5.1 to 12e.5.8 (Opus). `devtools::check()` and
+`lintr::lint_package()` once at the end of task 12e.
 
 ## Open questions
 
-None.
+1. **`surveytable`**: may the next session install it from CRAN
+   (`install.packages("surveytable")`) to write the Korn-Graubard anchor?
+   Recommended: yes, with the permission granted in the session settings;
+   otherwise drop the anchor (the published NCHS rows in `helper-nchs.R`
+   already anchor the interval) and close R2-D7 for the test part.
 
 ## Recommended model for the next session
 
-**Opus** for the notes of 12e.3, then 12e.4; **Sonnet** may do the text
-of 12e.3 in its own session.
+**Opus** (12e.4).
 
 ## Maintainer review points
 
-1. **The FAO examples** (Table 5.1, 1,975 / 2,355 / 3,925 kcal):
+1. **The two new audit notes on `hces_example`:**
 
    ```r
    library(hcesfort)
-   c(reference_energy("female", 40, 55, pal = 1.53),
-     reference_energy("female", 22, 57, pal = 1.76),
-     reference_energy("male", 22, 70, pal = 2.25))
-   # 1977.6 2343.0 3928.9
+   example(above_ul)
+   l <- audit_log(ul)
+   l[l$cause %in% c("apparent_intake_not_usual_intake",
+                    "average_content_understates_ul"), c("cause", "detail")]
    ```
 
-2. **Table I-7 of IOM 2001 (p. 703), non-OC users**, at 18% bioavailability:
-   compare with the page, e.g. 7.17 mg should be near 0.65, 11.94 near 0.15.
+2. **The quotations in `?inadequacy`** against IOM 2000b pp. 73, 81 (Box
+   4-1), 99 and IOM 2001 p. 703 (footnotes a and d); they were read in the
+   review session, not reopened in 12e.3:
 
    ```r
-   d <- subset(ref_iron_requirements, group == "females_menstruating_adult")
-   1 - approx(d$requirement_mg_d, d$percentile / 100,
-              xout = c(4.65, 7.17, 11.94, 16.865))$y
-   # 0.9625 0.6492 0.1498 0.0375
+   ?hcesfort::inadequacy   # section "What the figures are and are not"
    ```
 
-3. **The optional fixture changes the chain** (run from the package root):
+3. **The README reads as the package is** (render it and run its chain):
 
    ```r
-   g <- read.csv("tests/testthat/fixtures/golden-fixture.csv")
-   o <- read.csv("tests/testthat/fixtures/golden-optional.csv")
-   merge(g, o, by = "name", suffixes = c("_plain", "_optional"))
+   rmarkdown::render("README.md", output_dir = tempdir())
    ```

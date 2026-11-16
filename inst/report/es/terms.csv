@@ -156,7 +156,7 @@ sentence,,population_exclude,"Los resultados dejan fuera los {n} hogares, de {to
 sentence,,population_keep,"Los resultados incluyen los {n} hogares, de {total} con energía aparente estimada, cuya energía aparente está fuera del rango plausible de {lower} a {upper} kcal por equivalente de mujer adulta por día (informe de preparación de los datos, sección 7)."
 sentence,,ul_zero,"En la muestra (n = {n}), ningún hogar supera el nivel máximo de {nutrients} con ningún escenario (límite superior del IC {level}%: {limits} de los hogares)."
 sentence,,s1,"Desviación S1. Las estimaciones que no son proporciones (medianas, diferencias pareadas, aportes de los grupos de alimentos) se juzgan solo por su número de hogares y sus grados de libertad, y su intervalo se muestra siempre: la norma no da umbrales para ellas (p. 5)."
-sentence,,s2,"Desviación S2. Donde la inadecuación es una probabilidad (hierro), la proporción es la probabilidad media, y la norma se aplica a ella. Su varianza es a lo sumo la de un resultado de sí o no, de modo que el juicio es conservador; cero eventos significa una media de exactamente 0 o 1."
+sentence,,s2,"Desviación S2. Donde la inadecuación es una probabilidad (hierro), la proporción es la probabilidad media, y la norma se aplica a ella. Su varianza es a lo sumo la de un resultado de sí o no, de modo que los criterios de amplitud son conservadores; su tamaño efectivo de muestra se calcula como para un resultado de sí o no, lo que lo sobrestima, de modo que ese criterio en la práctica no se aplica. Cero eventos significa una media de exactamente 0 o 1."
 sentence,,s3,"Desviación S3. En este informe, las estimaciones señaladas para revisión estadística se {review}. La norma permite mostrarlas tras la revisión o suprimirlas (pp. 2, 5)."
 sentence,,s4,"Desviación S4. Una proporción con ningún hogar, o con todos los hogares, de la muestra se informa en una frase con su n y el límite de su intervalo de Clopper-Pearson, no como fila de una tabla ni como punto de una figura."
 sentence,,lonely_psu,Estratos con una sola unidad primaria de muestreo: {choice}.
@@ -215,6 +215,7 @@ note,,not_proportion,"No es una proporción: se juzga solo por el número de hog
 note,,national_line,Línea discontinua: la estimación nacional.
 note,,effect,"Panel izquierdo: punto hueco, el escenario de comparación ({comparators}); punto lleno, el escenario. Panel derecho: diferencia pareada en puntos porcentuales, con su IC {level}%."
 note,,ul_adult,El nivel máximo de los adultos se aplica a la ingesta por equivalente de mujer adulta; los niños tienen niveles máximos más bajos.
+note,,ul_average_content,"Con contenido medio y un cumplimiento menor que 1, cada gramo del vehículo lleva una parte del nivel y ningún hogar recibe el nivel completo, de modo que la proporción por encima del nivel máximo está subestimada; los mismos niveles con cumplimiento 1 dan su cota superior."
 note,,no_content,Sin aporte de {nutrient}: {groups}.
 note,,unclassified,Aporte de los alimentos sin grupo asignado: {shares}.
 note,,sensitivity,Las demás exhibiciones usan una biodisponibilidad del hierro del {pct}%.
