@@ -69,6 +69,31 @@ above_ul_log <- function(x, req, parts, cov, min_coverage) {
                 detail = paste0(names(cov), ": ", format(round(cov, 4)),
                                 " (min_coverage ", min_coverage, ")"))
     },
-    not_estimated_rows(step, "above_ul", x)
+    not_estimated_rows(step, "above_ul", x),
+    usual_intake_row(step, x),
+    understates_ul_rows(x, scope)
   )
+}
+
+# Flagged rows, one per scenario of `x` with a compliance below 1 under
+# the average-content model, when some UL is assessable: every gram then
+# carries part of the level, so the share above the UL is understated; the
+# same levels at compliance 1 give its upper bound (review v0.2, finding 9).
+understates_ul_rows <- function(x, scope) {
+  log <- audit_get(x)
+  f <- log$step == "apply_scenario"
+  model <- log$detail[f & log$cause == "compliance_model"]
+  sc <- intersect(log$detail[f & log$cause == "compliance_below_one"],
+                  unique(x[["scenario"]]))
+  if (length(sc) == 0 || !"average_content" %in% model ||
+        all(scope == "not_assessable")) {
+    return(NULL)
+  }
+  n <- vapply(sc, function(s) sum(x$scenario == s), integer(1))
+  hh <- vapply(sc, function(s) {
+    length(unique(x$household_id[x$scenario == s]))
+  }, integer(1))
+  audit_row("above_ul", "above_ul", "flagged",
+            "average_content_understates_ul", n, hh,
+            detail = paste0(sc, ": rerun at compliance 1 for the upper bound"))
 }

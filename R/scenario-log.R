@@ -116,6 +116,7 @@ scenario_log <- function(x, use, s, out, names_s, added_cols, model) {
       vu$acquired %in% TRUE & vu$n_records_no_grams > 0
     length(unique(vu$household_id[f]))
   }, integer(1))
+  partial <- table(s$scenario[s$compliance < 1])
   added <- expand.grid(scenario = names_s[-1], column = added_cols,
                        stringsAsFactors = FALSE)
   added$n <- mapply(function(sc, col) {
@@ -126,7 +127,7 @@ scenario_log <- function(x, use, s, out, names_s, added_cols, model) {
     audit_row(step, "scenario_intake", "input", "all", nrow(out), nrow(x),
               detail = paste(length(names_s), "scenarios")),
     note("compliance_model", sum(s$compliance < 1), model),
-    note("compliance_below_one", sum(s$compliance < 1)),
+    note("compliance_below_one", as.integer(partial), names(partial)),
     note("scenario_source_pending", sum(is_source_pending(s$source))),
     note("vehicle_not_acquired", rep(1L, length(not_acquired)),
          not_acquired),

@@ -72,3 +72,16 @@ ear_bioavailability_rows <- function(x, req, cut) {
             rep(nrow(x), sum(keep)),
             detail = paste0(req$nutrient[keep], ": ", b[keep]))
 }
+
+# Note row: the figures describe apparent intake over the period of the
+# records used, not usual intake, on which the cut-point and the
+# probability approach are defined (IOM 2000b, pp. 73 and 99). The period
+# is the `period_days` note of apparent_intake().
+usual_intake_row <- function(step, x) {
+  log <- audit_get(x)
+  p <- log$detail[log$step == "apparent_intake" & log$cause == "period_days"]
+  period <- if (length(p) > 0) p[[length(p)]] else "not recorded"
+  audit_row(step, step, "note", "apparent_intake_not_usual_intake", nrow(x),
+            length(unique(x$household_id)),
+            detail = paste0("period_days of the records used: ", period))
+}

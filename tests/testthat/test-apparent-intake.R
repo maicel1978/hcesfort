@@ -14,13 +14,13 @@
 # h4: no record -> no_food_records.
 # h5: rice 100 g -> food_module_nonresponse.
 # h6: rice 100 g -> no_afe.
-ai_content <- function() {
+ai_content <- function(period = 1) {
   a <- data.frame(
     record_id = 1:8, household_id = c(1, 1, 1, 2, 2, 3, 5, 6),
     food_code = c("rice", "oil", "salt", "rice", "rice", "salt", "rice",
                   "rice"),
     quantity = c(100, 50, 10, 200, 100, 10, 100, 100), unit = "g",
-    section = "diary", period_days = 1,
+    section = "diary", period_days = period,
     include = c(TRUE, TRUE, TRUE, FALSE, TRUE, TRUE, TRUE, TRUE)
   )
   f <- data.frame(unit = "g", factor = 1, factor_type = "mass_g",
@@ -81,6 +81,19 @@ test_that("the log counts records left out and households by status", {
   inc <- l[l$cause == "incomplete_nutrient_value", ]
   expect_equal(inc$detail, "iron_mg")
   expect_equal(inc$n_records, 1)
+})
+
+test_that("the log notes the range of period_days of the records used", {
+  # Used: records 1, 2, 5, 7, 8 (periods 7, 7, 30, 14, 7) of households 1,
+  # 2, 5, 6; record 4 (period 1) is not included, 3 and 6 are not linked.
+  i <- apparent_intake(ai_content(c(7, 7, 7, 1, 30, 7, 14, 7)), ai_afe(),
+                       ai_households())
+  log <- audit_log(i)
+  p <- log[log$step == "apparent_intake" & log$cause == "period_days", ]
+  expect_identical(p$detail, "7 to 30")
+  expect_identical(p$n_records, 5L)
+  expect_identical(p$n_households, 4L)
+  expect_identical(p$kind, "note")
 })
 
 test_that("outliers are excluded or kept only when asked", {

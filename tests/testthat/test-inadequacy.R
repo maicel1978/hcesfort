@@ -91,6 +91,11 @@ test_that("the audit log counts by hand", {
   expect_identical(log$n_records[log$cause == "tails_fixed"], 4L)
   expect_identical(log$detail[log$cause == "not_estimated"],
                    "no_food_records")
+  # Every record of the fixture covers one day.
+  usual <- log[log$cause == "apparent_intake_not_usual_intake", ]
+  expect_identical(usual$detail, "period_days of the records used: 1 to 1")
+  expect_identical(usual$n_records, 9L)
+  expect_identical(usual$n_households, 3L)
 })
 
 test_that("coverage below the minimum is a coverage error", {

@@ -95,6 +95,7 @@ intake_log <- function(x, reasons, used, out, nutrients) {
     rec("input", "all", rep(TRUE, nrow(x))),
     lapply(names(reasons), function(r) rec("excluded", r, reasons[[r]])),
     rec("note", "used", used),
+    period_row(step, x, used),
     lapply(sort(statuses), function(s) {
       hh("flagged", s, out$intake_status == s)
     }),
@@ -105,4 +106,16 @@ intake_log <- function(x, reasons, used, out, nutrients) {
          col)
     })
   )
+}
+
+# Note row: the range of `period_days` of the records used, the period of
+# observation behind the apparent intake (see usual_intake_row()).
+period_row <- function(step, x, used) {
+  days <- x[["period_days"]]
+  f <- used & !is.na(days)
+  if (is.null(days) || !any(f)) return(NULL)
+  r <- range(days[f])
+  audit_row(step, "nutrient_content", "note", "period_days", sum(f),
+            length(unique(x$household_id[f])),
+            detail = paste0(format(r[[1]]), " to ", format(r[[2]])))
 }

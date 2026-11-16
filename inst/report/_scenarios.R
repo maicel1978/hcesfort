@@ -135,10 +135,12 @@ show_effects <- function(equity = FALSE) {
 above_ul_estimates <- function() {
   ul <- above_ul(s, requirements, min_coverage = choices$min_coverage,
                  min_records_used = choices$min_records_used)
+  flagged <- "average_content_understates_ul" %in% audit_log(ul)$cause
   ul <- ul[ul$nutrient %in% choices$nutrients & ul$scenario != "baseline" &
              adds(ul), ]
   ul$above_ul <- ifelse(is.na(ul$above_ul_total), ul$above_ul_added,
                         ul$above_ul_total)
+  attr(ul, "understated") <- flagged
   ul
 }
 
@@ -159,7 +161,10 @@ above_ul_figure <- function(instance) {
   list(table = p$table, figure = g,
        rows = panel_rows(p$data, "scenario", "nutrient"),
        lead = ul_zero_sentence(e[e$nutrient %in% none, ]),
-       note = c(ul_statements(ul), term("ul_adult", "note")))
+       note = c(ul_statements(ul), term("ul_adult", "note"),
+                if (isTRUE(attr(ul, "understated"))) {
+                  term("ul_average_content", "note")
+                }))
 }
 
 # "In the sample (n = …), no household exceeds the UL of <nutrients> under

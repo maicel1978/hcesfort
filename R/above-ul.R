@@ -35,6 +35,22 @@
 #' does record loss: `min_records_used` is required and gated as in
 #' [inadequacy()].
 #'
+#' **What the figures are and are not.** The UL, like the EAR, refers to
+#' usual intake; the comparison here is with the apparent intake of a
+#' household over `period_days`, whose extra variance raises the share
+#' above an upper level (see "What the figures are and are not" in
+#' [inadequacy()]; the log notes it, `apparent_intake_not_usual_intake`).
+#'
+#' **Compliance below 1.** Under `compliance_model = "average_content"`
+#' of [apply_scenario()], every gram of the vehicle carries `compliance`
+#' times the level, so no household receives the full level, and the share
+#' above the UL is **understated**: if a share `c` of the product is
+#' fortified at the full level and the rest is not, the share above the UL
+#' is near `c` times the share at compliance 1, which can be far above the
+#' average-content figure. Each such scenario is flagged in the log
+#' (`average_content_understates_ul`); the same levels at compliance 1
+#' give the upper bound to report with it.
+#'
 #' @inheritParams inadequacy
 #' @param requirements A table with one row per nutrient: `nutrient`,
 #'   `unit`, `ul`, `ul_unit` and `ul_applies_to`, such as one group of

@@ -9,6 +9,33 @@
 #' apparent, and it is shared within the household in proportion to energy
 #' requirements, while nutrient requirements do not scale with energy.
 #'
+#' **What the figures are and are not.** Both methods are defined on the
+#' *usual* intake of persons: "To accurately determine the proportion of a
+#' group that has a usual intake of a nutrient less than the requirement,
+#' information on both usual intakes and nutrient requirements for each
+#' individual in the group is needed" (IOM 2000b, p. 73). The package
+#' applies them to what a household acquired over `period_days`, per adult
+#' equivalent, with no adjustment. Purchase frequency and stocks add
+#' variance that usual intake does not have, and "the variance of the
+#' estimated distribution will contain an unwanted day-to-day variability
+#' component. Therefore, estimates of the prevalence of nutrient inadequacy
+#' will be biased" (IOM 2000b, p. 99): the share below a fixed requirement
+#' moves towards 50%, up when the requirement is below the median intake
+#' and down when it is above. The cut-point "works well when: intakes are
+#' accurately measured; actual prevalence in the group is neither very low
+#' nor very high; estimated usual intakes of individuals are independent of
+#' each individual's requirement; the distribution of requirements is
+#' approximately symmetrical; variability in intakes among individuals in
+#' the group is greater than the variability in requirements" (IOM 2000b,
+#' p. 81, Box 4-1). The iron probabilities "may be used ... to evaluate
+#' adjusted distributions of usual intakes ... Not to be applied in the
+#' assessment of individuals" (IOM 2001, Table I-7, p. 703, footnote a). A
+#' result is the share of households whose *apparent* intake is below the
+#' requirement, a screening figure for comparing scenarios on the same
+#' data, not a prevalence of inadequacy. The log says so for every call
+#' (`apparent_intake_not_usual_intake`, with the range of `period_days` of
+#' the records used).
+#'
 #' **Cut-point.** For the nutrients of `requirements` with an `ear`,
 #' `p_inadequate` is 1 when the intake is below the EAR and 0 otherwise
 #' (strict comparison: an intake equal to the EAR is adequate).
@@ -35,9 +62,14 @@
 #' `p_inadequate = 1 - F(intake * b / b0)`, where `F` is the distribution
 #' function of the tabulated requirement, interpolated linearly between
 #' percentiles. Beyond the table the probability is 1 below the lowest
-#' percentile and 0 above the highest: a convention, since the source does
-#' not tabulate the tails (the jump at each end is the share outside the
-#' table). One `b` applies to the whole intake, baseline and added.
+#' percentile and 0 above the highest, the rule of the source: "a
+#' probability of 1 has been assigned to all usual intakes falling below
+#' the two and one-half percentile of requirement and a probability of 0
+#' has been assigned to all usual intakes falling above the ninety-seven
+#' and one-half percentile" (IOM 2001, Table I-7, p. 703, footnote d). The
+#' jump at each end is the share outside the table; the households in the
+#' tails are counted in the log (`tails_fixed`). One `b` applies to the
+#' whole intake, baseline and added.
 #' `bioavailability` has no default; several values give several rows.
 #'
 #' **Coverage.** `min_coverage` is required. For each nutrient assessed, the
@@ -136,7 +168,8 @@ inadequacy <- function(x, requirements, distribution = NULL,
                         min_coverage)
   log <- dplyr::bind_rows(log, records_used_row("inadequacy", x, used,
                                                 min_used),
-                          ear_bioavailability_rows(x, req, cut))
+                          ear_bioavailability_rows(x, req, cut),
+                          usual_intake_row("inadequacy", x))
   new_hces_tbl(out, "hces_inadequacy", dplyr::bind_rows(audit_get(x), log),
                c("scenario", "household_id", "nutrient", "bioavailability"),
                nutrients)

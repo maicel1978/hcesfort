@@ -130,6 +130,48 @@ test_that("the audit log notes scopes and lower bounds", {
                    "no_food_records")
 })
 
+test_that("the log says the figures are on apparent intake", {
+  log <- audit_log(above_ul(as_run(), ul_req(), min_coverage = 0,
+                            min_records_used = 0))
+  usual <- log[log$step == "above_ul" &
+                 log$cause == "apparent_intake_not_usual_intake", ]
+  expect_identical(usual$detail, "period_days of the records used: 1 to 1")
+  expect_identical(usual$n_records, 9L)
+})
+
+test_that("average content below compliance 1 is flagged, with its bound", {
+  # s1 at compliance 0.8: h1 receives 0.8 x 180 = 144 ug of folic acid,
+  # below the UL of 150; at compliance 1 it receives 180, above it.
+  sc <- as_scenarios()
+  sc$compliance <- c(0.8, 0.8, 1)
+  part <- above_ul(as_run(sc, compliance_model = "average_content"),
+                   ul_req(), min_coverage = 0, min_records_used = 0)
+  full <- above_ul(as_run(), ul_req(), min_coverage = 0,
+                   min_records_used = 0)
+  expect_false(ul_val(part, "s1", 1, "folate", "above_ul_added"))
+  expect_true(ul_val(full, "s1", 1, "folate", "above_ul_added"))
+  log <- audit_log(part)
+  f <- log[log$cause == "average_content_understates_ul", ]
+  expect_identical(f$kind, "flagged")
+  expect_identical(f$detail, "s1: rerun at compliance 1 for the upper bound")
+  expect_identical(f$n_records, 3L)
+  expect_identical(f$n_households, 3L)
+  expect_false("average_content_understates_ul" %in% audit_log(full)$cause)
+})
+
+test_that("no compliance flag without a scenario or an assessable UL", {
+  i <- as_pipeline()$intake
+  u <- above_ul(i, ul_req(), min_coverage = 0, min_records_used = 0)
+  expect_false("average_content_understates_ul" %in% audit_log(u)$cause)
+  sc <- as_scenarios()
+  sc$compliance <- 0.5
+  s <- as_run(sc, compliance_model = "average_content")
+  req <- ul_req()
+  req$ul <- NA_real_
+  u <- above_ul(s, req, min_coverage = 0, min_records_used = 0)
+  expect_false("average_content_understates_ul" %in% audit_log(u)$cause)
+})
+
 test_that("errors are classed", {
   s <- as_run()
   expect_error(above_ul(s, ul_req(folate_unit = "ug_dfe"), min_coverage = 0,

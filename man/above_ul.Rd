@@ -73,6 +73,22 @@ fortified staples, and a household figure says nothing about them.
 \code{\link[=inadequacy]{inadequacy()}}; low coverage understates the share above the UL. So
 does record loss: \code{min_records_used} is required and gated as in
 \code{\link[=inadequacy]{inadequacy()}}.
+
+\strong{What the figures are and are not.} The UL, like the EAR, refers to
+usual intake; the comparison here is with the apparent intake of a
+household over \code{period_days}, whose extra variance raises the share
+above an upper level (see "What the figures are and are not" in
+\code{\link[=inadequacy]{inadequacy()}}; the log notes it, \code{apparent_intake_not_usual_intake}).
+
+\strong{Compliance below 1.} Under \code{compliance_model = "average_content"}
+of \code{\link[=apply_scenario]{apply_scenario()}}, every gram of the vehicle carries \code{compliance}
+times the level, so no household receives the full level, and the share
+above the UL is \strong{understated}: if a share \code{c} of the product is
+fortified at the full level and the rest is not, the share above the UL
+is near \code{c} times the share at compliance 1, which can be far above the
+average-content figure. Each such scenario is flagged in the log
+(\code{average_content_understates_ul}); the same levels at compliance 1
+give the upper bound to report with it.
 }
 \examples{
 nutrients <- nutrient_registry(hces_example$nutrients)

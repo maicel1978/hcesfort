@@ -68,7 +68,12 @@ vehicles of \code{qty_vehicle_g_d} (from \code{\link[=vehicle_coverage]{vehicle_
 amount per 100 g, divided by 100. \code{compliance} enters under the model
 named by \code{compliance_model}; v0.1 offers \code{"average_content"}: every gram
 of vehicle carries \code{compliance} times the level. The argument has no
-default and is required whenever a compliance is below 1.
+default and is required whenever a compliance is below 1. Average
+content gives the right mean but understates the share of households
+above an upper level, since no household receives the full level:
+\code{\link[=above_ul]{above_ul()}} flags each scenario with a compliance below 1, and the
+same levels at compliance 1 give the upper bound. The scenarios with a
+compliance below 1 are listed in the log (\code{compliance_below_one}).
 
 Totals are missing for households whose intake is not \code{estimated}. A
 household that acquired a vehicle with records without grams gets what
