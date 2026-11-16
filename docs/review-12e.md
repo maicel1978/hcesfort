@@ -156,3 +156,63 @@ Mutations run in this session on a copy of `1605a94` (file filter
   looked up only for an age below 1, so the value never reaches a result.
   The fixture row documents a rule that no golden value can break.
   No change needed; the validator of 12e.4 (V4.x) is the real guard.
+
+## 12e.3 (commits `f38955f`, `8fed72f`): limits of the method, two audit rows
+
+Run on `hces_example` and on `hces_fixture()`, before and after: the
+tables of the chain (`convert_units()` to `above_ul()`) have the same
+columns and the same values; only the logs differ, by the rows approved
+(`period_days`, `apparent_intake_not_usual_intake`,
+`average_content_understates_ul`, and `compliance_below_one` now one row
+per scenario instead of one count). The tests of the three rows have
+expected values worked out by hand from the fixtures.
+
+### V3.1 (major). The report still prints the understated share as its safety figure; the bound at compliance 1 is not there
+
+- **Approved:** finding 9, "the results at compliance 1 as the upper bound
+  of the upper-level exhibit"; R2-D4, "the audit row and the bound at
+  compliance 1 in 12e.3".
+- **Done:** the flagged row, the two help pages, both figures in the
+  vignette, and a sentence under the exhibit
+  (`inst/report/_scenarios.R:143-168`, term `ul_average_content`): "the
+  same levels at compliance 1 give its upper bound". The exhibit does not
+  compute that bound. On `hces_example` the reader of the results report
+  sees 0.59% and is told that a higher figure exists, not that it is
+  19.7%.
+- **State:** recorded as P179 (medium, task 12), which waits for the
+  all-or-nothing model. That is a deferral of an approved correction of a
+  major finding, decided by the working session; `docs/roadmap.md` does
+  not name P179 in any step.
+- **Proposed:** the maintainer approves the deferral, or the column at
+  compliance 1 is added to the exhibit in 12e.5.8 (the report already has
+  the scenarios table; one more call of `apply_scenario()` with
+  `compliance = 1`). In any case before a report leaves the project.
+  Question 1 of the handoff.
+
+### V3.2 (minor). Fix (c) of finding 3 is not done
+
+The vignette does not show the sensitivity by number of days as a domain;
+it is P182 (medium), also absent from the roadmap. Recorded openly in
+P157. Same question as V3.1: an approved part moved without a decision.
+
+### V3.3 (minor). The period of the note is that of the run, not of the rows judged
+
+- **Where:** `R/inadequacy-log.R` (`usual_intake_row()` reads the last
+  `period_days` note of `apparent_intake()` in the log).
+- **Run:** the intake of `hces_example` cut to its first 100 households
+  (attributes restored) gives, in `inadequacy()`, "period_days of the
+  records used: 7 to 30" with `n_households = 100`: the range of the 1964
+  households of the run. With the log row removed the detail is "not
+  recorded" (right).
+- **Why it matters:** only when P182 is done: a domain of 7-day households
+  would carry the range of all. The text of the note is true as written
+  ("of the records used" by `apparent_intake()`); no change before P182.
+
+### Not findings
+
+- A scenario below compliance 1 is flagged whichever nutrient it adds, as
+  long as one UL of the call is assessable (run: a scenario of iron alone
+  at 0.5 is flagged; iron has a UL, so it is right). A scenario that adds
+  only a nutrient without a UL would be flagged too; harmless.
+- With every compliance at 1, no `compliance_below_one` row is written:
+  the same as before the diff (run on both versions).
