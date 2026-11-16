@@ -224,6 +224,8 @@ note,,effect,"Panel izquierdo: punto hueco, el escenario de comparación ({compa
 note,,usual_intake,"Ingesta aparente, no ingesta habitual: la proporción de hogares cuyas adquisiciones en el período de referencia, por equivalente de mujer adulta, quedan por debajo del requerimiento. El punto de corte y el enfoque probabilístico se definen sobre la ingesta habitual (IOM 2000b, pp. 73 y 99; IOM 2001, p. 703); es una cifra para comparar escenarios sobre los mismos datos, no una prevalencia de inadecuación."
 note,,ul_adult,El nivel máximo de los adultos se aplica a la ingesta por equivalente de mujer adulta; los niños tienen niveles máximos más bajos.
 note,,ul_average_content,"Con contenido medio y un cumplimiento menor que 1, cada gramo del vehículo lleva una parte del nivel y ningún hogar recibe el nivel completo, de modo que la proporción por encima del nivel máximo está subestimada; los mismos niveles con cumplimiento 1 dan su cota superior."
+note,,ul_model_average_content,"Modelo de cumplimiento: contenido medio; cada gramo del vehículo lleva el cumplimiento multiplicado por el nivel."
+note,,ul_model_all_or_nothing,"Modelo de cumplimiento: todo o nada; una parte del vehículo igual al cumplimiento lleva el nivel completo y el resto ninguno, cada hogar recibe uno u otro, y se supone que los vehículos son independientes. Las proporciones por encima del nivel máximo son valores esperados sobre estas combinaciones."
 note,,no_content,Sin aporte de {nutrient}: {groups}.
 note,,unclassified,Aporte de los alimentos sin grupo asignado: {shares}.
 note,,sensitivity,Las demás exhibiciones usan una biodisponibilidad del hierro del {pct}%.

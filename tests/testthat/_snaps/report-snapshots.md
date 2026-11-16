@@ -1043,6 +1043,7 @@
       Folate: The upper level applies to folate from fortified food or supplements, not to food folate, so the folic acid added by the scenario is the quantity to compare. Folic acid from foods fortified outside the scenarios and from supplements is not recorded by the survey: where they exist, the share is a lower bound (IOM 1998, pp. 13, 280).
       Vitamin A: The upper level applies to preformed vitamin A from food, fortified food and supplements. Only the retinol added by the scenario is compared; preformed vitamin A of the diet and of supplements is not counted, so the share is a lower bound (IOM 2001, pp. 126, 142).
       The adult upper level is applied to intake per adult female equivalent; children have lower upper levels.
+      Compliance model: average content; every gram of the vehicle carries the compliance times the level.
       Under average content with a compliance below 1, every gram of the vehicle carries part of the level and no household receives the full level, so the share above the upper level is understated; the same levels at compliance 1 give its upper bound.
 
 ---
@@ -1673,6 +1674,7 @@
       Folato: El nivel máximo se aplica al folato de alimentos fortificados o suplementos, no al folato de los alimentos, de modo que el ácido fólico añadido por el escenario es la cantidad que se debe comparar. La encuesta no registra el ácido fólico de alimentos fortificados fuera de los escenarios ni el de suplementos: donde existan, la proporción es una cota inferior (IOM 1998, pp. 13, 280).
       Vitamina A: El nivel máximo se aplica a la vitamina A preformada de alimentos, alimentos fortificados y suplementos. Solo se compara el retinol añadido por el escenario; no se cuenta la vitamina A preformada de la dieta ni la de suplementos, de modo que la proporción es una cota inferior (IOM 2001, pp. 126, 142).
       El nivel máximo de los adultos se aplica a la ingesta por equivalente de mujer adulta; los niños tienen niveles máximos más bajos.
+      Modelo de cumplimiento: contenido medio; cada gramo del vehículo lleva el cumplimiento multiplicado por el nivel.
       Con contenido medio y un cumplimiento menor que 1, cada gramo del vehículo lleva una parte del nivel y ningún hogar recibe el nivel completo, de modo que la proporción por encima del nivel máximo está subestimada; los mismos niveles con cumplimiento 1 dan su cota superior.
 
 ---

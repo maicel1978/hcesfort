@@ -418,3 +418,25 @@ test_that("energy_action leaves out or keeps the implausible (P148)", {
   expect_match(none$md, "Energy is not assessed", fixed = TRUE)
   expect_match(none$md, "n = 1,928", fixed = TRUE)
 })
+
+test_that("the upper-level exhibit names the compliance model (12e.5.7)", {
+  skip_if_no_knit()
+  expect_true(any(hces_example$scenarios$compliance < 1))
+  shipped <- c(en = "Compliance model: average content",
+               es = "Modelo de cumplimiento: contenido medio")
+  for (lang in results_langs) {
+    md <- strip_comments(shipped_results(lang)$md)
+    expect_true(grepl(shipped[[lang]], md, fixed = TRUE), info = lang)
+  }
+  r <- knit_report("en", "results",
+                   append = "compliance_model <- 'all_or_nothing'")
+  md <- strip_comments(r$md)
+  expect_true(grepl("Compliance model: all or nothing", md, fixed = TRUE))
+  expect_false(grepl(shipped[["en"]], md, fixed = TRUE))
+  expect_false(grepl("Under average content with a compliance below 1", md,
+                     fixed = TRUE))
+  above <- r$figures$R3.3$data$above_ul
+  # In percent.
+  expect_true(all(above >= 0 & above <= 100))
+  expect_true(any(above > 0))
+})

@@ -58,6 +58,10 @@ make_grams <- function(acquisitions, unit_factors) {
   # decisions.csv.
   convert_units(acquisitions, unit_factors, priority = "food")
 }
+# How a compliance below 1 enters the scenarios: "average_content" (every
+# gram carries compliance times the level) or "all_or_nothing" (a share of
+# the vehicle carries the full level and the rest none). The upper-level
+# exhibit names the model.
 compliance_model <- "average_content"
 # Records of a vehicle with `fortifiable` FALSE in `acquisitions` (own
 # production, home processing) get nothing in the scenarios: "use". With

@@ -224,6 +224,8 @@ note,,effect,"Left panel: hollow point, the scenario compared with ({comparators
 note,,usual_intake,"Apparent intake, not usual intake: the share of households whose acquisitions over the recall period, per adult female equivalent, fall below the requirement. The cut-point and the probability approach are defined on usual intake (IOM 2000b, pp. 73 and 99; IOM 2001, p. 703); this is a figure for comparing scenarios on the same data, not a prevalence of inadequacy."
 note,,ul_adult,The adult upper level is applied to intake per adult female equivalent; children have lower upper levels.
 note,,ul_average_content,"Under average content with a compliance below 1, every gram of the vehicle carries part of the level and no household receives the full level, so the share above the upper level is understated; the same levels at compliance 1 give its upper bound."
+note,,ul_model_average_content,"Compliance model: average content; every gram of the vehicle carries the compliance times the level."
+note,,ul_model_all_or_nothing,"Compliance model: all or nothing; a share of the vehicle equal to the compliance carries the full level and the rest none, each household receives one or the other, and the vehicles are assumed independent. The shares above the upper level are expected values over these combinations."
 note,,no_content,No {nutrient} from: {groups}.
 note,,unclassified,Share of foods with no group assigned: {shares}.
 note,,sensitivity,The other exhibits use an iron bioavailability of {pct}%.

@@ -163,6 +163,9 @@ above_ul_figure <- function(instance) {
        rows = panel_rows(p$data, "scenario", "nutrient"),
        lead = ul_zero_sentence(e[e$nutrient %in% none, ]),
        note = c(ul_statements(ul), term("ul_adult", "note"),
+                if (any(scenarios[["compliance"]] < 1)) {
+                  term(paste0("ul_model_", compliance_model), "note")
+                },
                 if (isTRUE(attr(ul, "understated"))) {
                   term("ul_average_content", "note")
                 }))
