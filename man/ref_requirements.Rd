@@ -64,6 +64,7 @@ ref_requirements[, c("nutrient", "unit", "ear", "ul", "ul_unit",
 Other reference tables:
 \code{\link{ref_bmr_equations}},
 \code{\link{ref_conversions}},
+\code{\link{ref_energy_additions}},
 \code{\link{ref_energy_requirements}},
 \code{\link{ref_iron_requirements}},
 \code{\link{ref_presentation_standard}},

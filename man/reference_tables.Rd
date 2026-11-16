@@ -23,6 +23,8 @@ Upper Intake Level (UL), with the intake the UL applies to.
 requirements, for the probability approach.
 \item \link{ref_energy_requirements}: energy requirements of infants, children and
 adolescents.
+\item \link{ref_energy_additions}: energy added in pregnancy and lactation, values
+to choose \code{pregnancy_kcal} and \code{lactation_kcal} from.
 \item \link{ref_bmr_equations}: equations for basal metabolic rate from body
 weight, for adult energy requirements.
 \item \link{ref_conversions}: factors from a form of a nutrient to its equivalent
@@ -37,6 +39,7 @@ standards for proportions.
 Other reference tables:
 \code{\link{ref_bmr_equations}},
 \code{\link{ref_conversions}},
+\code{\link{ref_energy_additions}},
 \code{\link{ref_energy_requirements}},
 \code{\link{ref_iron_requirements}},
 \code{\link{ref_presentation_standard}},

@@ -41,6 +41,7 @@ subset(ref_iron_requirements, group == "females_menstruating_adult")
 Other reference tables:
 \code{\link{ref_bmr_equations}},
 \code{\link{ref_conversions}},
+\code{\link{ref_energy_additions}},
 \code{\link{ref_energy_requirements}},
 \code{\link{ref_presentation_standard}},
 \code{\link{ref_requirements}},

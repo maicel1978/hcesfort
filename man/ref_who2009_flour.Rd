@@ -47,6 +47,7 @@ subset(ref_who2009_flour, nutrient == "iron" & availability_g_d == "<75")
 Other reference tables:
 \code{\link{ref_bmr_equations}},
 \code{\link{ref_conversions}},
+\code{\link{ref_energy_additions}},
 \code{\link{ref_energy_requirements}},
 \code{\link{ref_iron_requirements}},
 \code{\link{ref_presentation_standard}},

@@ -12,6 +12,8 @@ adult_equivalents(
   meal_share = NULL,
   infant_food_share = NULL,
   milk_energy_cost = NULL,
+  pregnancy_kcal = NULL,
+  lactation_kcal = NULL,
   energy = hcesfort::ref_energy_requirements,
   bmr = hcesfort::ref_bmr_equations,
   infants = c("monthly", "annual_mean"),
@@ -50,7 +52,14 @@ requirement. Accepted and ignored when there are no infants.}
 \item{milk_energy_cost}{Required when an infant has a share below 1:
 dietary energy charged to the household per unit of breast-milk
 energy, one number, 0 or more. \code{1} charges the milk at par, \code{1.25} its
-full cost, \code{0} nothing (see Details).}
+full cost, \code{0} nothing through the infant (to charge it to the mother
+with \code{lactation_kcal}, or not at all, flagged in the log; see
+Details).}
+
+\item{pregnancy_kcal, lactation_kcal}{Required when a member is flagged
+\code{pregnant} (\code{lactating}): energy added to the requirement of each such
+member, kcal per day, one number, 0 or more. See
+\link{ref_energy_additions}.}
 
 \item{energy}{Energy requirements by sex and age; default
 \link{ref_energy_requirements}. Schema: \code{hces_schema("energy_requirements")}.}
@@ -95,8 +104,20 @@ when the column is present and not missing, otherwise at \code{weight_kg}
 for their sex, times \code{pal}.
 }
 
-Pregnancy and lactation add no energy; members flagged as pregnant or
-lactating are counted in the log (\code{pregnant_or_lactating_no_extra}).
+\strong{Pregnancy and lactation.} \code{pregnancy_kcal} is added to the
+requirement of each member flagged \code{pregnant}, and \code{lactation_kcal} to
+each member flagged \code{lactating} (both to a member flagged both); a
+missing flag counts as not flagged. Each is required when a member
+carries its flag; \code{0} adds nothing, the rule of the original analysis,
+and the log counts those members (\code{pregnant_or_lactating_no_extra});
+a value above 0 is noted (\code{pregnancy_energy_added},
+\code{lactation_energy_added}). \link{ref_energy_additions} lists the values of
+FAO/WHO/UNU (2004) to choose from. Breast milk must be charged once: to
+the mother with \code{lactation_kcal}, or through the infant with
+\code{milk_energy_cost}. Both above 0, with an infant whose share is below
+1, is an error. A survey seldom says which woman feeds which infant, and
+the AFE is a household sum, so either way gives the same household AFE
+when the mother and the infant live together.
 
 \strong{Infants and breast milk.} A breastfed infant eats none of the food
 recorded, but its mother eats for it: the energy of the milk belongs in
@@ -127,7 +148,7 @@ reference <- reference_energy("female", 25, weight_kg = 55, pal = 1.76)
 afe <- adult_equivalents(
   hces_example$members, reference_kcal = reference,
   weight_kg = c(female = 55, male = 65), pal = 1.76,
-  infant_food_share = 1
+  infant_food_share = 1, pregnancy_kcal = 0, lactation_kcal = 0
 )
 afe
 audit_log(afe)
@@ -137,7 +158,15 @@ feeding <- data.frame(age_from = c(0, 6), age_to = c(6, 12),
 adult_equivalents(
   hces_example$members, reference_kcal = reference,
   weight_kg = c(female = 55, male = 65), pal = 1.76,
-  infant_food_share = feeding, milk_energy_cost = 1.25
+  infant_food_share = feeding, milk_energy_cost = 1.25,
+  pregnancy_kcal = 0, lactation_kcal = 0
+)
+# Pregnancy (FAO/WHO/UNU 2004, section 6.3, second trimester
+# recommendation) and lactation (section 7.2, first six months).
+adult_equivalents(
+  hces_example$members, reference_kcal = reference,
+  weight_kg = c(female = 55, male = 65), pal = 1.76,
+  infant_food_share = 1, pregnancy_kcal = 360, lactation_kcal = 505
 )
 }
 \seealso{

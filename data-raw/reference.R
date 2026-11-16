@@ -33,6 +33,7 @@ reference_files <- c(
   ref_requirements = "requirements.csv",
   ref_iron_requirements = "iron_requirement_percentiles.csv",
   ref_energy_requirements = "energy_requirements.csv",
+  ref_energy_additions = "energy_additions.csv",
   ref_bmr_equations = "bmr_equations.csv",
   ref_conversions = "nutrient_conversions.csv",
   ref_who2009_flour = "who2009_wheat_flour_levels.csv",

@@ -42,12 +42,15 @@ reference_kcal <- reference_energy("female", 25, 55, pal = 1.76)
 # survey that fails its contract still gets its variable inventory.
 make_afe <- function(members) {
   # Infants are charged their full energy requirement (breast milk reaches
-  # them through the mother's diet; the rule of the original analysis).
-  # For another feeding pattern see ?adult_equivalents and record the
-  # values of infant_food_share and milk_energy_cost in decisions.csv.
+  # them through the mother's diet) and pregnancy and lactation add no
+  # energy: the rules of the original analysis. For other values see
+  # ?adult_equivalents and ref_energy_additions, and record the values of
+  # infant_food_share, milk_energy_cost, pregnancy_kcal and lactation_kcal
+  # in decisions.csv.
   adult_equivalents(members, reference_kcal = reference_kcal,
                     weight_kg = c(female = 55, male = 65), pal = 1.76,
-                    infant_food_share = 1)
+                    infant_food_share = 1, pregnancy_kcal = 0,
+                    lactation_kcal = 0)
 }
 make_grams <- function(acquisitions, unit_factors) {
   # Outlier decision: none in this example. To act on flag_outliers(),

@@ -47,13 +47,25 @@ afe_members <- function() {
 }
 
 afe_fixture <- function(members = afe_members(), ...,
-                        infant_food_share = 1) {
+                        infant_food_share = 1, pregnancy_kcal = 0,
+                        lactation_kcal = 0) {
   adult_equivalents(
     members, reference_kcal = 2000, weight_kg = c(female = 50, male = 70),
     pal = 2, energy = afe_energy(), bmr = afe_bmr(),
-    infant_food_share = infant_food_share, ...
+    infant_food_share = infant_food_share, pregnancy_kcal = pregnancy_kcal,
+    lactation_kcal = lactation_kcal, ...
   )
 }
 
 # Energy charged to household 2 (two infants and a man of 2800 kcal).
 hh2_kcal <- function(...) afe_fixture(...)$energy_kcal_d[[2]]
+
+# Household 1 of afe_members(): woman 2000 kcal, man 2400, girl of 5 years
+# 1000 (5400 kcal, AFE 2.7); the woman flagged pregnant or lactating as the
+# arguments say.
+afe_mother <- function(pregnant = FALSE, lactating = FALSE) {
+  m <- afe_members()[afe_members()$household_id == 1, ]
+  m$pregnant <- c(pregnant, NA, NA)
+  m$lactating <- c(lactating, FALSE, NA)
+  m
+}

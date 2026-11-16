@@ -71,7 +71,7 @@ test_that("invariants: scaling the reference, row order", {
   half <- adult_equivalents(
     afe_members(), reference_kcal = 4000,
     weight_kg = c(female = 50, male = 70), pal = 2, energy = afe_energy(),
-    bmr = afe_bmr(), infant_food_share = 1
+    bmr = afe_bmr(), infant_food_share = 1, pregnancy_kcal = 0
   )
   expect_equal(half$afe, base$afe / 2)
   shuffled <- afe_fixture(afe_members()[c(8, 3, 5, 1, 7, 2, 6, 4), ])
@@ -86,7 +86,7 @@ test_that("a member outside every interval is an error", {
   expect_error(
     adult_equivalents(afe_members(), 2000, c(female = 50, male = 70), 2,
                       energy = afe_energy(), bmr = bmr,
-                      infant_food_share = 1),
+                      infant_food_share = 1, pregnancy_kcal = 0),
     class = "hcesfort_error_value"
   )
 })
@@ -97,7 +97,8 @@ test_that("bad reference tables are classed errors", {
   expect_error(afe_fixture(), NA)
   expect_error(
     adult_equivalents(afe_members(), 2000, c(female = 50, male = 70), 2,
-                      energy = e, bmr = afe_bmr(), infant_food_share = 1),
+                      energy = e, bmr = afe_bmr(), infant_food_share = 1,
+                      pregnancy_kcal = 0),
     class = "hcesfort_error_value"
   )
   expect_error(

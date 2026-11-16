@@ -39,6 +39,7 @@ subset(ref_energy_requirements, age_unit == "year" & sex == "female")
 Other reference tables:
 \code{\link{ref_bmr_equations}},
 \code{\link{ref_conversions}},
+\code{\link{ref_energy_additions}},
 \code{\link{ref_iron_requirements}},
 \code{\link{ref_presentation_standard}},
 \code{\link{ref_requirements}},

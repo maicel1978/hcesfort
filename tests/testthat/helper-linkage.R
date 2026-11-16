@@ -112,7 +112,7 @@ example_chain <- function(biscuit = FALSE) {
     e$members,
     reference_kcal = reference_energy("female", 25, 55, pal = 1.76),
     weight_kg = c(female = 55, male = 65), pal = 1.76,
-    infant_food_share = 1
+    infant_food_share = 1, pregnancy_kcal = 0, lactation_kcal = 0
   )
   list(content = content,
        intake = apparent_intake(content, afe, e$households),

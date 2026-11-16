@@ -18,6 +18,8 @@
 #'   requirements, for the probability approach.
 #' * [ref_energy_requirements]: energy requirements of infants, children and
 #'   adolescents.
+#' * [ref_energy_additions]: energy added in pregnancy and lactation, values
+#'   to choose `pregnancy_kcal` and `lactation_kcal` from.
 #' * [ref_bmr_equations]: equations for basal metabolic rate from body
 #'   weight, for adult energy requirements.
 #' * [ref_conversions]: factors from a form of a nutrient to its equivalent

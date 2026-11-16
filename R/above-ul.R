@@ -75,7 +75,7 @@
 #'   hces_example$members,
 #'   reference_kcal = reference_energy("female", 25, 55, pal = 1.76),
 #'   weight_kg = c(female = 55, male = 65), pal = 1.76,
-#'   infant_food_share = 1
+#'   infant_food_share = 1, pregnancy_kcal = 0, lactation_kcal = 0
 #' )
 #' intake <- apparent_intake(content, afe, hces_example$households)
 #' use <- vehicle_coverage(grams, hces_example$vehicles, afe,

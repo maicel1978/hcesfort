@@ -18,7 +18,7 @@ every value used there agrees with the document.
 
 | Key | Document | Opened at |
 |---|---|---|
-| FAO/WHO/UNU 2004 | FAO. 2004. *Human energy requirements. Report of a Joint FAO/WHO/UNU Expert Consultation, Rome, 17–24 October 2001.* FAO Food and Nutrition Technical Report Series 1. | <https://www.fao.org/4/y5686e/y5686e00.htm> (chapters 3, 4 and 5: `y5686e05.htm`, `y5686e06.htm`, `y5686e07.htm`) |
+| FAO/WHO/UNU 2004 | FAO. 2004. *Human energy requirements. Report of a Joint FAO/WHO/UNU Expert Consultation, Rome, 17–24 October 2001.* FAO Food and Nutrition Technical Report Series 1. | <https://www.fao.org/4/y5686e/y5686e00.htm> (chapters 3, 4 and 5: `y5686e05.htm`, `y5686e06.htm`, `y5686e07.htm`; chapters 6 and 7, `y5686e0a.htm` and `y5686e0b.htm`, opened 2026-11-16) |
 | IOM 1998 | Institute of Medicine. 1998. *Dietary Reference Intakes for Thiamin, Riboflavin, Niacin, Vitamin B6, Folate, Vitamin B12, Pantothenic Acid, Biotin, and Choline.* Washington, DC: The National Academies Press. doi:10.17226/6015 | <https://nap.nationalacademies.org/read/6015> |
 | IOM 2000 | Institute of Medicine. 2000. *Dietary Reference Intakes for Vitamin C, Vitamin E, Selenium, and Carotenoids.* Washington, DC: The National Academies Press. doi:10.17226/9810 | <https://nap.nationalacademies.org/read/9810> |
 | IOM 2000b | Institute of Medicine. 2000. *Dietary Reference Intakes: Applications in Dietary Assessment.* Washington, DC: The National Academies Press. doi:10.17226/9956 | <https://nap.nationalacademies.org/read/9956> (chapter 4, pp. 73–105: `/read/9956/chapter/10`) |
@@ -38,6 +38,7 @@ cited by number.
 | `requirements.csv` | `ref_requirements` | 6 / 1 | IOM 1998, 2000, 2000b, 2001, 2011; EAR for women 19–30 years and UL for adults; place per row |
 | `iron_requirement_percentiles.csv` | `ref_iron_requirements` | 182 / 0 | IOM 2001, Appendix Tables I-3 (p. 699) and I-4 (p. 700); bioavailability from the table footnotes (I-3) and chapter 9, pp. 315–316 and 343 (I-4) |
 | `energy_requirements.csv` | `ref_energy_requirements` | 58 / 0 | FAO/WHO/UNU 2004, Table 3.2 (infants, by month), Tables 4.2 (boys) and 4.3 (girls), column "Daily energy requirement, kcal/d" |
+| `energy_additions.csv` | `ref_energy_additions` | 7 / 0 | FAO/WHO/UNU 2004, section 6.3 (pregnancy: 85, 285 and 475 kcal per day by trimester for healthy well-nourished women with an average gestational weight gain of 12 kg; 360 kcal per day in the second trimester as the recommendation for societies where many women do not seek prenatal advice before the second or third month) and section 7.2 (lactation: 505 and 675 kcal per day in the first six months, conclusion; 460 kcal per day after six months with partial breastfeeding). Read on 2026-11-16 |
 | `bmr_equations.csv` | `ref_bmr_equations` | 12 / 0 | FAO/WHO/UNU 2004, Table 5.2 (Schofield equations, kcal/day) |
 | `nutrient_conversions.csv` | `ref_conversions` | 7 / 1 | IOM 1998 (DFE), IOM 2001 (RAE, IU) |
 | `who2009_wheat_flour_levels.csv` | `ref_who2009_flour` | 40 / 0 | WHO 2009, Table 1, with its footnotes |

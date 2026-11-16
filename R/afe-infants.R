@@ -6,8 +6,9 @@
 # or c = 1 return E exactly (the rule of the original analysis).
 
 # The infant arguments, checked: `share` a table of [age_from, age_to)
-# months with `food_share`, `cost` one number (1 when not needed), and
-# `given` the text of the log. Abort when an argument needed by the
+# months with `food_share`, `cost` one number (1 when not needed), `given`
+# the text of the log, and `milk_charged` (some infant's milk is charged
+# to the household through the infant). Abort when an argument needed by the
 # members is missing or when a given one is malformed; a value given where
 # it is not needed is accepted and ignored.
 check_infant_args <- function(infant_food_share, milk_energy_cost, m,
@@ -15,7 +16,8 @@ check_infant_args <- function(infant_food_share, milk_energy_cost, m,
   n_infants <- sum(!is.na(m$age_years) & m$age_years < 1)
   if (is.null(infant_food_share)) {
     if (n_infants > 0) abort_infant_share(n_infants, call)
-    return(list(share = share_table(1), cost = 1, given = NA_character_))
+    return(list(share = share_table(1), cost = 1, given = NA_character_,
+                milk_charged = FALSE))
   }
   share <- check_share_value(infant_food_share, call)
   needs_cost <- n_infants > 0 && any(share$food_share < 1)
@@ -28,7 +30,8 @@ check_infant_args <- function(infant_food_share, milk_energy_cost, m,
   given <- paste0("infant_food_share: ", describe_share(share),
                   "; milk_energy_cost: ",
                   if (is.null(milk_energy_cost)) "not given" else cost)
-  list(share = share, cost = cost, given = given)
+  list(share = share, cost = cost, given = given,
+       milk_charged = needs_cost && cost > 0)
 }
 
 # The share as a table of intervals of months covering [0, 12).
@@ -57,7 +60,8 @@ infant_factor <- function(months, infant) {
 
 # Audit rows of the infants: a note with the arguments and the energy
 # charged against the full requirement; flagged when breast milk is not
-# charged at all (`milk_energy_cost = 0` with a share below 1).
+# charged at all (`milk_energy_cost = 0` with a share below 1, and no
+# lactation energy added to a mother).
 infant_log <- function(step, m, kcal, full, infant, hh) {
   inf <- !is.na(full)
   if (!any(inf)) return(NULL)
@@ -69,7 +73,7 @@ infant_log <- function(step, m, kcal, full, infant, hh) {
                     format_kcal(charged), " of ", format_kcal(required))
   ))
   left_out <- inf & kcal < full
-  if (infant$cost == 0 && any(left_out)) {
+  if (infant$cost == 0 && any(left_out) && !infant$lactation_added) {
     rows[[2]] <- audit_row(
       step, "members", "flagged", "breast_milk_energy_not_counted",
       sum(left_out), hh(left_out),
@@ -158,7 +162,8 @@ abort_milk_cost <- function(call) {
     "{.arg infant_food_share} is below 1: say how much dietary energy the
     household spends per unit of breast-milk energy.",
     "i" = "{.code milk_energy_cost = 1} charges the milk at par; 1.25 its
-    full cost (FAO/WHO/UNU 2004, section 7.2); 0 charges nothing (flagged
-    in the log). See {.help hcesfort::adult_equivalents}."
+    full cost (FAO/WHO/UNU 2004, section 7.2); 0 charges nothing through
+    the infant (charge it to the mother with {.arg lactation_kcal}). See
+    {.help hcesfort::adult_equivalents}."
   ), arg = "milk_energy_cost", call = call)
 }

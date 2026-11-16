@@ -37,6 +37,7 @@ eq$slope_kcal_kg * 55 + eq$intercept_kcal
 \seealso{
 Other reference tables:
 \code{\link{ref_conversions}},
+\code{\link{ref_energy_additions}},
 \code{\link{ref_energy_requirements}},
 \code{\link{ref_iron_requirements}},
 \code{\link{ref_presentation_standard}},

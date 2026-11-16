@@ -46,6 +46,7 @@ ref_conversions[, c("from_form", "from_unit", "to_unit", "factor")]
 \seealso{
 Other reference tables:
 \code{\link{ref_bmr_equations}},
+\code{\link{ref_energy_additions}},
 \code{\link{ref_energy_requirements}},
 \code{\link{ref_iron_requirements}},
 \code{\link{ref_presentation_standard}},

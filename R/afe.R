@@ -23,8 +23,20 @@
 #'   when the column is present and not missing, otherwise at `weight_kg`
 #'   for their sex, times `pal`.
 #'
-#' Pregnancy and lactation add no energy; members flagged as pregnant or
-#' lactating are counted in the log (`pregnant_or_lactating_no_extra`).
+#' **Pregnancy and lactation.** `pregnancy_kcal` is added to the
+#' requirement of each member flagged `pregnant`, and `lactation_kcal` to
+#' each member flagged `lactating` (both to a member flagged both); a
+#' missing flag counts as not flagged. Each is required when a member
+#' carries its flag; `0` adds nothing, the rule of the original analysis,
+#' and the log counts those members (`pregnant_or_lactating_no_extra`);
+#' a value above 0 is noted (`pregnancy_energy_added`,
+#' `lactation_energy_added`). [ref_energy_additions] lists the values of
+#' FAO/WHO/UNU (2004) to choose from. Breast milk must be charged once: to
+#' the mother with `lactation_kcal`, or through the infant with
+#' `milk_energy_cost`. Both above 0, with an infant whose share is below
+#' 1, is an error. A survey seldom says which woman feeds which infant, and
+#' the AFE is a household sum, so either way gives the same household AFE
+#' when the mother and the infant live together.
 #'
 #' **Infants and breast milk.** A breastfed infant eats none of the food
 #' recorded, but its mother eats for it: the energy of the milk belongs in
@@ -74,7 +86,13 @@
 #' @param milk_energy_cost Required when an infant has a share below 1:
 #'   dietary energy charged to the household per unit of breast-milk
 #'   energy, one number, 0 or more. `1` charges the milk at par, `1.25` its
-#'   full cost, `0` nothing (see Details).
+#'   full cost, `0` nothing through the infant (to charge it to the mother
+#'   with `lactation_kcal`, or not at all, flagged in the log; see
+#'   Details).
+#' @param pregnancy_kcal,lactation_kcal Required when a member is flagged
+#'   `pregnant` (`lactating`): energy added to the requirement of each such
+#'   member, kcal per day, one number, 0 or more. See
+#'   [ref_energy_additions].
 #' @param energy Energy requirements by sex and age; default
 #'   [ref_energy_requirements]. Schema: `hces_schema("energy_requirements")`.
 #' @param bmr Equations for basal metabolic rate; default
@@ -93,7 +111,7 @@
 #' afe <- adult_equivalents(
 #'   hces_example$members, reference_kcal = reference,
 #'   weight_kg = c(female = 55, male = 65), pal = 1.76,
-#'   infant_food_share = 1
+#'   infant_food_share = 1, pregnancy_kcal = 0, lactation_kcal = 0
 #' )
 #' afe
 #' audit_log(afe)
@@ -103,12 +121,21 @@
 #' adult_equivalents(
 #'   hces_example$members, reference_kcal = reference,
 #'   weight_kg = c(female = 55, male = 65), pal = 1.76,
-#'   infant_food_share = feeding, milk_energy_cost = 1.25
+#'   infant_food_share = feeding, milk_energy_cost = 1.25,
+#'   pregnancy_kcal = 0, lactation_kcal = 0
+#' )
+#' # Pregnancy (FAO/WHO/UNU 2004, section 6.3, second trimester
+#' # recommendation) and lactation (section 7.2, first six months).
+#' adult_equivalents(
+#'   hces_example$members, reference_kcal = reference,
+#'   weight_kg = c(female = 55, male = 65), pal = 1.76,
+#'   infant_food_share = 1, pregnancy_kcal = 360, lactation_kcal = 505
 #' )
 #' @export
 adult_equivalents <- function(members, reference_kcal, weight_kg, pal,
                               meal_share = NULL, infant_food_share = NULL,
                               milk_energy_cost = NULL,
+                              pregnancy_kcal = NULL, lactation_kcal = NULL,
                               energy = hcesfort::ref_energy_requirements,
                               bmr = hcesfort::ref_bmr_equations,
                               infants = c("monthly", "annual_mean"),
@@ -123,7 +150,10 @@ adult_equivalents <- function(members, reference_kcal, weight_kg, pal,
   check_reference(energy, schema_energy_requirements(), c("sex", "age_unit"))
   check_reference(bmr, schema_bmr_equations(), "sex")
   infant <- check_infant_args(infant_food_share, milk_energy_cost, m)
+  extra <- check_extra_args(pregnancy_kcal, lactation_kcal, m, infant)
+  infant$lactation_added <- extra$lactation_added
   kcal <- member_energy(m, energy, bmr, weight_kg, pal, infants, infant)
+  kcal[] <- kcal + extra_energy(extra)
   check_covered(m, kcal)
   afe <- kcal / reference_kcal
   share <- if (meal_share) m[["meals_home_share"]] else rep(1, nrow(m))
@@ -134,7 +164,8 @@ adult_equivalents <- function(members, reference_kcal, weight_kg, pal,
     kcal[unknown] <- 0
   }
   out <- household_afe(m$household_id, kcal, afe)
-  log <- afe_log(m, kcal, infant, unknown, share, missing_members, out)
+  log <- afe_log(m, kcal, infant, extra, unknown, share, missing_members,
+                 out)
   new_hces_tbl(out, "hces_afe", dplyr::bind_rows(audit_get(m), log),
                "household_id")
 }
@@ -153,20 +184,20 @@ household_afe <- function(household_id, kcal, afe) {
 }
 
 # Audit rows of adult_equivalents(): members received, the energy of
-# infants, infants given the annual mean, pregnant or lactating members,
-# members without age or sex (flagged, or set to zero), members without
-# meal share, and households left without AFE.
-afe_log <- function(m, kcal, infant, unknown, share, missing_members, out) {
+# infants, infants given the annual mean, energy of pregnant or lactating
+# members, members without age or sex (flagged, or set to zero), members
+# without meal share, and households left without AFE.
+afe_log <- function(m, kcal, infant, extra, unknown, share, missing_members,
+                    out) {
   step <- "adult_equivalents"
   hh <- function(f) length(unique(m$household_id[f]))
-  pregnant <- flag_or_false(m[["pregnant"]]) | flag_or_false(m[["lactating"]])
   no_share <- is.na(share) & !unknown
   rows <- list(
     audit_row(step, "members", "input", "all", nrow(m), hh(TRUE)),
     infant_log(step, m, kcal, attr(kcal, "infant_full"), infant, hh),
     afe_note(step, "note", "infant_annual_mean", attr(kcal, "infant_mean"),
              hh),
-    afe_note(step, "note", "pregnant_or_lactating_no_extra", pregnant, hh),
+    extra_log(step, extra, hh),
     if (missing_members == "na") {
       afe_note(step, "flagged", "missing_age_or_sex", unknown, hh)
     } else {
@@ -189,8 +220,8 @@ afe_note <- function(step, kind, cause, f, hh) {
   audit_row(step, "members", kind, cause, sum(f), hh(f))
 }
 
-# A logical column with missing values and absence read as FALSE (used
-# only to count members in the log, never in the computation).
+# A logical column with missing values and absence read as FALSE: a
+# member whose flag is missing is not flagged.
 flag_or_false <- function(v) {
   if (is.null(v)) FALSE else !is.na(v) & v
 }

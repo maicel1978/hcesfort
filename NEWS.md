@@ -516,6 +516,17 @@
   energy charged (`infant_energy`) and flags milk not charged
   (`breast_milk_energy_not_counted`). Every example, the vignette, the
   README and the report template pass `infant_food_share = 1`.
+* `adult_equivalents()` takes `pregnancy_kcal` and `lactation_kcal` (P57):
+  energy added to the requirement of each member flagged `pregnant` or
+  `lactating`, required when a member carries the flag (0 keeps the
+  previous result and the original analysis). Breast milk charged both to
+  the mother (`lactation_kcal`) and through the infant (`milk_energy_cost`
+  with a share below 1) is an error. **Breaking:** a call on members with
+  these flags now needs both arguments; `hces_example` flags 77 pregnant
+  and 64 lactating women, and every call on it passes
+  `pregnancy_kcal = 0, lactation_kcal = 0`. New reference table
+  `ref_energy_additions`: the seven values of FAO/WHO/UNU 2004, sections
+  6.3 and 7.2, to choose from.
 * The contract of `age_months` says what the validator checks since 12e.4:
   the total months since birth (P206).
 * Corrections to the original ENGIH 2018 analysis will be recorded in this

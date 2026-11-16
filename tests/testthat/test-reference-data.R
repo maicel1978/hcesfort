@@ -13,8 +13,8 @@ data_raw_dir <- function() {
 ref_tables <- function() {
   names <- c(
     "ref_requirements", "ref_iron_requirements", "ref_energy_requirements",
-    "ref_bmr_equations", "ref_conversions", "ref_who2009_flour",
-    "ref_presentation_standard"
+    "ref_energy_additions", "ref_bmr_equations", "ref_conversions",
+    "ref_who2009_flour", "ref_presentation_standard"
   )
   rlang::set_names(lapply(names, get), names)
 }

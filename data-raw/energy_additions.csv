@@ -1,0 +1,8 @@
+condition,period,group,energy_kcal_d,source,location,status
+pregnancy,first trimester,healthy well-nourished women with an average gestational weight gain of 12 kg,85,"FAO/WHO/UNU 2004, Human energy requirements",section 6.3,verified
+pregnancy,second trimester,healthy well-nourished women with an average gestational weight gain of 12 kg,285,"FAO/WHO/UNU 2004, Human energy requirements",section 6.3,verified
+pregnancy,third trimester,healthy well-nourished women with an average gestational weight gain of 12 kg,475,"FAO/WHO/UNU 2004, Human energy requirements",section 6.3,verified
+pregnancy,second trimester,women in societies where many do not seek prenatal advice before the second or third month of pregnancy (first-trimester amount folded into the second),360,"FAO/WHO/UNU 2004, Human energy requirements","section 6.3, recommendation",verified
+lactation,first six months,well-nourished women with adequate gestational weight gain,505,"FAO/WHO/UNU 2004, Human energy requirements","section 7.2, conclusion",verified
+lactation,first six months,undernourished women or women with insufficient gestational weight gain,675,"FAO/WHO/UNU 2004, Human energy requirements","section 7.2, conclusion",verified
+lactation,after six months,women partially breastfeeding,460,"FAO/WHO/UNU 2004, Human energy requirements",section 7.2,verified

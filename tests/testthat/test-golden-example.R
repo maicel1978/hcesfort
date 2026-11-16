@@ -14,7 +14,7 @@ golden_chain <- function(ex = hces_fixture()) {
     reference_kcal = reference_energy("female", 25, 55, pal = 1.76),
     weight_kg = c(female = 55, male = 65), pal = 1.76,
     meal_share = if (!is.null(ex$members$meals_home_share)) TRUE,
-    infant_food_share = 1
+    infant_food_share = 1, pregnancy_kcal = 0, lactation_kcal = 0
   )
   intake <- apparent_intake(link_composition(g, ex$crosswalk, b), afe,
                             ex$households)
