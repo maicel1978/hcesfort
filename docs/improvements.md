@@ -1085,3 +1085,13 @@ Self-review of `missing_values()`, its log row and Table D3.1.
 | P211 | low | **Table D3.1 lists every food without a value.** With a large survey and many nutrients it can run to hundreds of rows. A cap (the foods up to a cumulative share, or the first ten per nutrient) with a sentence giving the rest, and the full list in the appendix. | On `hces_example` it is one row; ENGIH will say whether it is needed. | 12 |
 | P212 | low | **Two grams for the same records.** The log row `foods_without_value` of `apparent_intake()` gives grams per day as acquired, unweighted (the convention of every row of the step); `missing_values()` ranks by edible grams weighted by the survey weight. One sentence in `?missing_values` would say that the two do not agree and why. | A reader comparing the log with the queue sees two numbers. | 12 |
 
+
+## Open items from 12e.5.6 (2026-11-16)
+
+Self-review of the states table of `apply_scenario()` under
+`compliance_model = "all_or_nothing"`.
+
+| Id | Priority | Item | Why | Task |
+|---|---|---|---|---|
+| P213 | medium | **No bound on the number of states.** A scenario with `k` vehicles of partial compliance gives `2^k` copies of the households; with 15 vehicles and 10 000 households that is 330 million rows. A check before the rows are built (households times the sum of `2^k` above a stated limit, or `k` above a limit) with an error that names the scenarios and suggests average content or splitting the scenario. No threshold without a decision of the maintainer. | Real scenarios have one to four vehicles; a typo in `compliance` (0.99 for 1) over many vehicles would exhaust memory with no message. | 12e.5.8 or 12 |
+| P214 | low | **Each state recomputes the vehicle lookup.** `states_rows()` calls `scenario_rows()` once per state, which rebuilds the match of households to vehicle grams each time. Computing the added amount per vehicle once and summing the vehicles of each state would be linear in vehicles, not in states. | Only matters with many states (P213). | 12 |

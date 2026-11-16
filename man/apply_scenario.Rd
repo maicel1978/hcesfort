@@ -26,8 +26,8 @@ validated or not. Every \code{vehicle} must be a vehicle of \code{use}.}
 
 \item{conversions}{Conversions table, by default \link{ref_conversions}.}
 
-\item{compliance_model}{\code{NULL} or \code{"average_content"}; required when a
-compliance is below 1.}
+\item{compliance_model}{\code{NULL}, \code{"average_content"} or
+\code{"all_or_nothing"}; required when a compliance is below 1.}
 
 \item{baseline_label}{Name of the scenario that holds the baseline.}
 }
@@ -38,6 +38,14 @@ A tibble of class \code{hces_scenario_intake} (and \code{hces_tbl}), key
 \verb{_coverage} columns are those of the baseline) and one \verb{<column>_added}
 per nutrient or form touched by any scenario (0 under the baseline).
 The baseline is \code{total - added}. The registry travels with the table.
+
+Under \code{compliance_model = "all_or_nothing"}, a tibble of class
+\code{hces_scenario_states} (and \code{hces_tbl}; it does not inherit from
+\code{hces_scenario_intake}), key \code{scenario} + \code{state} + \code{household_id}: the
+same columns for each state, with the vehicles of the state at the full
+level, plus \code{state} (the vehicles on, sorted and joined by \code{"+"}, or
+\code{"none"}) and \code{state_probability}. The baseline has one state, \code{"none"},
+with probability 1.
 }
 \description{
 Add to the baseline intake of each household what each scenario puts in
@@ -70,17 +78,37 @@ of the vehicle that could have been fortified, all of them unless the
 acquisitions say otherwise) times the amount per 100 g, divided by 100.
 A vehicle of own production or home processing gets nothing. The log
 notes, per vehicle, the fortifiable grams over the vehicle grams of the
-estimated households (\code{fortifiable_share}, unweighted). \code{compliance}
-is the share of the fortifiable vehicle that is fortified; it enters
-under the model named by \code{compliance_model}; v0.1 offers
-\code{"average_content"}: every fortifiable gram carries \code{compliance} times
-the level. The argument has no
-default and is required whenever a compliance is below 1. Average
-content gives the right mean but understates the share of households
-above an upper level, since no household receives the full level:
-\code{\link[=above_ul]{above_ul()}} flags each scenario with a compliance below 1, and the
-same levels at compliance 1 give the upper bound. The scenarios with a
-compliance below 1 are listed in the log (\code{compliance_below_one}).
+estimated households (\code{fortifiable_share}, unweighted).
+
+\code{compliance} is the share of the fortifiable vehicle that is fortified;
+it enters under the model named by \code{compliance_model}, which has no
+default and is required whenever a compliance is below 1. The scenarios
+with a compliance below 1 are listed in the log (\code{compliance_below_one}).
+\itemize{
+\item \code{"average_content"}: every fortifiable gram carries \code{compliance} times
+the level. It gives the right mean but understates the share of
+households above an upper level, since no household receives the full
+level: \code{\link[=above_ul]{above_ul()}} flags each scenario with a compliance below 1, and
+the same levels at compliance 1 give the upper bound.
+\item \code{"all_or_nothing"}: a share \code{compliance} of each vehicle carries the
+full level and the rest none, and a household has one or the other for
+the whole period. A scenario with \code{k} vehicles of compliance strictly
+between 0 and 1 has \code{2^k} states, each a subset of those vehicles at the
+full level (vehicles at compliance 1 are always on, at 0 always off);
+vehicles are assumed independent, so the probability of a state is the
+product of \code{compliance} over its vehicles on and \code{1 - compliance} over
+those off. Every vehicle of a scenario must have one compliance (a
+compliance that differs by nutrient is under-dosing, which is average
+content); otherwise an \code{hcesfort_error_value}. The result is the table
+of states described under Value: one row per household for each state,
+so the number of rows is the households times the sum of \code{2^k} over the
+scenarios (1 for the baseline). The expected amounts over the states
+equal those of average content, so the means of intake by scenario are
+those of average content; percentiles of intake under all or nothing
+are not offered. The log holds a note \code{states} per scenario and a note
+\code{vehicles_assumed_independent} for each scenario with more than one
+vehicle of partial compliance.
+}
 
 Totals are missing for households whose intake is not \code{estimated}. A
 household that acquired a vehicle with records without grams gets what

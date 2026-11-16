@@ -52,7 +52,7 @@ test_that("compliance 0.8 under average content", {
   below <- log[log$cause == "compliance_below_one", ]
   expect_identical(below$detail, c("s1", "s2"))
   expect_identical(below$n_records, c(2L, 1L))
-  expect_error(as_run(sc, compliance_model = "all_or_nothing"),
+  expect_error(as_run(sc, compliance_model = "blend"),
                class = "hcesfort_error_argument")
 })
 

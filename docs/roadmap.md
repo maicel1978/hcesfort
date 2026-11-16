@@ -110,7 +110,7 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
     - [x] 12e.5.3 Column `fortifiable`; argument and three columns of `vehicle_coverage()`. Done 2026-11-16 (Opus).
     - [x] 12e.5.4 `apply_scenario()` on fortifiable grams; `fortifiable` in `hces_example` and the fixture; golden values and snapshots. Done 2026-11-16 (Opus).
     - [x] 12e.5.5 `missing_values()`; log row, note and messages; readiness exhibit (Table D3.1). Done 2026-11-16 (Opus).
-    - [ ] 12e.5.6 `compliance_model = "all_or_nothing"`: states in `apply_scenario()`.
+    - [x] 12e.5.6 `compliance_model = "all_or_nothing"`: states in `apply_scenario()`. Done 2026-11-16 (Opus).
     - [ ] 12e.5.7 Collapse in `inadequacy()` and `above_ul()`; numeric `above_ul_*`; the estimators refuse the states table.
     - [ ] 12e.5.8 Specification, `NEWS.md`, coverage exhibit with both coverages, self-review.
 

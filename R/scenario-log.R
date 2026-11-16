@@ -22,7 +22,7 @@ check_baseline_step <- function(x, arg = "intake",
 # like the baseline.
 check_scenario_args <- function(s, compliance_model, baseline_label,
                                 call = rlang::caller_env()) {
-  models <- "average_content"
+  models <- c("average_content", "all_or_nothing")
   partial <- any(s$compliance < 1)
   bad_model <- if (is.null(compliance_model)) partial else
     !rlang::is_string(compliance_model) || !compliance_model %in% models
@@ -98,14 +98,16 @@ check_scenario_use <- function(x, use, s, call = rlang::caller_env()) {
 }
 
 # Audit rows of apply_scenario(). Rows about scenario rows have no
-# household count; rows about households count them.
-scenario_log <- function(x, use, s, out, names_s, added_cols, model) {
+# household count; rows about households count them (once per household
+# when `out` holds several states of a scenario).
+scenario_log <- function(x, use, s, out, names_s, added_cols, model,
+                         table = "scenario_intake") {
   step <- "apply_scenario"
   note <- function(cause, n, detail = NA_character_, kind = "note",
                    households = FALSE) {
     keep <- n > 0
     if (!any(keep)) return(NULL)
-    audit_row(step, "scenario_intake", kind, cause, n[keep],
+    audit_row(step, table, kind, cause, n[keep],
               if (households) n[keep] else NA_integer_,
               detail = detail[keep])
   }
@@ -120,11 +122,11 @@ scenario_log <- function(x, use, s, out, names_s, added_cols, model) {
   added <- expand.grid(scenario = names_s[-1], column = added_cols,
                        stringsAsFactors = FALSE)
   added$n <- mapply(function(sc, col) {
-    v <- out[[paste0(col, "_added")]][out$scenario == sc]
-    sum(!is.na(v) & v > 0)
+    v <- out[[paste0(col, "_added")]]
+    length(unique(out$household_id[out$scenario == sc & !is.na(v) & v > 0]))
   }, added$scenario, added$column)
   dplyr::bind_rows(
-    audit_row(step, "scenario_intake", "input", "all", nrow(out), nrow(x),
+    audit_row(step, table, "input", "all", nrow(out), nrow(x),
               detail = paste(length(names_s), "scenarios")),
     note("compliance_model", sum(s$compliance < 1), model),
     note("compliance_below_one", as.integer(partial), names(partial)),

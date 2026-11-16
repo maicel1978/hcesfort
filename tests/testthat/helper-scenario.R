@@ -78,3 +78,18 @@ as_run <- function(scenarios = as_scenarios(), p = as_pipeline(), ...) {
 val <- function(s, scenario, h, col) {
   s[[col]][s$scenario == scenario & s$household_id == h]
 }
+
+# All or nothing: two vehicles of one scenario "both" (iron, flour 55 and
+# sugar 100 mg/kg) with the given compliances.
+two_vehicles <- function(compliance = c(0.5, 0.8)) {
+  data.frame(scenario = "both", vehicle = c("flour", "sugar"),
+             nutrient = "iron", level_mg_kg = c(55, 100),
+             level_basis = "nutrient", compliance = compliance,
+             source = "test fixture")
+}
+
+aon <- function(sc, ...) as_run(sc, compliance_model = "all_or_nothing", ...)
+
+state_val <- function(s, state, h, col) {
+  s[[col]][s$scenario == "both" & s$state == state & s$household_id == h]
+}

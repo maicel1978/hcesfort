@@ -38,3 +38,14 @@ liver_case <- function(weight = c(1, 1, 1), comp = NULL, bread = FALSE) {
   reg <- nutrient_registry(c(iron = "mg", vitamin_a = "ug_rae"))
   list(content = link_composition(g, cw, comp, reg), households = h)
 }
+
+# The liver case up to the apparent intake, one AFE per household.
+liver_intake <- function() {
+  x <- liver_case()
+  afe <- new_hces_tbl(
+    data.frame(household_id = 1:3, n_members = 1, energy_kcal_d = 2000,
+               afe = 1),
+    "hces_afe", key = "household_id"
+  )
+  apparent_intake(x$content, afe, x$households)
+}

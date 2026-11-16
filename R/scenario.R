@@ -29,17 +29,36 @@
 #' acquisitions say otherwise) times the amount per 100 g, divided by 100.
 #' A vehicle of own production or home processing gets nothing. The log
 #' notes, per vehicle, the fortifiable grams over the vehicle grams of the
-#' estimated households (`fortifiable_share`, unweighted). `compliance`
-#' is the share of the fortifiable vehicle that is fortified; it enters
-#' under the model named by `compliance_model`; v0.1 offers
-#' `"average_content"`: every fortifiable gram carries `compliance` times
-#' the level. The argument has no
-#' default and is required whenever a compliance is below 1. Average
-#' content gives the right mean but understates the share of households
-#' above an upper level, since no household receives the full level:
-#' [above_ul()] flags each scenario with a compliance below 1, and the
-#' same levels at compliance 1 give the upper bound. The scenarios with a
-#' compliance below 1 are listed in the log (`compliance_below_one`).
+#' estimated households (`fortifiable_share`, unweighted).
+#'
+#' `compliance` is the share of the fortifiable vehicle that is fortified;
+#' it enters under the model named by `compliance_model`, which has no
+#' default and is required whenever a compliance is below 1. The scenarios
+#' with a compliance below 1 are listed in the log (`compliance_below_one`).
+#'
+#' - `"average_content"`: every fortifiable gram carries `compliance` times
+#'   the level. It gives the right mean but understates the share of
+#'   households above an upper level, since no household receives the full
+#'   level: [above_ul()] flags each scenario with a compliance below 1, and
+#'   the same levels at compliance 1 give the upper bound.
+#' - `"all_or_nothing"`: a share `compliance` of each vehicle carries the
+#'   full level and the rest none, and a household has one or the other for
+#'   the whole period. A scenario with `k` vehicles of compliance strictly
+#'   between 0 and 1 has `2^k` states, each a subset of those vehicles at the
+#'   full level (vehicles at compliance 1 are always on, at 0 always off);
+#'   vehicles are assumed independent, so the probability of a state is the
+#'   product of `compliance` over its vehicles on and `1 - compliance` over
+#'   those off. Every vehicle of a scenario must have one compliance (a
+#'   compliance that differs by nutrient is under-dosing, which is average
+#'   content); otherwise an `hcesfort_error_value`. The result is the table
+#'   of states described under Value: one row per household for each state,
+#'   so the number of rows is the households times the sum of `2^k` over the
+#'   scenarios (1 for the baseline). The expected amounts over the states
+#'   equal those of average content, so the means of intake by scenario are
+#'   those of average content; percentiles of intake under all or nothing
+#'   are not offered. The log holds a note `states` per scenario and a note
+#'   `vehicles_assumed_independent` for each scenario with more than one
+#'   vehicle of partial compliance.
 #'
 #' Totals are missing for households whose intake is not `estimated`. A
 #' household that acquired a vehicle with records without grams gets what
@@ -53,8 +72,8 @@
 #' @param scenarios Scenarios table ([hces_schema()]`("scenarios")`),
 #'   validated or not. Every `vehicle` must be a vehicle of `use`.
 #' @param conversions Conversions table, by default [ref_conversions].
-#' @param compliance_model `NULL` or `"average_content"`; required when a
-#'   compliance is below 1.
+#' @param compliance_model `NULL`, `"average_content"` or
+#'   `"all_or_nothing"`; required when a compliance is below 1.
 #' @param baseline_label Name of the scenario that holds the baseline.
 #' @returns A tibble of class `hces_scenario_intake` (and `hces_tbl`), key
 #'   `scenario` + `household_id`: the column `scenario`, the columns of
@@ -62,6 +81,14 @@
 #'   `_coverage` columns are those of the baseline) and one `<column>_added`
 #'   per nutrient or form touched by any scenario (0 under the baseline).
 #'   The baseline is `total - added`. The registry travels with the table.
+#'
+#'   Under `compliance_model = "all_or_nothing"`, a tibble of class
+#'   `hces_scenario_states` (and `hces_tbl`; it does not inherit from
+#'   `hces_scenario_intake`), key `scenario` + `state` + `household_id`: the
+#'   same columns for each state, with the vehicles of the state at the full
+#'   level, plus `state` (the vehicles on, sorted and joined by `"+"`, or
+#'   `"none"`) and `state_probability`. The baseline has one state, `"none"`,
+#'   with probability 1.
 #' @seealso [vehicle_coverage()], [unfortified_baseline()].
 #' @examples
 #' nutrients <- nutrient_registry(hces_example$nutrients)
@@ -98,18 +125,29 @@ apply_scenario <- function(intake, use, scenarios,
   check_scenario_args(s, compliance_model, baseline_label)
   check_scenario_use(x, use, s)
   check_use_fortifiable(use)
-  targets <- scenario_targets(s, nutrients, conversions)
+  states <- identical(compliance_model, "all_or_nothing")
+  if (states) check_vehicle_compliance(s)
+  targets <- scenario_targets(if (states) at_full_level(s) else s,
+                              nutrients, conversions)
   names_s <- c(baseline_label, unique(s$scenario))
   added_cols <- unique(targets$column)
-  out <- dplyr::bind_rows(lapply(names_s, function(name) {
-    scenario_rows(x, use, targets[targets$scenario == name, ], name,
-                  added_cols)
-  }))
-  log <- scenario_log(x, use, s, out, names_s, added_cols, compliance_model)
+  out <- if (states) {
+    states_rows(x, use, s, targets, names_s, added_cols)
+  } else {
+    dplyr::bind_rows(lapply(names_s, function(name) {
+      scenario_rows(x, use, targets[targets$scenario == name, ], name,
+                    added_cols)
+    }))
+  }
+  class <- if (states) "hces_scenario_states" else "hces_scenario_intake"
+  table <- sub("^hces_", "", class)
+  log <- scenario_log(x, use, s, out, names_s, added_cols, compliance_model,
+                      table)
   log <- dplyr::bind_rows(audit_combine(x, use, s), log,
+                          if (states) states_log(s, table),
                           fortifiable_share_log(use, s))
-  new_hces_tbl(out, "hces_scenario_intake", log,
-               c("scenario", "household_id"), nutrients)
+  new_hces_tbl(out, class, log,
+               c("scenario", if (states) "state", "household_id"), nutrients)
 }
 
 # The rows of one scenario: `x` with its name, the amounts added to each

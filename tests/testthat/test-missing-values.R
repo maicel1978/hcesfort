@@ -132,17 +132,6 @@ test_that("errors: wrong table, unknown nutrient, households missing", {
   expect_error(missing_values(x$content), class = "hcesfort_error_argument")
 })
 
-# The liver case up to the apparent intake, one AFE per household.
-liver_intake <- function() {
-  x <- liver_case()
-  afe <- new_hces_tbl(
-    data.frame(household_id = 1:3, n_members = 1, energy_kcal_d = 2000,
-               afe = 1),
-    "hces_afe", key = "household_id"
-  )
-  apparent_intake(x$content, afe, x$households)
-}
-
 test_that("apparent_intake() logs the used records without a value", {
   l <- audit_log(liver_intake())
   f <- l[l$step == "apparent_intake" & l$cause == "foods_without_value", ]
