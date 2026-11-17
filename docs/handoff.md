@@ -19,25 +19,31 @@
 
 ## Exact next step
 
-The next open task is **A1** of the adapter: the maintainer runs
-`scripts/exportar_cifras_etapas.R` of `analisis_ENGIH2018` (branch
-`claude/intelligent-cori-3aev98`) with the microdata and pushes the
-aggregated tables of `etapas/` to that branch. **A2** (Opus, companion
-repository `hcesfort.engih2018`) waits for A1. Nothing for a model to do
-in this repository until then.
+**A1 is done** (2026-11-16, by the maintainer): the stage tables are in
+`analisis_ENGIH2018`, branch `claude/intelligent-cori-3aev98`, commit
+`513ca4a`, under `data/auditoria/cifras_control/etapas/` (21 tables). The
+md5 of the inputs are in `e00_entradas.csv`: `Registros_Cuestionario_B.xlsx`
+`850ea1fb53c9a9c64102957a194e7426`, `Sociodemograficas_e_ingresos.xlsx`
+`d9a58c8f325ec368bd72e5f40feebf53`. The original chain ran without errors
+and reproduced the October control figures (`riesgo_inadecuacion.csv`).
+
+Next, in this order (not before Thursday 2026-11-19, quota):
+
+1. **P188** (Sonnet, short session): the sentence of help, due before A3.
+2. **A2** (Opus): companion repository `hcesfort.engih2018` and the adapter,
+   from `docs/design-adapter-engih.md`. The session needs both repositories.
 
 ## Open questions
 
-1. **Tasks 12c and 12d** have every sub-item ticked but stay open in the
-   roadmap. Recommended: the maintainer ticks them after reviewing the
-   renders, since both were opened by a review of the renders.
-2. **While A1 waits:** P188 (one sentence of help, Sonnet) is due before
-   A3 and could be done now. Recommended: do it in a short Sonnet session
-   if A1 takes more than a day.
+None.
+
+**Answers of the maintainer (2026-11-16):** 1, tasks 12c and 12d: the
+maintainer ticks them after reviewing the renders. 2, P188 in a short
+Sonnet session before A2.
 
 ## Recommended model for the next session
 
-**Opus**, for A2, once A1 is pushed. (Sonnet, if P188 is done first.)
+**Sonnet** (P188), then **Opus** (A2).
 
 ## Maintainer review points
 
