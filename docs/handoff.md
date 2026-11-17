@@ -1,113 +1,86 @@
 # Handoff
 
-- **Date:** 2026-11-16
-- **Model:** Opus 5.5 (12e.5.6 and 12e.5.7).
-- **Branch:** `claude/focused-goodall-shtiue`, pushed.
+- **Date:** 2026-11-17
+- **Model:** Opus 5.5 (12e.5.8).
+- **Branch:** `claude/charming-fermat-wzrsv1`, pushed.
 - **Environment:** run `R CMD INSTALL .` at the start (the report tests use
   the installed package). The full `devtools::test()` runs in parallel,
   about 6 minutes: run it in the background, one at a time, and **do not
-  edit `R/`, `tests/` or `inst/` while it runs**. Delete the old log before
-  waiting on a new one. A single report test file needs `NOT_CRAN=true`
-  or it is skipped.
+  edit `R/`, `tests/` or `inst/` while it runs** (`load_all()` points
+  `system.file()` at the source `inst/`). A single report test file needs
+  `NOT_CRAN=true` or it is skipped.
 
 ## What was done
 
 See the commit messages.
 
-- **12e.5.6** (`89df9ec`): `apply_scenario(compliance_model =
-  "all_or_nothing")` returns `hces_scenario_states`, key `scenario` +
-  `state` + `household_id`, with `state` and `state_probability`; log
-  notes `states`, `vehicles_assumed_independent`. New `R/scenario-states.R`.
-- **12e.5.7** (`90bf099`, `4cc3e6c`): `inadequacy()` and `above_ul()`
-  accept the states table and collapse it by `state_probability`
-  (`R/risk-states.R`, log note `states_collapsed`); `above_ul_added` and
-  `above_ul_total` are numeric for every input; the estimators refuse the
-  states table; the report choice `compliance_model` takes both models and
-  exhibit R3.3 names the model (two snapshot lines, en and es).
-- Self-review items P213 to P216. A lint left by 12e.5.5 fixed (a test
-  helper moved to `helper-missing-values.R`).
+- **12e.5.8, package:** P217 (tests of `amount_total` and `above_ul_total`
+  on the table of states, by hand; the understates flag has its own test);
+  P218 (`?above_ul`, `?apply_scenario`, the vignette: the two models are
+  not ordered, compliance 1 bounds both); P219 (`apply_scenario(max_states
+  = NULL)`, new `R/scenario-states-size.R`; rows and MB in the log row
+  `states`; `utils` added to Imports for `object.size()`).
+- **12e.5.8, report template:** the column at compliance 1 in R3.3
+  (maintainer's rule), with a hollow point, when some compliance is below
+  1; cells of zero events stay in the table with their bound; a nutrient
+  goes to the sentence of zeros only when it is zero at compliance 1 too.
+  R1.1 shows the coverage of the fortifiable vehicle beside the vehicle in
+  any form; R1.1 and R3.1 note the weighted fortifiable share of the grams
+  (P210). `max_states <- NULL` in `_inputs.R`. The R3.3 code moved to the
+  new `_upper.R`, section 1 to `_coverage.R` (file size).
+- **Docs:** specification (states table, numeric `above_ul_*`,
+  `fortifiable`, `missing_values()`, the AFE arguments, the report
+  choices); `NEWS.md` (12e.5.6 to 12e.5.8); improvements P210, P213, P217
+  to P219 done; self-review items P221 to P225.
 
 ## Exact next step
 
-**12e.5.8** (Opus), from `docs/design-12e5.md`, sections 2.4, 4.2 and 5:
-specification (`docs/specification.md`: the states table, numeric
-`above_ul_*`, `fortifiable`, `missing_values()`, the AFE arguments of
-12e.5.1 and 12e.5.2); `NEWS.md` (every change of 12e.5, the type change of
-`above_ul_*`); the coverage exhibit of the results report with both
-coverages (acquired and fortifiable); **the column at compliance 1 in the
-upper-level exhibit** (maintainer's rule: no report leaves the project
-without it); P210 with the coverage exhibit; **P217, P218 and P219** from
-the review of the all-or-nothing model (read those three items in
-`docs/improvements.md` and section "Review of the all-or-nothing model"
-below; the maintainer approved them as recommended, see "Answers of the
-maintainer" there); then the self-review of 12e.5. Then, once for task 12e: `devtools::check()` (0/0/0) and
-`lintr::lint_package()`.
+**12e.9** (Opus): once for task 12e, `devtools::check()` with 0 errors, 0
+warnings, 0 notes, and `lintr::lint_package()` clean; fix what they find.
+Then task 12e is closed and the next open task of the roadmap is A1/A2 of
+the adapter (A1 is the maintainer's; A2 waits for it).
 
 ## Open questions
 
-None.
-
-**Maintainer decision on P213 (2026-11-16):** no limit on the number of
-states for now; a fixed threshold would be a hidden default. The question
-goes to the short review `docs/review-12e5-states-brief.md` (Fable, a
-separate session), which recommends whether the audit log reporting the
-number of states is enough.
+1. **The column at compliance 1 appears only when some compliance is
+   below 1.** With every compliance at 1 the column would repeat the
+   estimate, so it is left out (and its note). Recommended: keep it so.
+   Alternative: always print it, the literal reading of the rule.
+2. **The R3.3 table now keeps every scenario row of a nutrient whose bound
+   is above zero** (iron under the wheat flour scenarios: 0 and 0).
+   Recommended: keep for now, P222 in task 12.
 
 ## Recommended model for the next session
 
-**Opus, high effort** (12e.5.8).
+**Opus** (12e.9: check and lint).
 
 ## Maintainer review points
 
-1. **The hand example of the design** (folate: baseline 20, full dose
-   306, EAR 200, compliance 0.5): 1 under average content, 0.5 under all
-   or nothing.
+1. **The column at compliance 1 on the results report** (R3.3): folate
+   with rice, 0.4% as shipped and 17.63% at compliance 1; iron and vitamin
+   A stay in the exhibit.
+
+   ```r
+   d <- tempfile(); hcesfort::use_report_template(d, lang = "en")
+   quarto::quarto_render(file.path(d, "results.qmd"))  # or open in RStudio
+   # Read Figure R3.3: the column "At compliance 1 (%)" and its note.
+   ```
+
+2. **The limit on the states** (P219):
 
    ```r
    devtools::load_all()
    source("tests/testthat/helper-scenario.R")
-   a <- risk_of(as_run(folic(0.5), compliance_model = "average_content"))
-   r <- risk_of(aon(folic(0.5)))
-   a[a$nutrient == "folate", c("scenario", "household_id", "p_inadequate")]
-   r[r$nutrient == "folate", c("scenario", "household_id", "p_inadequate")]
+   sc <- rbind(two_vehicles(),
+               transform(two_vehicles(c(1, 0.3)), scenario = "one"))
+   try(aon(sc, max_states = 3))   # names "both", 4 states, 21 rows
+   s <- aon(sc)
+   audit_log(s)[audit_log(s)$cause == "states", "detail"]
    ```
 
-2. **The share above the folic acid UL on the example, both models**
-   (average content understates it; all or nothing should lie between it
-   and the bound at compliance 1):
-
-   ```r
-   library(hcesfort)
-   e <- hces_example
-   n <- nutrient_registry(e$nutrients)
-   g <- convert_units(e$acquisitions, e$unit_factors, priority = "food")
-   b <- unfortified_baseline(e$composition, e$enrichment, n)
-   afe <- adult_equivalents(e$members,
-     reference_energy("female", 25, 55, pal = 1.76),
-     c(female = 55, male = 65), 1.76, infant_food_share = 1,
-     pregnancy_kcal = 0, lactation_kcal = 0)
-   i <- apparent_intake(link_composition(g, e$crosswalk, b), afe,
-                        e$households)
-   u <- vehicle_coverage(g, e$vehicles, afe, e$households,
-                         fortifiable = "use")
-   ul <- function(m) {
-     x <- above_ul(apply_scenario(i, u, e$scenarios, compliance_model = m),
-                   ref_requirements, min_coverage = 0.8,
-                   min_records_used = 0.8)
-     x <- x[x$nutrient == "folate", ]
-     tapply(x$above_ul_added, x$scenario, mean, na.rm = TRUE)
-   }
-   rbind(average = ul("average_content"), aon = ul("all_or_nothing"))
-   ```
-
-3. **The states table itself** (rows, states, probabilities):
-
-   ```r
-   s <- apply_scenario(i, u, e$scenarios, compliance_model = "all_or_nothing")
-   unique(s[c("scenario", "state", "state_probability")])
-   audit_log(s)[audit_log(s)$cause %in% c("states",
-     "vehicles_assumed_independent"), c("cause", "n_records", "detail")]
-   ```
+3. **P218 on `hces_example`** (vitamin A above the UL under `plus_sugar`):
+   0.000468 under average content, 0.000328 under all or nothing, 0.000468
+   at compliance 1. Code: review point 1 of the section below.
 
 ## Review of the all-or-nothing model (2026-11-17, Fable; a separate session)
 

@@ -56,7 +56,10 @@ Standard tables (columns marked * are optional):
   adapter sets it and documents its rule: the design length of the window, or
   the days with a record where the survey supports that reading), `include`
   flag set by the adapter's section-combination rule,
-  origin* (purchase, own production, gift), household share*.
+  origin* (purchase, own production, gift), household share*,
+  `fortifiable`* (`FALSE` for a vehicle record that could not have been
+  fortified: own production, home or small-scale processing; set by the
+  adapter with its rule documented; not read for foods outside `vehicles`).
 
 Tables the user supplies alongside (not survey data, still external):
 
@@ -89,16 +92,16 @@ not tied to the nutrients of the first case.
 | Contracts | `validate_*()` and constructors | any standard table → validated table or classed error |
 | Units | `convert_units()` | acquisitions + unit factors → grams |
 | Outliers | `flag_outliers()` | grams → flag; scale, grouping and thresholds are arguments |
-| Adult equivalents | `adult_equivalents()`, `reference_energy()` | members + energy requirements + reference person → equivalents per household; the reference person's requirement from the BMR equations |
+| Adult equivalents | `adult_equivalents()`, `reference_energy()` | members + energy requirements + reference person → equivalents per household; the reference person's requirement from the BMR equations. Infants: `infant_food_share` (share eaten from the household's food, required when there is an infant) and `milk_energy_cost` (required when that share is below 1). Pregnancy and lactation: `pregnancy_kcal` and `lactation_kcal`, added to the members flagged, required when a member carries the flag (values to choose from in `ref_energy_additions`); milk charged both to the mother and through the infant is an error |
 | Composition | `link_composition()`, `fill_composition()` | grams + crosswalk + composition → nutrients per record, with coverage over all records |
 | Apparent intake | `apparent_intake()` | nutrients + equivalents → intake per equivalent per day, one row per household of `households`, with a status |
 | Plausibility | `flag_energy_plausibility()` | intake + energy column + `lower`, `upper` → flag |
 | Baseline | `unfortified_baseline()` | composition + enrichment → baseline composition (removes enrichment only) |
-| Vehicles | `vehicle_coverage()` | grams + vehicles + equivalents → vehicle use per household (acquired, grams per AFE and per member), by vehicle, group and combination |
+| Vehicles | `vehicle_coverage()` | grams + vehicles + equivalents → vehicle use per household (acquired, grams per AFE and per member), by vehicle, group and combination; always also the fortifiable vehicle (`acquired_fortifiable`, `qty_fortifiable_g_d`, `qty_fortifiable_g_d_pc`), read from `fortifiable` when the argument `fortifiable = "use"` (required when the column is present) |
 | Flour levels | `who2009_levels()` | per capita flour availability (ratio of weighted totals of grams and members) + extraction → rows of the WHO 2009 table |
-| Scenarios | `apply_scenario()` | baseline intake + vehicle use + scenarios → total and added intake per household and scenario, baseline included |
-| Risk | `inadequacy()` | intake + requirements (+ requirement distributions) → probability below the requirement per household, scenario and nutrient: EAR cut-point, or the probability approach for the nutrients given a distribution (bioavailability as a required argument); minimum coverage required |
-| Upper level | `above_ul()` | intake + UL, its unit and the form it applies to → above the UL per household, scenario and nutrient: total intake, or the form (added part, diet part where the composition has it) |
+| Scenarios | `apply_scenario()` | baseline intake + vehicle use + scenarios → total and added intake per household and scenario, baseline included; the fortificant goes to the fortifiable grams only. A compliance below 1 needs `compliance_model`: `"average_content"` (every gram carries compliance times the level; `hces_scenario_intake`) or `"all_or_nothing"` (a share of each vehicle carries the full level, independent vehicles: the table of states `hces_scenario_states`, key scenario + state + household, with `state_probability`; `2^k` states for `k` vehicles of partial compliance, limited by the optional `max_states`) |
+| Risk | `inadequacy()` | intake + requirements (+ requirement distributions) → probability below the requirement per household, scenario and nutrient: EAR cut-point, or the probability approach for the nutrients given a distribution (bioavailability as a required argument); minimum coverage required. On the table of states, the expectation over the states |
+| Upper level | `above_ul()` | intake + UL, its unit and the form it applies to → above the UL per household, scenario and nutrient: total intake, or the form (added part, diet part where the composition has it). `above_ul_added` and `above_ul_total` are numbers in [0, 1] for every input: 0 or 1 for one intake, the expectation over the states under all or nothing. The two compliance models give the same mean and are not ordered in the shares; the same levels at compliance 1 bound both |
 | Food groups | `food_group_intake()` | baseline nutrients + food groups + equivalents → amount per equivalent per day by household and group (foods without a group in `unclassified`) |
 | Density | `nutrient_density()` | intake + energy → per 1,000 kcal |
 | Design | `as_hces_design()` | households + choice for single-PSU strata → `srvyr` design on the full sample |
@@ -106,7 +109,9 @@ not tied to the nutrients of the first case.
 | Group shares | `food_group_shares()` | design + intake by group → share of each group in the mean intake per equivalent, by nutrient and domain (ratio of weighted totals, logit interval) |
 | Report | `use_report_template()` | path + language → Quarto template of the country report, by decision questions (English, Spanish), run on `hces_example` as shipped |
 
-Subsets are always estimated as domains of the full design.
+Subsets are always estimated as domains of the full design. The
+estimators refuse the table of states: it is passed to `inadequacy()` or
+`above_ul()` first.
 
 Audit log, across the core: every table carries its log; the logs of
 several inputs are merged without repeating a shared branch.
@@ -121,6 +126,7 @@ Data readiness and reports (task 12c, design `docs/design-reports-v2.md`):
 |---|---|---|
 | Linkage | `linkage_ladder()` | composition link + households → records, grams and expenditure (`expenditure_lcu`, optional in `acquisitions`) kept at each step from the record to the validated composition link |
 | Work queue | `unmatched_foods()` | composition link + households → foods pending, weighted, with the reasons and the coverage reached as foods are resolved |
+| Missing values | `missing_values()` | composition link + households → per nutrient, the foods with a linked record without a value, by weighted edible grams, with the share of grams that would carry a value once each is filled (the coverage gate counts grams and cannot see a nutrient concentrated in few foods) |
 | Unlinked share | `estimate_unlinked()` | design + composition link → share of grams and expenditure not linked, nationally and by domain, with the difference between each domain and the rest of the population |
 | Readiness | `readiness_inventory()`, `readiness_checks()`, `readiness_verdict()` | standard tables, baseline intake, linkage ladder + thresholds → variables present, thresholds met, and the sections of the results report enabled, nationally and by domain |
 | Labels | `read_labels()`, `label_codes()`, `read_decisions()` | analyst's CSV files → label table (no code is printed in a report) and decisions table |
@@ -136,7 +142,13 @@ The choices of `_inputs.R` that bear on the population are `energy_action`
 of every result of the results report, stay in the design outside every
 domain, and are counted in the audit log; the readiness report keeps all
 households and states how many are excluded) and `vehicles` (which vehicles
-enter the report). Every exhibit has an ID in the registry
+enter the report), `fortifiable_choice` (`"use"` or `"ignore"`, read
+when the acquisitions have `fortifiable`), `compliance_model` and
+`max_states`. The coverage exhibit shows the coverage of the vehicle in
+any form and of the fortifiable vehicle; the upper-level exhibit names the
+compliance model and carries the column at compliance 1, the upper bound
+of the share above the upper level under either model (no report leaves
+the project without it). Every exhibit has an ID in the registry
 (`exhibits.csv`); comments of experts cite these IDs and are kept in
 `docs/feedback/`. The vignette `getting-started` runs the chain on
 `hces_example` and draws one `ggplot2` figure by domain.

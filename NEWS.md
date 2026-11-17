@@ -437,10 +437,11 @@
   write the note `apparent_intake_not_usual_intake` in the log, with the
   range of `period_days` of the records used (new note `period_days` of
   `apparent_intake()`).
-* Under the average-content compliance model with a compliance below 1, the
-  share above an upper level is understated. `above_ul()` flags each such
-  scenario (`average_content_understates_ul`); the same levels at
-  compliance 1 give the upper bound (on `hces_example`, folic acid: 0.59%
+* Under the average-content compliance model with a compliance below 1, no
+  household receives the full level and the share above an upper level can
+  be far below its upper bound. `above_ul()` flags each such scenario
+  (`average_content_understates_ul`); the same levels at compliance 1 give
+  the upper bound (on `hces_example`, folic acid: 0.59%
   as shipped, 19.7% at compliance 1). The note `compliance_below_one` of
   `apply_scenario()` now has one row per scenario, named in `detail`. The
   results report adds the note under the upper-level exhibit.
@@ -579,6 +580,48 @@
   `above_ul()` points to `missing_values()` for a nutrient below 1, and so
   does the error of the gate. The readiness report gains Table D3.1, the
   queue for the nutrients assessed. No figure changes.
+* `apply_scenario(compliance_model = "all_or_nothing")` (P69, P163): a
+  share `compliance` of each vehicle carries the full level and the rest
+  none, a household has one or the other for the whole period, and the
+  vehicles are independent. It returns a table of states
+  (`hces_scenario_states`, key `scenario` + `state` + `household_id`, with
+  `state` and `state_probability`): `2^k` states for a scenario with `k`
+  vehicles of partial compliance. Every vehicle of a scenario must have one
+  compliance. The log notes the states of each scenario, with their rows
+  and approximate size in MB, and `vehicles_assumed_independent`. The new
+  optional argument `max_states` (`NULL`, no limit, by default) stops a
+  call before the rows are built when a scenario has more states (P213,
+  P219); the report template sets it in `_inputs.R`.
+* `inadequacy()` and `above_ul()` accept the table of states and return
+  the expectation over the states (`p_inadequate`, `above_ul_added`,
+  `above_ul_total`) and the expected amounts, equal to those of average
+  content; log note `states_collapsed`. `estimate_households()` and
+  `estimate_difference()` refuse the table of states.
+  **Breaking (type):** `above_ul_added` and `above_ul_total` are numbers
+  in [0, 1] for every input (they were logical; 0 or 1 under average
+  content). No figure moves; code that tests them with `isTRUE()` or as
+  logical must compare with 1.
+* The two compliance models give the same mean intake and **are not
+  ordered** in the share above an upper level or below a requirement: on
+  `hces_example`, vitamin A above the UL under `plus_sugar` is 0.047% under
+  average content and 0.033% under all or nothing (P218). `?above_ul`,
+  `?apply_scenario`, the vignette and the report note no longer call the
+  average-content figure understated without saying against what: the same
+  levels at compliance 1 bound both.
+* Results report: the choice `compliance_model` takes both models and the
+  upper-level exhibit (R3.3) names it. The exhibit gains the column at
+  compliance 1 (hollow point in the figure), the upper bound of the share
+  above the upper level, whenever a compliance is below 1 (V3.1); a cell
+  of zero households above stays in the table with its bound, and a
+  nutrient leaves the exhibit for the sentence of zeros only when it is
+  zero at compliance 1 too. On `hces_example`, folate above the folic acid
+  UL with rice in the scenario: 0.4% as shipped, 17.63% at compliance 1;
+  iron and vitamin A, 0 as shipped, now stay in the exhibit. The coverage
+  exhibit (R1.1) shows, beside the households acquiring each vehicle, those
+  acquiring it in a fortifiable form (hollow point), and R1.1 and the
+  scenarios table (R3.1) note the fortifiable share of the grams of each
+  vehicle, weighted (P210). The exhibits of R3.3 and of section 1 moved to
+  the new template files `_upper.R` and `_coverage.R`.
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is

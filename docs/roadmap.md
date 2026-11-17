@@ -112,7 +112,8 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
     - [x] 12e.5.5 `missing_values()`; log row, note and messages; readiness exhibit (Table D3.1). Done 2026-11-16 (Opus).
     - [x] 12e.5.6 `compliance_model = "all_or_nothing"`: states in `apply_scenario()`. Done 2026-11-16 (Opus).
     - [x] 12e.5.7 Collapse in `inadequacy()` and `above_ul()`; numeric `above_ul_*`; the estimators refuse the states table; template choice. Done 2026-11-16 (Opus).
-    - [ ] 12e.5.8 Specification, `NEWS.md`, coverage exhibit with both coverages, self-review.
+    - [x] 12e.5.8 Specification, `NEWS.md`, coverage exhibit with both coverages, self-review. Done 2026-11-17 (Opus), with P210, P217, P218, P219 (`max_states`) and the column at compliance 1 in the upper-level exhibit (V3.1). Self-review items P221 to P225.
+    - [ ] 12e.9 Once for task 12e: `devtools::check()` (0/0/0) and `lintr::lint_package()`.
 
 ## v0.1, companion repository `hcesfort.engih2018`: ENGIH 2018 adapter (needs the microdata)
 - [ ] A0. Design of the adapter and of the acceptance test: `docs/design-adapter-engih.md` (Fable, 2026-11-16), from `docs/adapter-design-brief.md`. Written; its eight decisions (section 9) wait for approval. No package code.
