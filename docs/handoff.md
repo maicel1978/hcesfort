@@ -50,6 +50,11 @@ the adapter (A1 is the maintainer's; A2 waits for it).
    is above zero** (iron under the wheat flour scenarios: 0 and 0).
    Recommended: keep for now, P222 in task 12.
 
+**Answers of the maintainer (2026-11-16):** 1, approved as recommended
+(with every compliance at 1 the estimate is the bound). 2, approved as
+recommended: P222 in task 12. Next session: Opus, medium effort, 12e.9
+only; if `check()` needs a change of behaviour or of figures, stop and ask.
+
 ## Recommended model for the next session
 
 **Opus** (12e.9: check and lint).
