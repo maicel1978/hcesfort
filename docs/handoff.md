@@ -1,91 +1,55 @@
 # Handoff
 
 - **Date:** 2026-11-17
-- **Model:** Opus 5.5 (12e.5.8).
-- **Branch:** `claude/charming-fermat-wzrsv1`, pushed.
+- **Model:** Opus 5.5 (12e.9).
+- **Branch:** `claude/funny-goldberg-jknbmy`, pushed.
 - **Environment:** run `R CMD INSTALL .` at the start (the report tests use
   the installed package). The full `devtools::test()` runs in parallel,
   about 6 minutes: run it in the background, one at a time, and **do not
-  edit `R/`, `tests/` or `inst/` while it runs** (`load_all()` points
-  `system.file()` at the source `inst/`). A single report test file needs
-  `NOT_CRAN=true` or it is skipped.
+  edit `R/`, `tests/` or `inst/` while it runs**. A single report test file
+  needs `NOT_CRAN=true` or it is skipped. `devtools::check()` needs the
+  system tool `qpdf` (`apt-get install -y qpdf`), or it warns.
 
 ## What was done
 
-See the commit messages.
-
-- **12e.5.8, package:** P217 (tests of `amount_total` and `above_ul_total`
-  on the table of states, by hand; the understates flag has its own test);
-  P218 (`?above_ul`, `?apply_scenario`, the vignette: the two models are
-  not ordered, compliance 1 bounds both); P219 (`apply_scenario(max_states
-  = NULL)`, new `R/scenario-states-size.R`; rows and MB in the log row
-  `states`; `utils` added to Imports for `object.size()`).
-- **12e.5.8, report template:** the column at compliance 1 in R3.3
-  (maintainer's rule), with a hollow point, when some compliance is below
-  1; cells of zero events stay in the table with their bound; a nutrient
-  goes to the sentence of zeros only when it is zero at compliance 1 too.
-  R1.1 shows the coverage of the fortifiable vehicle beside the vehicle in
-  any form; R1.1 and R3.1 note the weighted fortifiable share of the grams
-  (P210). `max_states <- NULL` in `_inputs.R`. The R3.3 code moved to the
-  new `_upper.R`, section 1 to `_coverage.R` (file size).
-- **Docs:** specification (states table, numeric `above_ul_*`,
-  `fortifiable`, `missing_values()`, the AFE arguments, the report
-  choices); `NEWS.md` (12e.5.6 to 12e.5.8); improvements P210, P213, P217
-  to P219 done; self-review items P221 to P225.
+- **12e.9:** `devtools::check()` 0 errors, 0 warnings, 0 notes (7.6 min,
+  `NOT_CRAN=true`); `lintr::lint_package()` no lints. No code change.
+  Task 12e is closed in the roadmap; A0 ticked (its decisions were
+  approved on 2026-11-16).
 
 ## Exact next step
 
-**12e.9** (Opus): once for task 12e, `devtools::check()` with 0 errors, 0
-warnings, 0 notes, and `lintr::lint_package()` clean; fix what they find.
-Then task 12e is closed and the next open task of the roadmap is A1/A2 of
-the adapter (A1 is the maintainer's; A2 waits for it).
+The next open task is **A1** of the adapter: the maintainer runs
+`scripts/exportar_cifras_etapas.R` of `analisis_ENGIH2018` (branch
+`claude/intelligent-cori-3aev98`) with the microdata and pushes the
+aggregated tables of `etapas/` to that branch. **A2** (Opus, companion
+repository `hcesfort.engih2018`) waits for A1. Nothing for a model to do
+in this repository until then.
 
 ## Open questions
 
-1. **The column at compliance 1 appears only when some compliance is
-   below 1.** With every compliance at 1 the column would repeat the
-   estimate, so it is left out (and its note). Recommended: keep it so.
-   Alternative: always print it, the literal reading of the rule.
-2. **The R3.3 table now keeps every scenario row of a nutrient whose bound
-   is above zero** (iron under the wheat flour scenarios: 0 and 0).
-   Recommended: keep for now, P222 in task 12.
-
-**Answers of the maintainer (2026-11-16):** 1, approved as recommended
-(with every compliance at 1 the estimate is the bound). 2, approved as
-recommended: P222 in task 12. Next session: Opus, medium effort, 12e.9
-only; if `check()` needs a change of behaviour or of figures, stop and ask.
+1. **Tasks 12c and 12d** have every sub-item ticked but stay open in the
+   roadmap. Recommended: the maintainer ticks them after reviewing the
+   renders, since both were opened by a review of the renders.
+2. **While A1 waits:** P188 (one sentence of help, Sonnet) is due before
+   A3 and could be done now. Recommended: do it in a short Sonnet session
+   if A1 takes more than a day.
 
 ## Recommended model for the next session
 
-**Opus** (12e.9: check and lint).
+**Opus**, for A2, once A1 is pushed. (Sonnet, if P188 is done first.)
 
 ## Maintainer review points
 
-1. **The column at compliance 1 on the results report** (R3.3): folate
-   with rice, 0.4% as shipped and 17.63% at compliance 1; iron and vitamin
-   A stay in the exhibit.
+1. **The check is clean on your machine** (12e.9):
 
    ```r
-   d <- tempfile(); hcesfort::use_report_template(d, lang = "en")
-   quarto::quarto_render(file.path(d, "results.qmd"))  # or open in RStudio
-   # Read Figure R3.3: the column "At compliance 1 (%)" and its note.
+   devtools::check()   # 0 errors, 0 warnings, 0 notes
+   lintr::lint_package()
    ```
 
-2. **The limit on the states** (P219):
-
-   ```r
-   devtools::load_all()
-   source("tests/testthat/helper-scenario.R")
-   sc <- rbind(two_vehicles(),
-               transform(two_vehicles(c(1, 0.3)), scenario = "one"))
-   try(aon(sc, max_states = 3))   # names "both", 4 states, 21 rows
-   s <- aon(sc)
-   audit_log(s)[audit_log(s)$cause == "states", "detail"]
-   ```
-
-3. **P218 on `hces_example`** (vitamin A above the UL under `plus_sugar`):
-   0.000468 under average content, 0.000328 under all or nothing, 0.000468
-   at compliance 1. Code: review point 1 of the section below.
+2. **The review points of 12e.5.8** stay valid: see the commit `c398f90`
+   (`git show c398f90:docs/handoff.md`).
 
 ## Review of the all-or-nothing model (2026-11-17, Fable; a separate session)
 

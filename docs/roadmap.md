@@ -95,14 +95,14 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
   - [x] 12d.15 `energy_action` (P148, V-D26; Opus), then snapshot and registry tests (Q1, Q2).
   - [x] 12d.16 Feedback log (Q3); getting-started vignette (R23); specification, `NEWS.md`, self-review; handoff for the maintainer's render on ENGIH 2018 (Q4).
 
-- [ ] 12e. Corrections of the hostile review v0.2 (`docs/review-v0.2.md`; brief `docs/review-v0.2-brief.md`). Comes before A2. Approved on 2026-11-15 (answers in `docs/handoff.md`). Order: the design of 12e.5 first (Fable; done), then 12e.1 to 12e.4, then the implementation of 12e.5.
+- [x] 12e. Corrections of the hostile review v0.2 (`docs/review-v0.2.md`; brief `docs/review-v0.2-brief.md`). Comes before A2. Approved on 2026-11-15 (answers in `docs/handoff.md`). Order: the design of 12e.5 first (Fable; done), then 12e.1 to 12e.4, then the implementation of 12e.5.
   - [x] 12e.0 Review written (Fable, 2026-11-15): one blocker, eight major and ten minor findings; findings recorded as P155 to P175. No package code changed.
   - [x] 12e.1 Key check in `require_hces()`, `audit_check_rows()` in the estimators, range check of a proportion (P155, P156). Opus.
   - [x] 12e.2 Anchor tests from sources outside the package, five tests for the surviving mutations, optional columns in `hces_fixture()` and the golden script (P160, P169, P174). Opus. Before A3.
   - [x] 12e.3 Limits of the method in the help pages, README and vignette; tail citation; audit notes on usual intake and on compliance with the upper level; corrected sentences on the presentation of probabilities (P157, P161, P163, P164, P170). Sonnet for the text, Opus for the notes. Before the first expert round. Done 2026-11-15 (Opus, notes and text in one session). The `surveytable` anchor of R2-D7 is still open: the package could not be installed in that session.
   - [x] 12e.4 Zero-width intervals, `df = 0`, `exact`, the second option of `survey`, validator bounds, `zero_intake` (P165 to P168, P172). Opus. Done 2026-11-16 (Opus), with the effective size of P164 (R2-D6) and the report note P183. The `surveytable` anchor (R2-D7) is dropped: the install was refused again (decision of 2026-11-15).
   - [x] 12e.4b Findings of the review of 12e.1 to 12e.4 (`docs/review-12e.md`): stacked estimates (P201), cells without degrees of freedom (P204). Done 2026-11-16 (Opus).
-  - [ ] 12e.5 Infants and pregnancy in the AFE, the fortifiable vehicle, missing composition values, all-or-nothing compliance (P158 with P57, P159, P162, P163 with P69). Before A4; recommended before A2 (decision 8 of the design).
+  - [x] 12e.5 Infants and pregnancy in the AFE, the fortifiable vehicle, missing composition values, all-or-nothing compliance (P158 with P57, P159, P162, P163 with P69). Before A4; recommended before A2 (decision 8 of the design).
     - [x] 12e.5.0 Design note `docs/design-12e5.md` (Fable, 2026-11-15). No package code. Its nine decisions (section 7) approved on 2026-11-15 (R3-D1 to R3-D9); two of them amend the answers of 2026-11-15 (a second argument for infants; `fortifiable` used only when the call says so).
     - Implementation (Opus), after approval; each step at most 300 lines of code. Detail in section 6 of the design.
     - [x] 12e.5.1 `infant_food_share`, `milk_energy_cost` in `adult_equivalents()`. Done 2026-11-16 (Opus), with P206.
@@ -113,10 +113,10 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
     - [x] 12e.5.6 `compliance_model = "all_or_nothing"`: states in `apply_scenario()`. Done 2026-11-16 (Opus).
     - [x] 12e.5.7 Collapse in `inadequacy()` and `above_ul()`; numeric `above_ul_*`; the estimators refuse the states table; template choice. Done 2026-11-16 (Opus).
     - [x] 12e.5.8 Specification, `NEWS.md`, coverage exhibit with both coverages, self-review. Done 2026-11-17 (Opus), with P210, P217, P218, P219 (`max_states`) and the column at compliance 1 in the upper-level exhibit (V3.1). Self-review items P221 to P225.
-    - [ ] 12e.9 Once for task 12e: `devtools::check()` (0/0/0) and `lintr::lint_package()`.
+    - [x] 12e.9 Once for task 12e: `devtools::check()` (0/0/0) and `lintr::lint_package()`. Done 2026-11-17 (Opus): 0 errors, 0 warnings, 0 notes; no lints; no code change. The only warning of the first run was `qpdf` missing from the container (installed with apt in the session).
 
 ## v0.1, companion repository `hcesfort.engih2018`: ENGIH 2018 adapter (needs the microdata)
-- [ ] A0. Design of the adapter and of the acceptance test: `docs/design-adapter-engih.md` (Fable, 2026-11-16), from `docs/adapter-design-brief.md`. Written; its eight decisions (section 9) wait for approval. No package code.
+- [x] A0. Design of the adapter and of the acceptance test: `docs/design-adapter-engih.md` (Fable, 2026-11-16), from `docs/adapter-design-brief.md`. Written; its eight decisions (section 9) approved on 2026-11-16 (A-D1 to A-D8 in `docs/improvements.md`). No package code.
 - [ ] A1. Stage-level control figures exported from the original pipeline (record counts by section and drop cause, grams by section, AFE distribution, median intake per nutrient), md5 of the microdata, and the three checks left open on E4 (energy of Sec 3A alone by days with a record, upper tail by days, the eighth day) plus the number of records in dozens (E2). Run by the maintainer when the microdata are at hand: first the md5 and a rerun of the original chain, then `scripts/exportar_cifras_etapas.R` of `analisis_ENGIH2018` (design, section 2).
 - [ ] A2. Thin adapter: ENGIH files → standard tables that pass the contracts of task 2. Start right after task 2 so the contracts meet a real survey early.
 - [ ] A3. Acceptance step 1: reproduce the control figures with the original choices as explicit options (tolerance 1e-6).
