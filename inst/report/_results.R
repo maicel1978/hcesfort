@@ -1,8 +1,9 @@
 # Exhibits of the results report (docs/design-reports-v3.md, section 6):
-# its inputs and sections 0 to 2. Sourced by results.qmd after _inputs.R,
-# _chain.R, _tables.R, _figures.R and _exhibits.R, before _scenarios.R;
-# do not edit. Each builder named in exhibits.csv takes the instance and
-# returns the list that show_exhibit() prints. Tables have code column
+# its inputs and sections 0 and 2 (section 1 is in _coverage.R). Sourced
+# by results.qmd after _inputs.R, _chain.R, _tables.R, _figures.R and
+# _exhibits.R, before _coverage.R, _scenarios.R and _upper.R; do not
+# edit. Each builder named in exhibits.csv takes the instance and returns
+# the list that show_exhibit() prints. Tables have code column
 # names, labels in the order of labels.csv, shares in percent and
 # differences in points; figures print the short labels (R22). Each
 # section, nationally and by domain, is shown only where the readiness
@@ -124,7 +125,8 @@ risk <- NULL
 if (enabled("risk")) {
   s <- if (enabled("scenarios")) {
     apply_scenario(drop_excluded(intake), use, scenarios,
-                   compliance_model = compliance_model)
+                   compliance_model = compliance_model,
+                   max_states = max_states)
   } else {
     drop_excluded(intake)
   }
@@ -187,70 +189,6 @@ findings_figure <- function(instance) {
   list(table = p$table, figure = g,
        rows = panel_rows(p$data, "scenario", "nutrient"),
        note = method_note())
-}
-
-# ---- Section 1. Coverage and quantity --------------------------------
-coverage_exhibit <- function(e, col, value = "acquired", ...) {
-  p <- shown_pair(e, stats::setNames(col, col), NULL, value, ...)
-  list(table = p$table,
-       figure = fig_interval(p$data, value, col,
-                             xlab = term(value, "header"),
-                             ylab = term(col, "header"),
-                             percent = value == "acquired"))
-}
-
-coverage_vehicle <- function(instance) {
-  coverage_exhibit(est(use[use$level == "vehicle", ], "acquired"),
-                   "vehicle")
-}
-
-coverage_group <- function(instance) {
-  e <- est(use[use$level %in% c("group", "combined"), ], "acquired")
-  e$vehicle_group <- e$vehicle
-  out <- coverage_exhibit(e, "vehicle_group")
-  out$note <- fill(term("groups", "note"), groups = group_note())
-  out
-}
-
-# The members of each vehicle group and of "any vehicle".
-group_note <- function() {
-  g <- unique(stats::na.omit(vehicles$vehicle_group))
-  members <- function(v) collapse(as.character(lab(unique(v), "vehicle")))
-  parts <- vapply(g, function(x) {
-    paste0(lab(x, "vehicle_group"), ": ",
-           members(vehicles$vehicle[vehicles$vehicle_group %in% x]))
-  }, character(1))
-  any <- paste0(lab("any_vehicle", "vehicle_group"), ": ",
-                members(vehicles$vehicle))
-  paste(c(parts, any), collapse = "; ")
-}
-
-# Median among acquirers, judged by sample size and degrees of freedom
-# only (S1).
-quantity_vehicle <- function(instance) {
-  e <- precision(estimate_households(
-    design, use[use$level == "vehicle", ], "qty_vehicle_g_d",
-    statistic = "median", domain = "acquired", level = level
-  ))
-  out <- coverage_exhibit(e, "vehicle", "median_g", scale = round,
-                          unit = " g")
-  out$note <- term("not_proportion", "note")
-  out
-}
-
-# Households acquiring no vehicle, one domain variable (the national
-# figure is the complement of R1.2). The proportion is estimated as such,
-# so the standard judges the estimate that is printed.
-no_vehicle_by_domain <- function(instance) {
-  x <- use[use$vehicle == "any_vehicle", ]
-  x$no_vehicle <- !x$acquired
-  p <- shown_pair(est(x, "no_vehicle", by = instance), list(), instance,
-                  "none")
-  g <- fig_interval(p$data, "none", "domain_value",
-                    xlab = term("none", "header"),
-                    ylab = as.character(lab(instance, "domain")),
-                    percent = TRUE)
-  list(table = p$table, figure = g, headers = value_header(instance))
 }
 
 # ---- Section 2. Inadequate apparent intake ---------------------------

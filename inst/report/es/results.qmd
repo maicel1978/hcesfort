@@ -37,7 +37,9 @@ source("_tables.R", local = TRUE)
 source("_figures.R", local = TRUE)
 source("_exhibits.R", local = TRUE)
 source("_results.R", local = TRUE)
+source("_coverage.R", local = TRUE)
 source("_scenarios.R", local = TRUE)
+source("_upper.R", local = TRUE)
 knitr::opts_chunk$set(results = "asis")
 ```
 

@@ -63,6 +63,11 @@ make_grams <- function(acquisitions, unit_factors) {
 # the vehicle carries the full level and the rest none). The upper-level
 # exhibit names the model.
 compliance_model <- "average_content"
+# Under "all_or_nothing" a scenario with k vehicles of partial compliance
+# has 2^k states, each a copy of every household: the largest number of
+# states a scenario may have, checked before the rows are built; NULL is
+# no limit. The log row `states` of apply_scenario() gives the rows and MB.
+max_states <- NULL
 # Records of a vehicle with `fortifiable` FALSE in `acquisitions` (own
 # production, home processing) get nothing in the scenarios: "use". With
 # "ignore" every gram of a vehicle is fortified. Read only when

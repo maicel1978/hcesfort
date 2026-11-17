@@ -47,6 +47,7 @@ header,,nutrient,Nutriente
 header,,vehicle,Vehículo
 header,,vehicle_group,Grupo de vehículos
 header,,acquired,Hogares que adquieren (%)
+header,,acquired_fortifiable,Que adquieren una forma fortificable (%)
 header,,median_g,Mediana de g por EMA y día
 header,,none,Hogares que no adquieren ningún vehículo (%)
 header,,inadequate,Ingesta aparente inadecuada (%)
@@ -59,6 +60,7 @@ header,,form,Forma
 header,,compliance,Cumplimiento (%)
 header,,source,Fuente
 header,,above_ul,Por encima del nivel máximo (%)
+header,,above_ul_full,Con cumplimiento 1 (%)
 header,,food_group,Grupo de alimentos
 header,,share,Proporción de la ingesta (%)
 header,,ear,EAR
@@ -204,6 +206,8 @@ title,,RT3,"Hogares con ingesta aparente inadecuada de hierro, por biodisponibil
 note,,n,n = {n} hogares
 note,,suppressed,— Suprimida según la norma de presentación
 note,,cumulative,"Un escenario enumera todos los vehículos que fortifica, por lo que los escenarios acumulativos repiten los vehículos del anterior."
+note,,fortifiable_coverage,"Punto hueco: hogares que adquieren el vehículo en una forma que podría fortificarse (no de producción propia ni de elaboración casera), la cobertura del vehículo fortificable; el punto lleno cuenta el vehículo en cualquier forma."
+note,,fortifiable_share,"En los escenarios solo los gramos fortificables reciben el fortificante; la producción propia y la elaboración casera no reciben nada. Proporción fortificable de los gramos de cada vehículo (ponderada): {shares}."
 note,,empty,— Sin dato: ningún hogar con estimación.
 note,,review,† Señalada para revisión estadística
 note,,complement,‡ El complemento de la estimación puede no ser fiable.
@@ -223,7 +227,8 @@ note,,national_line,Línea discontinua: la estimación nacional.
 note,,effect,"Panel izquierdo: punto hueco, el escenario de comparación ({comparators}); punto lleno, el escenario. Panel derecho: diferencia pareada en puntos porcentuales, con su IC {level}%."
 note,,usual_intake,"Ingesta aparente, no ingesta habitual: la proporción de hogares cuyas adquisiciones en el período de referencia, por equivalente de mujer adulta, quedan por debajo del requerimiento. El punto de corte y el enfoque probabilístico se definen sobre la ingesta habitual (IOM 2000b, pp. 73 y 99; IOM 2001, p. 703); es una cifra para comparar escenarios sobre los mismos datos, no una prevalencia de inadecuación."
 note,,ul_adult,El nivel máximo de los adultos se aplica a la ingesta por equivalente de mujer adulta; los niños tienen niveles máximos más bajos.
-note,,ul_average_content,"Con contenido medio y un cumplimiento menor que 1, cada gramo del vehículo lleva una parte del nivel y ningún hogar recibe el nivel completo, de modo que la proporción por encima del nivel máximo está subestimada; los mismos niveles con cumplimiento 1 dan su cota superior."
+note,,ul_compliance_1,"Con cumplimiento 1: los mismos niveles con todo cumplimiento igual a 1 (punto hueco en la figura), la cota superior de la proporción por encima del nivel máximo con cualquiera de los dos modelos de cumplimiento."
+note,,ul_average_content,"Con contenido medio y un cumplimiento menor que 1, cada gramo del vehículo lleva una parte del nivel y ningún hogar recibe el nivel completo. La cifra no es una cota inferior: si una parte del producto llevara el nivel completo y el resto ninguno, la proporción podría ser mayor o menor. La columna con cumplimiento 1 es su cota superior con cualquiera de los dos supuestos."
 note,,ul_model_average_content,"Modelo de cumplimiento: contenido medio; cada gramo del vehículo lleva el cumplimiento multiplicado por el nivel."
 note,,ul_model_all_or_nothing,"Modelo de cumplimiento: todo o nada; una parte del vehículo igual al cumplimiento lleva el nivel completo y el resto ninguno, cada hogar recibe uno u otro, y se supone que los vehículos son independientes. Las proporciones por encima del nivel máximo son valores esperados sobre estas combinaciones."
 note,,no_content,Sin aporte de {nutrient}: {groups}.

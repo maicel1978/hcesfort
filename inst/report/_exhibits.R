@@ -4,8 +4,9 @@
 # appendix of tables. Language-free: every word comes from terms.csv or
 # labels.csv. Sourced after _tables.R and _figures.R; may be edited.
 #
-# An exhibit is built by the one function of _readiness.R or _results.R
-# named in its `builder` column. A builder takes the instance (NULL, a
+# An exhibit is built by the one function of the files sourced by the
+# report (_readiness.R, _results.R, _coverage.R, ...) named in its
+# `builder` column. A builder takes the instance (NULL, a
 # domain, a nutrient, or a nutrient and a domain, as `repeats` says) and
 # returns a list with `table` (a table of display(), or any data frame),
 # and optionally `figure` (a ggplot), `rows` (the number of rows of the

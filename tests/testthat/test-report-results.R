@@ -225,16 +225,26 @@ test_that("the upper-level zeros are one sentence, not points (K24)", {
   use <- vehicle_coverage(g, e$vehicles, afe, e$households,
                           fortifiable = "use")
   use <- restore_audit(use[use$household_id %in% intake$household_id, ], use)
-  s <- apply_scenario(intake, use, e$scenarios,
-                      compliance_model = "average_content")
-  ul <- above_ul(s, ref_requirements, min_coverage = 0.8,
-                 min_records_used = 0.8)
-  pairs <- paste(e$scenarios$scenario, e$scenarios$nutrient)
-  ul <- ul[paste(ul$scenario, ul$nutrient) %in% pairs, ]
-  above <- dplyr::coalesce(ul$above_ul_total, ul$above_ul_added)
-  any_above <- tapply(above %in% TRUE, ul$nutrient, any)
-  none <- names(any_above)[!any_above]
-  expect_setequal(none, c("iron", "zinc", "vitamin_a"))
+  # A nutrient leaves the figure only when it is zero at the compliance
+  # of the scenarios and at compliance 1 (the column of the bound).
+  full <- e$scenarios
+  full$compliance <- 1
+  above_any <- function(sc) {
+    s <- apply_scenario(intake, use, sc, compliance_model = "average_content")
+    ul <- above_ul(s, ref_requirements, min_coverage = 0.8,
+                   min_records_used = 0.8)
+    pairs <- paste(e$scenarios$scenario, e$scenarios$nutrient)
+    ul <- ul[paste(ul$scenario, ul$nutrient) %in% pairs, ]
+    above <- dplyr::coalesce(ul$above_ul_total, ul$above_ul_added)
+    tapply(!is.na(above) & above > 0, ul$nutrient, any)
+  }
+  shipped <- above_any(e$scenarios)
+  bound <- above_any(full)
+  none <- names(shipped)[!shipped & !bound[names(shipped)]]
+  expect_setequal(none, "zinc")
+  # Iron and vitamin A: no household above at the shipped compliance, some
+  # at compliance 1.
+  expect_setequal(names(shipped)[!shipped], c("iron", "zinc", "vitamin_a"))
   for (lang in results_langs) {
     r <- shipped_results(lang)
     nutrient <- labels_of_type(lang, "nutrient")
@@ -246,7 +256,10 @@ test_that("the upper-level zeros are one sentence, not points (K24)", {
     }, logical(1))]
     expect_setequal(named, none)
     expect_false(nutrient[["zinc"]] %in% r$tables$R3.3$nutrient)
-    expect_true(all(r$figures$R3.3$data$above_ul > 0))
+    d <- r$figures$R3.3$data
+    some <- tapply(d$above_ul > 0 | d$above_ul_full > 0, d$nutrient, any)
+    expect_true(all(some))
+    expect_true(nutrient[["iron"]] %in% r$tables$R3.3$nutrient)
   }
 })
 
@@ -403,14 +416,18 @@ test_that("energy_action leaves out or keeps the implausible (P148)", {
   expect_match(r$md, paste("The results leave out the 33 households, of",
                            "1,928 with an estimated apparent energy"),
                fixed = TRUE)
-  expect_false("Iron" %in% r$figures$R3.3$data$nutrient)
+  # Iron stays in the exhibit for its column at compliance 1 (V3.1), with
+  # no household above at the compliance shipped.
+  d <- r$figures$R3.3$data
+  expect_true(all(d$above_ul[d$nutrient == "Iron"] %in% 0))
   keep <- knit_report("es", "results",
                       append = "choices$energy_action <- 'keep'")
   expect_match(keep$md, paste("Los resultados incluyen los 33 hogares, de",
                               "1,928 con energía aparente estimada"),
                fixed = TRUE)
   expect_match(keep$md, "n = 1,928", fixed = TRUE)
-  expect_true("Hierro" %in% keep$figures$R3.3$data$nutrient)
+  k <- keep$figures$R3.3$data
+  expect_true(any(k$above_ul[k$nutrient == "Hierro"] > 0))
   # Without energy there is nothing to leave out.
   none <- knit_report("en", "results", append = c(
     "choices['energy'] <- list(NULL)", "choices$energy_action <- 'keep'"
@@ -439,4 +456,37 @@ test_that("the upper-level exhibit names the compliance model (12e.5.7)", {
   # In percent.
   expect_true(all(above >= 0 & above <= 100))
   expect_true(any(above > 0))
+})
+
+test_that("the upper-level exhibit has the column at compliance 1 (V3.1)", {
+  skip_if_no_knit()
+  # Maintainer's rule (2026-11-16): no report leaves without it. It bounds
+  # the share under either model (P218).
+  head <- c(en = "At compliance 1 (%)", es = "Con cumplimiento 1 (%)")
+  note <- c(en = "At compliance 1: the same levels",
+            es = "Con cumplimiento 1: los mismos niveles")
+  for (lang in results_langs) {
+    r <- shipped_results(lang)
+    md <- strip_comments(r$md)
+    expect_true(grepl(head[[lang]], md, fixed = TRUE), info = lang)
+    expect_true(grepl(note[[lang]], md, fixed = TRUE), info = lang)
+    d <- r$figures$R3.3$data
+    ok <- !is.na(d$above_ul) & !is.na(d$above_ul_full)
+    expect_true(all(d$above_ul_full[ok] >= d$above_ul[ok]), info = lang)
+    expect_true(any(d$above_ul_full[ok] > d$above_ul[ok]), info = lang)
+  }
+  r <- knit_report("en", "results",
+                   append = "compliance_model <- 'all_or_nothing'")
+  d <- r$figures$R3.3$data
+  ok <- !is.na(d$above_ul) & !is.na(d$above_ul_full)
+  expect_true(all(d$above_ul_full[ok] >= d$above_ul[ok]))
+  # The limit of the template stops the knit before the rows are built.
+  expect_error(knit_report("en", "results", append = c(
+    "compliance_model <- 'all_or_nothing'", "max_states <- 2"
+  )), class = "hcesfort_error_value")
+  # Every compliance at 1: no column, no note.
+  r <- knit_report("en", "results",
+                   append = "scenarios$compliance <- 1")
+  expect_null(r$figures$R3.3$data$above_ul_full)
+  expect_false(grepl(note[["en"]], strip_comments(r$md), fixed = TRUE))
 })

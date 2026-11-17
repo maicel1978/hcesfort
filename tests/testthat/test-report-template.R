@@ -1,9 +1,10 @@
 # use_report_template() and the template it copies (inst/report).
 
 template_files <- function(lang) {
-  shared <- c("_chain.R", "_exhibits.R", "_figures.R", "_inputs.R",
-              "_readiness.R", "_results.R", "_scenarios.R", "_tables.R",
-              "_verdict.R", "exhibits.csv", "report.css")
+  shared <- c("_chain.R", "_coverage.R", "_exhibits.R", "_figures.R",
+              "_inputs.R", "_readiness.R", "_results.R", "_scenarios.R",
+              "_tables.R", "_upper.R", "_verdict.R", "exhibits.csv",
+              "report.css")
   own <- c("decisions.csv", "labels.csv", "terms.csv", "readiness.qmd",
            "results.qmd")
   c(shared, own)

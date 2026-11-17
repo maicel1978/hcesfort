@@ -190,3 +190,22 @@ verdict_text <- function(v) {
   ifelse(v$enabled, term(rep("enabled", nrow(v)), "verdict"),
          paste0(term(v$reason, "verdict_reason"), " (", detail, ")"))
 }
+
+# The column `col` of a table of display() moved to the end, its
+# attributes kept.
+move_last <- function(d, col) {
+  keep <- attributes(d)
+  d <- d[c(setdiff(names(d), col), col)]
+  keep$names <- names(d)
+  attributes(d) <- keep
+  d
+}
+
+# The estimates of a table of flag_presentation() scaled by `scale`, for a
+# column beside another estimate: missing where display() would hide them
+# (suppressed, or flagged for review when `choices$review` is "suppress").
+shown_value <- function(e, scale = pct) {
+  hide <- e$presentation %in% "suppress" |
+    (e$presentation %in% "review" & choices$review == "suppress")
+  scale(ifelse(hide, NA, e$estimate))
+}

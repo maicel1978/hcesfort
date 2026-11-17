@@ -47,6 +47,7 @@ header,,nutrient,Nutrient
 header,,vehicle,Vehicle
 header,,vehicle_group,Vehicle group
 header,,acquired,Households acquiring (%)
+header,,acquired_fortifiable,Acquiring a fortifiable form (%)
 header,,median_g,Median g per AFE per day
 header,,none,Households acquiring no vehicle (%)
 header,,inadequate,Inadequate apparent intake (%)
@@ -59,6 +60,7 @@ header,,form,Form
 header,,compliance,Compliance (%)
 header,,source,Source
 header,,above_ul,Above the upper level (%)
+header,,above_ul_full,At compliance 1 (%)
 header,,food_group,Food group
 header,,share,Share of intake (%)
 header,,ear,EAR
@@ -204,6 +206,8 @@ title,,RT3,"Households with inadequate apparent intake of iron, by iron bioavail
 note,,n,n = {n} households
 note,,suppressed,— Suppressed under the presentation standard
 note,,cumulative,"A scenario lists every vehicle it fortifies, so cumulative scenarios repeat the vehicles of the one before."
+note,,fortifiable_coverage,"Hollow point: households acquiring the vehicle in a form that could be fortified (not own production or home processing), the coverage of the fortifiable vehicle; the filled point counts the vehicle in any form."
+note,,fortifiable_share,"Only the fortifiable grams get the fortificant in the scenarios; own production and home processing get nothing. Fortifiable share of the grams of each vehicle (weighted): {shares}."
 note,,empty,— No data: no household with an estimate.
 note,,review,† Flagged for statistical review
 note,,complement,‡ The complement of the estimate may be unreliable.
@@ -223,7 +227,8 @@ note,,national_line,Dashed line: the national estimate.
 note,,effect,"Left panel: hollow point, the scenario compared with ({comparators}); filled point, the scenario. Right panel: paired difference in percentage points, with its {level}% CI."
 note,,usual_intake,"Apparent intake, not usual intake: the share of households whose acquisitions over the recall period, per adult female equivalent, fall below the requirement. The cut-point and the probability approach are defined on usual intake (IOM 2000b, pp. 73 and 99; IOM 2001, p. 703); this is a figure for comparing scenarios on the same data, not a prevalence of inadequacy."
 note,,ul_adult,The adult upper level is applied to intake per adult female equivalent; children have lower upper levels.
-note,,ul_average_content,"Under average content with a compliance below 1, every gram of the vehicle carries part of the level and no household receives the full level, so the share above the upper level is understated; the same levels at compliance 1 give its upper bound."
+note,,ul_compliance_1,"At compliance 1: the same levels with every compliance set to 1 (hollow point in the figure), the upper bound of the share above the upper level under either compliance model."
+note,,ul_average_content,"Under average content with a compliance below 1, every gram of the vehicle carries part of the level and no household receives the full level. The figure is not a lower bound: if part of the product carried the full level and the rest none, the share could be larger or smaller. The column at compliance 1 is its upper bound under either assumption."
 note,,ul_model_average_content,"Compliance model: average content; every gram of the vehicle carries the compliance times the level."
 note,,ul_model_all_or_nothing,"Compliance model: all or nothing; a share of the vehicle equal to the compliance carries the full level and the rest none, each household receives one or the other, and the vehicles are assumed independent. The shares above the upper level are expected values over these combinations."
 note,,no_content,No {nutrient} from: {groups}.

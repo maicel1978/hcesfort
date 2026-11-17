@@ -710,15 +710,17 @@
     Output
       [R1.1] Figure R1.1. Households that acquire each fortification vehicle, % (95% CI)
       
-      vehicle | n | acquired | ci_low | ci_high | mark
-      Wheat flour | 1931 | 63.9 | 61.4 | 66.4 | NA
-      Bread | 1931 | 78.7 | 76.3 | 80.9 | NA
-      Pasta | 1931 | 59.6 | 57.0 | 62.2 | NA
-      Maize flour | 1931 | 29.3 | 26.7 | 32.0 | NA
-      Rice | 1931 | 95.8 | 94.6 | 96.7 | NA
-      Sugar | 1931 | 96.1 | 95.1 | 96.9 | NA
-      Vegetable oil | 1931 | 93.5 | 92.1 | 94.7 | NA
+      vehicle | n | acquired | ci_low | ci_high | mark | acquired_fortifiable
+      Wheat flour | 1931 | 63.9 | 61.4 | 66.4 | NA | 60.9
+      Bread | 1931 | 78.7 | 76.3 | 80.9 | NA | 73.2
+      Pasta | 1931 | 59.6 | 57.0 | 62.2 | NA | 55.2
+      Maize flour | 1931 | 29.3 | 26.7 | 32.0 | NA | 27.4
+      Rice | 1931 | 95.8 | 94.6 | 96.7 | NA | 89.6
+      Sugar | 1931 | 96.1 | 95.1 | 96.9 | NA | 91.6
+      Vegetable oil | 1931 | 93.5 | 92.1 | 94.7 | NA | 86.5
       n = 1,931 households
+      Hollow point: households acquiring the vehicle in a form that could be fortified (not own production or home processing), the coverage of the fortifiable vehicle; the filled point counts the vehicle in any form.
+      Only the fortifiable grams get the fortificant in the scenarios; own production and home processing get nothing. Fortifiable share of the grams of each vehicle (weighted): Wheat flour 93.6%, Bread 92.9%, Pasta 92.6%, Maize flour 92.1%, Rice 92.7%, Sugar 93.8% and Vegetable oil 92.7%.
 
 ---
 
@@ -955,6 +957,7 @@
       Wheat and maize flour, rice, sugar, and oil with vitamin A | + oil | Sugar | Vitamin A | vitamin A compound (invented) |  5 | 70 | Invented for the example
       Wheat and maize flour, rice, sugar, and oil with vitamin A | + oil | Vegetable oil | Vitamin A | retinol |  6 | 90 | Invented for the example
       A scenario lists every vehicle it fortifies, so cumulative scenarios repeat the vehicles of the one before.
+      Only the fortifiable grams get the fortificant in the scenarios; own production and home processing get nothing. Fortifiable share of the grams of each vehicle (weighted): Wheat flour 93.6%, Bread 92.9%, Pasta 92.6%, Maize flour 92.1%, Rice 92.7%, Sugar 93.8% and Vegetable oil 92.7%.
 
 ---
 
@@ -1031,20 +1034,31 @@
       cat(r$env$exhibit_text(key), sep = "\n")
     Output
       [R3.3] Figure R3.3. Households above the upper level, by scenario, % (95% CI)
-      In the sample, the same value in every household: Folate, Wheat flour with iron, zinc and folic acid = 0% (n = 1,895; interval limit 0.19%); Folate, Wheat and maize flour with iron, zinc and folic acid = 0% (n = 1,895; interval limit 0.19%).
-      In the sample (n = 1,895), no household exceeds the upper level of iron, zinc and vitamin A under any scenario (upper limit of the 95% CI: iron 0.19%; zinc 0.19%; vitamin A 0.19% of households).
-      nutrient | scenario | n | above_ul | ci_low | ci_high | mark
-      Folate | Wheat and maize flour, and rice with iron and folic acid | 1895 | 0.4 | 0.17 | 0.8 | NA
-      Folate | Wheat and maize flour, rice, and sugar with vitamin A | 1895 | 0.4 | 0.17 | 0.8 | NA
-      Folate | Wheat and maize flour, rice, sugar, and oil with vitamin A | 1895 | 0.4 | 0.17 | 0.8 | NA
+      
+      In the sample (n = 1,895), no household exceeds the upper level of zinc under any scenario (upper limit of the 95% CI: zinc 0.19% of households).
+      nutrient | scenario | n | above_ul | ci_low | ci_high | mark | above_ul_full
+      Iron | Wheat flour with iron, zinc and folic acid | 1895 | 0.0 | 0.00 | 0.19 | † |  0.00
+      Iron | Wheat and maize flour with iron, zinc and folic acid | 1895 | 0.0 | 0.00 | 0.19 | † |  0.00
+      Iron | Wheat and maize flour, and rice with iron and folic acid | 1895 | 0.0 | 0.00 | 0.19 | † |  0.30
+      Iron | Wheat and maize flour, rice, and sugar with vitamin A | 1895 | 0.0 | 0.00 | 0.19 | † |  0.30
+      Iron | Wheat and maize flour, rice, sugar, and oil with vitamin A | 1895 | 0.0 | 0.00 | 0.19 | † |  0.30
+      Folate | Wheat flour with iron, zinc and folic acid | 1895 | 0.0 | 0.00 | 0.19 | † |  0.00
+      Folate | Wheat and maize flour with iron, zinc and folic acid | 1895 | 0.0 | 0.00 | 0.19 | † |  0.04
+      Folate | Wheat and maize flour, and rice with iron and folic acid | 1895 | 0.4 | 0.17 | 0.80 | NA | 17.63
+      Folate | Wheat and maize flour, rice, and sugar with vitamin A | 1895 | 0.4 | 0.17 | 0.80 | NA | 17.63
+      Folate | Wheat and maize flour, rice, sugar, and oil with vitamin A | 1895 | 0.4 | 0.17 | 0.80 | NA | 17.63
+      Vitamin A | Wheat and maize flour, rice, and sugar with vitamin A | 1895 | 0.0 | 0.00 | 0.19 | † |  0.00
+      Vitamin A | Wheat and maize flour, rice, sugar, and oil with vitamin A | 1895 | 0.0 | 0.00 | 0.19 | † |  0.03
       n = 1,895 households
+      † Flagged for statistical review: no household or every household in the sample.
       Iron: Total intake under the scenario is compared. Supplements and water are not counted, and missing records or composition values lower it (IOM 2001, Summary, pp. 26-27).
       Zinc: Total intake under the scenario is compared. Supplements and water are not counted, and missing records or composition values lower it (IOM 2001, Summary, pp. 26-27).
       Folate: The upper level applies to folate from fortified food or supplements, not to food folate, so the folic acid added by the scenario is the quantity to compare. Folic acid from foods fortified outside the scenarios and from supplements is not recorded by the survey: where they exist, the share is a lower bound (IOM 1998, pp. 13, 280).
       Vitamin A: The upper level applies to preformed vitamin A from food, fortified food and supplements. Only the retinol added by the scenario is compared; preformed vitamin A of the diet and of supplements is not counted, so the share is a lower bound (IOM 2001, pp. 126, 142).
       The adult upper level is applied to intake per adult female equivalent; children have lower upper levels.
       Compliance model: average content; every gram of the vehicle carries the compliance times the level.
-      Under average content with a compliance below 1, every gram of the vehicle carries part of the level and no household receives the full level, so the share above the upper level is understated; the same levels at compliance 1 give its upper bound.
+      At compliance 1: the same levels with every compliance set to 1 (hollow point in the figure), the upper bound of the share above the upper level under either compliance model.
+      Under average content with a compliance below 1, every gram of the vehicle carries part of the level and no household receives the full level. The figure is not a lower bound: if part of the product carried the full level and the rest none, the share could be larger or smaller. The column at compliance 1 is its upper bound under either assumption.
 
 ---
 
@@ -1341,15 +1355,17 @@
     Output
       [R1.1] Figura R1.1. Hogares que adquieren cada vehículo de fortificación, % (IC 95%)
       
-      vehicle | n | acquired | ci_low | ci_high | mark
-      Harina de trigo | 1931 | 63.9 | 61.4 | 66.4 | NA
-      Pan | 1931 | 78.7 | 76.3 | 80.9 | NA
-      Pastas | 1931 | 59.6 | 57.0 | 62.2 | NA
-      Harina de maíz | 1931 | 29.3 | 26.7 | 32.0 | NA
-      Arroz | 1931 | 95.8 | 94.6 | 96.7 | NA
-      Azúcar | 1931 | 96.1 | 95.1 | 96.9 | NA
-      Aceite vegetal | 1931 | 93.5 | 92.1 | 94.7 | NA
+      vehicle | n | acquired | ci_low | ci_high | mark | acquired_fortifiable
+      Harina de trigo | 1931 | 63.9 | 61.4 | 66.4 | NA | 60.9
+      Pan | 1931 | 78.7 | 76.3 | 80.9 | NA | 73.2
+      Pastas | 1931 | 59.6 | 57.0 | 62.2 | NA | 55.2
+      Harina de maíz | 1931 | 29.3 | 26.7 | 32.0 | NA | 27.4
+      Arroz | 1931 | 95.8 | 94.6 | 96.7 | NA | 89.6
+      Azúcar | 1931 | 96.1 | 95.1 | 96.9 | NA | 91.6
+      Aceite vegetal | 1931 | 93.5 | 92.1 | 94.7 | NA | 86.5
       n = 1,931 hogares
+      Punto hueco: hogares que adquieren el vehículo en una forma que podría fortificarse (no de producción propia ni de elaboración casera), la cobertura del vehículo fortificable; el punto lleno cuenta el vehículo en cualquier forma.
+      En los escenarios solo los gramos fortificables reciben el fortificante; la producción propia y la elaboración casera no reciben nada. Proporción fortificable de los gramos de cada vehículo (ponderada): Harina de trigo 93.6%, Pan 92.9%, Pastas 92.6%, Harina de maíz 92.1%, Arroz 92.7%, Azúcar 93.8% y Aceite vegetal 92.7%.
 
 ---
 
@@ -1586,6 +1602,7 @@
       Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | + aceite | Azúcar | Vitamina A | compuesto de vitamina A (inventado) |  5 | 70 | Inventado para el ejemplo
       Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | + aceite | Aceite vegetal | Vitamina A | retinol |  6 | 90 | Inventado para el ejemplo
       Un escenario enumera todos los vehículos que fortifica, por lo que los escenarios acumulativos repiten los vehículos del anterior.
+      En los escenarios solo los gramos fortificables reciben el fortificante; la producción propia y la elaboración casera no reciben nada. Proporción fortificable de los gramos de cada vehículo (ponderada): Harina de trigo 93.6%, Pan 92.9%, Pastas 92.6%, Harina de maíz 92.1%, Arroz 92.7%, Azúcar 93.8% y Aceite vegetal 92.7%.
 
 ---
 
@@ -1662,20 +1679,31 @@
       cat(r$env$exhibit_text(key), sep = "\n")
     Output
       [R3.3] Figura R3.3. Hogares por encima del nivel máximo, por escenario, % (IC 95%)
-      En la muestra, el mismo valor en todos los hogares: Folato, Harina de trigo con hierro, zinc y ácido fólico = 0% (n = 1,895; límite del intervalo 0.19%); Folato, Harinas de trigo y de maíz con hierro, zinc y ácido fólico = 0% (n = 1,895; límite del intervalo 0.19%).
-      En la muestra (n = 1,895), ningún hogar supera el nivel máximo de hierro, zinc y vitamina A con ningún escenario (límite superior del IC 95%: hierro 0.19%; zinc 0.19%; vitamina A 0.19% de los hogares).
-      nutrient | scenario | n | above_ul | ci_low | ci_high | mark
-      Folato | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | 1895 | 0.4 | 0.17 | 0.8 | NA
-      Folato | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | 1895 | 0.4 | 0.17 | 0.8 | NA
-      Folato | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | 1895 | 0.4 | 0.17 | 0.8 | NA
+      
+      En la muestra (n = 1,895), ningún hogar supera el nivel máximo de zinc con ningún escenario (límite superior del IC 95%: zinc 0.19% de los hogares).
+      nutrient | scenario | n | above_ul | ci_low | ci_high | mark | above_ul_full
+      Hierro | Harina de trigo con hierro, zinc y ácido fólico | 1895 | 0.0 | 0.00 | 0.19 | † |  0.00
+      Hierro | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | 1895 | 0.0 | 0.00 | 0.19 | † |  0.00
+      Hierro | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | 1895 | 0.0 | 0.00 | 0.19 | † |  0.30
+      Hierro | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | 1895 | 0.0 | 0.00 | 0.19 | † |  0.30
+      Hierro | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | 1895 | 0.0 | 0.00 | 0.19 | † |  0.30
+      Folato | Harina de trigo con hierro, zinc y ácido fólico | 1895 | 0.0 | 0.00 | 0.19 | † |  0.00
+      Folato | Harinas de trigo y de maíz con hierro, zinc y ácido fólico | 1895 | 0.0 | 0.00 | 0.19 | † |  0.04
+      Folato | Harinas de trigo y de maíz, y arroz con hierro y ácido fólico | 1895 | 0.4 | 0.17 | 0.80 | NA | 17.63
+      Folato | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | 1895 | 0.4 | 0.17 | 0.80 | NA | 17.63
+      Folato | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | 1895 | 0.4 | 0.17 | 0.80 | NA | 17.63
+      Vitamina A | Harinas de trigo y de maíz, arroz, y azúcar con vitamina A | 1895 | 0.0 | 0.00 | 0.19 | † |  0.00
+      Vitamina A | Harinas de trigo y de maíz, arroz, azúcar, y aceite con vitamina A | 1895 | 0.0 | 0.00 | 0.19 | † |  0.03
       n = 1,895 hogares
+      † Señalada para revisión estadística: ningún hogar o todos los hogares de la muestra.
       Hierro: Se compara la ingesta total con el escenario. No se cuentan los suplementos ni el agua, y los registros o valores de composición que faltan la reducen (IOM 2001, resumen, pp. 26-27).
       Zinc: Se compara la ingesta total con el escenario. No se cuentan los suplementos ni el agua, y los registros o valores de composición que faltan la reducen (IOM 2001, resumen, pp. 26-27).
       Folato: El nivel máximo se aplica al folato de alimentos fortificados o suplementos, no al folato de los alimentos, de modo que el ácido fólico añadido por el escenario es la cantidad que se debe comparar. La encuesta no registra el ácido fólico de alimentos fortificados fuera de los escenarios ni el de suplementos: donde existan, la proporción es una cota inferior (IOM 1998, pp. 13, 280).
       Vitamina A: El nivel máximo se aplica a la vitamina A preformada de alimentos, alimentos fortificados y suplementos. Solo se compara el retinol añadido por el escenario; no se cuenta la vitamina A preformada de la dieta ni la de suplementos, de modo que la proporción es una cota inferior (IOM 2001, pp. 126, 142).
       El nivel máximo de los adultos se aplica a la ingesta por equivalente de mujer adulta; los niños tienen niveles máximos más bajos.
       Modelo de cumplimiento: contenido medio; cada gramo del vehículo lleva el cumplimiento multiplicado por el nivel.
-      Con contenido medio y un cumplimiento menor que 1, cada gramo del vehículo lleva una parte del nivel y ningún hogar recibe el nivel completo, de modo que la proporción por encima del nivel máximo está subestimada; los mismos niveles con cumplimiento 1 dan su cota superior.
+      Con cumplimiento 1: los mismos niveles con todo cumplimiento igual a 1 (punto hueco en la figura), la cota superior de la proporción por encima del nivel máximo con cualquiera de los dos modelos de cumplimiento.
+      Con contenido medio y un cumplimiento menor que 1, cada gramo del vehículo lleva una parte del nivel y ningún hogar recibe el nivel completo. La cifra no es una cota inferior: si una parte del producto llevara el nivel completo y el resto ninguno, la proporción podría ser mayor o menor. La columna con cumplimiento 1 es su cota superior con cualquiera de los dos supuestos.
 
 ---
 
