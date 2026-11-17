@@ -106,6 +106,77 @@ number of states is enough.
      "vehicles_assumed_independent"), c("cause", "n_records", "detail")]
    ```
 
+## Review of the all-or-nothing model (2026-11-17, Fable; a separate session)
+
+This section does not change the next step above.
+
+- **Done:** `docs/review-12e5-states.md`, from
+  `docs/review-12e5-states-brief.md`: the five questions answered,
+  findings S1.1 to S5.3, 12 mutations run (9 of 11 non-equivalent ones
+  caught); items P217 to P220 in `docs/improvements.md`. No package code
+  changed.
+- **Result:** the expectation over states, the probabilities and the
+  single use of the weight are right. Two findings for 12e.5.8: the
+  total-intake path of `above_ul()` on the states table has no test
+  (P217, failing input given), and average content is not a lower bound
+  of all or nothing, on the fixture and on `hces_example` (P218): the
+  help and the report note say "understated" where only the bound at
+  compliance 1 holds. The column at compliance 1 that 12e.5.8 adds is
+  that bound.
+- **P213, recommendation (P219):** the log alone is not enough, because
+  it is written after the memory is spent. An optional `max_states`
+  argument with no limit by default, set visibly in the report template,
+  plus the rows and MB in the log row `states`. Measured on the example:
+  498,000 rows, 830 MB of peak memory against 128 MB under average
+  content; about 3.7 GB at 9,000 households. The maintainer decides.
+
+### Review points
+
+1. **Average content above all or nothing on the example** (S4.1):
+
+   ```r
+   library(hcesfort)
+   # i, u as in review point 2 of the section of 12e.5.6 and 12e.5.7
+   ul <- function(sc, m) {
+     x <- above_ul(apply_scenario(i, u, sc, compliance_model = m),
+                   ref_requirements, min_coverage = 0.8,
+                   min_records_used = 0.8)
+     x <- x[x$scenario == "plus_sugar" & x$nutrient == "vitamin_a", ]
+     w <- hces_example$households$weight[match(x$household_id,
+       hces_example$households$household_id)]
+     ok <- !is.na(x$above_ul_added)
+     sum((x$above_ul_added * w)[ok]) / sum(w[ok])
+   }
+   sc1 <- hces_example$scenarios; sc1$compliance <- 1
+   c(average = ul(hces_example$scenarios, "average_content"),
+     aon = ul(hces_example$scenarios, "all_or_nothing"),
+     full = ul(sc1, "average_content"))  # 0.000468, 0.000328, 0.000468
+   ```
+
+2. **The untested path** (P217): `above_ul_total` on the states table.
+
+   ```r
+   devtools::load_all()
+   source("tests/testthat/helper-scenario.R")
+   s <- aon(two_vehicles())
+   ul <- data.frame(nutrient = "iron", unit = "mg", ul = 6, ul_unit = "mg",
+                    ul_applies_to = "total")
+   u <- above_ul(s, ul, min_coverage = 0.9, min_records_used = 0)
+   u[u$scenario == "both", c("household_id", "amount_total",
+                             "above_ul_total")]  # h1: 5.35, 0.5
+   ```
+
+3. **The cost of the states** (P219), peak memory of the three steps:
+
+   ```r
+   invisible(gc(reset = TRUE))
+   s <- apply_scenario(i, u, hces_example$scenarios,
+                       compliance_model = "all_or_nothing")
+   x <- above_ul(s, ref_requirements, min_coverage = 0.8,
+                 min_records_used = 0.8)
+   nrow(s); format(object.size(s), units = "MB"); sum(gc()[, 6])  # max MB
+   ```
+
 ## Design of the ENGIH adapter (2026-11-16, Fable; a separate session)
 
 This section does not change the next step above.
