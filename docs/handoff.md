@@ -36,8 +36,11 @@ specification (`docs/specification.md`: the states table, numeric
 `above_ul_*`); the coverage exhibit of the results report with both
 coverages (acquired and fortifiable); **the column at compliance 1 in the
 upper-level exhibit** (maintainer's rule: no report leaves the project
-without it); P210 with the coverage exhibit; then the self-review of
-12e.5. Then, once for task 12e: `devtools::check()` (0/0/0) and
+without it); P210 with the coverage exhibit; **P217, P218 and P219** from
+the review of the all-or-nothing model (read those three items in
+`docs/improvements.md` and section "Review of the all-or-nothing model"
+below; the maintainer approved them as recommended, see "Answers of the
+maintainer" there); then the self-review of 12e.5. Then, once for task 12e: `devtools::check()` (0/0/0) and
 `lintr::lint_package()`.
 
 ## Open questions
@@ -129,6 +132,17 @@ This section does not change the next step above.
   plus the rows and MB in the log row `states`. Measured on the example:
   498,000 rows, 830 MB of peak memory against 128 MB under average
   content; about 3.7 GB at 9,000 households. The maintainer decides.
+
+### Answers of the maintainer (2026-11-16)
+
+1. P217: approved; add the tests in 12e.5.8.
+2. P218: approved; correct `?above_ul` and the report note in 12e.5.8. Only
+   the figure at compliance 1 is a guaranteed upper bound; average content
+   and all or nothing are not ordered.
+3. P219: approved as recommended (optional `max_states`, `NULL` by default
+   meaning no limit, set visibly in the report template; rows and MB in the
+   log row `states`), in 12e.5.8, before the acceptance A3 runs on the full
+   survey. Building only the distinguishable states stays in task 12.
 
 ### Review points
 
