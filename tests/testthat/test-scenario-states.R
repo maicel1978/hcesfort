@@ -98,7 +98,7 @@ test_that("the log: model, states, independence, households once", {
   expect_identical(log$detail[log$cause == "compliance_model"],
                    "all_or_nothing")
   st <- log[log$cause == "states", ]
-  expect_identical(st$detail, c(
+  expect_identical(sub(";.*", "", st$detail), c(
     "both: 2 vehicles with partial compliance, 4 states",
     "one: 1 vehicle with partial compliance, 2 states"
   ))
@@ -140,4 +140,30 @@ test_that("functions of the scenario intake refuse the states table", {
                class = "hcesfort_error_audit")
   expect_error(flag_energy_plausibility(s, "energy_kcal", 100, 6000),
                class = "hcesfort_error_audit")
+})
+
+test_that("max_states stops a call before the rows are built (P219)", {
+  sc <- rbind(two_vehicles(),
+              transform(two_vehicles(c(1, 0.3)), scenario = "one"))
+  # "both" has 4 states, "one" 2.
+  expect_error(aon(sc, max_states = 3), class = "hcesfort_error_value")
+  expect_snapshot(aon(sc, max_states = 3), error = TRUE)
+  expect_identical(nrow(aon(sc, max_states = 4)), nrow(aon(sc)))
+  # Average content has one state per scenario: never above the limit.
+  a <- as_run(sc, compliance_model = "average_content", max_states = 1)
+  expect_s3_class(a, "hces_scenario_intake")
+  for (bad in list(0, 2.5, "4", c(4, 8), NA_real_, Inf)) {
+    expect_error(aon(sc, max_states = bad), class = "hcesfort_error_argument")
+  }
+})
+
+test_that("the log row states gives the rows and the size (P219)", {
+  s <- aon(rbind(two_vehicles(),
+                 transform(two_vehicles(c(1, 0.3)), scenario = "one")))
+  st <- audit_log(s)
+  st <- st[st$cause == "states", ]
+  # Three households: 4 x 3 and 2 x 3 rows.
+  expect_match(st$detail[1], "^both: .*; 12 rows, [0-9]+\\.[0-9] MB$")
+  expect_match(st$detail[2], "^one: .*; 6 rows, [0-9]+\\.[0-9] MB$")
+  expect_identical(sum(s$scenario %in% c("both", "one")), 18L)
 })

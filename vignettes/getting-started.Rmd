@@ -130,9 +130,11 @@ log[log$cause == "apparent_intake_not_usual_intake", c("cause", "detail")]
 
 The scenarios of `hces_example` have a compliance below 1 under the
 average-content model: every gram of the vehicle carries part of the level,
-so no household receives the full level, and the share above the upper
-level is understated. `above_ul()` flags each such scenario; the same
-levels at compliance 1 give the upper bound to report with it.
+so no household receives the full level. `above_ul()` flags each such
+scenario; the same levels at compliance 1 give the upper bound of the share
+above the upper level, under average content and under all or nothing, and
+are the figure to report with it. The two models give the same mean intake
+and are not ordered in that share: either can be the larger.
 
 ```{r upper-level}
 ul <- above_ul(scenarios, ref_requirements, min_coverage = 0.8,

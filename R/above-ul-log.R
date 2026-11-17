@@ -76,8 +76,9 @@ above_ul_log <- function(x, req, parts, cov, min_coverage) {
 
 # Flagged rows, one per scenario of `x` with a compliance below 1 under
 # the average-content model, when some UL is assessable: every gram then
-# carries part of the level, so the share above the UL is understated; the
-# same levels at compliance 1 give its upper bound (review v0.2, finding 9).
+# carries part of the level, so the share above the UL is below the figure
+# at compliance 1, its upper bound (review v0.2, finding 9). It is not a
+# lower bound of all or nothing (P218).
 understates_ul_rows <- function(x, scope) {
   log <- audit_get(x)
   f <- log$step == "apply_scenario"

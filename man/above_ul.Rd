@@ -102,13 +102,16 @@ above an upper level (see "What the figures are and are not" in
 
 \strong{Compliance below 1.} Under \code{compliance_model = "average_content"}
 of \code{\link[=apply_scenario]{apply_scenario()}}, every gram of the vehicle carries \code{compliance}
-times the level, so no household receives the full level, and the share
-above the UL is \strong{understated}: if a share \code{c} of the product is
-fortified at the full level and the rest is not, the share above the UL
-is near \code{c} times the share at compliance 1, which can be far above the
-average-content figure. Each such scenario is flagged in the log
-(\code{average_content_understates_ul}); the same levels at compliance 1
-give the upper bound to report with it. Under
+times the level, so no household receives the full level. If instead a
+share \code{c} of the product is fortified at the full level and the rest is
+not (\code{"all_or_nothing"}), a household near the UL at compliance 1 counts
+with weight \code{c}, and one above it at \code{c} times the level counts 1 under
+average content and \code{c} under all or nothing. The two models give the
+same mean amount and \strong{are not ordered} in the share above the UL:
+either can be the larger. The same levels at compliance 1 bound both
+from above and are the figure to report with them. Each scenario with a
+compliance below 1 under average content is flagged in the log
+(\code{average_content_understates_ul}, understated against that bound). Under
 \code{compliance_model = "all_or_nothing"} the table of states is accepted:
 each state is compared with the UL, and \code{above_ul_added},
 \code{above_ul_total}, \code{amount_added} and \code{amount_total} are the expectations

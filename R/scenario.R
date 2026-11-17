@@ -37,10 +37,11 @@
 #' with a compliance below 1 are listed in the log (`compliance_below_one`).
 #'
 #' - `"average_content"`: every fortifiable gram carries `compliance` times
-#'   the level. It gives the right mean but understates the share of
-#'   households above an upper level, since no household receives the full
+#'   the level. It gives the right mean, but no household receives the full
 #'   level: [above_ul()] flags each scenario with a compliance below 1, and
-#'   the same levels at compliance 1 give the upper bound.
+#'   the same levels at compliance 1 give the upper bound of the share above
+#'   an upper level, under either model. Average content and all or nothing
+#'   are not ordered in that share, nor in the share below a requirement.
 #' - `"all_or_nothing"`: a share `compliance` of each vehicle carries the
 #'   full level and the rest none, and a household has one or the other for
 #'   the whole period. A scenario with `k` vehicles of compliance strictly
@@ -56,9 +57,13 @@
 #'   scenarios (1 for the baseline). The expected amounts over the states
 #'   equal those of average content, so the means of intake by scenario are
 #'   those of average content; percentiles of intake under all or nothing
-#'   are not offered. The log holds a note `states` per scenario and a note
+#'   are not offered. The log holds a note `states` per scenario (its
+#'   states, rows and approximate size in MB) and a note
 #'   `vehicles_assumed_independent` for each scenario with more than one
-#'   vehicle of partial compliance.
+#'   vehicle of partial compliance. The table grows as `2^k`: on [hces_example]
+#'   (2,000 households, up to 7 vehicles of partial compliance in a
+#'   scenario) it has about 500,000 rows. `max_states` stops a call before
+#'   the rows are built.
 #'
 #' Totals are missing for households whose intake is not `estimated`. A
 #' household that acquired a vehicle with records without grams gets what
@@ -75,6 +80,12 @@
 #' @param compliance_model `NULL`, `"average_content"` or
 #'   `"all_or_nothing"`; required when a compliance is below 1.
 #' @param baseline_label Name of the scenario that holds the baseline.
+#' @param max_states `NULL` (the default: no limit) or the largest number of
+#'   states a scenario may have under `"all_or_nothing"`, checked before any
+#'   row is built: a scenario with more (`2^k` for `k` vehicles of partial
+#'   compliance) is an `hcesfort_error_value` that names it, its `k` and the
+#'   rows the table would have. Not read under `"average_content"`, where
+#'   every scenario has one state.
 #' @returns A tibble of class `hces_scenario_intake` (and `hces_tbl`), key
 #'   `scenario` + `household_id`: the column `scenario`, the columns of
 #'   `intake` (nutrient columns now hold the total of the scenario; the
@@ -113,7 +124,7 @@
 apply_scenario <- function(intake, use, scenarios,
                            conversions = hcesfort::ref_conversions,
                            compliance_model = NULL,
-                           baseline_label = "baseline") {
+                           baseline_label = "baseline", max_states = NULL) {
   check_required()
   require_hces(intake, "hces_intake")
   require_hces(use, "hces_vehicle_use")
@@ -126,7 +137,7 @@ apply_scenario <- function(intake, use, scenarios,
   check_scenario_use(x, use, s)
   check_use_fortifiable(use)
   states <- identical(compliance_model, "all_or_nothing")
-  if (states) check_vehicle_compliance(s)
+  check_states(s, states, max_states, nrow(x))
   targets <- scenario_targets(if (states) at_full_level(s) else s,
                               nutrients, conversions)
   names_s <- c(baseline_label, unique(s$scenario))
@@ -144,7 +155,7 @@ apply_scenario <- function(intake, use, scenarios,
   log <- scenario_log(x, use, s, out, names_s, added_cols, compliance_model,
                       table)
   log <- dplyr::bind_rows(audit_combine(x, use, s), log,
-                          if (states) states_log(s, table),
+                          if (states) states_log(s, table, out),
                           fortifiable_share_log(use, s))
   new_hces_tbl(out, class, log,
                c("scenario", if (states) "state", "household_id"), nutrients)

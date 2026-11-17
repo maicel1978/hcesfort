@@ -23,7 +23,8 @@ Imports:
     rlang,
     srvyr,
     stats,
-    survey
+    survey,
+    utils
 Suggests:
     ggplot2,
     knitr,

@@ -122,3 +122,50 @@ test_that("the estimators refuse the table of states", {
   expect_snapshot(estimate_households(d, s, "iron_mg", statistic = "mean"),
                   error = TRUE)
 })
+
+test_that("a UL on total iron: amount_total and above_ul_total by hand", {
+  # P217. Fixture two_vehicles(): h1 iron by state none 1 (0.1), flour 6.5
+  # (0.1), sugar 3 (0.4), both 8.5 (0.4); UL 6 mg on the total.
+  ul <- data.frame(nutrient = "iron", unit = "mg", ul = 6, ul_unit = "mg",
+                   ul_applies_to = "total")
+  u <- above_ul(aon(two_vehicles()), ul, min_coverage = 0.9,
+                min_records_used = 0)
+  expect_equal(risk_val(u, "both", 1, "iron", "amount_total"),
+               1 + 0.5 * 5.5 + 0.8 * 2, tolerance = 1e-12)
+  expect_equal(risk_val(u, "both", 1, "iron", "above_ul_total"),
+               0.1 + 0.4, tolerance = 1e-12)
+  # h2: none 0.5, flour 3.25, sugar 0.5, both 3.25: never above.
+  expect_identical(risk_val(u, "both", 2, "iron", "above_ul_total"), 0)
+  expect_equal(risk_val(u, "both", 2, "iron", "amount_total"),
+               0.5 + 0.5 * 2.75, tolerance = 1e-12)
+})
+
+test_that("a form with a diet part: total by hand under all or nothing", {
+  # P217. Folic acid: diet 50, added 100 in the state "flour" (0.3);
+  # UL 120 on the form: only the total can pass it.
+  req <- data.frame(nutrient = "folate", unit = "ug_dfe", ul = 120,
+                    ul_unit = "ug", ul_applies_to = "folic_acid")
+  s <- ul_form_run(compliance = 0.3, compliance_model = "all_or_nothing")
+  u <- above_ul(s, req, min_coverage = 0, min_records_used = 0)
+  expect_identical(risk_val(u, "s", 1, "folate", "ul_scope"),
+                   "form_diet_and_added")
+  expect_equal(risk_val(u, "s", 1, "folate", "amount_added"), 30,
+               tolerance = 1e-12)
+  expect_equal(risk_val(u, "s", 1, "folate", "amount_total"), 80,
+               tolerance = 1e-12)
+  expect_identical(risk_val(u, "s", 1, "folate", "above_ul_added"), 0)
+  expect_equal(risk_val(u, "s", 1, "folate", "above_ul_total"), 0.3,
+               tolerance = 1e-12)
+})
+
+test_that("the understates flag is written only under average content", {
+  # S3.3 of docs/review-12e5-states.md.
+  a <- risk_of(as_run(folic(0.5), compliance_model = "average_content"),
+               "above_ul")
+  r <- risk_of(aon(folic(0.5)), "above_ul")
+  log_a <- audit_log(a)
+  row <- log_a[log_a$cause == "average_content_understates_ul", ]
+  expect_identical(nrow(row), 1L)
+  expect_identical(row$kind, "flagged")
+  expect_false(any(audit_log(r)$cause == "average_content_understates_ul"))
+})

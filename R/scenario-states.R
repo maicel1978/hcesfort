@@ -78,17 +78,16 @@ states_rows <- function(x, use, s, targets, names_s, added_cols) {
 }
 
 # Audit notes of the states: one `states` row per scenario of `s` (n =
-# number of states), and one `vehicles_assumed_independent` row per
+# number of states; the detail adds the rows of the scenario in `out` and
+# their approximate size), and one `vehicles_assumed_independent` row per
 # scenario with more than one vehicle of partial compliance (n = vehicles).
-states_log <- function(s, table) {
+states_log <- function(s, table, out) {
+  k <- unname(partial_counts(s))
   names_s <- unique(s$scenario)
-  k <- vapply(names_s, function(name) {
-    comp <- vehicle_compliance(s[s$scenario == name, ])
-    sum(comp > 0 & comp < 1)
-  }, integer(1), USE.NAMES = FALSE)
   detail <- paste0(names_s, ": ", k, " vehicle", ifelse(k == 1, "", "s"),
                    " with partial compliance, ", 2^k, " state",
-                   ifelse(k == 0, "", "s"))
+                   ifelse(k == 0, "", "s"), "; ",
+                   states_size_text(out, names_s))
   indep <- k > 1
   dplyr::bind_rows(
     audit_row("apply_scenario", table, "note", "states", 2^k,

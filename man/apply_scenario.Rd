@@ -10,7 +10,8 @@ apply_scenario(
   scenarios,
   conversions = hcesfort::ref_conversions,
   compliance_model = NULL,
-  baseline_label = "baseline"
+  baseline_label = "baseline",
+  max_states = NULL
 )
 }
 \arguments{
@@ -30,6 +31,13 @@ validated or not. Every \code{vehicle} must be a vehicle of \code{use}.}
 \code{"all_or_nothing"}; required when a compliance is below 1.}
 
 \item{baseline_label}{Name of the scenario that holds the baseline.}
+
+\item{max_states}{\code{NULL} (the default: no limit) or the largest number of
+states a scenario may have under \code{"all_or_nothing"}, checked before any
+row is built: a scenario with more (\code{2^k} for \code{k} vehicles of partial
+compliance) is an \code{hcesfort_error_value} that names it, its \code{k} and the
+rows the table would have. Not read under \code{"average_content"}, where
+every scenario has one state.}
 }
 \value{
 A tibble of class \code{hces_scenario_intake} (and \code{hces_tbl}), key
@@ -86,10 +94,11 @@ default and is required whenever a compliance is below 1. The scenarios
 with a compliance below 1 are listed in the log (\code{compliance_below_one}).
 \itemize{
 \item \code{"average_content"}: every fortifiable gram carries \code{compliance} times
-the level. It gives the right mean but understates the share of
-households above an upper level, since no household receives the full
+the level. It gives the right mean, but no household receives the full
 level: \code{\link[=above_ul]{above_ul()}} flags each scenario with a compliance below 1, and
-the same levels at compliance 1 give the upper bound.
+the same levels at compliance 1 give the upper bound of the share above
+an upper level, under either model. Average content and all or nothing
+are not ordered in that share, nor in the share below a requirement.
 \item \code{"all_or_nothing"}: a share \code{compliance} of each vehicle carries the
 full level and the rest none, and a household has one or the other for
 the whole period. A scenario with \code{k} vehicles of compliance strictly
@@ -105,9 +114,13 @@ so the number of rows is the households times the sum of \code{2^k} over the
 scenarios (1 for the baseline). The expected amounts over the states
 equal those of average content, so the means of intake by scenario are
 those of average content; percentiles of intake under all or nothing
-are not offered. The log holds a note \code{states} per scenario and a note
+are not offered. The log holds a note \code{states} per scenario (its
+states, rows and approximate size in MB) and a note
 \code{vehicles_assumed_independent} for each scenario with more than one
-vehicle of partial compliance.
+vehicle of partial compliance. The table grows as \code{2^k}: on \link{hces_example}
+(2,000 households, up to 7 vehicles of partial compliance in a
+scenario) it has about 500,000 rows. \code{max_states} stops a call before
+the rows are built.
 }
 
 Totals are missing for households whose intake is not \code{estimated}. A
