@@ -1,118 +1,108 @@
 # Handoff
 
 - **Date:** 2026-11-19
-- **Model:** Opus 5.5 (A2.5).
-- **Branches:** `claude/affectionate-volta-a1nbds` in `hcesfort` (this
+- **Model:** Opus 5.5 (A2.6, A2.7).
+- **Branches:** `claude/gracious-sagan-vjl3h5` in `hcesfort` (this
   handoff, roadmap, improvements) and in `hcesfort.engih2018` (the code),
-  both pushed. Nothing merged into any `main`. The earlier work of A2.1 to
-  A2.4 is on this branch too.
-- **Environment:** `R CMD INSTALL .` of `hcesfort` first (the adapter's
-  tests call `hcesfort::validate_*()`), then `R CMD INSTALL .` of the
-  adapter before lint. The `data-raw/` scripts read the parameter files
-  from `../analisis_ENGIH2018/data/raw` (`ENGIH2018_PARAMS` overrides) and
-  check their md5; tests need only `inst/extdata`.
-- **Earlier handoffs:** `git show d813a72:docs/handoff.md` (A2.1 to A2.4,
-  open questions 1 and 2 still open), `git show 5ecd534:docs/handoff.md`.
+  both pushed. Nothing merged into any `main`.
+- **Environment:** `R CMD INSTALL .` of `hcesfort` first (the adapter now
+  imports it), then `R CMD INSTALL .` of the adapter before lint. A1's
+  stage tables are on branch `claude/intelligent-cori-3aev98` of
+  `analisis_ENGIH2018` (`git fetch origin claude/intelligent-cori-3aev98`,
+  then `git show FETCH_HEAD:data/auditoria/cifras_control/etapas/<file>`).
+- **Earlier handoffs:** `git show 14eedb8:docs/handoff.md` (A2.5 and the
+  answers of the maintainer), `git show d813a72:docs/handoff.md`.
 
 ## What was done (in `hcesfort.engih2018`)
 
 | Commit | Content |
 |---|---|
-| `42aa2ac` | `unit_factors.csv`: 11 generic + 84 + 626 food factors; Section 3A resolved by description (the five rows without code included); dozen `mass_g` 12, volume density 1 (S3, S4). |
-| `428ca6c` | `crosswalk.csv` with edible portion; `engih_crosswalk()` applies the two repairs with a log (114 `not_recorded`, 13 unvalidated). |
-| `7deeef8` | `composition.csv` (1,466 INCAP + 7,083 FNDDS, ten nutrients with `retinol_ug`, `folic_acid_ug`), `composition_fills.csv` (9 + 269). |
-| `1b4904f` | `vehicle_patterns.csv`, `vehicles.csv` (75 + 2; `engih_vehicles("matched")` 38 + 2), `enrichment.csv` (44 rules, equal to design 4.3). |
-| `36d67e4` | `food_groups.csv`, `scenarios.csv` (105), `requirements.csv`, `iron_requirements.csv`. |
-| `16d8f20` | `engih_tables(vehicles, enrichment)`: all of them with the log. |
+| `0d3a4c7` | `engih2018_options(preset, ...)`: 12 options (S1, S3, S4, S5, S8, S10 ×2, S11, S12, S15, S16, S22), presets `"original"` and `"corrected"`, print with changed options marked, unknown option or value an `hcesfort_error_argument`. `engih2018_tables(options)`: the tables of 1.8, the S8 energy table (24 infant rows at 649 and 600), package requirements, `enrichment_shares` (S22), one log note per option. `hcesfort` moved to Imports. |
+| `103b5d5` | `engih2018_survey(dir, options)`: verify, read, build, drop the 11 crosswalk non-foods with a count, `outlier_group`, `hcesfort::validate_survey()`, the adapter's log into each table's audit log with `audit_record()`. Tested on the invented sheets through `survey_from_sheets()`. |
 
-240 tests pass; `devtools::check()` 0/0/0; `lintr::lint_package()` clean.
-Every source and every pending value is in `data-raw/SOURCES.md` of the
-adapter. Invariants of finding 8 are tests (unique Section 2 ids, one
-vehicle per composition row, edible portion 1 for matched vehicles, no
-food factor on a generic unit).
+382 tests pass; `devtools::check()` 0/0/0; `lintr::lint_package()` clean.
 
 Choices made inside the design (say if you disagree):
 
-- English vehicle names (`wheat_flour`, `bread`, …, `maize_flour`) with
-  `vehicle_group = "wheat"` for the six wheat vehicles; the original names
-  are kept in `vehicle_patterns.csv`. Scenario names stay as the original
-  ("1a. Norma nacional: harina y pan"), since the control files use them.
-- The legacy enrichment rules give each row as its own `enriched_ref_id`
-  (not read by `replace_by_ingredient`). They are not for `"subtract"`.
-- FNDDS edition is `SOURCE PENDING` in `source`: the design says
-  2017-2018, but no file states it.
-- `engih_tables()` is internal; the exported `engih2018_tables(options)`
-  of the design comes with the options in A2.6.
+- Only the choices whose "Where" is the adapter are options (design,
+  section 3); the arguments of hcesfort functions (S2, S6, S7, S9, S13,
+  S14, S17 to S21, S23, S24) are passed by the chain, as in the design.
+- `days_missing` is not an option: A1 found no missing day, and a missing
+  day is an error (A2.3).
+- S22 is the option `group_shares`; the tables give `enrichment_shares`
+  (no rows for `"composition"`), to build the baseline of the food-group
+  shares apart from the baseline of the scenarios.
+- The table log notes the options with `n_records = 0` and the value in
+  `detail`.
 
 ## Exact next step
 
-**A2.6** (Opus): `engih2018_options()` with presets `"original"` and
-`"corrected"` (design, section 3), printed; unknown option an error. Read
-section 3 of the design. The options that change tables call
-`engih_tables()` and transform its output: `dozen` (S3: `count` with piece
-weight by food in the corrected preset; the piece weights need a source,
-so the corrected value may have to be `SOURCE PENDING` or wait for A4),
-`density` (S4), `vehicles` (S12), `enrichment` (S11, S22). Also build the
-S8 energy table there: `hcesfort::ref_energy_requirements` with the 24
-infant rows replaced by 649 (boys) and 600 (girls) (design, finding 6).
-Then A2.7 and A2.8 as in the roadmap.
+**A2.8** (Opus): move the export script of A1
+(`scripts/exportar_cifras_etapas.R` on branch
+`claude/intelligent-cori-3aev98` of `analisis_ENGIH2018`) to the companion
+repository (A-D2); acceptance tests skipped with a message without
+`ENGIH2018_DATA`; `renv.lock`; P230 (md5 of the frozen CSVs) if small;
+`devtools::check()` and lint once for A2. Then A3.
 
 ## Open questions
 
-1. **Garlic powder** (P226): `food_factors.xlsx` gives code 537 (garlic
-   powder) the edible portion 0.87 of fresh garlic. Recommended: keep it in
-   step 1 and correct it in A4 as a new E error (edible 1.00). Why: step 1
-   reproduces the original; the correction is one commit of step 2.
-2. **Finding 7, liquid milk** (P227): the factor 1,000 is on unit 31
-   (*Cartón*), not on a missing unit. Recommended: nothing in the code; fix
-   the sentence of the design in task 12. Why: the adapter already matches
-   the original (no factor for `no_unit`); A1's `sin_unidad_con_fc` should
-   be 0 and confirms it.
-3. Questions 1 and 2 of the previous handoff (error classes `file`/`md5`
-   kept in the adapter; codes in the records outside the food list) are
-   still open.
-
-**Answers of the maintainer (2026-11-19):** all approved as recommended.
-1, garlic powder: kept in step 1, corrected in A4 as a new E error. 2, liquid
-milk: fix the sentence of the design in task 12. 3, error classes `file` and
-`md5` stay in the adapter until P13; codes outside the food list: a local
-test in A3 shows they move no figure. Note for later: before the companion
-repository is made public, confirm that the INCAP table may be redistributed
-in `inst/extdata/composition.csv`; if not, download it from the source.
+1. **Corrected values without data** (P233): `dozen = "count"`,
+   `density = "by_food"`, `enrichment = "pairs"` and `levels = "standard"`
+   are refused by `engih2018_tables()` until their data are entered with a
+   source, so `engih2018_tables(engih2018_options("corrected"))` is an
+   error today. Recommended: keep it so, and enter each data set in its
+   commit of A4 (E2, E18, E6, E8). Why: a wrong value (12 g per dozen
+   oranges, density 1 for oil) or a silent loss of grams would be worse
+   than a clear refusal, and step 2 moves one row at a time from the
+   original preset. Alternative: convert nothing for those records and
+   count them (`no_piece_weight`, `no_density`), which would remove all oil
+   from the corrected figures.
+2. **The dozen is larger than the design says** (P231): A1's
+   `e_e2_docenas` gives 218 records in 22 foods (passion fruit 108, sour
+   lime 28, orange 22, ...), not 13. Recommended: in A4, before E2 runs,
+   rewrite its expected direction and find piece weights with a source
+   for the 22 foods (or for the few that carry most records). Do you have
+   a source for piece weights in the Dominican Republic?
+3. **Outlier group of unmatched records** (P232): they share one group per
+   section (missing `outlier_group`). Nothing of step 1 moves. Recommended:
+   decide in A4, at E27, between grouping them by food code and leaving
+   them out of the rule.
 
 ## Recommended model for the next session
 
-**Opus** (A2.6 to A2.8).
+**Opus** (A2.8, then A3).
 
 ## Maintainer review points
 
-1. **Personal names removed from the unit notes.** Five notes of
-   `Cuest. B Sec 2` named the person who validated the factor; they now say
-   "el responsable":
+1. **The two presets, side by side:**
 
    ```r
    # in hcesfort.engih2018
    devtools::load_all()
-   u <- engih_unit_factors()
-   u[grepl("responsable", u$note), c("unit", "food_code", "factor", "note")]
+   engih2018_options("original")
+   engih2018_options("corrected")
+   engih2018_options("original", vehicles = "all")  # one row of step 2
    ```
 
-2. **The pending sources**: read the notes of `data-raw/SOURCES.md` in
-   the adapter (composition basis and INCAP units, the two INCAP rows with
-   ids 99211088 and 99211110 that the original added, provisional flour
-   fractions, scenario levels, requirements).
+2. **The S8 energy table** (649 and 600 kcal in the 24 monthly rows,
+   every yearly row as the package):
 
    ```r
-   x <- engih_composition()
-   x[startsWith(x$composition_id, "99"), c("composition_id", "name", "source")]
+   t <- engih2018_tables()
+   e <- t$energy
+   e[e$age_unit == "month", c("sex", "age_from", "energy_kcal_d")]
+   all.equal(e[e$age_unit == "year", ],
+             hcesfort::ref_energy_requirements[
+               hcesfort::ref_energy_requirements$age_unit == "year", ])
    ```
 
-3. **Vehicles against the original's patterns**: the 38 matched foods and
-   the 37 left out (E27).
+3. **The survey on the real files** (needs the microdata): counts of 1.1
+   and 1.2, non-foods dropped (purified water alone has 5,937 records) and
+   the log.
 
    ```r
-   a <- engih_vehicles("all"); m <- engih_vehicles("matched")
-   foods <- read.csv(system.file("extdata", "foods.csv",
-                                 package = "hcesfort.engih2018"))
-   merge(a[!a$food_code %in% m$food_code, 1:2], foods)
+   s <- engih2018_survey(options = engih2018_options("original"))
+   sapply(s, nrow)
+   l <- hcesfort::audit_log(s$acquisitions)
+   l[grepl("^engih2018::", l$step), ]
    ```

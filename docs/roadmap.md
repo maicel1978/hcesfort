@@ -124,8 +124,8 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
   - [x] A2.3 Acquisitions: unit, days, origin, share, exhaustion rule, section rules (`84a5ff2`).
   - [x] A2.4 Food list and storable foods frozen as codes (`4073790`).
   - [x] A2.5 The tables of design 1.8 (`engih2018_tables()`), with `data-raw/` scripts and `data-raw/SOURCES.md`; the two contract repairs (E20, validated without id); the invariants of finding 8 as tests. Split in several commits. Done: `42aa2ac` (unit factors), `428ca6c` (crosswalk), `7deeef8` (composition, fills), `1b4904f` (vehicles, enrichment), `36d67e4` (groups, scenarios, requirements), `16d8f20` (`engih_tables()`). The S8 energy table goes to A2.6.
-  - [ ] A2.6 `engih2018_options()`: presets `"original"` and `"corrected"` (design, section 3), printed; unknown option an error.
-  - [ ] A2.7 `engih2018_survey(dir, options)`: verify, read, build, drop non-foods with a count (A-D6), `outlier_group`, `validate_survey()`, the adapter's log through `audit_record()`; `hcesfort` moves to Imports.
+  - [x] A2.6 `engih2018_options()`: presets `"original"` and `"corrected"` (design, section 3), printed; unknown option an error. `engih2018_tables(options)` with the S8 energy table; four corrected values refused until their data have a source (P233); `hcesfort` moved to Imports here (`0d3a4c7`).
+  - [x] A2.7 `engih2018_survey(dir, options)`: verify, read, build, drop non-foods with a count (A-D6), `outlier_group`, `validate_survey()`, the adapter's log through `audit_record()` (`103b5d5`).
   - [ ] A2.8 The export script of A1 moves to the companion repository (A-D2); acceptance tests skipped without `ENGIH2018_DATA`; `renv.lock`; `devtools::check()` and lint once for A2.
 - [ ] A3. Acceptance step 1: reproduce the control figures with the original choices as explicit options (tolerance 1e-6).
 - [ ] A4. Acceptance step 2: correct each erroneous default, one per commit, old and new figures in `NEWS.md`.
