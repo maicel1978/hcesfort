@@ -36,16 +36,21 @@ Tests: 504 pass, 22 skipped here. `lintr::lint_package()` clean;
 
 ## Exact next step
 
-1. **Maintainer:** run the S22 comparison on the microdata (review point
-   1) and send `grupos_codigos.csv` and, if it fails,
-   `grupos_micronutrientes.csv`.
-2. **If it passes:** A3 closes (all six control files). Record the new
-   error (P242) in `docs/analysis-map.md` with the codes and records of
-   `grupos_codigos.csv`, then A4 (P239 first).
-3. **If it fails:** the codes of `grupos_codigos.csv` say whether the
-   text join is the cause. If no code with composition differs, the cause
-   is elsewhere: hand to Fable (stop rule of design 4.4). Never widen a
-   tolerance.
+A3 step 1 passed on the microdata (15/15; see the runs below). Now:
+
+1. Record P242 in `docs/analysis-map.md` as a new E error of the original
+   (code `S2:13 LECHE LÍQUIDA`, 1,913 records dropped by the text join of
+   `08_grupos_alimentos.R`; only the group shares move), and in
+   `docs/improvements.md`.
+2. **A4, acceptance step 2** (Opus, high effort): correct each erroneous
+   default of the original, **one per commit**, P239 first, then the order
+   of the design. For each: the option in `engih2018_options()`, a test,
+   and old and new figures in `NEWS.md` of the adapter. Values without a
+   checkable source follow the maintainer's rule above (never invent; keep
+   the original and show the sensitivity).
+3. The maintainer runs the acceptance on the microdata after each group of
+   corrections; write in the handoff exactly what to run and what to send.
+   Stop and hand off near 50% of context; never widen a tolerance.
 
 ## Open questions
 
