@@ -43,9 +43,11 @@
 #' interval, counted in the log (`no_variation`).
 #'
 #' Degrees of freedom of the *t* intervals: `"domain"` (by default) uses
-#' those of the domain, `survey::degf()` of the subset design, as the
-#' original analysis did and as `survey` does on a subset; `"design"` those
-#' of the full design; or a number (`Inf` for normal intervals). A cell
+#' those of the domain, `survey::degf()` of the subset design, as `survey`
+#' does on a subset; `"design"` those of the full design, which is what the
+#' original analysis used in every interval, domains included (925 degrees
+#' of freedom = 933 PSUs - 8 strata; E24), so reproducing it needs
+#' `df = "design"`; or a number (`Inf` for normal intervals). A cell
 #' whose domain has no degrees of freedom (a domain inside one primary
 #' sampling unit), whatever `df` says, keeps its estimate and standard
 #' error, has no interval, `df` set to those of the domain (0) and

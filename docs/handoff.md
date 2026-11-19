@@ -1,7 +1,7 @@
 # Handoff
 
-- **Date:** 2026-11-17
-- **Model:** Opus 5.5 (12e.9).
+- **Date:** 2026-11-19
+- **Model:** Sonnet 5.5 (P188).
 - **Branch:** `claude/funny-goldberg-jknbmy`, pushed.
 - **Environment:** run `R CMD INSTALL .` at the start (the report tests use
   the installed package). The full `devtools::test()` runs in parallel,
@@ -11,6 +11,11 @@
   system tool `qpdf` (`apt-get install -y qpdf`), or it warns.
 
 ## What was done
+
+- **P188:** the help of `estimate_households()` no longer says `df = "domain"`
+  is what the original analysis did; it says the original used the full
+  design (925 df) and that reproducing it needs `df = "design"`. Docs only
+  (roxygen + `man/`); no test run needed.
 
 - **12e.9:** `devtools::check()` 0 errors, 0 warnings, 0 notes (7.6 min,
   `NOT_CRAN=true`); `lintr::lint_package()` no lints. No code change.
@@ -29,7 +34,7 @@ and reproduced the October control figures (`riesgo_inadecuacion.csv`).
 
 Next, in this order (not before Thursday 2026-11-19, quota):
 
-1. **P188** (Sonnet, short session): the sentence of help, due before A3.
+1. ~~P188~~ done 2026-11-19.
 2. **A2** (Opus): companion repository `hcesfort.engih2018` and the adapter,
    from `docs/design-adapter-engih.md`. The session needs both repositories.
 
@@ -43,7 +48,7 @@ Sonnet session before A2.
 
 ## Recommended model for the next session
 
-**Sonnet** (P188), then **Opus** (A2).
+**Opus** (A2).
 
 ## Maintainer review points
 

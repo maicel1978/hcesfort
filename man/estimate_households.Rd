@@ -118,9 +118,11 @@ a difference of zero) follows the same rule: the value, \code{se = 0}, no
 interval, counted in the log (\code{no_variation}).
 
 Degrees of freedom of the \emph{t} intervals: \code{"domain"} (by default) uses
-those of the domain, \code{survey::degf()} of the subset design, as the
-original analysis did and as \code{survey} does on a subset; \code{"design"} those
-of the full design; or a number (\code{Inf} for normal intervals). A cell
+those of the domain, \code{survey::degf()} of the subset design, as \code{survey}
+does on a subset; \code{"design"} those of the full design, which is what the
+original analysis used in every interval, domains included (925 degrees
+of freedom = 933 PSUs - 8 strata; E24), so reproducing it needs
+\code{df = "design"}; or a number (\code{Inf} for normal intervals). A cell
 whose domain has no degrees of freedom (a domain inside one primary
 sampling unit), whatever \code{df} says, keeps its estimate and standard
 error, has no interval, \code{df} set to those of the domain (0) and
