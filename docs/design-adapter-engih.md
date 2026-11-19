@@ -383,7 +383,7 @@ and `anexo_harina_maiz`; the other medians have no interval.
 | | `pct_folico_sobre_ul`, `folato_q1`, `folato_q5`, ratio | `above_ul_added` of folate; median of folate `by = "quintile"`; the ratio derived. The original repeats them on every nutrient row (E13): compared once per scenario. |
 | `escenarios_consumo_vehiculos`, 3 | coverage and limits, mean among all, median among consumers and limits | rows `group` (wheat) and `vehicle` (rice, sugar) of `use`; indicator and grams as in S14: `g = coalesce(qty_vehicle_g_d, 0)`, consumer `g > 0`, median of `g` where `g > 0` |
 | `anexo_harina_maiz`, 8 | the same, by area and quintile | the vehicle `maize_flour` |
-| `grupos_micronutrientes`, 16 × 7 | share of each group | `food_group_shares()` on the chain with S22; estimates only (the original has no interval). Records without a group are dropped by the original and are `unclassified` in the package: A1 gives their number, expected 0. |
+| `grupos_micronutrientes`, 16 × 7 | share of each group | `food_group_shares()` on the chain with S22; estimates only (the original has no interval). Records without a group are dropped by the original and are `unclassified` in the package: A1 gives their number, expected 0. **Amended in A3.5 (P241):** the original joins the groups by section and description text, not by code; step 1 takes, per code, the group of that join, and the shares leave out `unclassified` (a share is a ratio of weighted totals, so each is divided by one minus the share of `unclassified`). |
 
 All 800 + 336 + 35 + 3 + 8 + 16 rows are compared, not a sample.
 

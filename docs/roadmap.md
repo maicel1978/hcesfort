@@ -133,6 +133,7 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
   - [x] A3.3 The six control files (design 4.2), all rows; the threshold count of 4.1 (`cd61a3a`, `38a3185`; medians with an interval on the degrees of freedom of the domain, P237). Not yet run on the microdata.
   - [x] A3.4 Self-review of A3 (P237 to P240), `devtools::check()` 0/0/0 and lint clean in the adapter.
   - [ ] A3.5 The maintainer runs the control comparisons on the microdata; each failure is fixed (test side) or handed to Fable (stop rule of design 4.4). A3 closes when they pass.
+    - [x] A3.5a Run of 2026-11-19: 13 of 15 pass; both failures in `grupos_micronutrientes` (S22). Step 1 now groups the records by the original's join on the description and leaves out `unclassified` (P241; adapter, test helpers only). Not yet run on the microdata.
 - [ ] A4. Acceptance step 2: correct each erroneous default, one per commit, old and new figures in `NEWS.md`.
 
 ## v0.2: Peru and the article's open criticisms
