@@ -78,7 +78,9 @@ Choices made in the comparisons, each written in a comment of the helper:
 e04 afe, gramos_por_ema and agotamiento, e05 ingesta and cobertura, e06
 vehiculos and escenarios, e07 diseno). Result files written in
 `tests/testthat/_acceptance/` (one CSV per comparison and `sessionInfo.txt`).
-Next: A3.3, the six control files.
+The 649 rows of those CSV files were checked by the maintainer: 0 failures;
+counts equal; largest absolute difference 4.5e-12 on means and 4.8e-8 on
+sums (totals of 1e5 to 1e7). Next: A3.3, the six control files.
 
 ## Recommended model for the next session
 
