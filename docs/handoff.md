@@ -75,6 +75,24 @@ thresholds later, as a step of its own.
    `935bd18`, `b8d1b57`) against design section 5 before adding new
    corrections, and reports anything it would change.
 
+**Run of the maintainer (2026-11-19, A4.1 on the microdata):**
+`devtools::test(filter = "acceptance-step2")` gave FAIL 0, PASS 6 (state
+before every step reproduces the group shares; E10, E11, E29 move in their
+expected direction). Effect on the 653 figures of `step2_<id>.csv`
+(grupos 119, resumen 105, riesgo 420, vehiculos 9):
+
+- E10 and E11: no figure moves (0 of 653). Record them in `NEWS.md` as
+  corrected, with no effect on the ENGIH 2018.
+- E29 (household share, S5): 100 group shares (max 0.96 points), 100
+  summary figures (means fall 3-4%: folate 280.0 to 269.4, iron 11.28 to
+  10.98, vitamin A 448.0 to 430.5 at baseline), 338 of 420 risk rows, all
+  9 vehicle rows. Households with plausible energy 7,931 to 7,966 (+35).
+  Prevalences of inadequacy rise by at most 0.94 points (iron, 10%
+  bioavailability, 1a: 71.13 to 72.07; zinc 42.88 to 43.71; vitamin A
+  74.71 to 75.51 at baseline).
+
+Write these old and new figures in `NEWS.md` of the adapter with E29.
+
 ## Recommended model for the next session
 
 **Opus** (A4.2: implementing the corrections of an approved design).
