@@ -1,127 +1,103 @@
 # Handoff
 
 - **Date:** 2026-11-19
-- **Model:** Opus 5.5 (A2.6, A2.7).
-- **Branches:** `claude/gracious-sagan-vjl3h5` in `hcesfort` (this
-  handoff, roadmap, improvements) and in `hcesfort.engih2018` (the code),
-  both pushed. Nothing merged into any `main`.
-- **Environment:** `R CMD INSTALL .` of `hcesfort` first (the adapter now
-  imports it), then `R CMD INSTALL .` of the adapter before lint. A1's
-  stage tables are on branch `claude/intelligent-cori-3aev98` of
-  `analisis_ENGIH2018` (`git fetch origin claude/intelligent-cori-3aev98`,
-  then `git show FETCH_HEAD:data/auditoria/cifras_control/etapas/<file>`).
-- **Earlier handoffs:** `git show 14eedb8:docs/handoff.md` (A2.5 and the
-  answers of the maintainer), `git show d813a72:docs/handoff.md`.
+- **Model:** Opus 5.5 (A2.8; A2 closed).
+- **Branches:** `claude/jolly-cerf-eykgxd` in `hcesfort` (this handoff,
+  roadmap, improvements) and in `hcesfort.engih2018` (the code), both
+  pushed. The adapter is not merged into its `main`; `main` of `hcesfort`
+  on GitHub is at `f7f5c99`.
+- **Environment:** `R CMD INSTALL .` of `hcesfort` first, then of the
+  adapter, before lint. `renv` is installed in the container's library
+  when the session that wrote the lock ran; a new container may need
+  `install.packages("renv")` only to rewrite `renv.lock`.
+- **Earlier handoffs:** `git show 6e8c538:docs/handoff.md` (A2.6, A2.7),
+  `git show 14eedb8:docs/handoff.md` (A2.1 to A2.5).
 
 ## What was done (in `hcesfort.engih2018`)
 
 | Commit | Content |
 |---|---|
-| `0d3a4c7` | `engih2018_options(preset, ...)`: 12 options (S1, S3, S4, S5, S8, S10 ×2, S11, S12, S15, S16, S22), presets `"original"` and `"corrected"`, print with changed options marked, unknown option or value an `hcesfort_error_argument`. `engih2018_tables(options)`: the tables of 1.8, the S8 energy table (24 infant rows at 649 and 600), package requirements, `enrichment_shares` (S22), one log note per option. `hcesfort` moved to Imports. |
-| `103b5d5` | `engih2018_survey(dir, options)`: verify, read, build, drop the 11 crosswalk non-foods with a count, `outlier_group`, `hcesfort::validate_survey()`, the adapter's log into each table's audit log with `audit_record()`. Tested on the invented sheets through `survey_from_sheets()`. |
+| `33c7eae` | `inst/acceptance/`: the six control files (from `main` at `7caab91`) and the 21 stage tables of A1 in `etapas/` (from `513ca4a`), byte for byte, with their `LEEME.txt`; `inst/acceptance/README.md` gives the origin of each. `data-raw/acceptance/exportar_cifras_etapas.R`: the export script of A1, unchanged (A-D2). |
+| `1b27cb8` | P230: `inst/checksums.csv` (md5 and size of the 45 files of `inst/extdata/` and `inst/acceptance/`), written by `data-raw/checksums.R`; internal `check_frozen()`; `test-checksums.R`, which also checks that the registry's md5 are those of `e00_entradas`. `.gitattributes` keeps those files out of end-of-line conversion (Windows checkout). |
+| `0e9f9b2` | `helper-acceptance.R` (`skip_without_microdata()`, `acceptance_survey()` cached, `read_control()`, `stage_value()`); `test-acceptance-a2.R`: verify, households (8,892, sum of weights), members (28,394, no missing age or sex, infants by sex), records kept plus non-foods dropped against `e01_registros`. `renv.lock` (explicit snapshot; `hcesfort` from GitHub `main`). README section on acceptance. |
 
-382 tests pass; `devtools::check()` 0/0/0; `lintr::lint_package()` clean.
+403 tests, 3 skipped here with the message naming `ENGIH2018_DATA`;
+`devtools::check()` 0/0/0; `lintr::lint_package()` clean. **The tests
+that need the microdata have never run**: an error on the first run is
+likely a column or a vocabulary, to be reported, not worked around.
 
-Choices made inside the design (say if you disagree):
-
-- Only the choices whose "Where" is the adapter are options (design,
-  section 3); the arguments of hcesfort functions (S2, S6, S7, S9, S13,
-  S14, S17 to S21, S23, S24) are passed by the chain, as in the design.
-- `days_missing` is not an option: A1 found no missing day, and a missing
-  day is an error (A2.3).
-- S22 is the option `group_shares`; the tables give `enrichment_shares`
-  (no rows for `"composition"`), to build the baseline of the food-group
-  shares apart from the baseline of the scenarios.
-- The table log notes the options with `n_records = 0` and the value in
-  `detail`.
+Self-review of A2 recorded as P234 (md5 checked by tests only), P235 (the
+non-food count is not per section) and P236 (lock written with R 4.3.3).
 
 ## Exact next step
 
-**A2.8** (Opus): move the export script of A1
-(`scripts/exportar_cifras_etapas.R` on branch
-`claude/intelligent-cori-3aev98` of `analisis_ENGIH2018`) to the companion
-repository (A-D2); acceptance tests skipped with a message without
-`ENGIH2018_DATA`; `renv.lock`; P230 (md5 of the frozen CSVs) if small;
-`devtools::check()` and lint once for A2. Then A3.
+**A3** (Opus): acceptance step 1, design sections 4.1 to 4.4. Suggested
+split, one commit each, all in the adapter's tests with the helpers of
+`helper-acceptance.R`:
+
+1. A helper that runs the chain of hcesfort on the survey and the tables
+   of the `"original"` preset (`convert_units()`, `link_composition()`,
+   `flag_outliers()`, `adult_equivalents()`, `apparent_intake()`, the
+   scenarios, the design), cached like `acceptance_survey()`; checked to
+   run end to end on the invented sheets of `helper-sheets.R` with the
+   real tables, so the code is exercised in CI.
+2. Stage comparisons in order (4.3): `e01_registros`, `e03_atipicos`
+   (U1, U2), `e04_afe`, `e04_gramos_por_ema`, `e05_ingesta`,
+   `e06_vehiculos`, `e06_escenarios`, `e07_diseno`; tolerances of 4.1.
+3. The six control files (4.2), all rows; the threshold count of 4.1.
+
+Read first: design 4.1 to 4.4 and 3 (`grep -n "^## \|^### "
+docs/design-adapter-engih.md`), the help of each hcesfort function before
+calling it. Stop rule of 4.4: a figure that disagrees after the stages
+agree, with no household on a threshold, goes to Fable; never widen a
+tolerance.
 
 ## Open questions
 
-1. **Corrected values without data** (P233): `dozen = "count"`,
-   `density = "by_food"`, `enrichment = "pairs"` and `levels = "standard"`
-   are refused by `engih2018_tables()` until their data are entered with a
-   source, so `engih2018_tables(engih2018_options("corrected"))` is an
-   error today. Recommended: keep it so, and enter each data set in its
-   commit of A4 (E2, E18, E6, E8). Why: a wrong value (12 g per dozen
-   oranges, density 1 for oil) or a silent loss of grams would be worse
-   than a clear refusal, and step 2 moves one row at a time from the
-   original preset. Alternative: convert nothing for those records and
-   count them (`no_piece_weight`, `no_density`), which would remove all oil
-   from the corrected figures.
-2. **The dozen is larger than the design says** (P231): A1's
-   `e_e2_docenas` gives 218 records in 22 foods (passion fruit 108, sour
-   lime 28, orange 22, ...), not 13. Recommended: in A4, before E2 runs,
-   rewrite its expected direction and find piece weights with a source
-   for the 22 foods (or for the few that carry most records). Do you have
-   a source for piece weights in the Dominican Republic?
-3. **Outlier group of unmatched records** (P232): they share one group per
-   section (missing `outlier_group`). Nothing of step 1 moves. Recommended:
-   decide in A4, at E27, between grouping them by food code and leaving
-   them out of the rule.
-
-**Answers of the maintainer (2026-11-19).** 1 and 3: approved as
-recommended. 2: there is no Dominican source of piece weights; the only
-Dominican sources at hand are the NORDOM standards and the fieldwork
-documents. Rule for every corrected value of A4 (dozen, density,
-enrichment pairs, level basis):
-
-- Only from a source that can be cited and checked in the session: for
-  density and piece weights, an international table (for example a
-  FAO/INFOODS table or the portion weights of FNDDS, already a source of the
-  adapter) opened in the session and cited in `data-raw/SOURCES.md`; for the
-  level basis, the text of the NORDOM standard (ask the maintainer for the
-  page if it is not in `analisis_ENGIH2018`).
-- If no checkable source exists for a food, keep the original value in the
-  corrected preset, mark it `source: original analysis, no independent
-  source`, and report in `NEWS.md` a sensitivity run that shows how much the
-  figures move. Never invent a value.
-- For the dozen, weight the effort by records: first the few foods that
-  carry most of the 218 records.
+1. **`renv.lock` on your machine** (P236). The lock was written here with
+   R 4.3.3 and the versions of this container. Recommended: before the
+   first run of A3, run `renv::snapshot()` in the adapter on the machine
+   with the microdata and commit the lock it writes, because step 1
+   compares to 1e-6 and the figures of A3 will be made there.
+   Alternative: keep this lock and rely on the `sessionInfo()` each
+   acceptance run writes.
+2. **md5 of the frozen files at read time** (P234). Recommended: keep the
+   check in the tests only, because checking at every read would break the
+   `data-raw/` scripts between writing a table and rebuilding the
+   checksums, and CI runs the tests on every push. Alternative: an
+   argument of `engih2018_tables()` that runs `check_frozen()`.
 
 ## Recommended model for the next session
 
-**Opus** (A2.8, then A3).
+**Opus** (A3).
 
 ## Maintainer review points
 
-1. **The two presets, side by side:**
+1. **The acceptance tests of A2 on the microdata** (expect 0 skipped, 0
+   failed; report any failure as it is):
 
    ```r
    # in hcesfort.engih2018
-   devtools::load_all()
-   engih2018_options("original")
-   engih2018_options("corrected")
-   engih2018_options("original", vehicles = "all")  # one row of step 2
+   Sys.setenv(ENGIH2018_DATA = "path/to/the/microdata")
+   devtools::test(filter = "acceptance")
    ```
 
-2. **The S8 energy table** (649 and 600 kcal in the 24 monthly rows,
-   every yearly row as the package):
+2. **The control figures are the files of the original analysis** (all
+   `TRUE`):
 
    ```r
-   t <- engih2018_tables()
-   e <- t$energy
-   e[e$age_unit == "month", c("sex", "age_from", "energy_kcal_d")]
-   all.equal(e[e$age_unit == "year", ],
-             hcesfort::ref_energy_requirements[
-               hcesfort::ref_energy_requirements$age_unit == "year", ])
+   a <- "path/to/analisis_ENGIH2018/data/auditoria/cifras_control"
+   f <- list.files("inst/acceptance", recursive = TRUE)
+   f <- f[f != "README.md"]
+   tools::md5sum(file.path("inst/acceptance", f)) ==
+     tools::md5sum(file.path(a, f))  # etapas/ after checking out 513ca4a
    ```
 
-3. **The survey on the real files** (needs the microdata): counts of 1.1
-   and 1.2, non-foods dropped (purified water alone has 5,937 records) and
-   the log.
+3. **The frozen-file check catches an edit** (expect a failure of
+   `test-checksums.R`, then undo):
 
    ```r
-   s <- engih2018_survey(options = engih2018_options("original"))
-   sapply(s, nrow)
-   l <- hcesfort::audit_log(s$acquisitions)
-   l[grepl("^engih2018::", l$step), ]
+   cat("x\n", file = "inst/extdata/scenarios.csv", append = TRUE)
+   devtools::test(filter = "checksums")
+   system("git checkout inst/extdata/scenarios.csv")
    ```

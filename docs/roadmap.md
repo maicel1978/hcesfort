@@ -118,7 +118,7 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
 ## v0.1, companion repository `hcesfort.engih2018`: ENGIH 2018 adapter (needs the microdata)
 - [x] A0. Design of the adapter and of the acceptance test: `docs/design-adapter-engih.md` (Fable, 2026-11-16), from `docs/adapter-design-brief.md`. Written; its eight decisions (section 9) approved on 2026-11-16 (A-D1 to A-D8 in `docs/improvements.md`). No package code.
 - [x] A1. Stage-level control figures exported from the original pipeline (record counts by section and drop cause, grams by section, AFE distribution, median intake per nutrient), md5 of the microdata, and the three checks left open on E4 (energy of Sec 3A alone by days with a record, upper tail by days, the eighth day) plus the number of records in dozens (E2). Run by the maintainer when the microdata are at hand: first the md5 and a rerun of the original chain, then `scripts/exportar_cifras_etapas.R` of `analisis_ENGIH2018` (design, section 2).
-- [ ] A2. Thin adapter: ENGIH files → standard tables that pass the contracts of task 2. Start right after task 2 so the contracts meet a real survey early.
+- [x] A2. Thin adapter: ENGIH files → standard tables that pass the contracts of task 2. Start right after task 2 so the contracts meet a real survey early.
   - [x] A2.1 Package skeleton, registry of the sources, md5 verification and download (`28bee09`).
   - [x] A2.2 Sheets read by column name; households and members (`d576c17`).
   - [x] A2.3 Acquisitions: unit, days, origin, share, exhaustion rule, section rules (`84a5ff2`).
@@ -126,7 +126,7 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
   - [x] A2.5 The tables of design 1.8 (`engih2018_tables()`), with `data-raw/` scripts and `data-raw/SOURCES.md`; the two contract repairs (E20, validated without id); the invariants of finding 8 as tests. Split in several commits. Done: `42aa2ac` (unit factors), `428ca6c` (crosswalk), `7deeef8` (composition, fills), `1b4904f` (vehicles, enrichment), `36d67e4` (groups, scenarios, requirements), `16d8f20` (`engih_tables()`). The S8 energy table goes to A2.6.
   - [x] A2.6 `engih2018_options()`: presets `"original"` and `"corrected"` (design, section 3), printed; unknown option an error. `engih2018_tables(options)` with the S8 energy table; four corrected values refused until their data have a source (P233); `hcesfort` moved to Imports here (`0d3a4c7`).
   - [x] A2.7 `engih2018_survey(dir, options)`: verify, read, build, drop non-foods with a count (A-D6), `outlier_group`, `validate_survey()`, the adapter's log through `audit_record()` (`103b5d5`).
-  - [ ] A2.8 The export script of A1 moves to the companion repository (A-D2); acceptance tests skipped without `ENGIH2018_DATA`; `renv.lock`; `devtools::check()` and lint once for A2.
+  - [x] A2.8 The export script of A1 moves to the companion repository (A-D2); acceptance tests skipped without `ENGIH2018_DATA`; `renv.lock`; `devtools::check()` and lint once for A2. Done: `33c7eae` (control figures and script), `1b27cb8` (md5 of the frozen files, P230), `0e9f9b2` (acceptance tests of A2, `renv.lock`).
 - [ ] A3. Acceptance step 1: reproduce the control figures with the original choices as explicit options (tolerance 1e-6).
 - [ ] A4. Acceptance step 2: correct each erroneous default, one per commit, old and new figures in `NEWS.md`.
 
