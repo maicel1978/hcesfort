@@ -35,8 +35,23 @@ and reproduced the October control figures (`riesgo_inadecuacion.csv`).
 Next, in this order (not before Thursday 2026-11-19, quota):
 
 1. ~~P188~~ done 2026-11-19.
-2. **A2** (Opus): companion repository `hcesfort.engih2018` and the adapter,
-   from `docs/design-adapter-engih.md`. The session needs both repositories.
+2. **A2** (Opus, high effort): companion repository `hcesfort.engih2018` and
+   the adapter, from `docs/design-adapter-engih.md` (read its sections as you
+   reach them, starting with section 7 and the steps for Opus).
+   - The repository exists (created 2026-11-19); `main` has only `README.md`
+     and `.gitignore` (8fc07fe). Work on a `claude/` branch of it, as here.
+   - The session has three repositories: `hcesfort` (this one; the package
+     and this handoff), `hcesfort.engih2018` (where the code goes) and
+     `analisis_ENGIH2018` (read only: the original method and the reference).
+   - Reference for acceptance step 1 (A3): `analisis_ENGIH2018` at `main`
+     `7caab91` (`data/auditoria/cifras_control/`) and the stage tables of
+     A1 (branch `claude/intelligent-cori-3aev98`, `513ca4a`). Do not merge
+     anything into `main` of `analisis_ENGIH2018`.
+   - The microdata are not available to the session: tests use hand-built
+     fixtures; the acceptance test runs only on the maintainer's machine (A3).
+   - Split A2 into commits of at most 300 lines of code; stop and hand off
+     when the context nears 50%. Write the handoff of A2 here, in
+     `docs/handoff.md` of `hcesfort`, on a `claude/` branch.
 
 ## Open questions
 
