@@ -71,6 +71,15 @@ Choices made in the comparisons, each written in a comment of the helper:
    wrote them and need no setting. Alternative: a dated subdirectory per
    run, to keep the history of runs.
 
+**Run of the maintainer (2026-11-19, A3.1 and A3.2):** on the microdata,
+`devtools::test(filter = "acceptance")` with the adapter at 1aefc22 and
+`hcesfort` at 14b3cf9 gave FAIL 0, WARN 0, SKIP 0, PASS 40 in 279 s
+(acceptance-a2 15, acceptance-chain 14, acceptance-stages 11: e01, e03,
+e04 afe, gramos_por_ema and agotamiento, e05 ingesta and cobertura, e06
+vehiculos and escenarios, e07 diseno). Result files written in
+`tests/testthat/_acceptance/` (one CSV per comparison and `sessionInfo.txt`).
+Next: A3.3, the six control files.
+
 ## Recommended model for the next session
 
 **Opus** (A3.3; the stage failures of review point 1, if any, unless the
