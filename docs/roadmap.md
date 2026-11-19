@@ -128,6 +128,10 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
   - [x] A2.7 `engih2018_survey(dir, options)`: verify, read, build, drop non-foods with a count (A-D6), `outlier_group`, `validate_survey()`, the adapter's log through `audit_record()` (`103b5d5`).
   - [x] A2.8 The export script of A1 moves to the companion repository (A-D2); acceptance tests skipped without `ENGIH2018_DATA`; `renv.lock`; `devtools::check()` and lint once for A2. Done: `33c7eae` (control figures and script), `1b27cb8` (md5 of the frozen files, P230), `0e9f9b2` (acceptance tests of A2, `renv.lock`).
 - [ ] A3. Acceptance step 1: reproduce the control figures with the original choices as explicit options (tolerance 1e-6).
+  - [x] A3.1 The chain of hcesfort with the choices of step 1 (`step1_args`, `run_chain()`, `acceptance_chain(options)`), run in CI on the invented sheets with the real tables (`f938fe5`).
+  - [x] A3.2 Stage comparisons in the order of the chain (design 4.3): e01, e03, e04, e07 (`d34f30e`), e05, e06 (`678661f`); results and `sessionInfo()` of each run written to `tests/testthat/_acceptance/` or `ENGIH2018_RESULTS`; P235. Never run on the microdata yet.
+  - [ ] A3.3 The six control files (design 4.2), all rows; the threshold count of 4.1.
+  - [ ] A3.4 Self-review of A3, `devtools::check()` and lint once.
 - [ ] A4. Acceptance step 2: correct each erroneous default, one per commit, old and new figures in `NEWS.md`.
 
 ## v0.2: Peru and the article's open criticisms
