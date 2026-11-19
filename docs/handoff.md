@@ -1,108 +1,95 @@
 # Handoff
 
 - **Date:** 2026-11-19
-- **Model:** Opus 5.5 (A3.5a).
-- **Branches:** `claude/sleepy-feynman-dduxu5` in `hcesfort` (this handoff,
-  roadmap, improvements, a note in design 4.2) and in `hcesfort.engih2018`
-  (the test helpers), both pushed. They continue
-  `claude/elegant-pasteur-da2bt2`; nothing is merged into `main`.
+- **Model:** Opus 5.5 (A3 closed; A4.0 and A4.1).
+- **Branches:** `claude/sleepy-albattani-s7uctu` in `hcesfort` (docs only)
+  and in `hcesfort.engih2018` (tests and `NEWS.md`), both pushed. They
+  continue `claude/sleepy-feynman-dduxu5`; nothing is merged into `main`.
 - **Environment:** `R CMD INSTALL .` of `hcesfort` first, then of the
   adapter, before lint.
-- **Earlier handoffs:** `git show d6e52f0:docs/handoff.md` (A3.3, A3.4 and
-  the maintainer's run: 13 of 15 control comparisons pass).
+- **Earlier handoff:** `git show 4c3ad0e:docs/handoff.md` (A3.5).
 
-## What was done (in `hcesfort.engih2018`, tests only; `R/` unchanged)
+## What was done
 
-The S22 mismatch, without the microdata. Diagnosis (P241, a hypothesis to
-confirm):
+| Repo | Commit | Content |
+|---|---|---|
+| hcesfort | `6662cbb` | E30 in `docs/analysis-map.md` (section 11); P241 confirmed, P242 updated; P243 (preprocessing module, high, v0.2) in `docs/improvements.md` and the roadmap; A3 ticked. |
+| adapter | `25f8c97` | P239: `helper-fixture-design.R` (household 12_1, two PSUs per stratum) and `test-acceptance-controls-ci.R`; the smoke run no longer replaces the design. |
+| adapter | `ca27a0d` | Step 2 harness: `helper-step2.R` (the steps in order, each with options, chain arguments and expected direction; states accumulate), `helper-step2-figures.R` (national figures of a state: risk, summary, vehicles, group shares; comparison old/new; direction checks), `test-acceptance-step2.R` (microdata; writes `step2_<id>.csv`), `test-step2-ci.R` (every step on the invented survey; the `everywhere` directions). First step E10 (`missing_members = "na"`). `control_groups(drop =)`. |
+| adapter | `935bd18` | E11: `stock_missing = "known"`. `days_missing` not added (no record lacks its day). |
+| adapter | `b8d1b57` | E29: `share = "survey"`. |
 
-- The stages agree, so the package's totals are those of 05. A share
-  that rises in the package while every other falls means records that
-  `08_grupos_alimentos.R` lost, here dairy: with the reported figures the
-  package equals the original plus dairy records worth about 12% of the
-  vitamin D total (3.5% B12, 2.8% vitamin A, 0.13% folate, 0.04% iron).
-- 08 joins `agrupacion_alimentos.csv` by `(seccion, descripcion)` and
-  drops the records whose text finds no row; the adapter joins by code.
-  The text is one to one with the code on the records (`e01_descripciones`),
-  but may differ from the table's (`LECHE LíQUIDA`, Section 2, is a
-  candidate). Not checked: it needs the microdata.
+Tests of the adapter: 545 pass, 26 skipped here. `lintr::lint_package()`
+clean. `devtools::check()` not run (once at the end of A4).
 
-| Commit | Content |
-|---|---|
-| `8e7c36c` | `helper-controls-groups.R`: `group_join_codes()` (per code: text of the records, text of the table, group by code and by text), `group_join_differences()`, `step1_food_groups()`. `group_shares()` takes `food_groups`; `control_groups()` leaves out `unclassified`. The S22 test uses the groups of the original's join, writes `grupos_codigos.csv`, and requires every `unclassified` code to be one the original drops. `test-acceptance-groups.R` (CI): the join on invented sheets, the two stop cases, and the shares against the weighted sums of 08 (1e-8). The smoke run caches the sheets. |
-
-Tests: 504 pass, 22 skipped here. `lintr::lint_package()` clean;
-`devtools::check()` 0/0/0 in the adapter.
+Order: the design puts rows 1 to 5 first. Rows 1 and 2 move no figure
+(NEWS entries still to write); row 3 waits for the maintainer (question
+1); rows 4 and 5 wait for their sources (P233). So E10 is the first step
+with code.
 
 ## Exact next step
 
-A3 step 1 passed on the microdata (15/15; see the runs below). Now:
+A4.2 (Opus), one commit per step, each added to `step2_steps` in
+`helper-step2.R` with its direction (design section 5) and a `NEWS.md`
+entry "figures pending":
 
-1. Record P242 in `docs/analysis-map.md` as a new E error of the original
-   (code `S2:13 LECHE LÍQUIDA`, 1,913 records dropped by the text join of
-   `08_grupos_alimentos.R`; only the group shares move), and in
-   `docs/improvements.md`.
-2. **A4, acceptance step 2** (Opus, high effort): correct each erroneous
-   default of the original, **one per commit**, P239 first, then the order
-   of the design. For each: the option in `engih2018_options()`, a test,
-   and old and new figures in `NEWS.md` of the adapter. Values without a
-   checkable source follow the maintainer's rule above (never invent; keep
-   the original and show the sensitivity).
-3. The maintainer runs the acceptance on the microdata after each group of
-   corrections; write in the handoff exactly what to run and what to send.
-   Stop and hand off near 50% of context; never widen a tolerance.
+1. NEWS entries for rows 1 and 2 (E16, E26; E12 to E15, E17, E22): no
+   figure, corrected by construction.
+2. E27: `vehicles = "all"`. Direction: vehicle coverage and grams rise or
+   stay; scenario 0 unchanged; shares below the EAR of scenarios 1a to 3
+   fall or stay (`everywhere`).
+3. E5/E28: consumer of a vehicle = `acquired`, households without records
+   out of the denominator: needs a measure option in `control_vehicles()`
+   (`consumer_table()`, helper-controls-other.R) carried by the state.
+4. P159: `fortifiable = "use"` (a `step1_args` change). Scenario 0
+   unchanged; added amounts fall or stay.
+5. E30 (`groups = "code"` in the state), then E1 (`group_shares =
+   "baseline"`; only iron and folate move).
+6. E7, E24, then S8/S16 and S2 (`priority = "food"`).
+
+Then the maintainer runs step 2 (review point 1). Stop near 50% of
+context.
 
 ## Open questions
 
-None new.
-
-**Run of the maintainer (2026-11-19, A3.5, adapter 8e7c36c):**
-`devtools::test(filter = "acceptance-controls")` gave FAIL 0, PASS 15.
-`grupos_codigos.csv` has one row: `S2:13 LECHE LÍQUIDA`, 1,913 records,
-grouped `04 Lácteos` by code but dropped by the text join of
-`08_grupos_alimentos.R` (the table writes `LECHE LíQUIDA`). **Acceptance
-step 1 is closed.** Record the error of the original as P242 (a new E
-error, corrected in A4 together with E1 in the group shares).
-
-**Maintainer request for the roadmap (2026-11-19):** after A4, a module of
-the package that makes the preprocessing of a new survey more human and less
-error-prone: text keys normalised before any join (case, accents,
-spaces), joins by code with the unmatched listed, and a report of every
-description that a table spells differently. Record it as an item with
-priority high, for v0.2, next to the food-matching support module.
+1. **Row 3 of design section 5 (E3, E21): which gates?** Step 1 uses
+   `min_coverage = 0` and `min_records_used = 0` in `inadequacy()` and
+   `above_ul()`. Recommended: keep 0 for the national figures of step 2
+   and report the coverage of each nutrient (vitamins D and E flagged), so
+   that no figure disappears before you choose a threshold; give the
+   threshold when you want it applied, and it becomes its own step.
 
 ## Recommended model for the next session
 
-**Opus** (close A3 with the maintainer's files, or Fable if S22 still
-differs with no code of `grupos_codigos.csv` to explain it).
+**Opus** (A4.2: implementing the corrections of an approved design).
 
 ## Maintainer review points
 
-1. **The S22 comparison on the microdata** (expect 0 failures; about two
-   minutes):
+1. **Step 2 on the microdata** (E10, E11, E29; about three minutes). Send
+   the three `step2_*.csv` and the test summary:
 
    ```r
-   # in hcesfort.engih2018, branch claude/sleepy-feynman-dduxu5, with
+   # in hcesfort.engih2018, branch claude/sleepy-albattani-s7uctu, with
    # hcesfort installed from the same branch name
    Sys.setenv(ENGIH2018_DATA = "path/to/the/microdata")
-   devtools::test(filter = "acceptance-controls")
-   read.csv("tests/testthat/_acceptance/grupos_codigos.csv")
+   devtools::test(filter = "acceptance-step2")
+   list.files("tests/testthat/_acceptance", "^step2_")
    ```
 
-2. **The codes the original groups otherwise or drops**: in
-   `grupos_codigos.csv`, `description` (records) against
-   `table_description` (`agrupacion_alimentos.csv`). Expected: dairy codes
-   whose two texts differ in a character, and the Section 2 codes without
-   a description (no composition, so they change no share).
+   Expected: E10 and E11 move no figure; E29 lowers intake, the national
+   rows `n` do not move.
+
+2. **The size of E29** (the share below the EAR at scenario 0, before and
+   after):
 
    ```r
-   g <- read.csv("tests/testthat/_acceptance/grupos_codigos.csv")
-   g[order(-g$records), c("food_code", "description",
-                          "table_description", "group_code", "records")]
+   d <- read.csv("tests/testthat/_acceptance/step2_e29.csv")
+   d[d$bloque == "riesgo" & d$medida == "pct_inadecuado" &
+       grepl("^0\\. .*\\| Todos \\|", d$etapa), c("etapa", "old", "new")]
    ```
 
-3. **The join on invented sheets** (runs without the microdata):
+3. **The control comparisons in CI** (runs without the microdata):
 
    ```r
-   devtools::test(filter = "acceptance-groups")
+   devtools::test(filter = "controls-ci|step2-ci")
    ```

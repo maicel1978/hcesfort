@@ -136,6 +136,10 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
     - [x] A3.5a Run of 2026-11-19: 13 of 15 pass; both failures in `grupos_micronutrientes` (S22). Step 1 now groups the records by the original's join on the description and leaves out `unclassified` (P241; adapter, test helpers only). Not yet run on the microdata.
     - [x] A3.5b Run of 2026-11-19 (adapter `8e7c36c`): 15 of 15 pass. The original's text join drops `S2:13 LECHE LÍQUIDA` (1,913 records): new error E30 (P242).
 - [ ] A4. Acceptance step 2: correct each erroneous default, one per commit, old and new figures in `NEWS.md`.
+  - [x] A4.0 P239: the control comparisons run in CI on an invented survey with two PSUs per stratum (adapter `25f8c97`).
+  - [x] A4.1 Step 2 harness (`helper-step2*.R`, `test-acceptance-step2.R`, `test-step2-ci.R`) and the first corrections, each with its expected direction: E10 (`ca27a0d`), E11 (`935bd18`), E29 (`b8d1b57`). Old and new figures pending the maintainer's run.
+  - [ ] A4.2 The remaining corrections in the order of design section 5: rows 1 and 2 (no figure: NEWS entries), E27 (`vehicles = "all"`), E5/E28 (consumer = `acquired`), P159 (`fortifiable = "use"`), E30 then E1 (group shares by code, then on the baseline), E7, E24, S8/S16 (and S2 `priority = "food"`). Row 3 (E3, E21 gates) waits for the maintainer's thresholds; rows 4, 5, 12 and 15 (E2, E18, E6, E8) wait for their sources (P233).
+  - [ ] A4.3 The maintainer runs `test-acceptance-step2.R`; the figures go to `NEWS.md` of the adapter and `inst/acceptance/steps/`. Self-review, `devtools::check()` and lint once for A4.
 
 ## v0.2: Peru and the article's open criticisms
 - [ ] Food-matching support module (P42, parts b, c, e): candidates by text similarity, seeds from validated crosswalks, review round trip. Before the Peru adapter.
