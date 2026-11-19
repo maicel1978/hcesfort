@@ -68,6 +68,25 @@ repository (A-D2); acceptance tests skipped with a message without
    decide in A4, at E27, between grouping them by food code and leaving
    them out of the rule.
 
+**Answers of the maintainer (2026-11-19).** 1 and 3: approved as
+recommended. 2: there is no Dominican source of piece weights; the only
+Dominican sources at hand are the NORDOM standards and the fieldwork
+documents. Rule for every corrected value of A4 (dozen, density,
+enrichment pairs, level basis):
+
+- Only from a source that can be cited and checked in the session: for
+  density and piece weights, an international table (for example a
+  FAO/INFOODS table or the portion weights of FNDDS, already a source of the
+  adapter) opened in the session and cited in `data-raw/SOURCES.md`; for the
+  level basis, the text of the NORDOM standard (ask the maintainer for the
+  page if it is not in `analisis_ENGIH2018`).
+- If no checkable source exists for a food, keep the original value in the
+  corrected preset, mark it `source: original analysis, no independent
+  source`, and report in `NEWS.md` a sensitivity run that shows how much the
+  figures move. Never invent a value.
+- For the dozen, weight the effort by records: first the few foods that
+  carry most of the 218 records.
+
 ## Recommended model for the next session
 
 **Opus** (A2.8, then A3).
