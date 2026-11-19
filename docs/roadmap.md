@@ -127,17 +127,19 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
   - [x] A2.6 `engih2018_options()`: presets `"original"` and `"corrected"` (design, section 3), printed; unknown option an error. `engih2018_tables(options)` with the S8 energy table; four corrected values refused until their data have a source (P233); `hcesfort` moved to Imports here (`0d3a4c7`).
   - [x] A2.7 `engih2018_survey(dir, options)`: verify, read, build, drop non-foods with a count (A-D6), `outlier_group`, `validate_survey()`, the adapter's log through `audit_record()` (`103b5d5`).
   - [x] A2.8 The export script of A1 moves to the companion repository (A-D2); acceptance tests skipped without `ENGIH2018_DATA`; `renv.lock`; `devtools::check()` and lint once for A2. Done: `33c7eae` (control figures and script), `1b27cb8` (md5 of the frozen files, P230), `0e9f9b2` (acceptance tests of A2, `renv.lock`).
-- [ ] A3. Acceptance step 1: reproduce the control figures with the original choices as explicit options (tolerance 1e-6).
+- [x] A3. Acceptance step 1: reproduce the control figures with the original choices as explicit options (tolerance 1e-6).
   - [x] A3.1 The chain of hcesfort with the choices of step 1 (`step1_args`, `run_chain()`, `acceptance_chain(options)`), run in CI on the invented sheets with the real tables (`f938fe5`).
   - [x] A3.2 Stage comparisons in the order of the chain (design 4.3): e01, e03, e04, e07 (`d34f30e`), e05, e06 (`678661f`); results and `sessionInfo()` of each run written to `tests/testthat/_acceptance/` or `ENGIH2018_RESULTS`; P235. Run on the microdata by the maintainer (2026-11-19): 40/40, 649 rows, 0 failures.
   - [x] A3.3 The six control files (design 4.2), all rows; the threshold count of 4.1 (`cd61a3a`, `38a3185`; medians with an interval on the degrees of freedom of the domain, P237). Not yet run on the microdata.
   - [x] A3.4 Self-review of A3 (P237 to P240), `devtools::check()` 0/0/0 and lint clean in the adapter.
-  - [ ] A3.5 The maintainer runs the control comparisons on the microdata; each failure is fixed (test side) or handed to Fable (stop rule of design 4.4). A3 closes when they pass.
+  - [x] A3.5 The maintainer runs the control comparisons on the microdata; each failure is fixed (test side) or handed to Fable (stop rule of design 4.4). A3 closes when they pass.
     - [x] A3.5a Run of 2026-11-19: 13 of 15 pass; both failures in `grupos_micronutrientes` (S22). Step 1 now groups the records by the original's join on the description and leaves out `unclassified` (P241; adapter, test helpers only). Not yet run on the microdata.
+    - [x] A3.5b Run of 2026-11-19 (adapter `8e7c36c`): 15 of 15 pass. The original's text join drops `S2:13 LECHE LÍQUIDA` (1,913 records): new error E30 (P242).
 - [ ] A4. Acceptance step 2: correct each erroneous default, one per commit, old and new figures in `NEWS.md`.
 
 ## v0.2: Peru and the article's open criticisms
 - [ ] Food-matching support module (P42, parts b, c, e): candidates by text similarity, seeds from validated crosswalks, review round trip. Before the Peru adapter.
+- [ ] Preprocessing module (P243, priority high): text keys normalised before any join, joins by code with the unmatched listed, report of descriptions spelled differently. Fable designs, Opus implements. Before the Peru adapter.
 - [ ] Peru survey adapter (companion repository).
 - [ ] Retention factors.
 - [ ] H-AR reference table.

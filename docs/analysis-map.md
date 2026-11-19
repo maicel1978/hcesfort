@@ -478,3 +478,18 @@ Amended:
 - Step 9 of section 2: `n_distinct()` counts a missing day as a day
   (`01:437`). **[needs microdata]** for whether any day is missing.
 
+## 11. Found in acceptance step 1 (2026-11-19)
+
+- **E30 (B, confirmed on the microdata). Records whose description does not
+  match the group table are dropped from the food-group shares without a
+  count.** `08_grupos_alimentos.R:42-56` joins `agrupacion_alimentos.csv`
+  by `(seccion, descripcion)` and keeps `!is.na(grupo_mddw)`. The table
+  writes `LECHE LíQUIDA` (lower-case accented i); the records write
+  `LECHE LÍQUIDA`. Code `S2:13` (1,913 records, group `04 Lácteos` by
+  code) is therefore dropped, and only the group shares move (dairy is
+  understated, the other groups overstated by up to 11% of their share).
+  Found by the maintainer's run of A3.5 (`grupos_codigos.csv`, adapter
+  `8e7c36c`), 15 of 15 control comparisons passing once the original's
+  join is reproduced. Correction: the join by code, with `unclassified`
+  shown (P242), in A4 together with E1.
+
