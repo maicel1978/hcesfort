@@ -51,6 +51,21 @@ Tests: 504 pass, 22 skipped here. `lintr::lint_package()` clean;
 
 None new.
 
+**Run of the maintainer (2026-11-19, A3.5, adapter 8e7c36c):**
+`devtools::test(filter = "acceptance-controls")` gave FAIL 0, PASS 15.
+`grupos_codigos.csv` has one row: `S2:13 LECHE LÍQUIDA`, 1,913 records,
+grouped `04 Lácteos` by code but dropped by the text join of
+`08_grupos_alimentos.R` (the table writes `LECHE LíQUIDA`). **Acceptance
+step 1 is closed.** Record the error of the original as P242 (a new E
+error, corrected in A4 together with E1 in the group shares).
+
+**Maintainer request for the roadmap (2026-11-19):** after A4, a module of
+the package that makes the preprocessing of a new survey more human and less
+error-prone: text keys normalised before any join (case, accents,
+spaces), joins by code with the unmatched listed, and a report of every
+description that a table spells differently. Record it as an item with
+priority high, for v0.2, next to the food-matching support module.
+
 ## Recommended model for the next session
 
 **Opus** (close A3 with the maintainer's files, or Fable if S22 still
