@@ -59,6 +59,22 @@ context.
    that no figure disappears before you choose a threshold; give the
    threshold when you want it applied, and it becomes its own step.
 
+**Answers of the maintainer (2026-11-19, A4.1).** Thresholds of E3/E21
+(`min_coverage`, `min_records_used`): approved as recommended, 0 in step 2
+and the coverage of each nutrient reported; the maintainer chooses the
+thresholds later, as a step of its own.
+
+**Two requests for every remaining correction of A4:**
+
+1. Each correction commit states in one line the *class* of the root cause
+   (for example: text join, unit conversion, silent filter, reference value
+   without source, degrees of freedom, missing value read as zero). They feed
+   `docs/lessons.md` after A4.
+2. A4.1 ran at medium effort by mistake. The next session (high effort)
+   starts by re-reading the diffs of E10, E11 and E29 (`ca27a0d`,
+   `935bd18`, `b8d1b57`) against design section 5 before adding new
+   corrections, and reports anything it would change.
+
 ## Recommended model for the next session
 
 **Opus** (A4.2: implementing the corrections of an approved design).
