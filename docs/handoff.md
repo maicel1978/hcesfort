@@ -72,6 +72,14 @@ Then A2.7 and A2.8 as in the roadmap.
    kept in the adapter; codes in the records outside the food list) are
    still open.
 
+**Answers of the maintainer (2026-11-19):** all approved as recommended.
+1, garlic powder: kept in step 1, corrected in A4 as a new E error. 2, liquid
+milk: fix the sentence of the design in task 12. 3, error classes `file` and
+`md5` stay in the adapter until P13; codes outside the food list: a local
+test in A3 shows they move no figure. Note for later: before the companion
+repository is made public, confirm that the INCAP table may be redistributed
+in `inst/extdata/composition.csv`; if not, download it from the source.
+
 ## Recommended model for the next session
 
 **Opus** (A2.6 to A2.8).
