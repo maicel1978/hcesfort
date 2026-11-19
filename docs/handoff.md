@@ -61,6 +61,30 @@ Choices of the comparisons, each in a comment of the helpers:
 None new. Question 1 of the previous handoff (where results are written)
 stays as it is: `tests/testthat/_acceptance/` or `ENGIH2018_RESULTS`.
 
+**Run of the maintainer (2026-11-19, A3.3, adapter 38a3185, `hcesfort`
+f4cd983):** `devtools::test(filter = "acceptance-controls")` gave FAIL 2,
+PASS 13 in 136 s. Passed: `riesgo_inadecuacion` (800 rows),
+`diferencias_escenarios` (336, U3), `escenarios_resumen` (35),
+`escenarios_consumo_vehiculos`, `anexo_harina_maiz`, households near a
+threshold. Failed, both in `grupos_micronutrientes` (S22):
+
+1. `"unclassified" %in% sh$food_group` is TRUE: some records reach
+   `food_group_shares()` without a group.
+2. 100 of 112 shares differ. Pattern, the same for every nutrient: every
+   group is slightly lower in the package (relative 0.04% to 11%) except
+   `04 Lácteos`, which is higher (iron 0.425 to 0.467; folate 0.731 to
+   0.857; vitamin A 15.76 to 18.04; vitamin B12 17.94 to 20.71; vitamin D
+   40.56 to 46.89). Read as a hypothesis to test, not a finding: some
+   records are grouped differently (more go to dairy) and some get no
+   group, so the join of the records to `food_groups.csv` or the
+   composition used in S22 (legacy E1: enriched rice and pasta of the
+   crosswalk) does not match `scripts/08_grupos_alimentos.R`. Compare the
+   record-level group of the package with the original's before changing
+   anything.
+
+Next: A3.5, the S22 mismatch (Opus). The figures of the PMA report other
+than the group shares are reproduced.
+
 ## Recommended model for the next session
 
 **Opus** (A3.5 with the maintainer's CSV files; Fable only if a failure
