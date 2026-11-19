@@ -1,123 +1,106 @@
 # Handoff
 
 - **Date:** 2026-11-19
-- **Model:** Opus 5.5 (A3.1 and A3.2). Stopped above half the context,
-  by the same-model rule of `docs/model-routing.md`.
-- **Branches:** `claude/adoring-fermi-kj5m7d` in `hcesfort` (this handoff,
-  roadmap, improvements) and in `hcesfort.engih2018` (the code), both
-  pushed. Nothing is merged into `main` of either repository.
+- **Model:** Opus 5.5 (A3.3 and A3.4).
+- **Branches:** `claude/elegant-pasteur-da2bt2` in `hcesfort` (this handoff,
+  roadmap, improvements, a note in design 4.2) and in `hcesfort.engih2018`
+  (the tests), both pushed. Nothing is merged into `main` of either
+  repository.
 - **Environment:** `R CMD INSTALL .` of `hcesfort` first, then of the
   adapter, before lint.
-- **Earlier handoffs:** `git show c0aa058:docs/handoff.md` (A2.8 and the
-  maintainer's answers on P234 and P236).
+- **Earlier handoffs:** `git show 0257950:docs/handoff.md` (A3.1, A3.2 and
+  the maintainer's run of the stages: 40/40, 649 rows, 0 failures).
 
 ## What was done (in `hcesfort.engih2018`, tests only; `R/` unchanged)
 
 | Commit | Content |
 |---|---|
-| `f938fe5` | `helper-chain.R`: `step1_args` (the hcesfort arguments of S2, S6 to S9, S11, S13, S21, S24), `run_chain(survey, tables)` returning every stage, `acceptance_chain(options)` cached per set of options. `test-acceptance-chain.R` runs it in CI on the invented sheets with the real tables. |
-| `d34f30e` | `helper-stages.R` (package side of e01, e03, e04_afe, e04_gramos_por_ema, e04_agotamiento, e07, with the names of the export script); `helper-compare.R` (`compare_stage()`, tolerances of design 4.1 by kind of measure, `expect_comparison()`, results of the run); `records_chain()` / `acceptance_records()`: all records before the non-food drop, as stage 01 saw them. P235 closed in the A2 test. |
-| `678661f` | `helper-stages-intake.R`: e05_ingesta (four section variants, intake on the composition as it is), e05_cobertura, e06_vehiculos (the 75 + 2 vehicle foods), e06_escenarios. `acceptance_sheets()`: the sheets verified and read once; every set of options is built from them, and a test checks that `engih2018_survey()` gives the same survey. |
+| `cd61a3a` | `helper-controls.R` (riesgo_inadecuacion, diferencias_escenarios), `helper-controls-other.R` (escenarios_resumen, consumo de vehículos, anexo de harina de maíz, grupos, households near a threshold), `compare_control()` and the tolerance of each control column in `helper-compare.R`; `test-acceptance-intervals.R` (runs in CI); `srvyr` in Suggests. |
+| `38a3185` | `test-acceptance-controls.R`: the six files, all rows (800 + 336 + 35 + 3 + 8 + 16), U3 (130 zero differences) and `umbrales.csv`. |
 
-Tests: 453 pass, 15 skipped here (they need `ENGIH2018_DATA`). Lint clean.
-`devtools::check()` not run (once at the end of A3).
+Tests: 470 pass, 22 skipped here (they need `ENGIH2018_DATA`).
+`devtools::check()` 0/0/0 and `lintr::lint_package()` clean in the adapter.
+The smoke run (`data-raw/acceptance/smoke_acceptance.R`) runs every
+comparison to the end on the invented survey.
 
-**The stage comparisons have never met the microdata.** They were run
-here with the cache filled by the invented survey: every comparison ran to
-the end, every measure of the ten stage tables found its package
-counterpart by name (no measure missing on either side), and the figures
-differ, as expected. The script of that smoke run is
-`data-raw/acceptance/smoke_acceptance.R` of the adapter; run it after any
-change of the comparisons.
+**One finding changes design 4.2 (P237).** In the original, `survey_mean()`
+takes the degrees of freedom of the whole design (P188), but
+`survey_median()` passes none and `survey::svyquantile()` then takes those
+of the households of the group with a value. The medians among consumers
+by area and quintile (vehicles, maize flour) are therefore compared with
+`df = "domain"`; every other interval with `df = "design"`.
+`test-acceptance-intervals.R` checks both against `srvyr` on
+`hces_example` and shows that `df = "design"` would give other limits.
 
-Choices made in the comparisons, each written in a comment of the helper:
+Choices of the comparisons, each in a comment of the helpers:
 
-- Outlier counts take only records with an outlier group (the original
-  never judged a record without a match, P232). A test checks that the
-  flags of the chain equal those of all the records.
-- e01, e03, e04_gramos_por_ema, e05_cobertura and e06_vehiculos are
-  computed on all the records, non-foods included (the original's files
-  hold them); e05_ingesta, e06_escenarios and e07 on the chain.
-- e03: groups are counted by rows and by values, so U1 and U2 are
-  compared. e04_afe: `sin_ema` is the members without age or sex (the
-  package has no AFE per person); the four `*_no_constante` are 0 by
-  construction of the household table.
+- Cells without variation: limits filled with the estimate (U3), only
+  where `interval_note` is `no_variation` or `degenerate_proportion`.
+- `pct_sobre_ul`: `above_ul_added` for folate and vitamin A, `above_ul_total`
+  for iron, zinc and vitamin D (S18).
+- Groups: the group "No alimento" of the adapter is absent from the
+  original; the test requires its share to be 0 and leaves it out.
+- The folate columns of `escenarios_resumen` are compared on all 35 rows
+  (P240).
 
 ## Exact next step
 
-1. **Maintainer:** run the stage comparisons on the microdata (review
-   point 1) and give the next session the CSV files of the comparisons
-   that fail.
-2. **A3.3** (Opus): the six control files (design 4.2), all rows, with the
-   threshold count of 4.1; one commit per file or two, in a new
-   `test-acceptance-controls.R` with the helpers above
-   (`compare_stage()` takes a wide table and its keys; `read_control()`
-   reads the six files). Read first: design 4.1, 4.2 and 4.4, and the help
-   of `inadequacy()`, `above_ul()`, `estimate_households()`,
-   `estimate_difference()`, `nutrient_density()`, `food_group_shares()`,
-   `flag_precision()` before calling them. If a stage of review point 1
-   fails, fix that first: a cause in the test (a measure mapped wrongly)
-   is fixed here; a cause in the package or the adapter with no obvious
-   reason goes to Fable (stop rule of 4.4). Never widen a tolerance.
-3. **A3.4**: self-review of A3, `devtools::check()` and lint once.
+1. **Maintainer:** run the control comparisons on the microdata (review
+   point 1) and send the CSV of each comparison that fails, with
+   `umbrales.csv`.
+2. **A3.5** (Opus): fix each failure. A cause in the test (a column or a
+   label mapped wrongly) is fixed in the helpers; a figure that differs
+   with no household on a threshold, after the stages agree, goes to
+   Fable (stop rule of design 4.4). Never widen a tolerance.
+3. **A4** once A3 passes: step 2, one correction per commit (design
+   section 5). P239 (an invented survey with two PSUs per stratum, so the
+   control tests run in CI) fits before it.
 
 ## Open questions
 
-1. **Where each acceptance run writes its results.** Done as
-   `tests/testthat/_acceptance/` (ignored by git and by the build), or the
-   directory named by `ENGIH2018_RESULTS`: one CSV per comparison and
-   `sessionInfo.txt` with the versions of `hcesfort` and the adapter.
-   Recommended: keep it, because the files sit next to the tests that
-   wrote them and need no setting. Alternative: a dated subdirectory per
-   run, to keep the history of runs.
-
-**Run of the maintainer (2026-11-19, A3.1 and A3.2):** on the microdata,
-`devtools::test(filter = "acceptance")` with the adapter at 1aefc22 and
-`hcesfort` at 14b3cf9 gave FAIL 0, WARN 0, SKIP 0, PASS 40 in 279 s
-(acceptance-a2 15, acceptance-chain 14, acceptance-stages 11: e01, e03,
-e04 afe, gramos_por_ema and agotamiento, e05 ingesta and cobertura, e06
-vehiculos and escenarios, e07 diseno). Result files written in
-`tests/testthat/_acceptance/` (one CSV per comparison and `sessionInfo.txt`).
-The 649 rows of those CSV files were checked by the maintainer: 0 failures;
-counts equal; largest absolute difference 4.5e-12 on means and 4.8e-8 on
-sums (totals of 1e5 to 1e7). Next: A3.3, the six control files.
+None new. Question 1 of the previous handoff (where results are written)
+stays as it is: `tests/testthat/_acceptance/` or `ENGIH2018_RESULTS`.
 
 ## Recommended model for the next session
 
-**Opus** (A3.3; the stage failures of review point 1, if any, unless the
-cause is not obvious).
+**Opus** (A3.5 with the maintainer's CSV files; Fable only if a failure
+has no obvious cause).
 
 ## Maintainer review points
 
-1. **The stage comparisons on the microdata** (expect 0 failed; a failure
-   lists the figures that differ; send the CSV of each failing
-   comparison):
+1. **The control comparisons on the microdata** (expect 0 failed; the
+   first run of the risk file takes a few minutes):
 
    ```r
-   # in hcesfort.engih2018, with hcesfort installed from its branch
-   # claude/adoring-fermi-kj5m7d or main
+   # in hcesfort.engih2018, branch claude/elegant-pasteur-da2bt2, with
+   # hcesfort installed from the same branch name or main
    Sys.setenv(ENGIH2018_DATA = "path/to/the/microdata")
-   devtools::test(filter = "acceptance")
+   devtools::test(filter = "acceptance-controls")
    list.files("tests/testthat/_acceptance")
+   read.csv("tests/testthat/_acceptance/umbrales.csv")
    ```
 
-2. **The tolerances of design 4.1 as the comparisons apply them** (one
-   row per measure of each stage table, with its kind):
+2. **The degrees of freedom of a median with an interval** (P237): the
+   test that compares with `srvyr` runs without the microdata.
 
    ```r
-   x <- read.csv("tests/testthat/_acceptance/e05_ingesta.csv")
-   table(x$medida, x$kind)
+   devtools::test(filter = "acceptance-intervals")
    ```
 
-3. **One stage figure by hand**: the purchased grams per day of Section 3A
-   (e01, `suma_g_dia_comprado`, 51,354,042.95 in the original) against
-   the chain:
+3. **One control figure by hand**: the national share of households
+   below the folate EAR, scenario 0, all households (73.0821326803750 in
+   `riesgo_inadecuacion.csv`):
 
    ```r
    devtools::load_all()
    for (f in list.files("tests/testthat", "^helper", full.names = TRUE)) {
      source(f)
    }
-   r <- acceptance_records()$records  # non-foods included, as in A1
-   sum(r$qty_g_d[r$section == "sec3a"], na.rm = TRUE)
+   Sys.setenv(ENGIH2018_DATA = "path/to/the/microdata")
+   r <- acceptance_risk()$inad
+   i <- r[r$scenario == "0. Sin fortificación" & r$nutrient == "folate", ]
+   h <- acceptance_survey("original")$households
+   w <- h$weight[match(i$household_id, h$household_id)]
+   ok <- !is.na(i$p_inadequate)
+   100 * sum(w[ok] * i$p_inadequate[ok]) / sum(w[ok])
    ```

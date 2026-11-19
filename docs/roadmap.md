@@ -129,9 +129,10 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
   - [x] A2.8 The export script of A1 moves to the companion repository (A-D2); acceptance tests skipped without `ENGIH2018_DATA`; `renv.lock`; `devtools::check()` and lint once for A2. Done: `33c7eae` (control figures and script), `1b27cb8` (md5 of the frozen files, P230), `0e9f9b2` (acceptance tests of A2, `renv.lock`).
 - [ ] A3. Acceptance step 1: reproduce the control figures with the original choices as explicit options (tolerance 1e-6).
   - [x] A3.1 The chain of hcesfort with the choices of step 1 (`step1_args`, `run_chain()`, `acceptance_chain(options)`), run in CI on the invented sheets with the real tables (`f938fe5`).
-  - [x] A3.2 Stage comparisons in the order of the chain (design 4.3): e01, e03, e04, e07 (`d34f30e`), e05, e06 (`678661f`); results and `sessionInfo()` of each run written to `tests/testthat/_acceptance/` or `ENGIH2018_RESULTS`; P235. Never run on the microdata yet.
-  - [ ] A3.3 The six control files (design 4.2), all rows; the threshold count of 4.1.
-  - [ ] A3.4 Self-review of A3, `devtools::check()` and lint once.
+  - [x] A3.2 Stage comparisons in the order of the chain (design 4.3): e01, e03, e04, e07 (`d34f30e`), e05, e06 (`678661f`); results and `sessionInfo()` of each run written to `tests/testthat/_acceptance/` or `ENGIH2018_RESULTS`; P235. Run on the microdata by the maintainer (2026-11-19): 40/40, 649 rows, 0 failures.
+  - [x] A3.3 The six control files (design 4.2), all rows; the threshold count of 4.1 (`cd61a3a`, `38a3185`; medians with an interval on the degrees of freedom of the domain, P237). Not yet run on the microdata.
+  - [x] A3.4 Self-review of A3 (P237 to P240), `devtools::check()` 0/0/0 and lint clean in the adapter.
+  - [ ] A3.5 The maintainer runs the control comparisons on the microdata; each failure is fixed (test side) or handed to Fable (stop rule of design 4.4). A3 closes when they pass.
 - [ ] A4. Acceptance step 2: correct each erroneous default, one per commit, old and new figures in `NEWS.md`.
 
 ## v0.2: Peru and the article's open criticisms

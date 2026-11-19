@@ -365,6 +365,12 @@ cannot be rounding and is a real disagreement.
 `est()` stands for `estimate_households(design, x, value, ..., ci_method =
 "mean", df = "design")` and `dif()` for `estimate_difference(..., df =
 "design")`, on `as_hces_design(households, lonely_psu = "fail")`.
+Exception (found in A3.3, P237): a median *with an interval* takes
+`df = "domain"`. `srvyr::survey_median()` passes no degrees of freedom,
+and `survey::svyquantile()` then takes those of the households of the
+group with a value; only `survey_mean()` takes those of the whole design.
+It concerns the medians among consumers of `escenarios_consumo_vehiculos`
+and `anexo_harina_maiz`; the other medians have no interval.
 
 | File, rows | Column | Package |
 |---|---|---|
