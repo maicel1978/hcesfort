@@ -67,6 +67,18 @@ tolerance.
    checksums, and CI runs the tests on every push. Alternative: an
    argument of `engih2018_tables()` that runs `check_frozen()`.
 
+**Answers of the maintainer (2026-11-19).** 1: the alternative. On the
+maintainer's machine `renv::snapshot()` refuses `hcesfort` (installed from a
+local clone, "unknown source"); keep the current lock and make every
+acceptance run of A3 write its `sessionInfo()` next to its results. P236
+stays open for later. 2: approved as recommended.
+
+**Review point 1 done (2026-11-19, maintainer's machine: Windows, R 4.6.2,
+`hcesfort` cb17629, adapter 0e9f9b2, microdata md5 as registered):**
+`devtools::test(filter = "acceptance")` gave FAIL 0, WARN 0, SKIP 0,
+PASS 14 in 55.6 s. The adapter reads the real files; households, members
+and records match the stage figures of A1. A3 can start.
+
 ## Recommended model for the next session
 
 **Opus** (A3).
