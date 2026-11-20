@@ -74,6 +74,29 @@ recommended. 1, `ci_method = "korn_graubard"`. 2, `df = "domain"`. 3, add
 the interval limits as figures of step 2, so that `step2_e24.csv` records
 the change.
 
+**Run of the maintainer (2026-11-20, A4.2 on the microdata, adapter
+c2f16ea):** `acceptance-step2` FAIL 0, PASS 20 in 1,149 s; the nine steps
+move in their expected direction. Effects (rows that change, largest
+absolute change), for `NEWS.md`:
+
+- E10, E11: none.
+- E29: see above (prevalences up to +0.94 points).
+- E27: summary 54, risk 124, vehicles 3; prevalences of inadequacy fall up
+  to 0.31 points (vitamin A, 2a, plausible energy: 46.16 to 45.85).
+- E5/E28: vehicle coverage only, 6 rows, up to 2.81 points.
+- P159: negligible (prevalences up to 0.002 points).
+- E30: 100 group shares, up to 6.42 points (vitamin D from dairy 40.80 to
+  47.22; from meat 40.64 to 36.23; vitamin B12 from dairy 18.38 to 21.25).
+- **E1: 32 group shares, up to 49.6 points.** Folate from cereals 81.93 to
+  32.31 and from legumes 11.54 to 43.40; iron from cereals 66.49 to 44.46,
+  legumes 12.30 to 20.43, meat 9.19 to 15.27. The main source of folate in
+  the corrected figures is legumes, not cereals: a conclusion of the
+  delivered report changes.
+- **E7: percent above the UL of vitamin A, 17 risk rows, up to 1.71
+  points**: scenario 1c (sugar) 1.78 to 3.50 (plausible energy 0.78 to
+  1.73); baseline and 1a/1b/3 from 0 to 0.34; 2a 0.17 to 0.83; 2b 0.04 to
+  0.54.
+
 ## Recommended model for the next session
 
 **Opus** (A4.2b: implementing approved corrections).
