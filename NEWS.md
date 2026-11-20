@@ -622,6 +622,11 @@
   scenarios table (R3.1) note the fortifiable share of the grams of each
   vehicle, weighted (P210). The exhibits of R3.3 and of section 1 moved to
   the new template files `_upper.R` and `_coverage.R`.
+* `ref_requirements` gains vitamin D (IOM 2011): EAR 10 µg and UL 100 µg
+  for women 19–30 years, the UL on total intake (Summary Tables, p. 1112:
+  unless otherwise specified, the UL represents total intake from food,
+  water and supplements; vitamin D carries no footnote). The row was
+  pending until the intake its UL applies to was read in the report.
 * Corrections to the original ENGIH 2018 analysis will be recorded in this
   file, with the figures before and after, as each function is written.
   Errors of the original analysis are not ported; the list of those found is

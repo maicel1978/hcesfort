@@ -63,7 +63,12 @@ test_that("requirements: EAR below UL, vocabulary of ul_applies_to", {
   # Units parse as units of the nutrient registry.
   expect_s3_class(nutrient_registry(rlang::set_names(r$unit, r$nutrient)),
                   "hces_nutrients")
-  expect_false("vitamin_d" %in% r$nutrient)
+  # Vitamin D: IOM 2011, EAR p. 389, UL pp. 444-445, total intake p. 1112.
+  d <- r[r$nutrient == "vitamin_d", ]
+  expect_identical(nrow(d), 1L)
+  expect_identical(c(d$ear, d$ul), c(10, 100))
+  expect_identical(c(d$unit, d$ul_unit, d$ul_applies_to),
+                   c("ug", "ug", "total"))
   # ul_unit: a mass unit wherever there is a UL; the unit of the EAR for
   # total intake; the mass of the form for folate and vitamin A.
   expect_identical(is.na(r$ul), is.na(r$ul_unit))

@@ -40,9 +40,8 @@ NULL
 #' adults (19 years and older) and applies to the intake named in
 #' `ul_applies_to`, which is what the share above the UL must be computed on.
 #'
-#' Vitamin D is not included: its EAR (10 µg) and UL (100 µg) were read in
-#' IOM (2011), but the intake its UL applies to was not found stated in the
-#' report, so the row stays pending in `data-raw/`.
+#' Vitamin D comes from IOM (2011): EAR 10 µg, UL 100 µg on total intake
+#' (Summary Tables, p. 1112).
 #'
 #' @format A tibble with one row per nutrient and population group:
 #' \describe{
@@ -75,9 +74,10 @@ NULL
 #'   \item{location}{Chapter and page of the EAR, of the UL and of the two
 #'     columns above.}
 #' }
-#' @source Institute of Medicine (1998, 2000, 2001). Dietary Reference
+#' @source Institute of Medicine (1998, 2000, 2001, 2011). Dietary Reference
 #'   Intakes. Washington, DC: The National Academies Press; doi
-#'   10.17226/6015, 10.17226/9810, 10.17226/9956, 10.17226/10026.
+#'   10.17226/6015, 10.17226/9810, 10.17226/9956, 10.17226/10026,
+#'   10.17226/13050.
 #' @family reference tables
 #' @examples
 #' ref_requirements[, c("nutrient", "unit", "ear", "ul", "ul_unit",

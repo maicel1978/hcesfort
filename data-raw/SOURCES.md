@@ -35,7 +35,7 @@ cited by number.
 
 | CSV | Shipped as | Rows (verified / pending) | Source and place |
 |---|---|---|---|
-| `requirements.csv` | `ref_requirements` | 6 / 1 | IOM 1998, 2000, 2000b, 2001, 2011; EAR for women 19–30 years and UL for adults; place per row |
+| `requirements.csv` | `ref_requirements` | 7 / 0 | IOM 1998, 2000, 2000b, 2001, 2011; EAR for women 19–30 years and UL for adults; place per row |
 | `iron_requirement_percentiles.csv` | `ref_iron_requirements` | 182 / 0 | IOM 2001, Appendix Tables I-3 (p. 699) and I-4 (p. 700); bioavailability from the table footnotes (I-3) and chapter 9, pp. 315–316 and 343 (I-4) |
 | `energy_requirements.csv` | `ref_energy_requirements` | 58 / 0 | FAO/WHO/UNU 2004, Table 3.2 (infants, by month), Tables 4.2 (boys) and 4.3 (girls), column "Daily energy requirement, kcal/d" |
 | `energy_additions.csv` | `ref_energy_additions` | 7 / 0 | FAO/WHO/UNU 2004, section 6.3 (pregnancy: 85, 285 and 475 kcal per day by trimester for healthy well-nourished women with an average gestational weight gain of 12 kg; 360 kcal per day in the second trimester as the recommendation for societies where many women do not seek prenatal advice before the second or third month) and section 7.2 (lactation: 505 and 675 kcal per day in the first six months, conclusion; 460 kcal per day after six months with partial breastfeeding). Read on 2026-11-16 |
@@ -48,7 +48,6 @@ cited by number.
 
 | CSV | Row | Value | Why pending | How to check |
 |---|---|---|---|---|
-| `requirements.csv` | `vitamin_d` | EAR 10 µg and UL 100 µg are verified (IOM 2011, pp. 389 and 444–445); `ul_applies_to = total` is not | The chapters read (summary, 1, 5, 6) were not found to state whether the UL refers to total intake. IOM 2001 says so as a general rule (Summary, table footnote a, pp. 26–27), but that is another report. | Find the statement in IOM 2011 (chapter 1 or the UL chapter); if it says total intake, set `status` to `verified`. |
 | `requirements.csv` | `zinc` | `ear_bioavailability` (left missing; the row is shipped) | The absorption assumed by the zinc EAR was not read. | Read IOM 2001, chapter 12 (derivation of the EAR); enter the fraction if one is stated. |
 | `nutrient_conversions.csv` | `retinyl_palmitate` | no value | No document opened gives a factor from mass of retinyl palmitate to retinol activity (analysis map, E8). A value derived from molecular weights is a computation, not a source. | Give a document with the factor, or decide that scenario levels for vitamin A must be given as retinol. |
 
@@ -138,11 +137,30 @@ high. No value changed; only `location` and `ul_form_location`.
 | IOM 2000 | Vitamin E EAR, women 19–30 years | 238 | 237 |
 | IOM 2000 | Vitamin E UL, adults | 259 | 258 |
 | IOM 2000b | Cut-point method (pp. 81, 91) | 81, 91 | 81, 91 (unchanged) |
-| IOM 2011 | Vitamin D EAR 400 IU/day, adults 19–50 years (pending row) | 388 | 389 |
-| IOM 2011 | Vitamin D UL 4,000 IU/day, adults (pending row) | 444 | 444–445 |
+| IOM 2011 | Vitamin D EAR 400 IU/day, adults 19–50 years | 388 | 389 |
+| IOM 2011 | Vitamin D UL 4,000 IU/day, adults | 444 | 444–445 |
 
 The IOM 2000 and 2011 rows were not in the scope of P124 (IOM 1998 and
 2001) and were read because the same shift was found there.
+
+## Vitamin D row verified (added 2026-11-20, adapter task A4.3)
+
+The intake the vitamin D UL applies to was read in IOM 2011, opened in the
+online reader on 2026-11-20 (`/read/13050/chapter/24` and `/chapter/10`):
+
+- Summary Tables, "Tolerable Upper Intake Levels, Vitamins", p. 1112: the
+  table's NOTE says that, unless otherwise specified, the UL represents
+  total intake from food, water, and supplements. The vitamin D column
+  (100 µg/d for women 19–30 years) has no footnote; the footnotes of the
+  table qualify vitamin A (preformed only) and vitamin E, niacin and folate
+  (synthetic forms) only.
+- Chapter 8, p. 498: a vitamin D supplement is an option, "but total
+  intake (foods plus supplements) should not exceed the Tolerable Upper
+  Intake Level (UL)".
+
+`ul_applies_to = total` is therefore verified and the row is shipped. The
+EAR (Table 5-3, p. 363; text, p. 389) and the UL (Table 6-4, p. 441; text,
+pp. 443–445) were re-read in the same session; no value changed.
 
 ## Notes on use
 
