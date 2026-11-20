@@ -75,6 +75,29 @@ clean on the changed files.
    A1 count records before the non-foods are dropped, so the share on
    the chain's records need not be exactly 10.77%).
 
+**Answers of the maintainer (2026-11-20, A4.2d).**
+
+0. **Correction:** the dozen (E2) covers **218 records in 22 foods**
+   (P231, from A1's `e_e2_docenas`), not the 13 of the design. Rewrite the
+   expected direction of E2 with that count before running it; the
+   "at most 0.01 point" expectation may not hold.
+1. E2 piece weights: the maintainer has no document. Look for portion
+   weights in the FNDDS tables the adapter already uses (citable); if they
+   are not there, keep the original value and run a sensitivity, starting
+   with the foods that carry most records (passion fruit 108, sour lime 28,
+   orange 22).
+2. E18 density: correct oil only, from a citable density table opened in
+   the session (for example FAO/INFOODS); if none can be opened, keep water
+   and report the grams of oil.
+3. E8 NORDOM 602: run both readings (10 mg/kg as retinol or as retinyl
+   palmitate) as a sensitivity, with molecular weights from a document
+   opened in the session. The text of the standard is not in
+   `analisis_ENGIH2018`; `data/raw/parametros_normativos.csv` says
+   "palmitato de retinol; 10-25 mg/kg; NORDOM 602 (2004), numeral 5;
+   verificado", which names the compound but not the basis. The maintainer
+   will look for the PDF; if it appears, choose the reading it gives.
+4. Coverage margin of plus or minus 1 point around 10.8%: approved.
+
 ## Recommended model for the next session
 
 **Opus** (A4.2d.3 once the values or the decision to keep the original
