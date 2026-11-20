@@ -1,143 +1,118 @@
 # Handoff
 
 - **Date:** 2026-11-20
-- **Model:** Opus 5.5 (A4.2d.1: E6).
-- **Branches:** `claude/jolly-allen-ks3f7q` in `hcesfort` (docs only) and
-  in `hcesfort.engih2018` (E6), both pushed. They continue
-  `claude/sleepy-volta-wr6ir4`; nothing is merged into `main`.
+- **Model:** Opus 5.5 (A4.2d.2: row 3; the guard of the installed hcesfort).
+- **Branches:** `claude/dazzling-hypatia-h9ylzl` in `hcesfort` (docs only)
+  and in `hcesfort.engih2018`, both pushed. They contain the work of
+  `claude/jolly-allen-ks3f7q`; nothing is merged into `main`.
 - **Environment:** `R CMD INSTALL .` of `hcesfort` first, then of the
   adapter, before its tests and lint.
-- **Earlier handoffs:** `git show 9540049:docs/handoff.md` (A4.2c, S16,
-  the maintainer's answers on vitamin E and E6).
-
-## Corrections still open (design of the adapter, section 5), in order
-
-| Row | Error | State |
-|---|---|---|
-| 3 | E3, E21 | thresholds stay 0; coverage of each nutrient to report. No figure moves |
-| 4 | E2 | dozen as `count`: piece weights need a source (P233) |
-| 5 | E18 | density by food: densities need a source (P233) |
-| 15 | E8 | level basis: sensitivity, ratio of molecular weights `# SOURCE PENDING` |
-
-Done: rows 1, 2, 6 to 14, 16, 17 (S8, S16), S2. Row 12 (E6) done in this
-session, figures pending.
+- **Earlier handoffs:** `git show edb7cbf:docs/handoff.md` (E6, the
+  maintainer's runs of A4.4), `git show 9540049:docs/handoff.md` (A4.2c).
 
 ## What was done (adapter)
 
-- `bc6e18b`: `enrichment = "pairs"` available. 32 rules in
-  `inst/extdata/enrichment_pairs.csv` (`data-raw/enrichment_pairs.R`, md5
-  registered, `SOURCES.md`): rice 70213002 against 70213004; wheat
-  products against 70213039 / 70213038 at the original's fractions. No
-  rule for the three whole-grain rows (answer of 2026-11-20) nor for the
-  three rows named "unenriched" (question 1). New value
-  `"pairs_fraction_1"`: the sensitivity run. Cells tested by hand.
-- `707d3c1`: step `e6` (options `enrichment = "pairs"`, argument
-  `baseline_method = "subtract"`), **appended after `s16`** so that the
-  figures already in NEWS keep their meaning (question 2); its expected
-  direction in `helper-step2-e6.R`; sensitivity run `e6_fraction_1`
-  (`step2_e6_fraction_1.csv`); NEWS entries for E6 and the vitamin E
-  decision.
+- `3665542`: the acceptance tests check, once per run and before reading
+  the microdata, that the installed `hcesfort` has every feature the
+  adapter relies on (`hcesfort_features` in `helper-acceptance.R`: the
+  subtract baseline, `f283284`; the vitamin D row, `af8bc2e`); otherwise
+  they stop naming the missing features and the commit to install. Add a
+  row there whenever the adapter starts to rely on a new feature of
+  `hcesfort`. `step2_compare()` adds a column `change` (`same`,
+  `changed`, `now_missing`, `now_present`): a summary counts what goes
+  missing. README says to reinstall `hcesfort` before a run.
+- `46bce0e`: NEWS figures of S16 and E6 (and its sensitivity) from the
+  maintainer's repeated run.
+- `87d604b`: row 3 (E3, E21). No option moves, thresholds stay 0. A test
+  of `test-acceptance-step2.R` writes, for the state after every step,
+  `step2_coverage.csv` (block `enlace`: linkage ladder and records without
+  a validated match by section, with their grams as acquired; block
+  `cobertura`: per nutrient, records and grams as acquired with a value
+  over all included records, edible grams with a value over the linked
+  ones), `step2_missing_values.csv` and `step2_unmatched_foods.csv`.
+  Expected: Section 3A without a validated match within 1 point of 10.8%;
+  vitamins D and E lowest coverage of the original's nutrients; energy
+  complete. Tested without microdata (`test-step2-coverage.R`).
+- `hcesfort` docs: roadmap A4.2d.2 ticked; P246 (a `nutrient_coverage()`
+  in the core, low).
 
-**Finding P244.** The design says no baseline cell falls below its
-legacy value. One does: folate of pasta 70213057 ("Pasta, unenriched,
-raw", 18 µg DFE per 100 g), which the legacy rule raised to 26 (flour)
-and the subtraction leaves at 18. Iron holds cell by cell, so the step
-expects iron intake to rise or stay everywhere; folate is expected to
-rise on the microdata, but not by construction.
+Adapter: `devtools::test()` FAIL 0, PASS 702, SKIP 39 (microdata); lint
+clean on the changed files.
 
 ## Exact next step
 
-1. Maintainer: answers below, then one run of step 2 (S16 and E6
-   together, as agreed).
-2. A4.2d.2, row 3 (E3, E21): report the coverage of each nutrient
-   (`hcesfort::missing_values()`, `unmatched_foods()` on the chain's
-   linked content); share of Section 3A records without a validated
-   match near 10.8% (design row 3). No figure moves.
-3. A4.2d.3: E2, E18, E8 under the rule "cite and check, or keep the
-   original value and report the sensitivity".
-4. End of A4: self-review, `devtools::check()` and lint of the adapter.
+1. Maintainer: one run of `acceptance-step2` (now also row 3),
+   and answers to the questions below.
+2. A4.2d.3: E2, E18, E8 with the values the maintainer gives (each with
+   its document, `data-raw/SOURCES.md`), or, where none is given, the
+   original value kept and the records affected reported.
+3. End of A4: self-review, `devtools::check()` and lint of the adapter.
 
-## Open questions
+## Open questions (A4.2d.3 needs sourced values; none from memory)
 
-1. **Rows named "unenriched" (70213004 rice, 70213038 flour, 70213057
-   pasta).** Implemented: no rule (nothing was added to them).
-   Recommended: keep it. For rice and flour it changes nothing; for the
-   pasta the pair would lower iron from 1.30 to the floor 1.17 mg per
-   100 g, removing enrichment the row does not have. Alternative: keep
-   the design's rule for every legacy row but the whole-grain ones.
-2. **Order of E6 in step 2.** Implemented: after S16, not as row 12.
-   Recommended: keep it; moving it would change the "old" side of E1, E7,
-   E24, S8, S2 and S16, whose figures are already in NEWS. Alternative:
-   the order of the design, and a rerun of every step after it.
-
-**Answers of the maintainer (2026-11-20, A4.4):** both approved as
-recommended. 1, no rule for the unenriched rows (70213004, 70213038,
-70213057). 2, E6 at the end of the sequence, after S16.
-
-**Run of the maintainer (2026-11-20, A4.4, adapter 707d3c1) — invalid,
-to repeat:** FAIL 1 (S16): the 56 vitamin D figures became NA. Cause: the
-`hcesfort` installed on the maintainer's machine predated `af8bc2e` (the
-vitamin D row); the adviser had not asked for a reinstall. The test caught
-it as it should. **Request for the next session (high priority, before new
-corrections):** the acceptance tests check at start that the installed
-`hcesfort` is recent enough (for example, a minimum version or a feature
-check such as the vitamin D row of `ref_requirements`), and fail with a
-clear message naming the commit to install. Also: summaries of step 2
-count NA as a change (lesson: a summary must count what is missing).
-
-**Run of the maintainer, repeated (2026-11-20, `hcesfort` 4f1fe67
-reinstalled, adapter 707d3c1):** `acceptance-step2` FAIL 0, PASS 34 in
-916 s. For `NEWS.md`:
-
-- S16: no figure moves and none goes missing (1,120 risk rows, all
-  present).
-- E6 (pairs): 32 group shares, 84 summary figures, 330 risk rows change;
-  folate inadequacy falls up to 3.6 points (1a, plausible energy 63.05 to
-  59.43; 1a, all 60.98 to 57.51; baseline, all 73.88 to 70.55; 1b/1c,
-  plausible energy 50.25 to 47.30); upper limits of folate means rise about
-  20 µg.
-- Sensitivity `e6_fraction_1` (from the E6 state): folate inadequacy falls
-  a further 0.42 to 0.48 points (1a, plausible energy 59.43 to 58.96).
+1. **E2, dozen (13 records: 12 in Section 3A, 1 in Section 2).** The
+   original converts a dozen as 12 g (`unit_factors.csv`, unit 52,
+   "Requiere peso unidad"). `dozen = "count"` needs the weight of one
+   piece of each food sold by the dozen, with a source. Recommended: if
+   you have a document (a national or INCAP table of piece weights),
+   open it in the session and I enter each value with its page; if not,
+   keep the original and report only the 13 records (the design expects
+   no national figure to move by 0.01 point).
+2. **E18, density (oil: 3,369 Section 2 rows in gallons, 634 in Section
+   3A).** `density = "by_food"` needs the density of oil (and of any other
+   food recorded by volume that you want corrected), with a source.
+   Recommended: correct oil only, with a value from a document you open
+   in the session (for instance the FAO/INFOODS density database); water
+   for the rest. Without a document: keep water and report oil's grams.
+3. **E8, basis of the vitamin A level of sugar (NORDOM 602, numeral 5).**
+   Needs the text of the standard (is 10 mg/kg retinol or retinyl
+   palmitate?) and the molecular weights of retinol and retinyl
+   palmitate from a document. Recommended: run both readings as a
+   sensitivity run (as `e6_fraction_1`) once the ratio is cited; the
+   default stays the original's reading until the text is read.
+4. **Row 3, the band of the 10.8%.** Implemented: within 1 point is
+   expected; farther is a finding. Recommended: keep it (the 36,840 of
+   A1 count records before the non-foods are dropped, so the share on
+   the chain's records need not be exactly 10.77%).
 
 ## Recommended model for the next session
 
-**Opus** (row 3, then E2, E18, E8; implementation of the design).
+**Opus** (A4.2d.3 once the values or the decision to keep the original
+are given; then the end of A4).
 
 ## Maintainer review points
 
-1. **The pairs table and its cells** (expected: 32 rules; bread 70214019
-   iron 1.001, folate 18.2):
+1. **The guard stops a run against an old hcesfort** (expected: the
+   message names `af8bc2e`):
 
    ```r
-   e <- read.csv(system.file("extdata", "enrichment_pairs.csv",
-                             package = "hcesfort.engih2018"),
-                 colClasses = "character")
-   table(e$vehicle, e$enriched_ref_id)
+   # in hcesfort.engih2018, with devtools::load_all()
+   testthat::source_test_helpers("tests/testthat", env = globalenv())
+   f <- hcesfort_features
+   f[[2]]$check <- function() FALSE
+   check_hcesfort_features(f)
    ```
 
-2. **The rows left out, by name** (three whole-grain, three "unenriched"):
+2. **Step 2 on the microdata, row 3 included.** Send
+   `step2_coverage.csv` and the test summary:
 
    ```r
-   t <- hcesfort.engih2018::engih2018_tables()
-   ids <- c("70213158", "70214039", "70214103",
-            "70213004", "70213038", "70213057")
-   t$composition[t$composition$composition_id %in% ids,
-                 c("composition_id", "name", "iron_mg", "folate_ug_dfe")]
-   ```
-
-3. **Step 2 on the microdata** (fourteen steps and one sensitivity run).
-   Send `step2_s16.csv`, `step2_e6.csv`, `step2_e6_fraction_1.csv` and the
-   test summary:
-
-   ```r
-   # in hcesfort.engih2018, branch claude/jolly-allen-ks3f7q, with
-   # hcesfort installed from the same branch name
+   # hcesfort installed from branch claude/dazzling-hypatia-h9ylzl
    Sys.setenv(ENGIH2018_DATA = "path/to/the/microdata")
    devtools::test(filter = "acceptance-step2")
-   moved <- function(f) {
-     d <- read.csv(file.path("tests/testthat/_acceptance", f))
-     d[!(d$difference %in% 0) & !(is.na(d$old) & is.na(d$new)), ]
+   r <- read.csv("tests/testthat/_acceptance/step2_coverage.csv")
+   r[r$etapa == "sec3a | sin_enlace_validado", ]
+   r[r$bloque == "cobertura" &
+       r$medida == "pct_gramos_comestibles_con_valor", ]
+   ```
+
+3. **What went missing in a step** (expected: no `now_missing` or
+   `now_present` in any file):
+
+   ```r
+   for (f in list.files("tests/testthat/_acceptance", "^step2_.*\\.csv$",
+                        full.names = TRUE)) {
+     d <- read.csv(f)
+     if ("change" %in% names(d)) print(table(basename(f), d$change))
    }
-   moved("step2_s16.csv")   # expected: no rows
-   moved("step2_e6.csv")    # expected: iron and folate rows only
    ```

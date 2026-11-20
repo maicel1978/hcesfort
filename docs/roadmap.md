@@ -143,7 +143,7 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
   - [x] A4.2c Vitamin D row of `ref_requirements` verified in IOM 2011 (UL on total intake, Summary Tables, p. 1112) and shipped; S16 (`requirements = "package"`, iron group `females_menstruating_adult`): no figure expected to move, vitamin E above the UL stays missing (`not_assessable`). Adapter branch `claude/sleepy-volta-wr6ir4`. Figures pending the maintainer's run.
   - [ ] A4.2d Corrections that need sourced data (P233): E6, E2 (dozen), E18 (density), E8 (level basis, sensitivity). Row 3 (E3, E21): thresholds stay 0, coverage of each nutrient reported.
     - [x] A4.2d.1 E6: `enrichment = "pairs"` (32 rules, `enrichment_pairs.csv`) and `"pairs_fraction_1"` (sensitivity); step `e6` after `s16` and the sensitivity run `e6_fraction_1` (adapter `bc6e18b`, `707d3c1`). Finding P244 (one folate cell below its legacy value). Figures pending the maintainer's run.
-    - [ ] A4.2d.2 Row 3 (E3, E21): coverage of each nutrient reported.
+    - [x] A4.2d.2 Row 3 (E3, E21): coverage of each nutrient reported (`step2_coverage.csv` and the work queues of `missing_values()` and `unmatched_foods()`; adapter `87d604b`). Also: the acceptance run checks the installed `hcesfort` first (`3665542`); NEWS figures of S16 and E6 (`46bce0e`). Adapter branch `claude/dazzling-hypatia-h9ylzl`. Figures pending the maintainer's run.
     - [ ] A4.2d.3 E2, E18, E8 under the rule "cite and check, or keep the original value and report the sensitivity".
   - [ ] A4.3 The maintainer runs `test-acceptance-step2.R`; the figures go to `NEWS.md` of the adapter and `inst/acceptance/steps/`. Self-review, `devtools::check()` and lint once for A4.
 
