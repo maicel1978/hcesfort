@@ -119,6 +119,19 @@ food-matching module, P243). Separately, 363 matched foods lose records to
 units without a gram factor (`no_factor`), for example `S3A:393` (1,616
 records): list them for the unit catalogue (P243).
 
+**Maintainer's notes for P243 (2026-11-20; v0.2, after A4; not now).**
+Ideas to design with the maintainer, on evidence, never uncritically:
+a prioritised work list of units and foods to resolve (by records and
+expenditure); suggestions the user accepts or rejects; an Excel review
+template returned with validation; warnings for suspicious items (heavy and
+nutrient-free, impossible quantities, near-duplicate text); a small table of
+default unit weights and densities, each with a citable source; unit
+weights estimated from the survey itself (unit values: price per kg against
+price per unit); every default or estimated value flagged in the audit log
+with its origin and open to a sensitivity run. Evidence from the ENGIH:
+363 matched foods losing records to units without a factor, `S3A:569`
+unmatched, `S3A:594 Agua` outside the non-food list.
+
 ## Recommended model for the next session
 
 **Opus** (A4.2d.3 once the values or the decision to keep the original
