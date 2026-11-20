@@ -138,7 +138,8 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
 - [ ] A4. Acceptance step 2: correct each erroneous default, one per commit, old and new figures in `NEWS.md`.
   - [x] A4.0 P239: the control comparisons run in CI on an invented survey with two PSUs per stratum (adapter `25f8c97`).
   - [x] A4.1 Step 2 harness (`helper-step2*.R`, `test-acceptance-step2.R`, `test-step2-ci.R`) and the first corrections, each with its expected direction: E10 (`ca27a0d`), E11 (`935bd18`), E29 (`b8d1b57`). Old and new figures pending the maintainer's run.
-  - [ ] A4.2 The remaining corrections in the order of design section 5: rows 1 and 2 (no figure: NEWS entries), E27 (`vehicles = "all"`), E5/E28 (consumer = `acquired`), P159 (`fortifiable = "use"`), E30 then E1 (group shares by code, then on the baseline), E7, E24, S8/S16 (and S2 `priority = "food"`). Row 3 (E3, E21 gates) waits for the maintainer's thresholds; rows 4, 5, 12 and 15 (E2, E18, E6, E8) wait for their sources (P233).
+  - [x] A4.2 Re-reading of E10, E11, E29 (one note: the E29 direction is not guaranteed by construction, outlier bounds on shared grams); NEWS of rows 1 and 2 and the figures of E10, E11, E29 (`67f6cff`); E27 (`b6d8abe`), E5/E28 (`06cab8a`), P159 (`54cf5b1`), E30 (`9e533ef`), E1 (`7b43143`), E7 (`c2f16ea`), adapter branch `claude/zen-hamilton-ndnwr3`.
+  - [ ] A4.2b E24 (after the maintainer's choice of `ci_method` and `df`, and interval limits added to the step 2 figures), S8/S16 (`energy`, `requirements = "package"`), S2 (`priority = "food"`). Row 3 (E3, E21 gates) waits for the maintainer's thresholds; rows 4, 5, 12 and 15 (E2, E18, E6, E8) wait for their sources (P233).
   - [ ] A4.3 The maintainer runs `test-acceptance-step2.R`; the figures go to `NEWS.md` of the adapter and `inst/acceptance/steps/`. Self-review, `devtools::check()` and lint once for A4.
 
 ## v0.2: Peru and the article's open criticisms
