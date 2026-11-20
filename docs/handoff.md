@@ -70,6 +70,10 @@ rise on the microdata, but not by construction.
    E24, S8, S2 and S16, whose figures are already in NEWS. Alternative:
    the order of the design, and a rerun of every step after it.
 
+**Answers of the maintainer (2026-11-20, A4.4):** both approved as
+recommended. 1, no rule for the unenriched rows (70213004, 70213038,
+70213057). 2, E6 at the end of the sequence, after S16.
+
 ## Recommended model for the next session
 
 **Opus** (row 3, then E2, E18, E8; implementation of the design).
