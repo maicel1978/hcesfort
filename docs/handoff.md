@@ -85,6 +85,20 @@ check such as the vitamin D row of `ref_requirements`), and fail with a
 clear message naming the commit to install. Also: summaries of step 2
 count NA as a change (lesson: a summary must count what is missing).
 
+**Run of the maintainer, repeated (2026-11-20, `hcesfort` 4f1fe67
+reinstalled, adapter 707d3c1):** `acceptance-step2` FAIL 0, PASS 34 in
+916 s. For `NEWS.md`:
+
+- S16: no figure moves and none goes missing (1,120 risk rows, all
+  present).
+- E6 (pairs): 32 group shares, 84 summary figures, 330 risk rows change;
+  folate inadequacy falls up to 3.6 points (1a, plausible energy 63.05 to
+  59.43; 1a, all 60.98 to 57.51; baseline, all 73.88 to 70.55; 1b/1c,
+  plausible energy 50.25 to 47.30); upper limits of folate means rise about
+  20 µg.
+- Sensitivity `e6_fraction_1` (from the E6 state): folate inadequacy falls
+  a further 0.42 to 0.48 points (1a, plausible energy 59.43 to 58.96).
+
 ## Recommended model for the next session
 
 **Opus** (row 3, then E2, E18, E8; implementation of the design).
