@@ -1,150 +1,122 @@
 # Handoff
 
 - **Date:** 2026-11-20
-- **Model:** Opus 5.5 (A4.2b).
-- **Branches:** `claude/adoring-mayer-s0mm5x` in `hcesfort` (docs only)
-  and in `hcesfort.engih2018` (tests and `NEWS.md`), both pushed. They
-  continue `claude/zen-hamilton-ndnwr3`; nothing is merged into `main`.
+- **Model:** Opus 5.5 (A4.3, first part: A4.2c).
+- **Branches:** `claude/sleepy-volta-wr6ir4` in `hcesfort` (vitamin D row,
+  docs) and in `hcesfort.engih2018` (S16, NEWS), both pushed. They continue
+  `claude/adoring-mayer-s0mm5x`; nothing is merged into `main`.
 - **Environment:** `R CMD INSTALL .` of `hcesfort` first, then of the
-  adapter, before lint.
-- **Earlier handoff:** `git show 7ce3fb9:docs/handoff.md` (A4.2, with the
-  maintainer's answers on E24 and the figures of the run).
+  adapter, before its tests and lint.
+- **Earlier handoffs:** `git show 0a4f236:docs/handoff.md` (A4.2b, the
+  maintainer's answers on S16 and the figures of E24, S8, S2).
+
+## Corrections still open (design of the adapter, section 5), in order
+
+| Row | Error | State |
+|---|---|---|
+| 3 | E3, E21 | thresholds stay 0 (answer of the maintainer); coverage of each nutrient to report. No figure moves |
+| 4 | E2 | dozen as `count`: piece weights need a source (P233) |
+| 5 | E18 | density by food: densities need a source (P233) |
+| 12 | E6 | `"subtract"` with pairs: questions 2 and 3 below |
+| 15 | E8 | level basis: sensitivity, ratio of molecular weights `# SOURCE PENDING` |
+| 17 | S16 | done in this session (figures pending) |
+
+Done: rows 1, 2, 6 to 11, 13, 14, 16, S8, S2, S16.
 
 ## What was done
 
-Adapter commits:
+`hcesfort`:
 
-| Commit | Step | Class | Direction checked |
-|---|---|---|---|
-| `2c42abb` | E24: intervals as figures; `ci_method = "korn_graubard"`, `df = "domain"` (state `args$intervals`) | interval method that leaves the parameter space | every point estimate fixed; share limits inside 0 to 100 (present on the microdata); median limits fixed |
-| `97add90` | S8 `energy = "package"` (infant rows 649.42 / 600.42 kcal, not 649 / 600) | rounded reference value | intake and vehicle grams per AFE fall or stay; coverage and density of all households fixed; on the microdata no share moves by more than 0.1 point, no other figure by more than 0.1% |
-| `2e29595` | S2 `priority = "food"` (P59) | silent assumption | no figure moves (microdata only) |
-| `f5b06c4` | NEWS: figures of E27, E5/E28, P159, E30, E1, E7 from the maintainer's run | — | — |
+- Vitamin D row of `ref_requirements` verified and shipped. Read in IOM
+  2011, opened in this session (`nap.nationalacademies.org/read/13050`):
+  Summary Tables, Tolerable Upper Intake Levels, Vitamins, p. 1112, NOTE
+  ("Unless otherwise specified, the UL represents total intake from food,
+  water, and supplements"; vitamin D has no footnote); chapter 8, p. 498.
+  EAR (Table 5-3, p. 363; p. 389) and UL (Table 6-4, p. 441; pp. 443–445)
+  re-read: unchanged. `data-raw/requirements.csv`, `MD5`, `SOURCES.md`,
+  `?ref_requirements`, NEWS, test.
 
-Notes on E24:
+Adapter:
 
-- The step 2 figures now carry the limits of the 95% intervals
-  (`*_low`, `*_upp`) of the share below the EAR, above the UL, median
-  density, median and mean intake, coverage and median among consumers.
-  Group shares, mean grams per AFE and the folic-acid UL share (the folate
-  row of the UL share) have none. The other steps are checked on the
-  point estimates only (`step2_check()`).
-- The interval choices are threaded through `control_est()`,
-  `risk_block()`, `control_summary()`, `control_vehicles()` and
-  `group_shares()`, with the step 1 values as defaults: step 1 does not
-  change. Medians use `df = "domain"` in every state (srvyr's
-  `survey_median()`); the summary and density medians were on
-  `df = "design"` before, which changed no compared figure (the original
-  reported no interval for them).
-- On the invented survey a cell whose households lie in one PSU per
-  stratum has no degrees of freedom with `df = "domain"`, so "limits
-  present" is checked on the microdata only.
+- S16: `requirements = "package"` takes `ref_requirements` and, for iron,
+  only the group `females_menstruating_adult` (`engih_iron_package()`);
+  a test shows the package's tables equal the original's value by value,
+  except the vitamin E upper level (blank in the original).
+- Step `s16` of step 2: expected direction, **no figure moves**.
+- NEWS: figures of E24, S8 and S2 from the maintainer's run; S16 entry.
 
-Tests of the adapter: all pass here, 33 skipped (microdata); lint of
-`tests/testthat` clean. `devtools::check()` not run (once at the end of
-A4).
+**Finding on S16, vitamin E.** The approved answer expected 0% above the
+UL in every scenario. The package gives a missing share instead:
+`above_ul()` sets `ul_scope = "not_assessable"` when no scenario adds the
+form and the diet has none (`R/above-ul-log.R`, `ul_parts()`). So vitamin
+E stays missing, as in the original. See question 1.
 
 ## Exact next step
 
-Steps run on the microdata so far: E10, E11, E29, E27, E5/E28, P159, E30,
-E1, E7, E24, S8, S2 (28/28; effects below). S16 is postponed (answers
-below). Next, A4.3 (Opus, high effort):
-
-1. Re-read design section 5 and list the corrections still open, in order;
-   write that list here first.
-2. The small task in `hcesfort` before S16: the vitamin D row of
-   `ref_requirements`, verified against a document opened in the session
-   (stop and ask the maintainer for the document if it cannot be reached).
-   Then S16 with the three answers below.
-3. The corrections that need data with a source (P233: dozen, density by
-   food, enrichment pairs, level basis), under the maintainer's rule
-   (cite and check, or keep the original value and report the
-   sensitivity). Dozen: start with the foods that carry most records.
-4. E3/E21: thresholds stay 0; report the coverage of each nutrient.
+1. Maintainer's answers to the questions below.
+2. E6 (row 12) with the answers: the enrichment table of `"pairs"` in the
+   adapter (`inst/extdata/`, from INCAP rows already registered), its
+   option made available, step `e6` with the direction of the design.
+3. Row 3 (E3, E21): report the coverage of each nutrient; no figure moves.
+4. E2, E18, E8 under the rule "cite and check, or keep the original
+   value and report the sensitivity".
 5. At the end of A4: `devtools::check()` and lint of the adapter, and the
    step 2 command for the maintainer.
 
 ## Open questions
 
-1. **S16, iron group.** The original's distribution (13 percentiles,
-   women 19 to 30, 18%) is identical, value by value, to the package's
-   group `females_menstruating_adult` (IOM 2001, Appendix Table I-4,
-   p. 700). Recommended: the adapter's `requirements = "package"` keeps
-   that group only (the reference woman is 25 years old and
-   menstruating), so S16 does not move iron. Alternative:
-   `females_adult_mixed` (17% oral contraceptive users), a methodological
-   change that would lower iron inadequacy; it belongs to a separate
-   decision, not to S16.
-2. **S16, vitamin D.** Recommended: (a) wait for S16 until the package
-   ships the vitamin D row (one reading of IOM 2011 for the intake the UL
-   refers to; P-item to open in `improvements.md`), and run step 2 now
-   without S16. Alternatives: (b) append the original's vitamin D row
-   (EAR 10 µg, UL 100 µg, both verified) to the package table in the
-   adapter, its `ul_applies_to` marked pending; (c) let the vitamin D
-   figures drop from step 2 and record it in `NEWS.md`.
-3. **S16, vitamin E.** With the package's row, vitamin E's UL applies to
-   supplemental alpha-tocopherol only; no scenario adds vitamin E, so its
-   share above the UL would be 0% in every scenario (it was missing).
-   Recommended: accept it as the design's "vitamin E gains the package's
-   upper level", and say in `NEWS.md` that the 0% is by construction
-   (food is outside the scope of that UL).
-
-**Answers of the maintainer (2026-11-20, A4.2b, S16):** all approved as
-recommended. 1, iron: the adapter uses only `females_menstruating_adult`
-(the AFE unit), so S16 does not move iron. 2, vitamin D: postpone S16 and
-run step 2 without it; new small task in `hcesfort`, before S16: verify the
-vitamin D row of `ref_requirements` (EAR, UL and `ul_applies_to`) against a
-document opened in the session, with its source in `data-raw/SOURCES.md`;
-never from memory. 3, vitamin E: accept 0% above the UL in every scenario
-(the UL applies to supplements and fortificants only) and explain it in
-`NEWS.md`.
-
-**Run of the maintainer (2026-11-20, A4.2b on the microdata, adapter
-f5b06c4):** `acceptance-step2` FAIL 0, PASS 28 in 1,261 s (twelve steps).
-For `NEWS.md`:
-
-- E24: point estimates unchanged; interval limits change in 374 of 1,018
-  risk rows and 6 of 21 vehicle rows, largest 0.085 points (upper limit of
-  percent above the UL of vitamin A, 2b, plausible energy, 0.517 to 0.603;
-  vitamin D at baseline 0.086 to 0.161).
-- S8: negligible: largest 0.12 on a median limit (folate, scenario 3,
-  857.99 to 857.87); group shares at most 4e-5; risk at most 2e-4.
-- S2: no figure moves.
+1. **Vitamin E above the UL.** The package reports it missing
+   (`not_assessable`), not 0%. Recommended: keep it missing; 0% would
+   state a comparison the data cannot make (no supplement is recorded),
+   and changing it would change `above_ul()` (Fable). Alternative: report
+   0% by construction in the adapter's tables only.
+2. **E6, whole-grain rows without a rule.** The design says "no rule for
+   the three whole-grain rows" without naming them. By the INCAP names in
+   `composition.csv`: `70213158` Whole wheat flour, `70214039` Whole
+   wheat bread, roll type, `70214103` Whole grain cookies with honey.
+   Recommended: these three. (Oat bread `70214121` keeps its rule.)
+3. **E6, ingredient fractions.** The fractions (bread 0.7, crackers 0.85,
+   biscuits 0.6, pastry 0.4) are provisional in the original (`SOURCE
+   PENDING`). Recommended: keep them under `"pairs"` (the maintainer's
+   rule: keep the original value and report the sensitivity), with a run
+   at fraction 1 as sensitivity. Pairs: rice 70213002 against 70213004;
+   flour 70213039 (enriched) against 70213038.
 
 ## Recommended model for the next session
 
-**Opus** (A4.2c: implementing S16 once answered).
+**Opus** (E6 and row 3 once answered; implementation of the design).
 
 ## Maintainer review points
 
-1. **Step 2 on the microdata** (now twelve steps; about 25 minutes).
-   Send the new `step2_*.csv` files and the test summary:
+1. **The vitamin D row** (expected: EAR 10, UL 100, `total`):
 
    ```r
-   # in hcesfort.engih2018, branch claude/adoring-mayer-s0mm5x, with
+   subset(hcesfort::ref_requirements, nutrient == "vitamin_d",
+          c(ear, ul, ul_unit, ul_applies_to, location))
+   ```
+
+   And open IOM 2011, p. 1112 (`/read/13050/chapter/24`), the NOTE under
+   the vitamins UL table.
+
+2. **Step 2 on the microdata** (thirteen steps; about 27 minutes). Send
+   `step2_s16.csv` and the test summary:
+
+   ```r
+   # in hcesfort.engih2018, branch claude/sleepy-volta-wr6ir4, with
    # hcesfort installed from the same branch name
    Sys.setenv(ENGIH2018_DATA = "path/to/the/microdata")
    devtools::test(filter = "acceptance-step2")
-   list.files("tests/testthat/_acceptance", "^step2_")
+   d <- read.csv("tests/testthat/_acceptance/step2_s16.csv")
+   d[!(d$difference %in% 0) & !(is.na(d$old) & is.na(d$new)), ]
    ```
 
-   Expected: every step passes its direction; e24 moves only limits; s8
-   nothing beyond 0.1; s2 nothing.
+   Expected: every step passes; the last line returns no rows.
 
-2. **E24, the shares that gain an interval or had a limit outside 0 to
-   100:**
+3. **The scope of vitamin E's upper level** (question 1):
 
    ```r
-   d <- read.csv("tests/testthat/_acceptance/step2_e24.csv")
-   lim <- d[grepl("^pct_.*_(low|upp)$", d$medida), ]
-   lim[is.na(lim$old) | lim$old < 0 | lim$old > 100,
-       c("etapa", "medida", "old", "new")]
-   ```
-
-3. **S8, the largest changes** (expected: nothing visible):
-
-   ```r
-   d <- read.csv("tests/testthat/_acceptance/step2_s8.csv")
-   head(d[order(-abs(d$difference)), c("bloque", "etapa", "medida",
-                                       "old", "new")], 10)
+   t <- hcesfort.engih2018::engih2018_tables(
+     hcesfort.engih2018::engih2018_options(requirements = "package"))
+   t$requirements[t$requirements$nutrient == "vitamin_e",
+                  c("ul", "ul_applies_to")]
    ```
