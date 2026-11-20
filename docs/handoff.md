@@ -100,6 +100,18 @@ never from memory. 3, vitamin E: accept 0% above the UL in every scenario
 (the UL applies to supplements and fortificants only) and explain it in
 `NEWS.md`.
 
+**Run of the maintainer (2026-11-20, A4.2b on the microdata, adapter
+f5b06c4):** `acceptance-step2` FAIL 0, PASS 28 in 1,261 s (twelve steps).
+For `NEWS.md`:
+
+- E24: point estimates unchanged; interval limits change in 374 of 1,018
+  risk rows and 6 of 21 vehicle rows, largest 0.085 points (upper limit of
+  percent above the UL of vitamin A, 2b, plausible energy, 0.517 to 0.603;
+  vitamin D at baseline 0.086 to 0.161).
+- S8: negligible: largest 0.12 on a median limit (folate, scenario 3,
+  857.99 to 857.87); group shares at most 4e-5; risk at most 2e-4.
+- S2: no figure moves.
+
 ## Recommended model for the next session
 
 **Opus** (A4.2c: implementing S16 once answered).
