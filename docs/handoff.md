@@ -82,6 +82,16 @@ E stays missing, as in the original. See question 1.
    at fraction 1 as sensitivity. Pairs: rice 70213002 against 70213004;
    flour 70213039 (enriched) against 70213038.
 
+**Answers of the maintainer (2026-11-20, A4.2c).** 1, vitamin E above
+the UL: leave it absent (not evaluable), as recommended; this replaces the
+earlier "0%" answer; explain it in `NEWS.md`. 2, E6 whole-grain rows:
+`70213158`, `70214039`, `70214103` as proposed; list them as a review
+point for the maintainer (chosen by name). 3, E6 ingredient fractions:
+keep the original's (bread 0.7, crackers 0.85, sweet biscuits 0.6,
+pastry 0.4; no source) and add a sensitivity run with fraction 1.
+The maintainer runs step 2 once, after E6, to check S16 (no figure should
+move) and E6 together.
+
 ## Recommended model for the next session
 
 **Opus** (E6 and row 3 once answered; implementation of the design).
