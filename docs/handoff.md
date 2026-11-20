@@ -69,6 +69,11 @@ Then the maintainer runs step 2 (A4.3).
    figures (as in point 1 of the next step), so the change of intervals
    is recorded in `step2_e24.csv`.
 
+**Answers of the maintainer (2026-11-20, A4.2, E24):** all approved as
+recommended. 1, `ci_method = "korn_graubard"`. 2, `df = "domain"`. 3, add
+the interval limits as figures of step 2, so that `step2_e24.csv` records
+the change.
+
 ## Recommended model for the next session
 
 **Opus** (A4.2b: implementing approved corrections).
