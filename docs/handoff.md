@@ -90,6 +90,16 @@ Then the maintainer runs step 2 (A4.3).
    upper level", and say in `NEWS.md` that the 0% is by construction
    (food is outside the scope of that UL).
 
+**Answers of the maintainer (2026-11-20, A4.2b, S16):** all approved as
+recommended. 1, iron: the adapter uses only `females_menstruating_adult`
+(the AFE unit), so S16 does not move iron. 2, vitamin D: postpone S16 and
+run step 2 without it; new small task in `hcesfort`, before S16: verify the
+vitamin D row of `ref_requirements` (EAR, UL and `ul_applies_to`) against a
+document opened in the session, with its source in `data-raw/SOURCES.md`;
+never from memory. 3, vitamin E: accept 0% above the UL in every scenario
+(the UL applies to supplements and fortificants only) and explain it in
+`NEWS.md`.
+
 ## Recommended model for the next session
 
 **Opus** (A4.2c: implementing S16 once answered).
