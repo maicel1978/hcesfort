@@ -1166,3 +1166,13 @@ The S22 mismatch of the maintainer's run (`grupos_micronutrientes`, 100 of
 | P242 | medium | **New error of the original, E30 (`docs/analysis-map.md`, section 11; P241 confirmed): records whose description does not match the table are dropped from the food-group shares without a count.** The package's join by code, with `unclassified` shown, is the correction; old and new figures in `NEWS.md`. | Step 2 corrects each erroneous default. | A4 |
 | P243 | high | **A preprocessing module for new surveys (maintainer's request, 2026-11-19).** Text keys normalised before any join (case, accents, spaces); joins by code with the unmatched listed; a report of every description that a table spells differently from the records. | E30: one accented letter (`LECHE LíQUIDA` against `LECHE LÍQUIDA`) dropped 1,913 records from the food-group shares without a count. A new survey (Peru) will bring the same class of error. Next to the food-matching support module (P42, v0.2); Fable designs, Opus implements. | v0.2 |
 
+
+## A4.2d, E6 (2026-11-20, Opus)
+
+Implementation of row 12 of the design of the adapter
+(`hcesfort.engih2018` `bc6e18b`, `707d3c1`).
+
+| Id | Priority | Item | Why | Task |
+|---|---|---|---|---|
+| P244 | medium | **The direction of E6 in the design (section 5, row 12) is not true cell by cell.** It says "every baseline cell is at least its legacy value (the floor of `"subtract"` is the legacy value)". `unfortified_baseline()` keeps a cell at `v` when `v < f × U` (no cell increases), while the legacy rule set it to `f × U`. On ENGIH 2018 one cell: folate of pasta 70213057 ("unenriched", 18 µg DFE per 100 g; legacy 26). Correct statement: every cell is at least `min(v, legacy)`. Iron holds cell by cell; folate intake is expected, not guaranteed, to rise. | Found by `test-tables-enrichment.R` before the run; the step's expectation was written accordingly (`helper-step2-e6.R`). Amend the design table when the figures come back. | A4.3 |
+| P245 | low | **`engih2018_tables()` returns the enrichment rules without the method they are meant for.** `"legacy"` rules go with `method = "replace_by_ingredient"`, `"pairs"` with `"subtract"`; the chain takes the method from `step1_args`. A user who mixes them gets no error (pairs under replace give `f × U`, nearly the legacy values). Option: return `baseline_method` with the tables, or a note in the log. | Coupling now stated only in `?engih2018_options`. | A4.3 |
