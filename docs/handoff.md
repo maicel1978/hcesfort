@@ -46,24 +46,23 @@ A4).
 
 ## Exact next step
 
-A4.2c (Opus), S16 `requirements = "package"`, after the answers below.
-Found while preparing it: the step cannot run as the design has it.
+Steps run on the microdata so far: E10, E11, E29, E27, E5/E28, P159, E30,
+E1, E7, E24, S8, S2 (28/28; effects below). S16 is postponed (answers
+below). Next, A4.3 (Opus, high effort):
 
-1. `engih2018_tables(requirements = "package")` passes the whole
-   `ref_iron_requirements` (14 groups, 182 rows), and `inadequacy()`
-   refuses it (`hcesfort_error_key`: "must describe one group").
-2. `ref_requirements` has no vitamin D row: it is pending in
-   `data-raw/SOURCES.md` of hcesfort (`ul_applies_to = total` not found
-   in IOM 2011). With the package's table, every vitamin D figure of
-   inadequacy and UL would disappear.
-3. The other rows match the original's (EAR and UL of iron, zinc,
-   folate, vitamin A, B12), except vitamin E, which gains the UL of 1,000
-   mg of supplemental alpha-tocopherol (`ul_applies_to =
-   supplemental_alpha_tocopherol`), and the iron row's
-   `ear_bioavailability` (0.18 against missing; iron uses the probability
-   approach, so no figure should depend on it).
-
-Then the maintainer runs step 2 (A4.3).
+1. Re-read design section 5 and list the corrections still open, in order;
+   write that list here first.
+2. The small task in `hcesfort` before S16: the vitamin D row of
+   `ref_requirements`, verified against a document opened in the session
+   (stop and ask the maintainer for the document if it cannot be reached).
+   Then S16 with the three answers below.
+3. The corrections that need data with a source (P233: dozen, density by
+   food, enrichment pairs, level basis), under the maintainer's rule
+   (cite and check, or keep the original value and report the
+   sensitivity). Dozen: start with the foods that carry most records.
+4. E3/E21: thresholds stay 0; report the coverage of each nutrient.
+5. At the end of A4: `devtools::check()` and lint of the adapter, and the
+   step 2 command for the maintainer.
 
 ## Open questions
 
