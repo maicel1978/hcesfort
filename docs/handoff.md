@@ -25,7 +25,7 @@ Done: rows 1, 2, 6 to 11, 13, 14, 16, S8, S2, S16.
 
 ## What was done
 
-`hcesfort`:
+`hcesfort` (`af8bc2e`):
 
 - Vitamin D row of `ref_requirements` verified and shipped. Read in IOM
   2011, opened in this session (`nap.nationalacademies.org/read/13050`):
@@ -36,7 +36,7 @@ Done: rows 1, 2, 6 to 11, 13, 14, 16, S8, S2, S16.
   re-read: unchanged. `data-raw/requirements.csv`, `MD5`, `SOURCES.md`,
   `?ref_requirements`, NEWS, test.
 
-Adapter:
+Adapter (`308fecc` S16, `b9495fd` NEWS, then the Rd):
 
 - S16: `requirements = "package"` takes `ref_requirements` and, for iron,
   only the group `females_menstruating_adult` (`engih_iron_package()`);
