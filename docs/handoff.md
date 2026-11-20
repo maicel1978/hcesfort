@@ -74,6 +74,17 @@ rise on the microdata, but not by construction.
 recommended. 1, no rule for the unenriched rows (70213004, 70213038,
 70213057). 2, E6 at the end of the sequence, after S16.
 
+**Run of the maintainer (2026-11-20, A4.4, adapter 707d3c1) — invalid,
+to repeat:** FAIL 1 (S16): the 56 vitamin D figures became NA. Cause: the
+`hcesfort` installed on the maintainer's machine predated `af8bc2e` (the
+vitamin D row); the adviser had not asked for a reinstall. The test caught
+it as it should. **Request for the next session (high priority, before new
+corrections):** the acceptance tests check at start that the installed
+`hcesfort` is recent enough (for example, a minimum version or a feature
+check such as the vitamin D row of `ref_requirements`), and fail with a
+clear message naming the commit to install. Also: summaries of step 2
+count NA as a change (lesson: a summary must count what is missing).
+
 ## Recommended model for the next session
 
 **Opus** (row 3, then E2, E18, E8; implementation of the design).
