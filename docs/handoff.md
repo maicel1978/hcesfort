@@ -98,6 +98,27 @@ clean on the changed files.
    will look for the PDF; if it appears, choose the reading it gives.
 4. Coverage margin of plus or minus 1 point around 10.8%: approved.
 
+**Run of the maintainer (2026-11-20, A4.5, adapter 87d604b):**
+`acceptance-step2` FAIL 0, PASS 37 in 1,069 s. Coverage (`step2_coverage.csv`):
+of the grams with a composition link, 86% to 100% have a value for each
+nutrient (iron 97.4, folate 94.3, vitamin A 93.3, zinc 97.1, B12 97.1,
+vitamin D 91.2, vitamin E 86.1). Section 3A: unlinked records are 10.4% of
+records but 56.2% of grams. **Finding (adviser, from
+`step2_unmatched_foods.csv`):** one code explains it: `S3A:594 Agua`
+(7,775 records, 4,571 households) carries 47.2% of all grams, about 98% of
+the unlinked grams; without it the unlinked grams are about 0.75%. Water
+is not among the 11 non-food codes dropped by the adapter. No nutrient
+figure is affected (unlinked records add no nutrient), but the coverage in
+grams is misleading. **Request:** in the corrected preset treat
+`S3A:594 Agua` as a non-food (dropped with a count, like the purified
+water), and report coverage in grams with and without water; record it in
+`NEWS.md` and as a lesson (a coverage figure must exclude non-nutritive
+items or say so). Also listed: `S3A:569 Caldo concentrado`, 18,087 records,
+unmatched: check whether INCAP or FNDDS has a match (task for the
+food-matching module, P243). Separately, 363 matched foods lose records to
+units without a gram factor (`no_factor`), for example `S3A:393` (1,616
+records): list them for the unit catalogue (P243).
+
 ## Recommended model for the next session
 
 **Opus** (A4.2d.3 once the values or the decision to keep the original
