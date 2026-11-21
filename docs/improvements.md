@@ -1181,3 +1181,14 @@ Implementation of row 12 of the design of the adapter
 | P248 | low | **The invented survey of CI has no oil by volume and no sugar.** E18 and the sensitivity run of E8 move no figure there; their directions are tested only on hand-built comparisons (`test-step2-ci.R`). Option: add a gallon of oil and a sugar record to `fake_sec3a_2psu()`. | Found writing E18 and E8. | A4.3 |
 | P249 | low | **Other water codes.** `S3A:2665` ("Agua purificada servida", not validated) is the same item served; `S3A:596` ("Agua saborizada") may carry sugar. Only `S3A:594` is dropped by `water = "non_food"`, as the maintainer asked. | Row 3 finding (S25). | A4.3 **Done 2026-11-21** (adapter `2aa5602`): maintainer's decision, `S3A:2665` dropped with `S3A:594` (same log row, cause `water`); `S3A:596` stays a food. |
 | P250 | low | **`engih_scenarios_palmitate()` overwrites the columns `compound` and `nutrient_fraction`.** It sets them to missing on every row before filling the sugar row; `scenarios.csv` has neither today, but a future version with compound levels on other rows would lose them silently. Fill only missing columns, or fail if they exist. | Self-review of A4. | Adapter, next change to `scenarios.csv` |
+
+## A4.3b, expectations after the maintainer's run (2026-11-21, Opus)
+
+Adapter `10f77c2`: the expectations of S25 and E18 that failed on
+`9e4b241` rewritten to the verified effect.
+
+| Id | Priority | Item | Why | Task |
+|---|---|---|---|---|
+| P251 | low | **Households left without records by the non-foods of the crosswalk are not noted by the adapter.** `drop_non_foods()` notes the households whose records are all water (`water_only_households`), as the maintainer asked; a household whose records are all non-foods (tobacco, ice, ...) also leaves the vehicle denominator since E5 and is counted only among the `no_food_records` of `vehicle_coverage()`. Option: one note for every household left without records by the step, with the cause. | Found settling S25. | Adapter, with P243 |
+| P252 | low | **E18 among households of plausible energy: only vitamin E has a direction.** Iron and zinc (traces in oil) are not checked there, nor the median density of the nutrients the oils carry (it moves either way). The run of `9e4b241` moved the iron risk rows by under 0.005 points. | The set of households of plausible energy moves with energy; a direction for traces would be a guess. | A4.3c, if the maintainer wants it |
+| P253 | medium | **An expectation "no figure moves" missed a change of denominator.** S25 and E18 were written as "unchanged" for nutrients and vehicles that the step does not touch, but dropping records changes who has records (S25) and the composition carries traces (E18). Lesson for `docs/lessons.md`: before writing "unchanged", list the households whose status can move and the nutrients each touched food carries in the table shipped. | Two of three failures of the run of `9e4b241`. | `docs/lessons.md` |
