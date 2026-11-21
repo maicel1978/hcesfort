@@ -88,3 +88,44 @@
      print(r[r$etapa == k, ])
    }
    ```
+
+## Maintainer's run of acceptance-step2 on 9e4b241 (21-11, before 2aa5602)
+
+42 pass, 3 fail. All earlier steps (e10 … e6, both sensitivities, row 3)
+pass. The three failures are expectations, not yet judged as errors:
+
+1. **water (S25), "every figure unchanged"**: 6 vehicle figures move.
+   `pct_hogares` and `media_todos` rise for rice (88.3105 → 88.5005;
+   215.6030 → 216.0668), sugar (78.9262 → 79.0960; 55.3145 → 55.4335)
+   and wheat (94.0376 → 94.2399; 46.8570 → 46.9578). All ratios are about
+   1.0021, so the vehicle denominator lost about 0.2 % of households.
+   The intake blocks (`resumen`, `riesgo`, `grupos`) do not move.
+   Hypothesis to verify: households whose only records were water now
+   have no acquisition and leave the vehicle denominator. To do:
+   - count them;
+   - check that the audit log reports them;
+   - say whether households with no food records are already outside
+     that denominator in the original.
+   The expectation is then rewritten to the verified effect. **Question
+   for the maintainer** before rewriting it (see the advisor's
+   recommendation in chat).
+2. **e18 (S4), "other nutrients and vehicles unchanged"**: iron and zinc
+   means fall by about 1e-3 mg (for example 11.155501 → 11.154456), and
+   the iron risk rows move by under 0.005 points. Likely cause: the oil
+   rows of the composition carry traces of iron and zinc; check it.
+   If confirmed, the expectation becomes "does not increase" for every
+   nutrient present in oil, not "unchanged".
+3. **e18 (S4), "plausible energy, within 0.5 point"**: vitamin E
+   inadequacy rises 86.9548 → 88.3796 (+1.42) under plausible energy and
+   82.9473 → 84.5422 (+1.59) for all. The direction is right (less oil,
+   less vitamin E). The 0.5-point margin was a guess without a source.
+   Replace it with the direction only, and record the size in NEWS.
+
+**Sensitivity e8_palmitate (passes)**: vitamin A inadequacy in scenario
+1c, cut-point method, rises 35.6232 → 49.1172 under plausible energy and
+35.5341 → 48.0538 for all. The reading of the sugar level (retinol
+vs retinyl palmitate) moves the 1c conclusion by about 13 points: NEWS
+and the report must show both readings until NORDOM 602 is checked.
+
+The coverage files (`step2_coverage*.csv`) were not sent in this run;
+the next run after 2aa5602 reports them.
