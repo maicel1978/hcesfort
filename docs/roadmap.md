@@ -77,7 +77,7 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
   - [ ] 12c.14 Render of the results and readiness reports on ENGIH 2018 in the adapter, corrected only: the state after the last step of step 2 (maintainer's answers of 2026-11-21; no hybrid "original" render). Opus.
     - [x] 12c.14a Label tables in Spanish and English for the codes of the adapter's tables (adapter `64d6491`).
     - [x] 12c.14b `_inputs.R` of the adapter (corrected state), decisions tables in both languages, the note of the E8 sensitivity in the technical note, `engih2018_report()` and `engih2018_exclude_outliers()` (adapter `2ff2591`).
-    - [ ] 12c.14c Tests on the invented survey done (both reports knit in both languages; the intake of the report equals the chain of step 2; adapter `2ff2591`, check 0/0/0). Open: the labels of the region values and of the quintile (questions 5 and 7 of `docs/handoff.md`); the maintainer's render with the microdata.
+    - [ ] 12c.14c Tests on the invented survey (both reports knit in both languages; the intake of the report equals the chain of step 2; adapter `2ff2591`); labels of region and of the expenditure quintile (`ff797b0`); both reports rendered with Quarto on the invented survey in the session. Open: the maintainer's render with the microdata.
   - [ ] 12c.15 Errata table: the figures of the delivered report against the corrected ones, from `acceptance-results/step2/` of the adapter (old and new of each step). After 12c.14.
 
 - [ ] 12d. Reports v3 and a realistic example, after the maintainer's review of the v2 renders (2026-11-14). Requirements: `docs/report-requirements-v2.md` (approved 2026-11-14). Comes before task 12 and before the ENGIH adapter work resumes.

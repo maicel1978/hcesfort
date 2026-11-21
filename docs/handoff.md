@@ -51,19 +51,24 @@
      test). `check()` 0/0/0; `test()` FAIL 0, PASS 816, SKIP 43; lint
      clean.
 
+## After the answers on 5, 7 and max_small_cells (2026-11-21)
+
+Adapter `ff797b0`: region values as their text (Este, Gran Santo
+Domingo, Norte o Cibao, Sur), labels equal to it; "Quintil de gasto" /
+"Expenditure quintile", per capita pending the documentation of the ONE
+(`decisions.csv`, `data-raw/SOURCES.md`); `max_small_cells = 1`
+confirmed. `check()` 0/0/0; `test()` FAIL 0, PASS 822, SKIP 43; lint
+clean. Both reports rendered with Quarto (installed in the container)
+on the invented survey, with `_inputs.R` patched in a scratch copy only:
+`readiness.html` and `results.html` created, the E8 note and the
+expenditure quintile in them.
+
 ## Exact next step
 
-1. Maintainer: answer 5 and 7 (the blanks), and 1 below.
-2. Next session (Opus): the region labels (if codes, from the document
-   the maintainer names; if text, the four names as codes) and the
-   quintile label in both `labels.csv`; then the maintainer renders
-   (review point 1). A value of the data without a label stops the
-   render with the list of the values missing (`read_labels()`).
-3. Then 12c.15 (errata table), after the render.
-
-## Open questions
-
-1. `max_small_cells = 1` (above). Recommended: keep, as answer 3.
+1. Maintainer: render both reports with the microdata (review point 1),
+   and send what fails or reads wrong.
+2. Next session (Opus): fix what the render shows; tick 12c.14c and
+   12c.14; then 12c.15 (errata table from `acceptance-results/step2/`).
 
 ## Recommended model for the next session
 
