@@ -309,6 +309,7 @@ row; step 2 moves one row at a time to the third (section 5).
 | S22 | Food-group shares | composition as it is (an `enrichment` table without rows) | on the baseline | adapter `enrichment` | E1 |
 | S23 | Precision | `min_n = 50`, `max_half_width = 0.10` | presentation standard | `flag_precision()` | |
 | S24 | Compliance model | `"average_content"` (compliance is 1 everywhere, so the model decides nothing) | the same | `apply_scenario()` | |
+| S25 | Drinking water (`S3A:594`) | a food without composition match (its grams count in every coverage in grams) | a non-food, dropped with a count (maintainer, 2026-11-20) | adapter `water` | row 3 |
 
 The chain of step 1, with the tables of section 1:
 
@@ -454,7 +455,7 @@ control figures; "A1" means the size is in the export.
 | 1 | E16, E26 | md5 registry; versions recorded | no figure | any change |
 | 2 | E12 to E15, E17, E22 (no interval) | one vehicles table, one requirements table, tidy output, checked joins | no figure. E17: `con_registros_y_sin_modulo` of A1 says whether a household was ever dropped by the inner join | any change |
 | 3 | E3, E21 | coverage over all records; `missing_values()`; gates set by the maintainer | intake unchanged. Reported for the first time: about 10.8% of Section 3A records without a validated match (36,833 of 342,039 by the crosswalk's own counts; the README says 36,840), and the grams they weigh. Vitamins D and E flagged by their coverage (INCAP lacks vitamin E for a third of its rows) | a share of unlinked records away from 10.8%; intake moving |
-| 4 | E2 | dozen as `count` with a piece weight | 13 records. No national figure moves by 0.01 point | more |
+| 4 | E2 | dozen as `count` with a piece weight | 13 records. No national figure moves by 0.01 point. **Amended (P231):** 218 records in 22 foods; no piece weight with a source, so the original value is kept (A4.2d.3) | more |
 | 5 | E18 | density by food | Oil is declared by volume in most of its Section 2 rows (3,369 in gallons) and 634 of Section 3A. Its grams fall by the density (about 8%, value `# SOURCE PENDING`). Energy and vitamin E fall slightly (oils and fats carry 68.2% of vitamin E); the share below the EAR of vitamin E rises; nothing else moves beyond 0.5 point | iron, folate, zinc, B12 or vitamin A intake changing; vitamin E rising |
 | 6 | E10 | `missing_members = "na"` | The feasibility report says no member lacks a requirement: no change. `e04_afe` says how many | any change contradicts the report |
 | 7 | E11, S1 | known final stock; missing days ignored | More records marked as stored: intake falls or stays. Fewer days: intake of those households rises. Sizes: A1 (`registros_sin_cantidad_final`, `registros_sin_dia`) | the opposite sign |
