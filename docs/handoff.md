@@ -129,3 +129,16 @@ and the report must show both readings until NORDOM 602 is checked.
 
 The coverage files (`step2_coverage*.csv`) were not sent in this run;
 the next run after 2aa5602 reports them.
+
+## Maintainer's answers (21-11, 10:19)
+
+1. **Water-only households**: they leave the vehicle denominator, like
+   households with no food records, and are **counted in the audit log**
+   (rows and households). Verify the hypothesis first; if the cause is
+   different, stop and report it.
+2. **After A4**: task 12c (report redesign), as proposed. P243 is
+   designed with the maintainer after `docs/lessons.md`.
+
+Next session (Opus): settle the three expectations above, write the
+figures of water, e18 and e8_palmitate in `NEWS.md`, and leave A4 ready
+to close with one more maintainer run (with the coverage files).
