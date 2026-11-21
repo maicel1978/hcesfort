@@ -1,87 +1,69 @@
 # Handoff
 
 - **Date:** 2026-11-21
-- **Model:** Opus 5.5 (A4 closed; 12c.14 started).
+- **Model:** Opus 5.5 (A4 closed; 12c.14a and 12c.14b done).
 - **Branches:** `claude/awesome-fermi-oxv0vv` in `hcesfort` (docs only)
-  and in `hcesfort.engih2018`, both pushed, both started from `main`
-  (earlier branches are merged).
+  and in `hcesfort.engih2018`, both pushed, both from `main`.
 - **Environment:** `R CMD INSTALL .` of `hcesfort` first, then of the
   adapter, before its tests and lint.
-- **Earlier handoffs:** `git show 3be3299:docs/handoff.md`,
-  `git show 3803b9e:docs/handoff.md`.
+- **Earlier handoffs:** `git show 363ec93:docs/handoff.md` (the eight
+  questions and the findings on the template), `git show
+  3be3299:docs/handoff.md`.
 
-## What was done
+## Maintainer's answers of 2026-11-21 (on the eight questions)
 
-1. **A4 closed.** Adapter `f86e4b2`: S25 figures of the run on `10f77c2`
-   in `NEWS.md`. The 23 result files of the maintainer's commit
-   `c8fcd78` raised a NOTE in `check()` (installed size 6.7 Mb,
-   `acceptance` 4.5 Mb) and broke `test-checksums.R` (not registered).
-   Moved to `acceptance-results/step2/` in the root, in `.Rbuildignore`
-   (`d8a8637`), with a README: they are a record of a run, read by no
-   code or test; `inst/` stays the installed, md5-frozen content (keeping
-   them in `inst/` but build-ignored would make the source tree and the
-   installed package differ inside a frozen folder).
-   `test-no-microdata.R` still checks them. Adapter `check()` 0/0/0;
-   `devtools::test()` FAIL 0, PASS 779, SKIP 43; lint clean. P254
-   (small cells and the INCAP licence before going public).
-2. **12c.14a.** Adapter `64d6491`: `inst/report/{es,en}/labels.csv`,
-   69 rows each, every code of the original, corrected and all-vehicles
-   tables, tested (`test-report-labels.R`, 11 expectations).
+1. No hybrid "original" report: only the corrected one is rendered. The
+   comparison with the delivered report comes later as an errata table
+   from `acceptance-results/step2/` (roadmap 12c.15).
+2. Corrected = the state after the last step of step 2; the E8
+   sensitivity as a note in the report, no second render.
+3. `min_coverage`, `min_records_used`, `min_linked_share` = 0 (0.9 has
+   no source); the coverage shown explicitly (1.91% of the grams without
+   a link, without water), said in `decisions.csv`.
+4. 500 to 6000 kcal, the original's choice without a published source,
+   recorded as such.
+5. Region, area and quintile; no province. **The quintile is of
+   "______" (income / expenditure) per capita: the blank was not
+   filled.**
+6. Yes (seven nutrients; iron bioavailability 0.10, sensitivity 0.18).
+7. **`GRUPO_REGION` comes as "______": the blank was not filled.**
+8. Yes (`engih2018_report()` prepares the folder; Quarto renders).
 
-## Findings that shape 12c.14
+## What was done (adapter)
 
-- `engih2018_options("corrected")` cannot build tables: `dozen = "count"`
-  and `levels = "standard"` are refused until their data have a source.
-  The state after the last step of step 2 is `corrected` with
-  `dozen = "mass"`, `levels = "nutrient"` (checked: the only two
-  differences).
-- The template's chain (`_chain.R`, `_results.R`) fixes the corrected
-  method for: intervals (Korn-Graubard, E24), consumers of a vehicle
-  (`vehicle_coverage()`, E5), the amount compared with the UL
-  (`above_ul()`, E7) and the food-group shares (by code, on the
-  baseline; E30, E1). The original's versions exist only in the
-  adapter's test helpers. `_inputs.R` can set: tables (so the baseline
-  of `replace_by_ingredient`, pre-computed, with an empty enrichment
-  table), `make_afe()` (S7, S9), `make_grams()` (S2, S6: outliers as
-  `include = FALSE`, checked on `hces_example`), `fortifiable_choice`
-  (S13), `compliance_model`, and `choices`.
-- `GRUPO_REGION` is coded in the invented sheets ("1", "2"); the real
-  coding is unknown here. The original's outputs say "Este", "Gran Santo
-  Domingo", "Norte o Cibao", "Sur"; no script of `analisis_ENGIH2018`
-  maps codes to names.
-- With water as a food (original), 56% of the Section 3A grams are
-  unlinked: any `min_linked_share` above about 0.44 disables the
-  results of the original report.
-
-## Open questions (asked in chat, 2026-11-21)
-
-1. Original report: data options and settable chain choices of the
-   original; intervals, consumers, UL amount and group shares follow
-   the template (corrected), stated in `decisions.csv`. Recommended: yes;
-   reproducing those errors would put them back in the core.
-2. Corrected report = state after the last step of step 2 (`dozen =
-   "mass"`, `levels = "nutrient"`); no render of the E8 sensitivity.
-   Recommended: yes.
-3. Thresholds: `min_coverage = 0`, `min_records_used = 0` (step 2
-   decision) in both; `min_linked_share` the same in both, value yours
-   (template example 0.9, no source). With 0.9 the original report
-   disables its results (water). Recommended: same values in both.
-4. Energy 500 to 6000 kcal (original, no source), `energy_action =
-   "exclude"` in both. Recommended: yes.
-5. Domains region, area, quintile; equity domain quintile; province out
-   (32 cells). Quintile of what (income or expenditure per capita)?
-6. Nutrients: the seven of the original; iron bioavailability 0.10, with
-   0.18 as sensitivity (the original's two values). Recommended: yes.
-7. Region names: is `GRUPO_REGION` text or a code in the microdata? If a
-   code, which document gives the names?
-8. Output: exported `engih2018_report(dir, preset, lang)` prepares the
-   folder; the maintainer renders with `quarto render`. Both languages.
-   Recommended: yes.
+1. `64d6491`: label tables `inst/report/{es,en}/labels.csv`.
+2. `2ff2591`: `engih2018_report(path, lang)`: the hcesfort template
+   with the adapter's `_inputs.R`, `labels.csv`, `decisions.csv` (14
+   decisions, both languages) and a note on the E8 sensitivity inserted
+   before the appendix of `results.qmd` (fixed figures of
+   `step2_e8_palmitate.csv`: 35.6% [34.1, 37.2] to 49.1% [47.5, 50.7]).
+   `engih2018_exclude_outliers()`: the template acts on an outlier rule
+   through `include`; this sets it for the flagged records, drops
+   `outlier` and counts them in the audit log.
+   - Choice I made, to confirm: `max_small_cells = 1` (no domain is
+     disabled for small cells), by the same rule as answer 3 (the
+     template's 0.5 has no source); the presentation standard still
+     marks each small cell.
+   - Tests: folder, note anchor, outlier exclusion by hand, the intake of
+     the report equal to `run_chain()` on the last state of step 2 on the
+     invented survey (1e-12), and both reports knit in both languages.
+   - Suggests: ggplot2, knitr, rmarkdown, tinytable (only that knit
+     test). `check()` 0/0/0; `test()` FAIL 0, PASS 816, SKIP 43; lint
+     clean.
 
 ## Exact next step
 
-12c.14b with the answers: `inst/report/_inputs.R` of the adapter, then
-12c.14c and 12c.14d (roadmap).
+1. Maintainer: answer 5 and 7 (the blanks), and 1 below.
+2. Next session (Opus): the region labels (if codes, from the document
+   the maintainer names; if text, the four names as codes) and the
+   quintile label in both `labels.csv`; then the maintainer renders
+   (review point 1). A value of the data without a label stops the
+   render with the list of the values missing (`read_labels()`).
+3. Then 12c.15 (errata table), after the render.
+
+## Open questions
+
+1. `max_small_cells = 1` (above). Recommended: keep, as answer 3.
 
 ## Recommended model for the next session
 
@@ -89,17 +71,28 @@
 
 ## Maintainer review points
 
-1. **Step 2 results out of the build:**
+1. **Render both reports with the microdata** (Spanish first):
+
+   ```r
+   Sys.setenv(ENGIH2018_DATA = "<folder of the microdata>")
+   hcesfort.engih2018::engih2018_report("informe-engih2018", "es")
+   # then, in a shell, from informe-engih2018/:
+   #   quarto render readiness.qmd
+   #   quarto render results.qmd
+   ```
+
+2. **The decisions table as the report prints it:**
+
+   ```r
+   hcesfort::read_decisions(system.file("report", "es", "decisions.csv",
+                                        package = "hcesfort.engih2018"))
+   ```
+
+3. **The note of E8 against its source file:**
 
    ```r
    # in hcesfort.engih2018
-   devtools::check()   # 0 errors, 0 warnings, 0 notes
-   list.files("acceptance-results/step2")
-   ```
-
-2. **The labels of the reports, read by hcesfort:**
-
-   ```r
-   x <- hcesfort::read_labels("inst/report/es/labels.csv")
-   x[x$type %in% c("scenario", "source"), c("code", "label", "short_label")]
+   d <- read.csv("acceptance-results/step2/step2_e8_palmitate.csv")
+   d[grepl("Energia plausible \\| vitamina_a", d$etapa) &
+       d$medida == "pct_inadecuado", ]   # 35.62 -> 49.12
    ```
