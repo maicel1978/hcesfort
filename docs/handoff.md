@@ -100,3 +100,14 @@
    comp[comp$composition_id %in% ids,
         c("name", "iron_mg", "zinc_mg", "vitamin_e_mg")]
    ```
+
+## Maintainer's answers on A4.3b (21-11, 10:41)
+
+1. E18 under plausible energy: no direction for iron and zinc; vitamin E
+   only.
+2. Households left without records by the crosswalk's non-foods (P251):
+   yes, counted in the log, but with P243, not now.
+3. `inst/acceptance/steps/`: yes, create it with the `step2_*.csv` of the
+   next run. Only aggregated figures go there (estimates, ratios, counts,
+   food codes); never a file with household or person identifiers.
+   Check each file's columns before committing it.
