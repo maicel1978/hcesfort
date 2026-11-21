@@ -111,3 +111,27 @@
    next run. Only aggregated figures go there (estimates, ratios, counts,
    food codes); never a file with household or person identifiers.
    Check each file's columns before committing it.
+
+## Maintainer's run of acceptance-step2 on 10f77c2 (21-11, 11:19)
+
+**53/53 pass, 0 fail, 0 skipped** (2067 s). Every step, both
+sensitivities, the water-households test and row 3 pass.
+
+- `step2_water_households.csv`: 19 water-only households; ratio 1.002151
+  for both `pct_hogares` and `media_todos`.
+- Coverage, `sec3a | sin_enlace_validado`:
+
+  | file | registros | pct_registros | gramos_dia | pct_gramos |
+  |---|---|---|---|---|
+  | step2_coverage | 35275 | 10.42982 | 1.063481e+10 | 56.19125 |
+  | step2_coverage_no_water | 27499 | 8.322010 | 1.614739e+08 | 1.912271 |
+
+  Without water, 1.91 % of the grams of Section 3A have no validated
+  link (expectation: under 2 %; it holds with little room). 8.3 % of the
+  records have none: these are small foods, and they go to the P243
+  work queue.
+
+Next session (Opus, short): write these figures in `NEWS.md`; create
+`inst/acceptance/steps/` with the aggregated `step2_*.csv` that the
+maintainer sends (checking columns, no identifiers); close A4 in the
+roadmap; then start 12c.
