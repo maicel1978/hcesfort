@@ -107,3 +107,18 @@ Adapter: `devtools::test()` FAIL 0, PASS 794, SKIP 43 (microdata);
      print(r[r$etapa == k, ])
    }
    ```
+
+## Maintainer's answers on A4.6 (21-11)
+
+1. **E18**: one density, 0.92 g/ml, for all oils. No split by oil type.
+2. **E2 (dozen)**: keep the original's value. The 218 records in 22 foods
+   go to the catalogue of units without a citable weight (P243). U.S.
+   portion tables are not Dominican weights and are not used.
+3. **Water**: also treat `S3A:2665 Agua purificada servida` as a non-food,
+   counted like `S3A:594`. Flavoured water stays a food.
+   **Not implemented yet**: the next session adds it (adapter non-food
+   list and its test), re-checks coverage with and without water, then
+   runs `devtools::check()` of the adapter and closes A4.
+4. The maintainer runs `acceptance-step2` after the merge and sends the
+   summary of `water`, `e18` and `e8_palmitate`; the figures go to
+   `NEWS.md` in that session.
