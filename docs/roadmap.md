@@ -74,6 +74,11 @@ Work only on the first open task. Each task ends with a clean `devtools::check()
   - [x] 12c.11 Results report in English, with `choices$comparator`; old template files removed.
   - [x] 12c.12 Results report in Spanish.
   - [x] 12c.13 Quarto in CI; specification, `NEWS.md`, self-review; handoff for the maintainer's render on ENGIH 2018 (acceptance C2).
+  - [ ] 12c.14 Render of both reports on ENGIH 2018 in the adapter, presets original and corrected (maintainer's answer of 2026-11-21), with its label and decisions tables. Opus.
+    - [x] 12c.14a Label tables in Spanish and English for the codes of the adapter's tables (adapter `64d6491`).
+    - [ ] 12c.14b `_inputs.R` of the adapter for both presets, after the answers in `docs/handoff.md`.
+    - [ ] 12c.14c Decisions tables of both presets; the function that prepares a report folder (template, inputs, labels with the region and province values of the data, decisions).
+    - [ ] 12c.14d Tests on the invented sheets (both reports knit), check and lint; the maintainer renders with the microdata.
 
 - [ ] 12d. Reports v3 and a realistic example, after the maintainer's review of the v2 renders (2026-11-14). Requirements: `docs/report-requirements-v2.md` (approved 2026-11-14). Comes before task 12 and before the ENGIH adapter work resumes.
   - [x] 12d.0 Design (`docs/design-reports-v3.md`): both reports (DR9–DR13, R15–R24), the presentation standard (R18), the realistic example (X1–X2), and robustness and change (Q1–Q3); commit plan. Model: Fable. No package code. Written 2026-11-14; approved 2026-11-14 with conditions (`docs/improvements.md`, "Decisions (2026-11-14, reports v3)").
