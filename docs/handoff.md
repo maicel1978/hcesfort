@@ -1,102 +1,83 @@
 # Handoff
 
 - **Date:** 2026-11-21
-- **Model:** Opus 5.5 (A4.2d.3: S25 water, E18, E8, E2).
-- **Branches:** `claude/intelligent-lovelace-mtj9ik` in `hcesfort` (docs
+- **Model:** Opus 5.5 (A4.3a: water served, self-review, check of A4).
+- **Branches:** `claude/ecstatic-hypatia-eq0k2m` in `hcesfort` (docs
   only) and in `hcesfort.engih2018`, both pushed. They contain the work
-  of `claude/dazzling-hypatia-h9ylzl`; nothing is merged into `main`.
+  of `claude/intelligent-lovelace-mtj9ik`; nothing is merged into `main`.
 - **Environment:** `R CMD INSTALL .` of `hcesfort` first, then of the
-  adapter, before its tests and lint. The environment now allows
-  `pubchem.ncbi.nlm.nih.gov` (added this session, for E8).
-- **Earlier handoffs:** `git show 1c069d0:docs/handoff.md` (row 3, the
-  maintainer's answers on E2, E18, E8 and the run of row 3; notes for
-  P243), `git show edb7cbf:docs/handoff.md` (E6).
+  adapter, before its tests and lint.
+- **Earlier handoffs:** `git show df0f53b:docs/handoff.md` (A4.2d.3: S25,
+  E18, E8, E2 and the maintainer's answers on A4.6),
+  `git show 1c069d0:docs/handoff.md` (row 3; notes for P243).
 
-## What was done (adapter)
+## What was done
 
-- `f6d675e` **S25, water.** Option `water` (`"food"` original,
-  `"non_food"` corrected): `S3A:594` dropped with its own log row (cause
-  `water`). Step `water` after `e6` (no figure expected to move). The
-  coverage is written before the step (`step2_coverage.csv`, with water,
-  same expectations as before) and after the last step
-  (`step2_coverage_no_water.csv`: Section 3A grams without a validated
-  match below 2% and below the share with water). NEWS: figures of row 3
-  from the run. The roxygen of `engih2018_survey()` wrongly listed
-  purified water among the crosswalk's non-foods; fixed.
-- `f77076e` **E18.** `density = "by_food"` available: nine oils at
-  0.92 g/ml in the five volume units, from the FAO/INFOODS Density
-  Database Version 2.0, row "Oil, other than palmoil" (DK)
-  (`inst/extdata/densities.csv`, `data-raw/densities.R`, SOURCES.md).
-  Step `e18` after `water`; direction in `helper-step2-units.R`.
-- `9e4b241` **E8.** `levels = "sugar_palmitate"`: the sugar row of 1c as
-  retinyl palmitate, retinol fraction 286.5 / 524.9 (PubChem). Sensitivity
-  run `e8_palmitate` on the state after `e18`. The default stays retinol.
-  The WHO/FAO guidelines (2006), opened in the session, write such levels
-  as retinol (Table 5.5) and say a level in mg/kg of a micronutrient
-  refers to the micronutrient (11.3.1.4): recorded in SOURCES.md.
-- **E2:** kept at the original value. The FNDDS and INCAP workbooks the
-  adapter uses carry no portion weights; `dozen = "count"` is still
-  refused. NEWS says so.
-- `hcesfort` docs: roadmap A4.2d.3 ticked; design table S25 and row 4
-  amended; P247 to P249.
-
-Adapter: `devtools::test()` FAIL 0, PASS 794, SKIP 43 (microdata);
-`lintr::lint_package()` clean.
+- Adapter `2aa5602` **S25, water served.** `S3A:2665` ("Agua purificada
+  servida") joins `S3A:594` in `engih_water_codes`: dropped under
+  `water = "non_food"`, counted in the same log row (cause `water`).
+  `S3A:596` (flavoured water) stays a food. The test fixture carries the
+  three codes and checks that both water codes are foods of the shipped
+  crosswalk, never its non-foods. NEWS (S25) and roxygen updated. The
+  snapshot of the printed options gains the S25 row (it had not been
+  updated in `f6d675e`).
+- **Coverage with and without water:** cannot be re-run here (microdata).
+  `S3A:2665` has no validated match either, so dropping it can only lower
+  the grams without a validated match: the expectation of
+  `step2_coverage_no_water.csv` (below 2% and below the share with
+  water) still holds by construction.
+- **Self-review of A4** (diff of `R/` since `ca27a0d~1`): one finding,
+  P250 (low). P249 marked done.
+- Adapter: `devtools::test()` FAIL 0, PASS 755, SKIP 42 (all skips are
+  acceptance files that need the microdata); `devtools::check()` 0
+  errors, 0 warnings, 0 notes; `lintr::lint_package()` clean.
+- `hcesfort` docs: roadmap A4.2d ticked, A4.3 split (A4.3a done, A4.3b
+  open); improvements P249, P250.
 
 ## Exact next step
 
-1. Maintainer: one run of `acceptance-step2` (new: steps `water`, `e18`,
-   sensitivity `e8_palmitate`, `step2_coverage_no_water.csv`), and
-   answers to the questions below.
-2. Fill the figures in NEWS.md of the adapter; then A4.3: self-review,
-   `devtools::check()` of the adapter and lint, once for A4.
+1. Maintainer: merge both branches, then one run of `acceptance-step2`
+   on the microdata, and send the summary of the steps `water`, `e18` and
+   the sensitivity run `e8_palmitate`, and both coverage files.
+2. Next session: put those figures in `NEWS.md` of the adapter (S25,
+   E18, E8) and `inst/acceptance/steps/`, tick A4.3b and A4. If a figure
+   moves where `expect_step2_unchanged()` says none should, stop and ask.
+3. After A4, the first open tasks of the roadmap are 12c and 12d (reports)
+   and 12 (vignettes); the maintainer decides the order (12d says it
+   comes "before the ENGIH adapter work resumes").
 
 ## Open questions
 
-1. **E18, one value or one per oil?** Implemented: 0.92 g/ml for every oil
-   (the only general vegetable-oil row from a food composition databank).
-   Rows per kind exist (soya 0.927, corn 0.922, olive 0.918, ...; mostly
-   from web pages; sunflower 0.96, one measurement). Recommended: keep
-   one value (grams move by less than 4% either way).
-2. **E2, what sensitivity?** Without a cited piece weight no sensitivity
-   with real weights can be run. Recommended: leave E2 at the original
-   value and list the 218 records for the unit catalogue of P243 (unit
-   weights estimated from the survey's own unit values, v0.2), unless you
-   open a document with piece weights (FNDDS 2017-2018 "Portions and
-   Weights" is part of the same release as the FNDDS workbook; its host,
-   www.ars.usda.gov, is blocked here and could be allowed).
-3. **Water: also `S3A:2665` ("Agua purificada servida")?** Recommended:
-   yes, same item served; `S3A:596` (flavoured water) stays a food (P249).
+1. After A4, which task: 12c/12d (reports, Fable-designed requirements
+   already approved, so Opus implements) or the v0.2 preprocessing module
+   (P243, Fable designs)? Recommended: 12c, as the roadmap orders it.
 
 ## Recommended model for the next session
 
-**Opus** (figures of the run in NEWS, then the end of A4).
+**Opus** (figures of the run in NEWS, close A4).
 
 ## Maintainer review points
 
-1. **The oil gallon converts at 0.92 g/ml only with the food factor
-   first** (P247):
+1. **Both water codes dropped, flavoured water kept:**
 
    ```r
    # in hcesfort.engih2018, with devtools::load_all()
-   u <- engih_unit_factors("by_food")
-   a <- data.frame(record_id = "r1", household_id = "h1",
-                   food_code = "S3A:293", quantity = 1, unit = "57",
-                   section = "sec3a", period_days = 7, include = TRUE)
-   hcesfort::convert_units(a, u, priority = "food")$qty_g     # 3482.577
-   hcesfort::convert_units(a, u, priority = "generic")$qty_g  # 3785.41
+   a <- data.frame(record_id = 1:3, household_id = "h1",
+                   food_code = c("S3A:594", "S3A:2665", "S3A:596"))
+   r <- drop_non_foods(a, engih_crosswalk()$table, "non_food")
+   r$table$food_code   # "S3A:596"
+   r$log               # row "water": 2 records, 1 household
    ```
 
-2. **The sugar row of the E8 sensitivity** (expected: one row, fraction
-   0.5458):
+2. **The log row of water on the microdata** (after the run):
 
    ```r
-   t <- engih2018_tables(engih2018_options("original",
-                                           levels = "sugar_palmitate"))
-   t$scenarios[!is.na(t$scenarios$compound), ]
+   s <- engih2018_survey(options = engih2018_options("corrected"))
+   l <- hcesfort::audit_log(s$acquisitions)
+   l[l$cause == "water", ]   # records of S3A:594 plus S3A:2665
    ```
 
-3. **Coverage with and without water on the microdata:**
+3. **Coverage with and without water** (as in the previous handoff):
 
    ```r
    Sys.setenv(ENGIH2018_DATA = "path/to/the/microdata")
@@ -107,18 +88,3 @@ Adapter: `devtools::test()` FAIL 0, PASS 794, SKIP 43 (microdata);
      print(r[r$etapa == k, ])
    }
    ```
-
-## Maintainer's answers on A4.6 (21-11)
-
-1. **E18**: one density, 0.92 g/ml, for all oils. No split by oil type.
-2. **E2 (dozen)**: keep the original's value. The 218 records in 22 foods
-   go to the catalogue of units without a citable weight (P243). U.S.
-   portion tables are not Dominican weights and are not used.
-3. **Water**: also treat `S3A:2665 Agua purificada servida` as a non-food,
-   counted like `S3A:594`. Flavoured water stays a food.
-   **Not implemented yet**: the next session adds it (adapter non-food
-   list and its test), re-checks coverage with and without water, then
-   runs `devtools::check()` of the adapter and closes A4.
-4. The maintainer runs `acceptance-step2` after the merge and sends the
-   summary of `water`, `e18` and `e8_palmitate`; the figures go to
-   `NEWS.md` in that session.
